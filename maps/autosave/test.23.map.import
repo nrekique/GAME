@@ -1,0 +1,14 @@
+[remap]
+
+importer="qodot.map"
+type="Resource"
+uid="uid://ctv5tylkeswna"
+path="res://.godot/imported/test.23.map-4dfaded9aee74534ad249a2316c5cc44.tres"
+
+[deps]
+
+source_file="res://maps/autosave/test.23.map"
+dest_files=["res://.godot/imported/test.23.map-4dfaded9aee74534ad249a2316c5cc44.tres"]
+
+[params]
+

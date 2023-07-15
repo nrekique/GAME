@@ -1,0 +1,14 @@
+[remap]
+
+importer="qodot.map"
+type="Resource"
+uid="uid://bxlb3uea3nfbm"
+path="res://.godot/imported/full.map-39b40317858c22a32aca0e73a6290a70.tres"
+
+[deps]
+
+source_file="res://maps/buildings/full.map"
+dest_files=["res://.godot/imported/full.map-39b40317858c22a32aca0e73a6290a70.tres"]
+
+[params]
+
