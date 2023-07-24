@@ -1,0 +1,14 @@
+[remap]
+
+importer="qodot.map"
+type="Resource"
+uid="uid://upwxlg7xitgk"
+path="res://.godot/imported/laCebia.map-a55159815f05ac558f4c51c26bf1e766.tres"
+
+[deps]
+
+source_file="res://maps/laCebia.map"
+dest_files=["res://.godot/imported/laCebia.map-a55159815f05ac558f4c51c26bf1e766.tres"]
+
+[params]
+
