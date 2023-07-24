@@ -1,0 +1,19 @@
+[gd_resource type="ShaderMaterial" load_steps=3 format=3 uid="uid://duvtrsmqwsll"]
+
+[ext_resource type="Shader" path="res://shaders/water.gdshader" id="1_wpcbb"]
+[ext_resource type="Texture2D" uid="uid://0ef35wcbl7v7" path="res://maps/textures/water_normal.jpg" id="2_y2014"]
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_wpcbb")
+shader_parameter/surface_color = Color(0.113725, 0.447059, 0.419608, 1)
+shader_parameter/depth_color = Color(0.0745098, 0.113725, 0.376471, 1)
+shader_parameter/opacity = 1.0
+shader_parameter/normal_scale = -0.154999
+shader_parameter/beer_factor = 10.0
+shader_parameter/_roughness = 0.183
+shader_parameter/_refraction = 0.0
+shader_parameter/_uv_scale = 0.068
+shader_parameter/_foam_strength = 0.18
+shader_parameter/_foam_size = null
+shader_parameter/normal_map = ExtResource("2_y2014")

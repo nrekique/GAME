@@ -1,0 +1,14 @@
+[remap]
+
+importer="qodot.map"
+type="Resource"
+uid="uid://dxal2bgt8mi31"
+path="res://.godot/imported/heavywater.map-ea70a5c77431158b647fffdbaeaba2ce.tres"
+
+[deps]
+
+source_file="res://maps/other/old/heavywater.map"
+dest_files=["res://.godot/imported/heavywater.map-ea70a5c77431158b647fffdbaeaba2ce.tres"]
+
+[params]
+

@@ -1,0 +1,21 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://dopalrpnrfapb"
+path="res://.godot/imported/Car5_Police.obj-d04647768682953efb2b2e6be678088c.mesh"
+
+[deps]
+
+files=["res://.godot/imported/Car5_Police.obj-d04647768682953efb2b2e6be678088c.mesh"]
+
+source_file="res://maps/entities/models/PSX_Style_Cars_by_GGBot_(September2022)/Car 05/Car5_Police.obj"
+dest_files=["res://.godot/imported/Car5_Police.obj-d04647768682953efb2b2e6be678088c.mesh", "res://.godot/imported/Car5_Police.obj-d04647768682953efb2b2e6be678088c.mesh"]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+optimize_mesh=true

@@ -1,0 +1,14 @@
+[remap]
+
+importer="qodot.map"
+type="Resource"
+uid="uid://bh82i0bx1v1nw"
+path="res://.godot/imported/grill.3.map-19af563e2f55cd25a4781cf693948b4b.tres"
+
+[deps]
+
+source_file="res://maps/autosave/grill.3.map"
+dest_files=["res://.godot/imported/grill.3.map-19af563e2f55cd25a4781cf693948b4b.tres"]
+
+[params]
+

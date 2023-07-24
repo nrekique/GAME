@@ -1,0 +1,15 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://dqomfp5brl0nu"]
+
+[resource]
+blend_mode = 1
+albedo_color = Color(0.156863, 0.501961, 0.368627, 0.305882)
+albedo_texture_force_srgb = true
+metallic = 0.28
+metallic_specular = 0.34
+roughness = 0.0
+clearcoat = 0.38
+clearcoat_roughness = 0.11
+anisotropy = 0.28
+subsurf_scatter_strength = 0.98
+refraction_enabled = true
+refraction_scale = 2.08167e-17
