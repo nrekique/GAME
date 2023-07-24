@@ -12,7 +12,7 @@ config_version=5
 
 config/name="heavyWater"
 run/main_scene="res://post_process/pp_stack.tscn"
-config/features=PackedStringArray("4.1", "C#", "Forward Plus")
+config/features=PackedStringArray("4.1", "Forward Plus")
 boot_splash/show_image=false
 config/icon="res://hw.png"
 
@@ -34,7 +34,7 @@ project/assembly_name="heavyWater"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/AMSG/plugin.cfg", "res://addons/PoseWarping/plugin.cfg", "res://addons/dialogic/plugin.cfg", "res://addons/qodot/plugin.cfg")
+enabled=PackedStringArray("res://addons/tbloader/plugin.cfg", "res://addons/dialogic/plugin.cfg", "res://addons/PoseWarping/plugin.cfg", "res://addons/AMSG/plugin.cfg")
 
 [input]
 
