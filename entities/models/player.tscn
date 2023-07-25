@@ -19,7 +19,8 @@ transform = Transform3D(1.2, 0, 0, 0, 1.2, 0, 0, 0, 1.2, 0, 1.20318, 0)
 shape = SubResource("CapsuleShape3D_soaca")
 
 [node name="Head" type="Node3D" parent="."]
-transform = Transform3D(-0.604335, 0, 0.79673, 0, 1, 0, -0.79673, 0, -0.604335, 0, 2.11325, 0)
+transform = Transform3D(-0.999998, 0, 0.00202427, 0, 1, 0, -0.00202427, 0, -0.999998, 0, 2.11325, 0)
 
 [node name="Camera3D" type="Camera3D" parent="Head"]
-transform = Transform3D(0.655703, 0, 0, 0, 0.655703, 0, 0, 0, 0.655703, 0, 0, -0.104131)
+transform = Transform3D(0.655703, -2.28701e-16, -1.87296e-09, 2.28701e-16, 0.655703, -2.28701e-16, -1.83665e-08, 2.28701e-16, 0.655703, -2.20406e-09, 0, -0.104131)
+fov = 110.0

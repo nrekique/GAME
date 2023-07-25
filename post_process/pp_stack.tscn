@@ -4,7 +4,7 @@
 [ext_resource type="Material" uid="uid://bni0eo5gi5ho4" path="res://post_process/lcd-overlay_mat.tres" id="2_0v7s0"]
 [ext_resource type="Shader" path="res://shaders/pp_band-dither.gdshader" id="3_rkbcs"]
 [ext_resource type="Texture2D" uid="uid://b0ub3tqjyw46f" path="res://shaders/psxdither.png" id="4_05ih0"]
-[ext_resource type="PackedScene" uid="uid://dtevwtfpggmjv" path="res://Scenes/grill.tscn" id="5_3jgtt"]
+[ext_resource type="PackedScene" uid="uid://j7ldji3fs2er" path="res://Scenes/laCebia.tscn" id="5_vlj0w"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_m5nvn"]
 shader = ExtResource("3_rkbcs")
@@ -67,4 +67,4 @@ audio_listener_enable_3d = true
 size = Vector2i(320, 240)
 render_target_update_mode = 4
 
-[node name="Node3D" parent="PSXLayer/BlurPostProcess/Viewport/LCDOverlay/Viewport/DitherBanding/Viewport" instance=ExtResource("5_3jgtt")]
+[node name="Node3D2" parent="PSXLayer/BlurPostProcess/Viewport/LCDOverlay/Viewport/DitherBanding/Viewport" instance=ExtResource("5_vlj0w")]
