@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="QodotFGDPointClass" load_steps=3 format=3 uid="uid://durkqru55fj5w"]
 
-[ext_resource type="PackedScene" uid="uid://cxdrqbhec2uoq" path="res://maps/entities/scenes/npc.tscn" id="1_j5pxa"]
+[ext_resource type="PackedScene" uid="uid://cxdrqbhec2uoq" path="res://entities/scenes/npc.tscn" id="1_j5pxa"]
 [ext_resource type="Script" path="res://addons/qodot/src/resources/game-definitions/fgd/qodot_fgd_point_class.gd" id="2_284a4"]
 
 [resource]
@@ -17,8 +17,8 @@ class_properties = {}
 class_property_descriptions = {}
 meta_properties = {
 "color": Color(0.188235, 0.905882, 0.921569, 1),
-"model": "{ \"path\": \"maps/entities/models/psx_male_base_mesh.glb\" }",
-"size": AABB(-8, -8, -8, 8, 8, 8)
+"model": "{ \"path\": \"maps/entities/models/npc.obj\" }",
+"size": AABB(-15, -15, -30, 15, 15, 30)
 }
 node_options = "----------------------------------------------------------------"
 node_class = ""
