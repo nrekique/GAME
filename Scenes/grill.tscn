@@ -1,4 +1,4 @@
-[gd_scene load_steps=573 format=3 uid="uid://dtevwtfpggmjv"]
+[gd_scene load_steps=578 format=3 uid="uid://dtevwtfpggmjv"]
 
 [ext_resource type="Resource" uid="uid://dxp37dladbquv" path="res://maps/fgd/solid_classes/worldspawn_solid_class.tres" id="1_o3vxa"]
 [ext_resource type="Resource" uid="uid://cw4s1hnxqetee" path="res://maps/fgd/solid_classes/func_group_solid_class.tres" id="2_pp22v"]
@@ -9,10 +9,10 @@
 [ext_resource type="Texture2D" uid="uid://cbllumptx0j7u" path="res://maps/textures/stAsphaltBrn.png" id="4_op57t"]
 [ext_resource type="Resource" uid="uid://v3fbh0xn5d2h" path="res://maps/fgd/solid_classes/physics_solid_class.tres" id="5_8xwe2"]
 [ext_resource type="Texture2D" uid="uid://bllykrqwfper" path="res://maps/textures/wood1_1.png" id="5_m5l78"]
-[ext_resource type="Resource" uid="uid://ccwosedfa8v8d" path="res://maps/fgd/point_classes/light_point_class.tres" id="6_cc2n4"]
+[ext_resource type="Script" path="res://addons/qodot/src/resources/game-definitions/fgd/qodot_fgd_point_class.gd" id="7_4ay7l"]
 [ext_resource type="Texture2D" uid="uid://14s5kh54fxlh" path="res://maps/textures/city4_6.png" id="7_gtaad"]
-[ext_resource type="Resource" uid="uid://cubvqwi3p77sq" path="res://maps/fgd/point_classes/physics_ball_point_class.tres" id="7_hqwdt"]
 [ext_resource type="Texture2D" uid="uid://cwyluofri64os" path="res://maps/textures/smpfloor04.png" id="8_a8prv"]
+[ext_resource type="Script" path="res://addons/qodot/game_definitions/fgd/point_classes/physics_ball.gd" id="8_b40ar"]
 [ext_resource type="Resource" uid="uid://dbh35xj5q8gvc" path="res://maps/fgd/point_classes/receiver_point_class.tres" id="8_m6pjj"]
 [ext_resource type="Texture2D" uid="uid://b0b4hry8jied6" path="res://maps/textures/concreteWhite.png" id="9_nrw4x"]
 [ext_resource type="Resource" uid="uid://bu3h1cvdigp1i" path="res://maps/fgd/point_classes/signal_point_class.tres" id="9_uoa25"]
@@ -1229,6 +1229,71 @@ func _build_complete():
 	emit_signal(\"build_complete\")
 "
 
+[sub_resource type="Resource" id="Resource_fj4l4"]
+script = ExtResource("7_4ay7l")
+scene = "----------------------------------------------------------------"
+scripting = "----------------------------------------------------------------"
+class_options = "----------------------------------------------------------------"
+classname = "omniLight"
+description = "Invisible light source"
+qodot_internal = false
+base_classes = Array[Resource]([ExtResource("10_vjnfx")])
+class_properties = {
+"angle": 0.0
+}
+class_property_descriptions = {
+"angle": "Rotation Angle"
+}
+meta_properties = {
+"size": AABB(-8, -8, -8, 8, 8, 8)
+}
+node_options = "----------------------------------------------------------------"
+node_class = "OmniLight3d"
+transient_node = false
+
+[sub_resource type="SphereMesh" id="1"]
+
+[sub_resource type="SphereShape3D" id="2"]
+
+[sub_resource type="PackedScene" id="PackedScene_nn3rn"]
+_bundled = {
+"conn_count": 0,
+"conns": PackedInt32Array(),
+"editable_instances": [],
+"names": PackedStringArray("PhysicsBall", "RigidBody3D", "MeshInstance", "MeshInstance3D", "mesh", "CollisionShape", "CollisionShape3D", "shape"),
+"node_count": 3,
+"node_paths": [NodePath("."), NodePath(".")],
+"nodes": PackedInt32Array(-1, -1, 1, 0, -1, 0, 0, 1073741824, 0, 3, 2, -1, 1, 4, 0, 0, 1073741825, 0, 6, 5, -1, 1, 7, 1, 0),
+"variants": [SubResource("1"), SubResource("2")],
+"version": 3
+}
+
+[sub_resource type="Resource" id="Resource_as0sk"]
+script = ExtResource("7_4ay7l")
+scene = "----------------------------------------------------------------"
+scene_file = SubResource("PackedScene_nn3rn")
+scripting = "----------------------------------------------------------------"
+script_class = ExtResource("8_b40ar")
+class_options = "----------------------------------------------------------------"
+classname = "physics_ball"
+description = "Physics Ball"
+qodot_internal = false
+base_classes = Array[Resource]([])
+class_properties = {
+"mass": 1.0,
+"size": 1.0,
+"velocity": Vector3(0, 0, 0)
+}
+class_property_descriptions = {
+"velocity": "Initial velocity"
+}
+meta_properties = {
+"size": AABB(-8, -8, -8, 8, 8, 8)
+}
+node_options = "----------------------------------------------------------------"
+node_class = ""
+transient_node = false
+
 [sub_resource type="GDScript" id="GDScript_becqs"]
 script/source = "@tool
 class_name QodotFGDFile
@@ -1360,7 +1425,7 @@ export_file = false
 target_folder = "/Users/nre_kique/Library/Application Support/TrenchBroom/games/Heavy Water"
 fgd_name = "heavyW"
 base_fgd_files = Array[Resource]([])
-entity_definitions = Array[Resource]([ExtResource("1_o3vxa"), ExtResource("2_pp22v"), ExtResource("3_xvg2p"), ExtResource("4_ewlr8"), ExtResource("5_8xwe2"), ExtResource("6_cc2n4"), ExtResource("7_hqwdt"), ExtResource("8_m6pjj"), ExtResource("9_uoa25"), ExtResource("10_vjnfx"), null])
+entity_definitions = Array[Resource]([ExtResource("1_o3vxa"), ExtResource("2_pp22v"), ExtResource("3_xvg2p"), ExtResource("4_ewlr8"), ExtResource("5_8xwe2"), SubResource("Resource_fj4l4"), SubResource("Resource_as0sk"), ExtResource("8_m6pjj"), ExtResource("9_uoa25"), ExtResource("10_vjnfx"), null])
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_v7j41"]
 

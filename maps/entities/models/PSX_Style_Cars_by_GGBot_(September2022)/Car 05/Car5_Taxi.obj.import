@@ -1,0 +1,21 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://bpa5wjrio1nj"
+path="res://.godot/imported/Car5_Taxi.obj-070ce6cf28a7eca4c065bbcb6bf11855.mesh"
+
+[deps]
+
+files=["res://.godot/imported/Car5_Taxi.obj-070ce6cf28a7eca4c065bbcb6bf11855.mesh"]
+
+source_file="res://maps/entities/models/PSX_Style_Cars_by_GGBot_(September2022)/Car 05/Car5_Taxi.obj"
+dest_files=["res://.godot/imported/Car5_Taxi.obj-070ce6cf28a7eca4c065bbcb6bf11855.mesh", "res://.godot/imported/Car5_Taxi.obj-070ce6cf28a7eca4c065bbcb6bf11855.mesh"]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+optimize_mesh=true

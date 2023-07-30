@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="QodotFGDPointClass" load_steps=3 format=3 uid="uid://dx87vfhoblv4x"]
+
+[ext_resource type="PackedScene" uid="uid://cckf3rtlfb4vm" path="res://maps/entities/scenes/player.tscn" id="1_wifjj"]
+[ext_resource type="Script" path="res://addons/qodot/src/resources/game-definitions/fgd/qodot_fgd_point_class.gd" id="2_82aro"]
+
+[resource]
+script = ExtResource("2_82aro")
+scene = "Player"
+scene_file = ExtResource("1_wifjj")
+scripting = "----------------------------------------------------------------"
+class_options = "----------------------------------------------------------------"
+classname = "player"
+description = ""
+qodot_internal = false
+base_classes = Array[Resource]([])
+class_properties = {}
+class_property_descriptions = {}
+meta_properties = {
+"color": Color(0.133333, 0.976471, 0.521569, 1),
+"iconsprite": "\"maps/sprites/player.png\"",
+"size": AABB(-15, -15, -30, 15, 15, 30)
+}
+node_options = "----------------------------------------------------------------"
+node_class = ""
+transient_node = false

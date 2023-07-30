@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="QodotFGDPointClass" load_steps=2 format=3 uid="uid://dk5kxg08l1xp7"]
+
+[ext_resource type="Script" path="res://addons/qodot/src/resources/game-definitions/fgd/qodot_fgd_point_class.gd" id="1_ayiel"]
+
+[resource]
+script = ExtResource("1_ayiel")
+scene = "----------------------------------------------------------------"
+scripting = "----------------------------------------------------------------"
+class_options = "----------------------------------------------------------------"
+classname = "SpotLight3D"
+description = "invisible light"
+qodot_internal = false
+base_classes = Array[Resource]([])
+class_properties = {
+"color": Color(0.768627, 0.694118, 0.0313726, 1),
+"light": 1000,
+"wait": 200
+}
+class_property_descriptions = {}
+meta_properties = {
+"color": Color(0.937255, 0.913725, 0.203922, 1),
+"iconsprite": "\"maps/sprites/spot.png\"",
+"size": AABB(-8, -8, -8, 8, 8, 8)
+}
+node_options = "----------------------------------------------------------------"
+node_class = "SpotLight3D"
+transient_node = false
