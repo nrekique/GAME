@@ -1,7 +1,6 @@
-[gd_scene load_steps=13 format=3 uid="uid://cdv1lvdv80kt5"]
+[gd_scene load_steps=12 format=3 uid="uid://cdv1lvdv80kt5"]
 
 [ext_resource type="Script" path="res://Scripts/exit.gd" id="1_qr05o"]
-[ext_resource type="PackedScene" uid="uid://dtevwtfpggmjv" path="res://Scenes/grill.tscn" id="4_2p0g2"]
 [ext_resource type="PackedScene" uid="uid://fpwj62o2rchm" path="res://Scenes/outside.tscn" id="4_o50q5"]
 [ext_resource type="PackedScene" uid="uid://cckf3rtlfb4vm" path="res://entities/models/player.tscn" id="5_qcqyh"]
 [ext_resource type="Shader" path="res://shaders/outline.gdshader" id="55_rflvg"]
@@ -22,25 +21,29 @@ sky_material = SubResource("ProceduralSkyMaterial_42yb1")
 
 [sub_resource type="Environment" id="Environment_iyacb"]
 background_mode = 2
+background_energy_multiplier = 0.59
 sky = SubResource("Sky_gpnce")
 ambient_light_source = 2
 ambient_light_color = Color(0.67451, 0.301961, 0.207843, 1)
 tonemap_mode = 2
 ssao_enabled = true
-ssao_radius = 2.74
-ssao_power = 1.30583
+ssao_radius = 2.49
+ssao_power = 0.100479
 ssil_enabled = true
 ssil_radius = 1.88
 ssil_intensity = 2.32
 ssil_sharpness = 0.68
 sdfgi_enabled = true
-sdfgi_bounce_feedback = 1.31
+sdfgi_use_occlusion = true
+sdfgi_bounce_feedback = 1.39
 sdfgi_cascades = 8
-sdfgi_min_cell_size = 3.37
+sdfgi_min_cell_size = 0.808246
 glow_enabled = true
-glow_intensity = 2.04
-glow_strength = 1.2
-glow_hdr_threshold = 0.25
+glow_intensity = 6.34
+glow_strength = 1.47
+glow_hdr_threshold = 0.17
+glow_hdr_scale = 1.85
+glow_map_strength = 0.85
 volumetric_fog_enabled = true
 volumetric_fog_density = 0.0113
 volumetric_fog_albedo = Color(0.121569, 0.211765, 0.172549, 1)
@@ -94,9 +97,6 @@ transform = Transform3D(-0.381679, 0.476408, 0.792058, -0.528158, -0.815664, 0.2
 extra_cull_margin = 16384.0
 mesh = SubResource("QuadMesh_5aiid")
 skeleton = NodePath("../DirectionalLight3D")
-
-[node name="grill" parent="." instance=ExtResource("4_2p0g2")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 154, 5.25143, 146.501)
 
 [node name="outside" parent="." instance=ExtResource("4_o50q5")]
 

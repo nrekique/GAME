@@ -1,43 +1,43 @@
-[gd_scene load_steps=573 format=3 uid="uid://dtevwtfpggmjv"]
+[gd_scene load_steps=578 format=3 uid="uid://dtevwtfpggmjv"]
 
 [ext_resource type="Resource" uid="uid://dxp37dladbquv" path="res://maps/fgd/solid_classes/worldspawn_solid_class.tres" id="1_o3vxa"]
 [ext_resource type="Resource" uid="uid://cw4s1hnxqetee" path="res://maps/fgd/solid_classes/func_group_solid_class.tres" id="2_pp22v"]
-[ext_resource type="Texture2D" uid="uid://cb3sya8cq17jw" path="res://maps/textures/city1_4.png" id="2_r2vtk"]
-[ext_resource type="Texture2D" uid="uid://dwfttmuw1iyh2" path="res://maps/textures/metal5_3.png" id="3_1whwv"]
+[ext_resource type="Texture2D" uid="uid://cb3sya8cq17jw" path="res://textures/city1_4.png" id="2_r2vtk"]
+[ext_resource type="Texture2D" uid="uid://dwfttmuw1iyh2" path="res://textures/metal5_3.png" id="3_1whwv"]
 [ext_resource type="Resource" uid="uid://bnbdy0cky2bo" path="res://maps/fgd/solid_classes/group_solid_class.tres" id="3_xvg2p"]
 [ext_resource type="Resource" uid="uid://dy7undvxjvodx" path="res://maps/fgd/solid_classes/illusionary_solid_class.tres" id="4_ewlr8"]
-[ext_resource type="Texture2D" uid="uid://cbllumptx0j7u" path="res://maps/textures/stAsphaltBrn.png" id="4_op57t"]
+[ext_resource type="Texture2D" uid="uid://cbllumptx0j7u" path="res://textures/stAsphaltBrn.png" id="4_op57t"]
 [ext_resource type="Resource" uid="uid://v3fbh0xn5d2h" path="res://maps/fgd/solid_classes/physics_solid_class.tres" id="5_8xwe2"]
-[ext_resource type="Texture2D" uid="uid://bllykrqwfper" path="res://maps/textures/wood1_1.png" id="5_m5l78"]
-[ext_resource type="Resource" uid="uid://ccwosedfa8v8d" path="res://maps/fgd/point_classes/light_point_class.tres" id="6_cc2n4"]
-[ext_resource type="Texture2D" uid="uid://14s5kh54fxlh" path="res://maps/textures/city4_6.png" id="7_gtaad"]
-[ext_resource type="Resource" uid="uid://cubvqwi3p77sq" path="res://maps/fgd/point_classes/physics_ball_point_class.tres" id="7_hqwdt"]
-[ext_resource type="Texture2D" uid="uid://cwyluofri64os" path="res://maps/textures/smpfloor04.png" id="8_a8prv"]
+[ext_resource type="Texture2D" uid="uid://bllykrqwfper" path="res://textures/wood1_1.png" id="5_m5l78"]
+[ext_resource type="Script" path="res://addons/qodot/src/resources/game-definitions/fgd/qodot_fgd_point_class.gd" id="7_4ay7l"]
+[ext_resource type="Texture2D" uid="uid://14s5kh54fxlh" path="res://textures/city4_6.png" id="7_gtaad"]
+[ext_resource type="Texture2D" uid="uid://cwyluofri64os" path="res://textures/smpfloor04.png" id="8_a8prv"]
+[ext_resource type="Script" path="res://addons/qodot/game_definitions/fgd/point_classes/physics_ball.gd" id="8_b40ar"]
 [ext_resource type="Resource" uid="uid://dbh35xj5q8gvc" path="res://maps/fgd/point_classes/receiver_point_class.tres" id="8_m6pjj"]
-[ext_resource type="Texture2D" uid="uid://b0b4hry8jied6" path="res://maps/textures/concreteWhite.png" id="9_nrw4x"]
+[ext_resource type="Texture2D" uid="uid://b0b4hry8jied6" path="res://textures/concreteWhite.png" id="9_nrw4x"]
 [ext_resource type="Resource" uid="uid://bu3h1cvdigp1i" path="res://maps/fgd/point_classes/signal_point_class.tres" id="9_uoa25"]
-[ext_resource type="Texture2D" uid="uid://sc3ifmnqgixm" path="res://maps/textures/wizwood1_8.png" id="10_r2pnr"]
+[ext_resource type="Texture2D" uid="uid://sc3ifmnqgixm" path="res://textures/wizwood1_8.png" id="10_r2pnr"]
 [ext_resource type="Resource" uid="uid://c5o31v30rw7v5" path="res://maps/fgd/base_classes/light_base_class.tres" id="10_vjnfx"]
-[ext_resource type="Texture2D" uid="uid://vuk5ug06gy7m" path="res://maps/textures/roofTeal.png" id="11_rnkvb"]
-[ext_resource type="Texture2D" uid="uid://cwswxpevw3fqj" path="res://maps/textures/wizmet1_8.png" id="12_jsyd2"]
-[ext_resource type="Texture2D" uid="uid://bnqy47tun66b" path="res://maps/textures/groundBrown2.png" id="13_32sxk"]
-[ext_resource type="Texture2D" uid="uid://c7gkrqpn6vghw" path="res://maps/textures/concreteBrown.png" id="14_puuen"]
-[ext_resource type="Texture2D" uid="uid://d3bkwi1difi1g" path="res://maps/textures/sand.png" id="15_eqn88"]
-[ext_resource type="Texture2D" uid="uid://6py3wchhymy3" path="res://maps/textures/marble.png" id="16_o0qr8"]
-[ext_resource type="Texture2D" uid="uid://g3dj487pnyyq" path="res://maps/textures/indRed2.png" id="17_g53ju"]
-[ext_resource type="Material" uid="uid://cbo7d3fitb60d" path="res://maps/textures/light7.tres" id="17_y48lm"]
-[ext_resource type="Texture2D" uid="uid://c5tcsk3quwwyb" path="res://maps/textures/bricksRed2.png" id="18_wykr6"]
-[ext_resource type="Texture2D" uid="uid://d3infy7g2m5xq" path="res://maps/textures/cop1_6.png" id="19_0x4f4"]
-[ext_resource type="Texture2D" uid="uid://bshw7he0djgbb" path="res://maps/textures/city4_7.png" id="20_646lp"]
-[ext_resource type="Texture2D" uid="uid://cwdh185cxwdb6" path="res://maps/textures/light6.png" id="22_3ayu7"]
-[ext_resource type="Material" uid="uid://dqomfp5brl0nu" path="res://maps/textures/glass.tres" id="22_qo0yp"]
-[ext_resource type="Texture2D" uid="uid://buxnfaqy33qfo" path="res://maps/textures/light12.png" id="29_ojer7"]
-[ext_resource type="Texture2D" uid="uid://blumb4nqm865e" path="res://maps/textures/m5_8.png" id="30_i1g56"]
-[ext_resource type="Texture2D" uid="uid://df3r57t8xemrc" path="res://maps/textures/concreteWhite2.png" id="32_egamd"]
-[ext_resource type="Texture2D" uid="uid://b0v1loubwdhob" path="res://maps/textures/red5.png" id="43_8813w"]
-[ext_resource type="Texture2D" uid="uid://ce5e80cluemlv" path="res://maps/textures/orange5.png" id="44_4gstt"]
-[ext_resource type="Texture2D" uid="uid://c726rr46s3267" path="res://maps/textures/dark1.png" id="44_q3lfj"]
-[ext_resource type="Texture2D" uid="uid://gq7tw61fmdek" path="res://maps/textures/green1.png" id="45_42pgp"]
+[ext_resource type="Texture2D" uid="uid://vuk5ug06gy7m" path="res://textures/roofTeal.png" id="11_rnkvb"]
+[ext_resource type="Texture2D" uid="uid://cwswxpevw3fqj" path="res://textures/wizmet1_8.png" id="12_jsyd2"]
+[ext_resource type="Texture2D" uid="uid://bnqy47tun66b" path="res://textures/groundBrown2.png" id="13_32sxk"]
+[ext_resource type="Texture2D" uid="uid://c7gkrqpn6vghw" path="res://textures/concreteBrown.png" id="14_puuen"]
+[ext_resource type="Texture2D" uid="uid://d3bkwi1difi1g" path="res://textures/sand.png" id="15_eqn88"]
+[ext_resource type="Texture2D" uid="uid://6py3wchhymy3" path="res://textures/marble.png" id="16_o0qr8"]
+[ext_resource type="Texture2D" uid="uid://g3dj487pnyyq" path="res://textures/indRed2.png" id="17_g53ju"]
+[ext_resource type="Material" uid="uid://cbo7d3fitb60d" path="res://textures/light7.tres" id="17_y48lm"]
+[ext_resource type="Texture2D" uid="uid://c5tcsk3quwwyb" path="res://textures/bricksRed2.png" id="18_wykr6"]
+[ext_resource type="Texture2D" uid="uid://d3infy7g2m5xq" path="res://textures/cop1_6.png" id="19_0x4f4"]
+[ext_resource type="Texture2D" uid="uid://bshw7he0djgbb" path="res://textures/city4_7.png" id="20_646lp"]
+[ext_resource type="Texture2D" uid="uid://cwdh185cxwdb6" path="res://textures/light6.png" id="22_3ayu7"]
+[ext_resource type="Material" uid="uid://dqomfp5brl0nu" path="res://textures/glass.tres" id="22_qo0yp"]
+[ext_resource type="Texture2D" uid="uid://buxnfaqy33qfo" path="res://textures/light12.png" id="29_ojer7"]
+[ext_resource type="Texture2D" uid="uid://blumb4nqm865e" path="res://textures/m5_8.png" id="30_i1g56"]
+[ext_resource type="Texture2D" uid="uid://df3r57t8xemrc" path="res://textures/concreteWhite2.png" id="32_egamd"]
+[ext_resource type="Texture2D" uid="uid://b0v1loubwdhob" path="res://textures/red5.png" id="43_8813w"]
+[ext_resource type="Texture2D" uid="uid://ce5e80cluemlv" path="res://textures/orange5.png" id="44_4gstt"]
+[ext_resource type="Texture2D" uid="uid://c726rr46s3267" path="res://textures/dark1.png" id="44_q3lfj"]
+[ext_resource type="Texture2D" uid="uid://gq7tw61fmdek" path="res://textures/green1.png" id="45_42pgp"]
 
 [sub_resource type="GDScript" id="GDScript_draq1"]
 script/source = "@tool
@@ -1229,6 +1229,71 @@ func _build_complete():
 	emit_signal(\"build_complete\")
 "
 
+[sub_resource type="Resource" id="Resource_fj4l4"]
+script = ExtResource("7_4ay7l")
+scene = "----------------------------------------------------------------"
+scripting = "----------------------------------------------------------------"
+class_options = "----------------------------------------------------------------"
+classname = "omniLight"
+description = "Invisible light source"
+qodot_internal = false
+base_classes = Array[Resource]([ExtResource("10_vjnfx")])
+class_properties = {
+"angle": 0.0
+}
+class_property_descriptions = {
+"angle": "Rotation Angle"
+}
+meta_properties = {
+"size": AABB(-8, -8, -8, 8, 8, 8)
+}
+node_options = "----------------------------------------------------------------"
+node_class = "OmniLight3d"
+transient_node = false
+
+[sub_resource type="SphereMesh" id="1"]
+
+[sub_resource type="SphereShape3D" id="2"]
+
+[sub_resource type="PackedScene" id="PackedScene_nn3rn"]
+_bundled = {
+"conn_count": 0,
+"conns": PackedInt32Array(),
+"editable_instances": [],
+"names": PackedStringArray("PhysicsBall", "RigidBody3D", "MeshInstance", "MeshInstance3D", "mesh", "CollisionShape", "CollisionShape3D", "shape"),
+"node_count": 3,
+"node_paths": [NodePath("."), NodePath(".")],
+"nodes": PackedInt32Array(-1, -1, 1, 0, -1, 0, 0, 1073741824, 0, 3, 2, -1, 1, 4, 0, 0, 1073741825, 0, 6, 5, -1, 1, 7, 1, 0),
+"variants": [SubResource("1"), SubResource("2")],
+"version": 3
+}
+
+[sub_resource type="Resource" id="Resource_as0sk"]
+script = ExtResource("7_4ay7l")
+scene = "----------------------------------------------------------------"
+scene_file = SubResource("PackedScene_nn3rn")
+scripting = "----------------------------------------------------------------"
+script_class = ExtResource("8_b40ar")
+class_options = "----------------------------------------------------------------"
+classname = "physics_ball"
+description = "Physics Ball"
+qodot_internal = false
+base_classes = Array[Resource]([])
+class_properties = {
+"mass": 1.0,
+"size": 1.0,
+"velocity": Vector3(0, 0, 0)
+}
+class_property_descriptions = {
+"velocity": "Initial velocity"
+}
+meta_properties = {
+"size": AABB(-8, -8, -8, 8, 8, 8)
+}
+node_options = "----------------------------------------------------------------"
+node_class = ""
+transient_node = false
+
 [sub_resource type="GDScript" id="GDScript_becqs"]
 script/source = "@tool
 class_name QodotFGDFile
@@ -1360,7 +1425,7 @@ export_file = false
 target_folder = "/Users/nre_kique/Library/Application Support/TrenchBroom/games/Heavy Water"
 fgd_name = "heavyW"
 base_fgd_files = Array[Resource]([])
-entity_definitions = Array[Resource]([ExtResource("1_o3vxa"), ExtResource("2_pp22v"), ExtResource("3_xvg2p"), ExtResource("4_ewlr8"), ExtResource("5_8xwe2"), ExtResource("6_cc2n4"), ExtResource("7_hqwdt"), ExtResource("8_m6pjj"), ExtResource("9_uoa25"), ExtResource("10_vjnfx"), null])
+entity_definitions = Array[Resource]([ExtResource("1_o3vxa"), ExtResource("2_pp22v"), ExtResource("3_xvg2p"), ExtResource("4_ewlr8"), ExtResource("5_8xwe2"), SubResource("Resource_fj4l4"), SubResource("Resource_as0sk"), ExtResource("8_m6pjj"), ExtResource("9_uoa25"), ExtResource("10_vjnfx"), null])
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_v7j41"]
 

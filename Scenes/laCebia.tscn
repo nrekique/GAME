@@ -1,14 +1,20 @@
-[gd_scene load_steps=6 format=3 uid="uid://j7ldji3fs2er"]
+[gd_scene load_steps=5 format=3 uid="uid://j7ldji3fs2er"]
 
 [ext_resource type="Script" path="res://addons/qodot/src/nodes/qodot_map.gd" id="1_0ip61"]
-[ext_resource type="Resource" uid="uid://c36hv0o6g0udo" path="res://addons/qodot/game_definitions/fgd/qodot_fgd.tres" id="2_2ee0v"]
-[ext_resource type="PackedScene" uid="uid://cckf3rtlfb4vm" path="res://entities/models/player.tscn" id="5_ofgdr"]
+[ext_resource type="Resource" uid="uid://4qg32v6xvets" path="res://maps/fgd/heavyW_fgd.tres" id="2_f3bkl"]
 
 [sub_resource type="Environment" id="Environment_dhcml"]
+ssil_enabled = true
+ssil_radius = 5.32
+ssil_intensity = 8.74
 sdfgi_enabled = true
-sdfgi_bounce_feedback = 1.32
-sdfgi_min_cell_size = 37.7422
-volumetric_fog_density = 0.0
+sdfgi_bounce_feedback = 1.54
+sdfgi_min_cell_size = 13.3758
+fog_enabled = true
+fog_light_color = Color(0, 0.0470588, 0, 1)
+fog_light_energy = 0.0
+volumetric_fog_enabled = true
+volumetric_fog_density = 0.0322
 volumetric_fog_albedo = Color(0.184314, 0.309804, 0.309804, 1)
 volumetric_fog_emission_energy = 234.77
 volumetric_fog_gi_inject = 1.81
@@ -19,16 +25,22 @@ volumetric_fog_ambient_inject = 0.27
 
 [node name="Node3D" type="Node3D"]
 
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-0.0144327, 0.378356, -0.925548, 0.940171, 0.320254, 0.116256, 0.340397, -0.868496, -0.360341, 0, 0, 0)
+light_color = Color(0.964706, 0.729412, 0.615686, 1)
+light_energy = 1.509
+light_indirect_energy = 13.34
+light_volumetric_fog_energy = 0.0
+shadow_enabled = true
+shadow_bias = 0.0
+
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_dhcml")
 
 [node name="QodotMap" type="Node3D" parent="."]
 script = ExtResource("1_0ip61")
 map_file = "/Users/nre_kique/Documents/GitHub/Heavy-Water/maps/laCebia.map"
-entity_fgd = ExtResource("2_2ee0v")
+entity_fgd = ExtResource("2_f3bkl")
 base_texture_dir = "res://maps/textures"
 texture_file_extensions = PackedStringArray("png")
 default_material = SubResource("StandardMaterial3D_tbrd0")
-
-[node name="Player" parent="." instance=ExtResource("5_ofgdr")]
-transform = Transform3D(1.21087, 0, 0.927185, 0, 1.52508, 0, -0.927185, 0, 1.21087, 2.08165e-12, 2.08165e-12, -33.2843)
