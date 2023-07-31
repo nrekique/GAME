@@ -1,0 +1,33 @@
+[gd_resource type="Resource" script_class="QodotFGDSolidClass" load_steps=2 format=3 uid="uid://dpmga0oywee7c"]
+
+[ext_resource type="Script" path="res://addons/qodot/src/resources/game-definitions/fgd/qodot_fgd_solid_class.gd" id="1_qkf5i"]
+
+[resource]
+script = ExtResource("1_qkf5i")
+spawn = "----------------------------------------------------------------"
+spawn_type = 2
+visual_build = "----------------------------------------------------------------"
+build_visuals = true
+collision_build = "----------------------------------------------------------------"
+collision_shape_type = 0
+scripting = "----------------------------------------------------------------"
+class_options = "----------------------------------------------------------------"
+classname = "Portal"
+description = "Appluse allong with portal texture and link with another portalbrush"
+qodot_internal = false
+base_classes = Array[Resource]([])
+class_properties = {
+"target": "",
+"targetname": ""
+}
+class_property_descriptions = {
+"target": "points to link entities targetname property",
+"targetname": "points to link entities target property"
+}
+meta_properties = {
+"color": Color(0.8, 0.8, 0.8, 1),
+"size": AABB(-8, -8, -8, 8, 8, 8)
+}
+node_options = "----------------------------------------------------------------"
+node_class = ""
+transient_node = false

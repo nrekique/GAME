@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="heavyWater"
-run/main_scene="res://post_process/pp_stack.tscn"
+run/main_scene="res://Scenes/post_process/pp_stack.tscn"
 config/features=PackedStringArray("4.1", "C#", "Forward Plus")
 boot_splash/show_image=false
 config/icon="res://hw.png"
@@ -20,6 +20,8 @@ config/icon="res://hw.png"
 
 Dialogic="*res://addons/dialogic/Other/DialogicGameHandler.gd"
 Global="*res://addons/AMSG/Global.gd"
+GGS="*res://addons/ggs/classes/ggs_globals.gd"
+g="*res://Scripts/global.gd"
 
 [display]
 
@@ -34,7 +36,7 @@ project/assembly_name="heavyWater"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/AMSG/plugin.cfg", "res://addons/PoseWarping/plugin.cfg", "res://addons/dialogic/plugin.cfg", "res://addons/qodot/plugin.cfg")
+enabled=PackedStringArray("res://addons/AMSG/plugin.cfg", "res://addons/Mirror/plugin.cfg", "res://addons/PoseWarping/plugin.cfg", "res://addons/dialogic/plugin.cfg", "res://addons/ggs/plugin.cfg", "res://addons/godot_gameplay_systems/plugin.cfg", "res://addons/qodot/plugin.cfg", "res://addons/ui_design_tool/plugin.cfg")
 
 [input]
 
@@ -85,5 +87,6 @@ dialogic_default_action={
 
 [rendering]
 
+textures/canvas_textures/default_texture_filter=0
 textures/vram_compression/import_s3tc_bptc=true
 anti_aliasing/quality/msaa_2d=1
