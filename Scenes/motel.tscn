@@ -2,36 +2,36 @@
 
 [ext_resource type="Script" path="res://addons/qodot/src/nodes/qodot_map.gd" id="1_hfyfq"]
 [ext_resource type="Resource" uid="uid://4qg32v6xvets" path="res://maps/fgd/heavyW_fgd.tres" id="2_4w2cd"]
-[ext_resource type="Texture2D" uid="uid://cbllumptx0j7u" path="res://maps/textures/stAsphaltBrn.png" id="12_3rnuc"]
-[ext_resource type="Texture2D" uid="uid://boitwp4c61761" path="res://maps/textures/groundRed.png" id="14_nroll"]
-[ext_resource type="Texture2D" uid="uid://dncm48655br5u" path="res://maps/textures/smpconc01.png" id="15_1ptuy"]
-[ext_resource type="Texture2D" uid="uid://bt1vou0g14l4k" path="res://maps/textures/roofTealRough.png" id="16_0lh18"]
-[ext_resource type="Texture2D" uid="uid://cwyluofri64os" path="res://maps/textures/smpfloor04.png" id="16_8x5fk"]
-[ext_resource type="Texture2D" uid="uid://b0b4hry8jied6" path="res://maps/textures/concreteWhite.png" id="17_ukh2j"]
-[ext_resource type="Texture2D" uid="uid://sc3ifmnqgixm" path="res://maps/textures/wizwood1_8.png" id="18_4rq7k"]
-[ext_resource type="Texture2D" uid="uid://da0q83ycqsfm4" path="res://maps/textures/kh_art1.png" id="18_yxmc2"]
+[ext_resource type="Texture2D" uid="uid://d3bkwi1difi1g" path="res://textures/sand.png" id="3_6gf83"]
+[ext_resource type="Texture2D" uid="uid://boitwp4c61761" path="res://textures/groundRed.png" id="4_5oa47"]
+[ext_resource type="Texture2D" uid="uid://cbllumptx0j7u" path="res://textures/stAsphaltBrn.png" id="5_cuvii"]
+[ext_resource type="Texture2D" uid="uid://dncm48655br5u" path="res://textures/smpconc01.png" id="6_rv31m"]
+[ext_resource type="Texture2D" uid="uid://bt1vou0g14l4k" path="res://textures/roofTealRough.png" id="7_eyb5y"]
+[ext_resource type="Texture2D" uid="uid://cwyluofri64os" path="res://textures/smpfloor04.png" id="8_v438t"]
+[ext_resource type="Texture2D" uid="uid://da0q83ycqsfm4" path="res://textures/kh_art1.png" id="9_vqh75"]
+[ext_resource type="Material" uid="uid://dqomfp5brl0nu" path="res://textures/glass.tres" id="10_3q4ee"]
+[ext_resource type="Texture2D" uid="uid://b0b4hry8jied6" path="res://textures/concreteWhite.png" id="11_ws3an"]
+[ext_resource type="Texture2D" uid="uid://sc3ifmnqgixm" path="res://textures/wizwood1_8.png" id="13_twari"]
+[ext_resource type="Texture2D" uid="uid://cn03buwru74wm" path="res://textures/grass_floor1.png" id="14_i80h0"]
+[ext_resource type="Texture2D" uid="uid://bpyhw5awrmell" path="res://textures/grass.png" id="15_12h1e"]
+[ext_resource type="Texture2D" uid="uid://bjxw6724jt3rg" path="res://textures/concrete.png" id="16_pdj2j"]
+[ext_resource type="Texture2D" uid="uid://dqmvwwex4gyk" path="res://textures/bricksRed.png" id="17_g4aku"]
+[ext_resource type="Material" uid="uid://duvtrsmqwsll" path="res://textures/water.tres" id="18_pv0ia"]
 [ext_resource type="Script" path="res://addons/qodot/game_definitions/fgd/point_classes/light.gd" id="20_0hik0"]
-[ext_resource type="Texture2D" uid="uid://cn03buwru74wm" path="res://maps/textures/grass_floor1.png" id="22_j0v3x"]
-[ext_resource type="Texture2D" uid="uid://d3bkwi1difi1g" path="res://maps/textures/sand.png" id="23_1ikwn"]
-[ext_resource type="Texture2D" uid="uid://bpyhw5awrmell" path="res://maps/textures/grass.png" id="23_7b40t"]
-[ext_resource type="Material" uid="uid://dqomfp5brl0nu" path="res://maps/textures/glass.tres" id="24_2gcvf"]
-[ext_resource type="Texture2D" uid="uid://bjxw6724jt3rg" path="res://maps/textures/concrete.png" id="24_ji05w"]
-[ext_resource type="Texture2D" uid="uid://dqmvwwex4gyk" path="res://maps/textures/bricksRed.png" id="25_2nxe0"]
-[ext_resource type="Material" uid="uid://duvtrsmqwsll" path="res://maps/textures/water.tres" id="26_ny5ij"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_cxp4i"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_q0xje"]
-albedo_texture = ExtResource("23_1ikwn")
+albedo_texture = ExtResource("3_6gf83")
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_6yea3"]
-albedo_texture = ExtResource("14_nroll")
+albedo_texture = ExtResource("4_5oa47")
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_we7ah"]
-albedo_texture = ExtResource("12_3rnuc")
+albedo_texture = ExtResource("5_cuvii")
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_3dp4q"]
-albedo_texture = ExtResource("15_1ptuy")
+albedo_texture = ExtResource("6_rv31m")
 
 [sub_resource type="ArrayMesh" id="ArrayMesh_blv6h"]
 _surfaces = [{
@@ -111,16 +111,16 @@ points = PackedVector3Array(-17.5, 4.2, 23.0125, -17.5, 0.45, 23.0125, -15, 0.45
 points = PackedVector3Array(43, 3.95, 3.0125, 43, 0.2, 3.0125, 43.25, 0.2, 3.0125, 43.25, 3.95, 3.0125, 43, 3.95, 5.5125, 43, 0.2, 5.5125, 43.25, 0.2, 5.5125, 43.25, 3.95, 5.5125)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_n5phn"]
-albedo_texture = ExtResource("16_0lh18")
+albedo_texture = ExtResource("7_eyb5y")
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_wv6sb"]
-albedo_texture = ExtResource("16_8x5fk")
+albedo_texture = ExtResource("8_v438t")
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ib87h"]
-albedo_texture = ExtResource("18_yxmc2")
+albedo_texture = ExtResource("9_vqh75")
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_l34ch"]
-albedo_texture = ExtResource("17_ukh2j")
+albedo_texture = ExtResource("11_ws3an")
 
 [sub_resource type="ArrayMesh" id="ArrayMesh_6i4eq"]
 _surfaces = [{
@@ -162,7 +162,7 @@ _surfaces = [{
 "format": 4119,
 "index_count": 108,
 "index_data": PackedByteArray(0, 0, 1, 0, 2, 0, 0, 0, 2, 0, 3, 0, 4, 0, 5, 0, 6, 0, 4, 0, 6, 0, 7, 0, 8, 0, 9, 0, 10, 0, 8, 0, 10, 0, 11, 0, 12, 0, 13, 0, 14, 0, 12, 0, 14, 0, 15, 0, 16, 0, 17, 0, 18, 0, 16, 0, 18, 0, 19, 0, 20, 0, 21, 0, 22, 0, 20, 0, 22, 0, 23, 0, 24, 0, 25, 0, 26, 0, 24, 0, 26, 0, 27, 0, 28, 0, 29, 0, 30, 0, 28, 0, 30, 0, 31, 0, 32, 0, 33, 0, 34, 0, 32, 0, 34, 0, 35, 0, 36, 0, 37, 0, 38, 0, 36, 0, 38, 0, 39, 0, 40, 0, 41, 0, 42, 0, 40, 0, 42, 0, 43, 0, 44, 0, 45, 0, 46, 0, 44, 0, 46, 0, 47, 0, 48, 0, 49, 0, 50, 0, 48, 0, 50, 0, 51, 0, 52, 0, 53, 0, 54, 0, 52, 0, 54, 0, 55, 0, 56, 0, 57, 0, 58, 0, 56, 0, 58, 0, 59, 0, 60, 0, 61, 0, 62, 0, 60, 0, 62, 0, 63, 0, 64, 0, 65, 0, 66, 0, 64, 0, 66, 0, 67, 0, 68, 0, 69, 0, 70, 0, 68, 0, 70, 0, 71, 0),
-"material": ExtResource("24_2gcvf"),
+"material": ExtResource("10_3q4ee"),
 "name": "glass",
 "primitive": 3,
 "vertex_count": 72,
@@ -259,10 +259,10 @@ points = PackedVector3Array(-3.2524, 3.92869, -6.87019, -3.2524, 0.928686, -6.87
 points = PackedVector3Array(2.2476, 3.92869, -6.87019, 2.2476, -4.07131, -6.87019, 12.7476, -4.07131, -6.87019, 12.7476, 1.05369, -6.87019, 2.2476, 3.92869, -6.62019, 2.2476, -4.07131, -6.62019, 12.7476, -4.07131, -6.62019, 12.7476, 1.05369, -6.62019)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_u2wyq"]
-albedo_texture = ExtResource("18_4rq7k")
+albedo_texture = ExtResource("13_twari")
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_3i7f1"]
-albedo_texture = ExtResource("22_j0v3x")
+albedo_texture = ExtResource("14_i80h0")
 
 [sub_resource type="ArrayMesh" id="ArrayMesh_4bees"]
 _surfaces = [{
@@ -485,10 +485,10 @@ points = PackedVector3Array(-3.54545, 4.17803, -10.2727, -11.5455, 1.67803, -18.
 points = PackedVector3Array(-3.54545, 4.17803, -10.2727, -3.54546, 1.67803, -18.2727, 4.45454, 1.67803, -18.2727, -3.54546, 1.67803, -10.2727, 4.45454, 1.67803, -10.2727)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_afm2r"]
-albedo_texture = ExtResource("23_7b40t")
+albedo_texture = ExtResource("15_12h1e")
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_sn7lx"]
-albedo_texture = ExtResource("24_ji05w")
+albedo_texture = ExtResource("16_pdj2j")
 
 [sub_resource type="ArrayMesh" id="ArrayMesh_opjlw"]
 _surfaces = [{
@@ -1051,7 +1051,7 @@ points = PackedVector3Array(0.361462, 1.00714, -0.896111, 0.361427, 1.00772, -0.
 points = PackedVector3Array(0.548857, 0.979828, -3.9217, -0.675766, 1.25863, -3.95418, -0.179674, 0.537441, -3.91877, -0.175974, 0.193119, -3.87006, 0.215185, 2.10183, -3.35825, -1.11433, 1.81097, -3.42117, 0.569075, -0.196846, -2.8606, -0.700905, -0.161799, -2.87034, -1.39985, 1.01344, -2.41541, 1.22276, 1.69657, -1.74168, 1.01708, 0.391384, -1.62188, -1.56967, 1.61185, -1.64994, -0.473398, 2.5025, -1.08126, -1.32366, 0.456767, -1.55399, 1.27928, 1.0606, -0.685436, 0.770706, 2.38403, 0.212425, -0.429829, -0.266124, -2.09961, -1.5305, 1.14075, -0.592995, 0.290037, -0.173047, -1.28711, -1.05954, 1.75986, 0.179615, -0.307419, 0.103277, -0.544319, 0.0158424, 0.411329, 0.191334, -0.12656, 1.79085, 0.722637, -0.470778, 1.17179, 0.796257, 0.00670052, 0.999564, 0.817924, 0.304007, 1.41396, 0.773521)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_t1278"]
-albedo_texture = ExtResource("25_2nxe0")
+albedo_texture = ExtResource("17_g4aku")
 
 [sub_resource type="ArrayMesh" id="ArrayMesh_krqmi"]
 _surfaces = [{
@@ -2128,7 +2128,7 @@ _surfaces = [{
 "format": 4119,
 "index_count": 36,
 "index_data": PackedByteArray(0, 0, 1, 0, 2, 0, 0, 0, 2, 0, 3, 0, 4, 0, 5, 0, 6, 0, 4, 0, 6, 0, 7, 0, 8, 0, 9, 0, 10, 0, 8, 0, 10, 0, 11, 0, 12, 0, 13, 0, 14, 0, 12, 0, 14, 0, 15, 0, 16, 0, 17, 0, 18, 0, 16, 0, 18, 0, 19, 0, 20, 0, 21, 0, 22, 0, 20, 0, 22, 0, 23, 0),
-"material": ExtResource("26_ny5ij"),
+"material": ExtResource("18_pv0ia"),
 "name": "water",
 "primitive": 3,
 "vertex_count": 24,

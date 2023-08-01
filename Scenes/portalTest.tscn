@@ -1,0 +1,199 @@
+[gd_scene load_steps=25 format=3 uid="uid://ud4ayafesfba"]
+
+[ext_resource type="Script" path="res://addons/qodot/src/nodes/qodot_map.gd" id="1_j4urw"]
+[ext_resource type="Resource" uid="uid://4qg32v6xvets" path="res://maps/fgd/heavyW_fgd.tres" id="2_ybnx0"]
+[ext_resource type="Texture2D" uid="uid://c726rr46s3267" path="res://textures/dark1.png" id="3_53fba"]
+[ext_resource type="Material" uid="uid://d0oeret2viofm" path="res://textures/entitiy/portal.tres" id="5_3wdjm"]
+[ext_resource type="Script" path="res://Scripts/portal.gd" id="5_pnx7x"]
+[ext_resource type="Script" path="res://assets/simple_fpsplayer/Player.gd" id="7_ixvu4"]
+[ext_resource type="Script" path="res://assets/simple_fpsplayer/ability_grab.gd" id="8_tnmqp"]
+[ext_resource type="Shader" path="res://shaders/StencilShader.gdshader" id="9_433ru"]
+[ext_resource type="Script" path="res://Scripts/StencilCamera.gd" id="10_v00b8"]
+[ext_resource type="Script" path="res://Scripts/PortalCamera.gd" id="11_n1a1u"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_rb1bx"]
+sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+ground_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+
+[sub_resource type="Sky" id="Sky_ywfkv"]
+sky_material = SubResource("ProceduralSkyMaterial_rb1bx")
+
+[sub_resource type="Environment" id="Environment_eu7l4"]
+background_mode = 2
+sky = SubResource("Sky_ywfkv")
+tonemap_mode = 2
+glow_enabled = true
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ph2t7"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_q4kd5"]
+albedo_texture = ExtResource("3_53fba")
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_2hde6"]
+_surfaces = [{
+"aabb": AABB(-11, -4, -25, 28, 2.00001, 50),
+"attribute_data": PackedByteArray(0, 0, 48, 190, 0, 0, 0, 61, 0, 0, 48, 190, 0, 0, 128, 61, 0, 0, 136, 62, 0, 0, 128, 61, 0, 0, 136, 62, 0, 0, 0, 61, 0, 0, 200, 190, 0, 0, 0, 61, 0, 0, 200, 62, 0, 0, 0, 61, 0, 0, 200, 62, 0, 0, 128, 61, 0, 0, 200, 190, 0, 0, 128, 61, 0, 0, 200, 190, 0, 0, 136, 190, 0, 0, 200, 190, 0, 0, 48, 62, 0, 0, 200, 62, 0, 0, 48, 62, 0, 0, 200, 62, 0, 0, 136, 190, 0, 0, 200, 190, 0, 0, 136, 190, 0, 0, 200, 62, 0, 0, 136, 190, 0, 0, 200, 62, 0, 0, 48, 62, 0, 0, 200, 190, 0, 0, 48, 62, 0, 0, 200, 190, 0, 0, 0, 61, 0, 0, 200, 190, 0, 0, 128, 61, 0, 0, 200, 62, 0, 0, 128, 61, 0, 0, 200, 62, 0, 0, 0, 61, 0, 0, 48, 190, 0, 0, 0, 61, 0, 0, 136, 62, 0, 0, 0, 61, 0, 0, 136, 62, 0, 0, 128, 61, 0, 0, 48, 190, 0, 0, 128, 61),
+"format": 4119,
+"index_count": 36,
+"index_data": PackedByteArray(0, 0, 1, 0, 2, 0, 0, 0, 2, 0, 3, 0, 4, 0, 5, 0, 6, 0, 4, 0, 6, 0, 7, 0, 8, 0, 9, 0, 10, 0, 8, 0, 10, 0, 11, 0, 12, 0, 13, 0, 14, 0, 12, 0, 14, 0, 15, 0, 16, 0, 17, 0, 18, 0, 16, 0, 18, 0, 19, 0, 20, 0, 21, 0, 22, 0, 20, 0, 22, 0, 23, 0),
+"material": SubResource("StandardMaterial3D_q4kd5"),
+"name": "dark1",
+"primitive": 3,
+"vertex_count": 24,
+"vertex_data": PackedByteArray(0, 0, 48, 193, 0, 0, 0, 192, 0, 0, 200, 193, 255, 255, 255, 255, 255, 255, 255, 63, 0, 0, 48, 193, 0, 0, 128, 192, 0, 0, 200, 193, 255, 255, 255, 255, 255, 255, 255, 63, 0, 0, 136, 65, 0, 0, 128, 192, 0, 0, 200, 193, 255, 255, 255, 255, 255, 255, 255, 63, 0, 0, 136, 65, 0, 0, 0, 192, 0, 0, 200, 193, 255, 255, 255, 255, 255, 255, 255, 63, 0, 0, 48, 193, 0, 0, 0, 192, 0, 0, 200, 193, 0, 0, 255, 127, 255, 127, 255, 191, 0, 0, 48, 193, 0, 0, 0, 192, 0, 0, 200, 65, 0, 0, 255, 127, 255, 127, 255, 191, 0, 0, 48, 193, 0, 0, 128, 192, 0, 0, 200, 65, 0, 0, 255, 127, 255, 127, 255, 191, 0, 0, 48, 193, 0, 0, 128, 192, 0, 0, 200, 193, 0, 0, 255, 127, 255, 127, 255, 191, 0, 0, 136, 65, 0, 0, 128, 192, 0, 0, 200, 193, 255, 127, 0, 0, 255, 127, 255, 63, 0, 0, 48, 193, 0, 0, 128, 192, 0, 0, 200, 193, 255, 127, 0, 0, 255, 127, 255, 63, 0, 0, 48, 193, 0, 0, 128, 192, 0, 0, 200, 65, 255, 127, 0, 0, 255, 127, 255, 63, 0, 0, 136, 65, 0, 0, 128, 192, 0, 0, 200, 65, 255, 127, 0, 0, 255, 127, 255, 63, 0, 0, 136, 65, 0, 0, 0, 192, 0, 0, 200, 193, 255, 127, 255, 255, 255, 127, 255, 191, 0, 0, 136, 65, 0, 0, 0, 192, 0, 0, 200, 65, 255, 127, 255, 255, 255, 127, 255, 191, 0, 0, 48, 193, 0, 0, 0, 192, 0, 0, 200, 65, 255, 127, 255, 255, 255, 127, 255, 191, 0, 0, 48, 193, 0, 0, 0, 192, 0, 0, 200, 193, 255, 127, 255, 255, 255, 127, 255, 191, 0, 0, 136, 65, 0, 0, 0, 192, 0, 0, 200, 193, 255, 255, 255, 127, 255, 127, 255, 63, 0, 0, 136, 65, 0, 0, 128, 192, 0, 0, 200, 193, 255, 255, 255, 127, 255, 127, 255, 63, 0, 0, 136, 65, 0, 0, 128, 192, 0, 0, 200, 65, 255, 255, 255, 127, 255, 127, 255, 63, 0, 0, 136, 65, 0, 0, 0, 192, 0, 0, 200, 65, 255, 255, 255, 127, 255, 127, 255, 63, 0, 0, 48, 193, 0, 0, 0, 192, 0, 0, 200, 65, 255, 127, 255, 127, 255, 255, 255, 191, 0, 0, 136, 65, 0, 0, 0, 192, 0, 0, 200, 65, 255, 127, 255, 127, 255, 255, 255, 191, 0, 0, 136, 65, 0, 0, 128, 192, 0, 0, 200, 65, 255, 127, 255, 127, 255, 255, 255, 191, 0, 0, 48, 193, 0, 0, 128, 192, 0, 0, 200, 65, 255, 127, 255, 127, 255, 255, 255, 191)
+}]
+
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_dwmrv"]
+points = PackedVector3Array(-11, -2, -25, -11, -4, -25, 17, -4, -25, 17, -2, -25, -11, -2, 25, -11, -4, 25, 17, -4, 25, 17, -2, 25)
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_yjtay"]
+_surfaces = [{
+"aabb": AABB(-1.125, -2, 0.3125, 2.25, 4.00001, 1.00136e-05),
+"attribute_data": PackedByteArray(0, 0, 168, 63, 0, 0, 0, 191, 0, 0, 240, 63, 0, 0, 0, 191, 0, 0, 240, 63, 0, 0, 0, 63, 0, 0, 168, 63, 0, 0, 0, 63),
+"format": 4119,
+"index_count": 6,
+"index_data": PackedByteArray(0, 0, 1, 0, 2, 0, 0, 0, 2, 0, 3, 0),
+"material": ExtResource("5_3wdjm"),
+"name": "entitiy/portal",
+"primitive": 3,
+"vertex_count": 4,
+"vertex_data": PackedByteArray(0, 0, 144, 191, 0, 0, 0, 64, 0, 0, 160, 62, 255, 127, 255, 127, 255, 255, 255, 191, 0, 0, 144, 63, 0, 0, 0, 64, 0, 0, 160, 62, 255, 127, 255, 127, 255, 255, 255, 191, 0, 0, 144, 63, 0, 0, 0, 192, 0, 0, 160, 62, 255, 127, 255, 127, 255, 255, 255, 191, 0, 0, 144, 191, 0, 0, 0, 192, 0, 0, 160, 62, 255, 127, 255, 127, 255, 255, 255, 191)
+}]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_pm3v2"]
+_surfaces = [{
+"aabb": AABB(-1.125, -2, 0.3125, 2.25, 4.00001, 1.00136e-05),
+"attribute_data": PackedByteArray(0, 0, 160, 190, 0, 0, 0, 191, 0, 0, 128, 62, 0, 0, 0, 191, 0, 0, 128, 62, 0, 0, 0, 63, 0, 0, 160, 190, 0, 0, 0, 63),
+"format": 4119,
+"index_count": 6,
+"index_data": PackedByteArray(0, 0, 1, 0, 2, 0, 0, 0, 2, 0, 3, 0),
+"material": ExtResource("5_3wdjm"),
+"name": "entitiy/portal",
+"primitive": 3,
+"vertex_count": 4,
+"vertex_data": PackedByteArray(0, 0, 144, 191, 0, 0, 0, 64, 0, 0, 160, 62, 255, 127, 255, 127, 255, 255, 255, 191, 0, 0, 144, 63, 0, 0, 0, 64, 0, 0, 160, 62, 255, 127, 255, 127, 255, 255, 255, 191, 0, 0, 144, 63, 0, 0, 0, 192, 0, 0, 160, 62, 255, 127, 255, 127, 255, 255, 255, 191, 0, 0, 144, 191, 0, 0, 0, 192, 0, 0, 160, 62, 255, 127, 255, 127, 255, 255, 255, 191)
+}]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_euj4i"]
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_fscxd"]
+viewport_path = NodePath("Player/StencilViewport")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_jfgod"]
+resource_local_to_scene = true
+shader = ExtResource("9_433ru")
+shader_parameter/stencil_tex = SubResource("ViewportTexture_fscxd")
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_pe2dp"]
+viewport_path = NodePath("Player/PortalViewport")
+
+[sub_resource type="Environment" id="Environment_ko30l"]
+background_mode = 1
+background_energy_multiplier = 0.0
+
+[node name="Node3D" type="Node3D"]
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-0.866023, -0.433016, 0.250001, 0, 0.499998, 0.866027, -0.500003, 0.749999, -0.43301, 0, 0, 0)
+shadow_enabled = true
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_eu7l4")
+
+[node name="QodotMap" type="Node3D" parent="."]
+script = ExtResource("1_j4urw")
+map_file = "/Users/nre_kique/Documents/GitHub/Heavy-Water/maps/portalTest.map"
+entity_fgd = ExtResource("2_ybnx0")
+texture_file_extensions = PackedStringArray("png")
+face_skip_texture = "entitiy/skip"
+default_material = SubResource("StandardMaterial3D_ph2t7")
+
+[node name="entity_0_worldspawn" type="StaticBody3D" parent="QodotMap"]
+
+[node name="entity_0_mesh_instance" type="MeshInstance3D" parent="QodotMap/entity_0_worldspawn"]
+mesh = SubResource("ArrayMesh_2hde6")
+
+[node name="entity_0_brush_0_collision_shape" type="CollisionShape3D" parent="QodotMap/entity_0_worldspawn"]
+shape = SubResource("ConvexPolygonShape3D_dwmrv")
+
+[node name="entity_1_Portal" type="MeshInstance3D" parent="QodotMap"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.375, 0, -11.5625)
+script = ExtResource("5_pnx7x")
+current = true
+other_portal_path = NodePath("../entity_2_Portal")
+
+[node name="entity_1_mesh_instance" type="MeshInstance3D" parent="QodotMap/entity_1_Portal"]
+gi_mode = 2
+mesh = SubResource("ArrayMesh_yjtay")
+
+[node name="helper" type="Node3D" parent="QodotMap/entity_1_Portal/entity_1_mesh_instance"]
+
+[node name="entity_2_Portal" type="MeshInstance3D" parent="QodotMap"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.125, 0, -8.5625)
+script = ExtResource("5_pnx7x")
+other_portal_path = NodePath("../entity_1_Portal")
+
+[node name="entity_2_mesh_instance" type="MeshInstance3D" parent="QodotMap/entity_2_Portal"]
+gi_mode = 2
+mesh = SubResource("ArrayMesh_pm3v2")
+
+[node name="helper" type="Node3D" parent="QodotMap/entity_2_Portal/entity_2_mesh_instance"]
+
+[node name="Player" type="CharacterBody3D" parent="." groups=["Player"]]
+disable_mode = 2
+floor_max_angle = 0.802851
+script = ExtResource("7_ixvu4")
+
+[node name="body" type="CollisionShape3D" parent="Player"]
+shape = SubResource("CapsuleShape3D_euj4i")
+
+[node name="rotation_helper" type="Node3D" parent="Player"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+
+[node name="Camera3D" type="Camera3D" parent="Player/rotation_helper"]
+cull_mask = 1048559
+
+[node name="flashlight_player" type="SpotLight3D" parent="Player/rotation_helper/Camera3D"]
+visible = false
+light_energy = 3.0
+light_bake_mode = 0
+spot_range = 10.0
+spot_angle = 15.0
+spot_angle_attenuation = 1.56917
+
+[node name="ability_grab" type="RayCast3D" parent="Player/rotation_helper/Camera3D"]
+target_position = Vector3(0, 0, -2)
+script = ExtResource("8_tnmqp")
+
+[node name="GrabPosition3D" type="Marker3D" parent="Player/rotation_helper/Camera3D/ability_grab"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2)
+
+[node name="TextureRect" type="TextureRect" parent="Player"]
+material = SubResource("ShaderMaterial_jfgod")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = SubResource("ViewportTexture_pe2dp")
+metadata/_edit_use_anchors_ = true
+
+[node name="StencilViewport" type="SubViewport" parent="Player"]
+canvas_cull_mask = 4293918736
+size = Vector2i(960, 720)
+render_target_update_mode = 4
+
+[node name="StencilCamera" type="Camera3D" parent="Player/StencilViewport"]
+cull_mask = 16
+environment = SubResource("Environment_ko30l")
+script = ExtResource("10_v00b8")
+main_cam_path = NodePath("../../rotation_helper/Camera3D")
+
+[node name="PortalViewport" type="SubViewport" parent="Player"]
+canvas_cull_mask = 4294967279
+size = Vector2i(960, 720)
+render_target_update_mode = 4
+
+[node name="PortalCamera" type="Camera3D" parent="Player/PortalViewport"]
+cull_mask = 1048559
+script = ExtResource("11_n1a1u")

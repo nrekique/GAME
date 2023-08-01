@@ -17,7 +17,7 @@ class_properties = {}
 class_property_descriptions = {}
 meta_properties = {
 "color": Color(0.188235, 0.905882, 0.921569, 1),
-"model": "{ \"path\": \"maps/entities/models/npc.obj\" }",
+"model": "{ \"path\": \"entities/models/npc.obj\" }",
 "size": AABB(-15, -15, -30, 15, 15, 30)
 }
 node_options = "----------------------------------------------------------------"

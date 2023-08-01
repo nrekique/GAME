@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="QodotFGDPointClass" load_steps=5 format=3 uid="uid://rapm2gv8l37c"]
+
+[ext_resource type="Resource" uid="uid://c5o31v30rw7v5" path="res://maps/fgd/base_classes/light_base_class.tres" id="1"]
+[ext_resource type="PackedScene" path="res://maps/fgd/point_classes/light.tscn" id="2"]
+[ext_resource type="Script" path="res://addons/qodot/src/resources/game-definitions/fgd/qodot_fgd_point_class.gd" id="3"]
+[ext_resource type="Script" path="res://maps/fgd/point_classes/light_dx.gd" id="4_wnr4a"]
+
+[resource]
+script = ExtResource("3")
+scene = "----------------------------------------------------------------"
+scene_file = ExtResource("2")
+scripting = "----------------------------------------------------------------"
+script_class = ExtResource("4_wnr4a")
+class_options = "----------------------------------------------------------------"
+classname = "light_omni"
+description = "Invisible light source"
+qodot_internal = false
+base_classes = Array[Resource]([ExtResource("1")])
+class_properties = {}
+class_property_descriptions = {}
+meta_properties = {
+"size": AABB(-8, -8, -8, 8, 8, 8)
+}
+node_options = "----------------------------------------------------------------"
+node_class = ""
+transient_node = false

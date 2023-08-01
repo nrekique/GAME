@@ -3,8 +3,8 @@
 // entity 0
 {
 "classname" "worldspawn"
-"_tb_textures" "textures"
-"_tb_mod" "maps"
+"_tb_textures" "textures;textures/entitiy"
+"_tb_mod" "maps;textures"
 }
 // entity 1
 {
@@ -962,15 +962,31 @@
 }
 // entity 15
 {
-"classname" "omniLight"
-"origin" "-296 -248 8"
+"classname" "player"
+"origin" "-141 18 93"
 }
 // entity 16
 {
-"classname" "player"
-"origin" "-232 24 93"
+"classname" "OmniLight3D"
+"origin" "-72 -88 152"
 }
 // entity 17
+{
+"classname" "OmniLight3D"
+"origin" "-72 88 152"
+}
+// entity 18
+{
+"classname" "SpotLight3D"
+"origin" "-71.0694 -8 155.473"
+"angle" "180"
+}
+// entity 19
+{
+"classname" "light_omni"
+"origin" "-112 -168 168"
+}
+// entity 20
 {
 "classname" "func_group"
 "_tb_type" "_tb_layer"
@@ -979,11 +995,11 @@
 "_tb_layer_sort_index" "0"
 // brush 0
 {
-( -15864 704 -16 ) ( -15864 705 -16 ) ( -15864 704 -15 ) water 0 0 0 1 1
-( -1080 -15616 -16 ) ( -1080 -15616 -15 ) ( -1079 -15616 -16 ) water -8 0 0 1 1
-( -1080 704 -16 ) ( -1079 704 -16 ) ( -1080 705 -16 ) water -8 0 0 1 1
-( -952 832 0 ) ( -952 833 0 ) ( -951 832 0 ) water -8 0 0 1 1
-( -952 15616 16 ) ( -951 15616 16 ) ( -952 15616 17 ) water -8 0 0 1 1
-( 15368 832 16 ) ( 15368 832 17 ) ( 15368 833 16 ) water 0 0 0 1 1
+( -15864 704 -16 ) ( -15864 705 -16 ) ( -15864 704 -15 ) entitiy/water 0 0 0 1 1
+( -1080 -15616 -16 ) ( -1080 -15616 -15 ) ( -1079 -15616 -16 ) entitiy/water -8 0 0 1 1
+( -1080 704 -16 ) ( -1079 704 -16 ) ( -1080 705 -16 ) entitiy/water -8 0 0 1 1
+( -952 832 0 ) ( -952 833 0 ) ( -951 832 0 ) entitiy/water -8 0 0 1 1
+( -952 15616 16 ) ( -951 15616 16 ) ( -952 15616 17 ) entitiy/water -8 0 0 1 1
+( 15368 832 16 ) ( 15368 832 17 ) ( 15368 833 16 ) entitiy/water 0 0 0 1 1
 }
 }
