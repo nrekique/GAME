@@ -16,7 +16,7 @@ func _ready():
 			$Inside.visible = true
  
 func _process(delta):
-	if current and g.player_in_scene:
+	if current:
 		var main_cam = get_viewport().get_camera_3d()
 		helper.global_transform = main_cam.global_transform 
 		other_portal.helper.transform = helper.transform

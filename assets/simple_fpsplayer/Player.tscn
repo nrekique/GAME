@@ -9,7 +9,7 @@
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_euj4i"]
 
 [sub_resource type="ViewportTexture" id="ViewportTexture_fscxd"]
-viewport_path = NodePath("StencilViewport")
+viewport_path = NodePath("Player/StencilViewport")
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_jfgod"]
 resource_local_to_scene = true
@@ -17,7 +17,7 @@ shader = ExtResource("3_qiyth")
 shader_parameter/stencil_tex = SubResource("ViewportTexture_fscxd")
 
 [sub_resource type="ViewportTexture" id="ViewportTexture_pe2dp"]
-viewport_path = NodePath("PortalViewport2")
+viewport_path = NodePath("Player/PortalViewport")
 
 [sub_resource type="Environment" id="Environment_ko30l"]
 background_mode = 1

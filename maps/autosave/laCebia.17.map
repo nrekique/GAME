@@ -963,7 +963,7 @@
 // entity 15
 {
 "classname" "player"
-"origin" "-141 18 93"
+"origin" "-189 18 93"
 }
 // entity 16
 {
@@ -980,6 +980,7 @@
 "classname" "SpotLight3D"
 "origin" "-71.0694 -8 155.473"
 "angle" "180"
+"wait" "200"
 }
 // entity 19
 {
@@ -987,6 +988,11 @@
 "origin" "-112 -168 168"
 }
 // entity 20
+{
+"classname" "npc"
+"origin" "-161 -79 94"
+}
+// entity 21
 {
 "classname" "func_group"
 "_tb_type" "_tb_layer"
