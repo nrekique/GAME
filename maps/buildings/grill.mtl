@@ -1,0 +1,87 @@
+newmtl bricksRed2
+map_Kd textures/bricksRed2.png
+
+newmtl city1_4
+map_Kd textures/city1_4.png
+
+newmtl city4_6
+map_Kd textures/city4_6.png
+
+newmtl city4_7
+map_Kd textures/city4_7.png
+
+newmtl concrete1
+map_Kd textures/concrete1.png
+
+newmtl concreteBrown
+map_Kd textures/concreteBrown.png
+
+newmtl concreteWhite
+map_Kd textures/concreteWhite.png
+
+newmtl concreteWhite2
+map_Kd textures/concreteWhite2.png
+
+newmtl cop1_6
+map_Kd textures/cop1_6.png
+
+newmtl dark1
+map_Kd textures/dark1.png
+
+newmtl entitiy/glass
+map_Kd textures/entitiy/glass.png
+
+newmtl green1
+map_Kd textures/green1.png
+
+newmtl groundBrown2
+map_Kd textures/groundBrown2.png
+
+newmtl indRed2
+map_Kd textures/indRed2.png
+
+newmtl light12
+map_Kd textures/light12.png
+
+newmtl light6
+map_Kd textures/light6.png
+
+newmtl light7
+map_Kd textures/light7.png
+
+newmtl m5_8
+map_Kd textures/m5_8.png
+
+newmtl marble
+map_Kd textures/marble.png
+
+newmtl metal5_3
+map_Kd textures/metal5_3.png
+
+newmtl orange5
+map_Kd textures/orange5.png
+
+newmtl red5
+map_Kd textures/red5.png
+
+newmtl roofTeal
+map_Kd textures/roofTeal.png
+
+newmtl sand
+map_Kd textures/sand.png
+
+newmtl smpfloor04
+map_Kd textures/smpfloor04.png
+
+newmtl stAsphaltBrn
+map_Kd textures/stAsphaltBrn.png
+
+newmtl wizmet1_8
+map_Kd textures/wizmet1_8.png
+
+newmtl wizwood1_8
+map_Kd textures/wizwood1_8.png
+
+newmtl wood1_1
+map_Kd textures/wood1_1.png
+
