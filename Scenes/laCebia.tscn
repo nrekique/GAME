@@ -1,35 +1,16 @@
-[gd_scene load_steps=122 format=3 uid="uid://j7ldji3fs2er"]
+[gd_scene load_steps=126 format=3 uid="uid://j7ldji3fs2er"]
 
 [ext_resource type="Script" path="res://addons/qodot/src/nodes/qodot_map.gd" id="1_0ip61"]
 [ext_resource type="Resource" uid="uid://4qg32v6xvets" path="res://maps/fgd/heavyW_fgd.tres" id="2_f3bkl"]
 [ext_resource type="Texture2D" uid="uid://d2a454pf7qig7" path="res://textures/kh_block1.png" id="3_tyvhq"]
 [ext_resource type="Texture2D" uid="uid://gq7tw61fmdek" path="res://textures/green1.png" id="4_16kxv"]
 [ext_resource type="Texture2D" uid="uid://6py3wchhymy3" path="res://textures/marble.png" id="5_2lvnb"]
-[ext_resource type="Material" path="res://textures/entitiy/water.tres" id="5_j7aa2"]
+[ext_resource type="Material" uid="uid://duvtrsmqwsll" path="res://textures/water.tres" id="5_j7aa2"]
 [ext_resource type="Texture2D" uid="uid://c726rr46s3267" path="res://textures/dark1.png" id="6_en6gw"]
 [ext_resource type="Texture2D" uid="uid://ca5gfjlo22wk0" path="res://textures/light1.png" id="7_x1mgc"]
 [ext_resource type="Texture2D" uid="uid://bjxw6724jt3rg" path="res://textures/concrete.png" id="8_5nhc8"]
 [ext_resource type="PackedScene" uid="uid://cckf3rtlfb4vm" path="res://entities/scenes/player.tscn" id="10_2p2m7"]
 [ext_resource type="PackedScene" path="res://maps/fgd/point_classes/light.tscn" id="10_ksvgv"]
-
-[sub_resource type="Environment" id="Environment_dhcml"]
-ssil_enabled = true
-ssil_radius = 5.32
-ssil_intensity = 8.74
-sdfgi_enabled = true
-sdfgi_use_occlusion = true
-sdfgi_bounce_feedback = 1.99
-sdfgi_min_cell_size = 2.49
-fog_enabled = true
-fog_light_color = Color(0, 0.0470588, 0, 1)
-fog_light_energy = 0.0
-volumetric_fog_enabled = true
-volumetric_fog_density = 0.0322
-volumetric_fog_albedo = Color(0.184314, 0.309804, 0.309804, 1)
-volumetric_fog_emission_energy = 234.77
-volumetric_fog_gi_inject = 1.81
-volumetric_fog_anisotropy = 0.35
-volumetric_fog_ambient_inject = 0.27
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_tbrd0"]
 
@@ -522,19 +503,59 @@ _surfaces = [{
 [sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_iav26"]
 points = PackedVector3Array(-976, 0.5, -976, -976, -0.5, -976, 976, -0.5, -976, 976, 0.5, -976, -976, 0.5, 976, -976, -0.5, 976, 976, -0.5, 976, 976, 0.5, 976)
 
+[sub_resource type="Curve" id="Curve_p4ssr"]
+max_value = 3.0
+_data = [Vector2(0, 0), 0.0, 0.0195924, 0, 0, Vector2(0.463944, 0.29299), 1.11953, 1.11953, 0, 0, Vector2(0.687375, 1.18237), 5.7842, 5.7842, 0, 0, Vector2(1, 2.86583), 0.0467199, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="CurveTexture" id="CurveTexture_soi3a"]
+curve = SubResource("Curve_p4ssr")
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_knniy"]
+sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+ground_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+
+[sub_resource type="Sky" id="Sky_gpnce"]
+sky_material = SubResource("ProceduralSkyMaterial_knniy")
+
+[sub_resource type="Environment" id="Environment_lw65g"]
+background_mode = 2
+background_energy_multiplier = 0.59
+sky = SubResource("Sky_gpnce")
+ambient_light_source = 3
+ambient_light_color = Color(0.67451, 0.301961, 0.207843, 1)
+tonemap_mode = 1
+ssao_radius = 2.49
+ssao_power = 0.100479
+ssil_enabled = true
+ssil_radius = 1.15
+ssil_intensity = 2.32
+ssil_sharpness = 0.68
+sdfgi_enabled = true
+sdfgi_bounce_feedback = 0.38
+sdfgi_cascades = 8
+sdfgi_min_cell_size = 0.808246
+sdfgi_y_scale = 0
+sdfgi_energy = 2.0
+glow_intensity = 6.34
+glow_strength = 1.47
+glow_hdr_threshold = 0.17
+glow_hdr_scale = 1.85
+glow_map_strength = 0.85
+volumetric_fog_enabled = true
+volumetric_fog_density = 0.0113
+volumetric_fog_albedo = Color(0.121569, 0.211765, 0.172549, 1)
+volumetric_fog_emission_energy = 0.0
+volumetric_fog_gi_inject = 1.9
+volumetric_fog_anisotropy = 0.9
+volumetric_fog_length = 467.21
+volumetric_fog_detail_spread = 3.0
+volumetric_fog_ambient_inject = 3.97
+volumetric_fog_temporal_reprojection_amount = 0.88
+adjustment_enabled = true
+adjustment_color_correction = SubResource("CurveTexture_soi3a")
+
 [node name="Node3D" type="Node3D"]
-
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
-transform = Transform3D(-0.0144327, 0.378356, -0.925548, 0.940171, 0.320254, 0.116256, 0.340397, -0.868496, -0.360341, 0, 0, 0)
-light_color = Color(0.964706, 0.729412, 0.615686, 1)
-light_energy = 1.509
-light_indirect_energy = 13.34
-light_volumetric_fog_energy = 0.0
-shadow_enabled = true
-shadow_bias = 0.0
-
-[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
-environment = SubResource("Environment_dhcml")
 
 [node name="QodotMap" type="Node3D" parent="."]
 script = ExtResource("1_0ip61")
@@ -938,3 +959,18 @@ mesh = SubResource("ArrayMesh_7l2k7")
 
 [node name="entity_20_brush_0_collision_shape" type="CollisionShape3D" parent="QodotMap/entity_20_func_group"]
 shape = SubResource("ConvexPolygonShape3D_iav26")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-0.122461, -0.693819, -0.709661, -0.516595, -0.565981, 0.642491, -0.847427, 0.445288, -0.289113, -11.2004, -1.06866, -6.98611)
+light_color = Color(0.913725, 0.592157, 0.52549, 1)
+light_energy = 1.336
+light_indirect_energy = 0.0
+light_volumetric_fog_energy = 0.0
+shadow_enabled = true
+shadow_transmittance_bias = -3.044
+shadow_opacity = 0.81
+shadow_blur = 0.484
+sky_mode = 1
+
+[node name="WorldEnvironment2" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_lw65g")

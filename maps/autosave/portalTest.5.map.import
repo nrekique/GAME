@@ -1,0 +1,14 @@
+[remap]
+
+importer="qodot.map"
+type="Resource"
+uid="uid://dg6fe748tnc05"
+path="res://.godot/imported/portalTest.5.map-06ca569100d760e8b9321dd79355af87.tres"
+
+[deps]
+
+source_file="res://maps/autosave/portalTest.5.map"
+dest_files=["res://.godot/imported/portalTest.5.map-06ca569100d760e8b9321dd79355af87.tres"]
+
+[params]
+
