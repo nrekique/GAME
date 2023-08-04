@@ -3,12 +3,12 @@
 importer="oggvorbisstr"
 type="AudioStreamOggVorbis"
 uid="uid://bo0loxd3b0skv"
-path="res://.godot/imported/Car_Engine_Start_Up.ogg-7f11024671b1a505f6a11e91edd08d0f.oggvorbisstr"
+path="res://.godot/imported/Car_Engine_Start_Up.ogg-b75da751b144451377f69c6effac1c0f.oggvorbisstr"
 
 [deps]
 
-source_file="res://entities/models/PSX_Style_Cars_by_GGBot_(September2022)/Sound effects/Car_Engine_Start_Up.ogg"
-dest_files=["res://.godot/imported/Car_Engine_Start_Up.ogg-7f11024671b1a505f6a11e91edd08d0f.oggvorbisstr"]
+source_file="res://maps/fgd/models/PSX_Style_Cars_by_GGBot_(September2022)/Sound effects/Car_Engine_Start_Up.ogg"
+dest_files=["res://.godot/imported/Car_Engine_Start_Up.ogg-b75da751b144451377f69c6effac1c0f.oggvorbisstr"]
 
 [params]
 

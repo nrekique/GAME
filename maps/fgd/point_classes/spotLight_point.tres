@@ -19,7 +19,7 @@ class_properties = {
 class_property_descriptions = {}
 meta_properties = {
 "color": Color(0.937255, 0.913725, 0.203922, 1),
-"iconsprite": "\"maps/sprites/spot.png\"",
+"iconsprite": "\"maps/fgd/sprites/omni.png\"",
 "size": AABB(-8, -8, -8, 8, 8, 8)
 }
 node_options = "----------------------------------------------------------------"

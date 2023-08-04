@@ -4,12 +4,12 @@ importer="scene"
 importer_version=1
 type="PackedScene"
 uid="uid://b4bt5fxea5o3y"
-path="res://.godot/imported/psx_male_base_mesh.glb-5a7064dfdfe911c3cfd2b6c5dbd4db6e.scn"
+path="res://.godot/imported/psx_male_base_mesh.glb-4808143d60afedfeb5147e3b896e8b39.scn"
 
 [deps]
 
-source_file="res://entities/models/psx_male_base_mesh.glb"
-dest_files=["res://.godot/imported/psx_male_base_mesh.glb-5a7064dfdfe911c3cfd2b6c5dbd4db6e.scn"]
+source_file="res://maps/fgd/models/psx_male_base_mesh.glb"
+dest_files=["res://.godot/imported/psx_male_base_mesh.glb-4808143d60afedfeb5147e3b896e8b39.scn"]
 
 [params]
 

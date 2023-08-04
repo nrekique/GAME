@@ -4,14 +4,14 @@ importer="wavefront_obj"
 importer_version=1
 type="Mesh"
 uid="uid://b35p73hp6ju48"
-path="res://.godot/imported/Car7.obj-1ce3db980e1e0f7b504194ce5baa777f.mesh"
+path="res://.godot/imported/Car7.obj-c8c99f4bc5c2b01c4e9f76f46957e883.mesh"
 
 [deps]
 
-files=["res://.godot/imported/Car7.obj-1ce3db980e1e0f7b504194ce5baa777f.mesh"]
+files=["res://.godot/imported/Car7.obj-c8c99f4bc5c2b01c4e9f76f46957e883.mesh"]
 
-source_file="res://entities/models/PSX_Style_Cars_by_GGBot_(September2022)/Car 07/Car7.obj"
-dest_files=["res://.godot/imported/Car7.obj-1ce3db980e1e0f7b504194ce5baa777f.mesh", "res://.godot/imported/Car7.obj-1ce3db980e1e0f7b504194ce5baa777f.mesh"]
+source_file="res://maps/fgd/models/PSX_Style_Cars_by_GGBot_(September2022)/Car 07/Car7.obj"
+dest_files=["res://.godot/imported/Car7.obj-c8c99f4bc5c2b01c4e9f76f46957e883.mesh", "res://.godot/imported/Car7.obj-c8c99f4bc5c2b01c4e9f76f46957e883.mesh"]
 
 [params]
 

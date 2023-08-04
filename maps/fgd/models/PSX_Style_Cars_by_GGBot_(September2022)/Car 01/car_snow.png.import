@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ct2tkxa12de2x"
-path="res://.godot/imported/car_snow.png-d18a33070d773227a7c547005257586e.ctex"
+path="res://.godot/imported/car_snow.png-ecfc309e696d49f93ff927342ff102e3.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://entities/models/PSX_Style_Cars_by_GGBot_(September2022)/Car 01/car_snow.png"
-dest_files=["res://.godot/imported/car_snow.png-d18a33070d773227a7c547005257586e.ctex"]
+source_file="res://maps/fgd/models/PSX_Style_Cars_by_GGBot_(September2022)/Car 01/car_snow.png"
+dest_files=["res://.godot/imported/car_snow.png-ecfc309e696d49f93ff927342ff102e3.ctex"]
 
 [params]
 

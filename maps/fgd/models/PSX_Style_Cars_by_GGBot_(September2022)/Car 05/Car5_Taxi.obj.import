@@ -4,14 +4,14 @@ importer="wavefront_obj"
 importer_version=1
 type="Mesh"
 uid="uid://bpa5wjrio1nj"
-path="res://.godot/imported/Car5_Taxi.obj-36cdb58fc1d8a588e5cf399c198ea222.mesh"
+path="res://.godot/imported/Car5_Taxi.obj-6ca52320a16c055638adae89750d2b4f.mesh"
 
 [deps]
 
-files=["res://.godot/imported/Car5_Taxi.obj-36cdb58fc1d8a588e5cf399c198ea222.mesh"]
+files=["res://.godot/imported/Car5_Taxi.obj-6ca52320a16c055638adae89750d2b4f.mesh"]
 
-source_file="res://entities/models/PSX_Style_Cars_by_GGBot_(September2022)/Car 05/Car5_Taxi.obj"
-dest_files=["res://.godot/imported/Car5_Taxi.obj-36cdb58fc1d8a588e5cf399c198ea222.mesh", "res://.godot/imported/Car5_Taxi.obj-36cdb58fc1d8a588e5cf399c198ea222.mesh"]
+source_file="res://maps/fgd/models/PSX_Style_Cars_by_GGBot_(September2022)/Car 05/Car5_Taxi.obj"
+dest_files=["res://.godot/imported/Car5_Taxi.obj-6ca52320a16c055638adae89750d2b4f.mesh", "res://.godot/imported/Car5_Taxi.obj-6ca52320a16c055638adae89750d2b4f.mesh"]
 
 [params]
 

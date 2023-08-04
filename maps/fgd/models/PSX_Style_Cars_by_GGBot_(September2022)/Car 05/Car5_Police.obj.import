@@ -4,14 +4,14 @@ importer="wavefront_obj"
 importer_version=1
 type="Mesh"
 uid="uid://dopalrpnrfapb"
-path="res://.godot/imported/Car5_Police.obj-7f4fe84fe2b163359cb42923d081de7b.mesh"
+path="res://.godot/imported/Car5_Police.obj-4cc750225235f5cdc7fcfc5d4a88d360.mesh"
 
 [deps]
 
-files=["res://.godot/imported/Car5_Police.obj-7f4fe84fe2b163359cb42923d081de7b.mesh"]
+files=["res://.godot/imported/Car5_Police.obj-4cc750225235f5cdc7fcfc5d4a88d360.mesh"]
 
-source_file="res://entities/models/PSX_Style_Cars_by_GGBot_(September2022)/Car 05/Car5_Police.obj"
-dest_files=["res://.godot/imported/Car5_Police.obj-7f4fe84fe2b163359cb42923d081de7b.mesh", "res://.godot/imported/Car5_Police.obj-7f4fe84fe2b163359cb42923d081de7b.mesh"]
+source_file="res://maps/fgd/models/PSX_Style_Cars_by_GGBot_(September2022)/Car 05/Car5_Police.obj"
+dest_files=["res://.godot/imported/Car5_Police.obj-4cc750225235f5cdc7fcfc5d4a88d360.mesh", "res://.godot/imported/Car5_Police.obj-4cc750225235f5cdc7fcfc5d4a88d360.mesh"]
 
 [params]
 

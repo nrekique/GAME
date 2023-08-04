@@ -3,12 +3,12 @@
 importer="qodot.map"
 type="Resource"
 uid="uid://c28m21ifa0oym"
-path="res://.godot/imported/entity.map-d92ce0786bfaf038bc36a8ac84e96d4a.tres"
+path="res://.godot/imported/entity.map-59c453f0b31462f14fbb92b885b0cbf8.tres"
 
 [deps]
 
-source_file="res://maps/devRooms/entity.map"
-dest_files=["res://.godot/imported/entity.map-d92ce0786bfaf038bc36a8ac84e96d4a.tres"]
+source_file="res://maps/buildings/devRooms/entity.map"
+dest_files=["res://.godot/imported/entity.map-59c453f0b31462f14fbb92b885b0cbf8.tres"]
 
 [params]
 

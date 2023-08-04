@@ -3,12 +3,12 @@
 importer="oggvorbisstr"
 type="AudioStreamOggVorbis"
 uid="uid://xqxfwnpgjv1n"
-path="res://.godot/imported/Car_Door_Open.ogg-224f5fca0b45eac8e2fae69e2f1abdc9.oggvorbisstr"
+path="res://.godot/imported/Car_Door_Open.ogg-1afb74e0a5ce7a349c5e1ccf87193ca7.oggvorbisstr"
 
 [deps]
 
-source_file="res://entities/models/PSX_Style_Cars_by_GGBot_(September2022)/Sound effects/Car_Door_Open.ogg"
-dest_files=["res://.godot/imported/Car_Door_Open.ogg-224f5fca0b45eac8e2fae69e2f1abdc9.oggvorbisstr"]
+source_file="res://maps/fgd/models/PSX_Style_Cars_by_GGBot_(September2022)/Sound effects/Car_Door_Open.ogg"
+dest_files=["res://.godot/imported/Car_Door_Open.ogg-1afb74e0a5ce7a349c5e1ccf87193ca7.oggvorbisstr"]
 
 [params]
 

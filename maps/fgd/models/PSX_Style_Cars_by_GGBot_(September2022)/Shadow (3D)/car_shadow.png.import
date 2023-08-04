@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bfxq2ly2m5yno"
-path.s3tc="res://.godot/imported/car_shadow.png-c1458e912e40818f2632888259d5449d.s3tc.ctex"
+path.s3tc="res://.godot/imported/car_shadow.png-2141fad381db1d3714b2ae8c4814bb4e.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
@@ -11,8 +11,8 @@ metadata={
 
 [deps]
 
-source_file="res://entities/models/PSX_Style_Cars_by_GGBot_(September2022)/Shadow (3D)/car_shadow.png"
-dest_files=["res://.godot/imported/car_shadow.png-c1458e912e40818f2632888259d5449d.s3tc.ctex"]
+source_file="res://maps/fgd/models/PSX_Style_Cars_by_GGBot_(September2022)/Shadow (3D)/car_shadow.png"
+dest_files=["res://.godot/imported/car_shadow.png-2141fad381db1d3714b2ae8c4814bb4e.s3tc.ctex"]
 
 [params]
 

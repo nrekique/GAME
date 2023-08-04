@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dxo5k111er0wu"
-path="res://.godot/imported/omni.png-7295e0d201dcd726b7aa9e9ee0d3b39e.ctex"
+path="res://.godot/imported/omni.png-44d3d1df06c5a8fa171d59abb72350c9.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://maps/sprites/omni.png"
-dest_files=["res://.godot/imported/omni.png-7295e0d201dcd726b7aa9e9ee0d3b39e.ctex"]
+source_file="res://maps/fgd/sprites/omni.png"
+dest_files=["res://.godot/imported/omni.png-44d3d1df06c5a8fa171d59abb72350c9.ctex"]
 
 [params]
 

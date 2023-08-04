@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b7l2083hh3d3l"
-path="res://.godot/imported/car_snowcovered_blue.png-30ea779aa0c0b4b7d6437eb49eeb3ef0.ctex"
+path="res://.godot/imported/car_snowcovered_blue.png-bb53c6d00e43373d79d3ebfefbbc3fdf.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://entities/models/PSX_Style_Cars_by_GGBot_(September2022)/Car 01/car_snowcovered_blue.png"
-dest_files=["res://.godot/imported/car_snowcovered_blue.png-30ea779aa0c0b4b7d6437eb49eeb3ef0.ctex"]
+source_file="res://maps/fgd/models/PSX_Style_Cars_by_GGBot_(September2022)/Car 01/car_snowcovered_blue.png"
+dest_files=["res://.godot/imported/car_snowcovered_blue.png-bb53c6d00e43373d79d3ebfefbbc3fdf.ctex"]
 
 [params]
 

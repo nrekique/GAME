@@ -4,12 +4,12 @@ importer="scene"
 importer_version=1
 type="PackedScene"
 uid="uid://c2a2khcsp1003"
-path="res://.godot/imported/sphere.gltf-851b1fc7e37eaa7d7cdc2fd22eaee93f.scn"
+path="res://.godot/imported/sphere.gltf-654bb873fc4abf6c01fa4bd741a2b15f.scn"
 
 [deps]
 
-source_file="res://entities/models/sphere.gltf"
-dest_files=["res://.godot/imported/sphere.gltf-851b1fc7e37eaa7d7cdc2fd22eaee93f.scn"]
+source_file="res://maps/fgd/models/sphere.gltf"
+dest_files=["res://.godot/imported/sphere.gltf-654bb873fc4abf6c01fa4bd741a2b15f.scn"]
 
 [params]
 

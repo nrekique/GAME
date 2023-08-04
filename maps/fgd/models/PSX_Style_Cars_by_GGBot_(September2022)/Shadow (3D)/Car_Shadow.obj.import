@@ -4,14 +4,14 @@ importer="wavefront_obj"
 importer_version=1
 type="Mesh"
 uid="uid://bn2jvb4a588iv"
-path="res://.godot/imported/Car_Shadow.obj-25b5765adbb18629f2c8bcb0111ba9e0.mesh"
+path="res://.godot/imported/Car_Shadow.obj-a62dd107e069b3463d45aff85b2e2a6d.mesh"
 
 [deps]
 
-files=["res://.godot/imported/Car_Shadow.obj-25b5765adbb18629f2c8bcb0111ba9e0.mesh"]
+files=["res://.godot/imported/Car_Shadow.obj-a62dd107e069b3463d45aff85b2e2a6d.mesh"]
 
-source_file="res://entities/models/PSX_Style_Cars_by_GGBot_(September2022)/Shadow (3D)/Car_Shadow.obj"
-dest_files=["res://.godot/imported/Car_Shadow.obj-25b5765adbb18629f2c8bcb0111ba9e0.mesh", "res://.godot/imported/Car_Shadow.obj-25b5765adbb18629f2c8bcb0111ba9e0.mesh"]
+source_file="res://maps/fgd/models/PSX_Style_Cars_by_GGBot_(September2022)/Shadow (3D)/Car_Shadow.obj"
+dest_files=["res://.godot/imported/Car_Shadow.obj-a62dd107e069b3463d45aff85b2e2a6d.mesh", "res://.godot/imported/Car_Shadow.obj-a62dd107e069b3463d45aff85b2e2a6d.mesh"]
 
 [params]
 

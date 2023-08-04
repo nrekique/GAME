@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dw3mq3q8utfje"
-path="res://.godot/imported/car4_grey.png-a14049a3aad89da712df5c0cfb42bf43.ctex"
+path="res://.godot/imported/car4_grey.png-953449f2354caf1ce765d8d19f89fa48.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://entities/models/PSX_Style_Cars_by_GGBot_(September2022)/Car 04/car4_grey.png"
-dest_files=["res://.godot/imported/car4_grey.png-a14049a3aad89da712df5c0cfb42bf43.ctex"]
+source_file="res://maps/fgd/models/PSX_Style_Cars_by_GGBot_(September2022)/Car 04/car4_grey.png"
+dest_files=["res://.godot/imported/car4_grey.png-953449f2354caf1ce765d8d19f89fa48.ctex"]
 
 [params]
 
