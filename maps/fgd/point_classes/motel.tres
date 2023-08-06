@@ -1,14 +1,16 @@
-[gd_resource type="Resource" script_class="QodotFGDPointClass" load_steps=2 format=3 uid="uid://c7vqtnsw54gra"]
+[gd_resource type="Resource" script_class="QodotFGDPointClass" load_steps=3 format=3 uid="uid://c7vqtnsw54gra"]
 
+[ext_resource type="PackedScene" uid="uid://d3btfcehudlob" path="res://maps/fgd/buildings/motel.tscn" id="1_4m2qc"]
 [ext_resource type="Script" path="res://addons/qodot/src/resources/game-definitions/fgd/qodot_fgd_point_class.gd" id="1_724t1"]
 
 [resource]
 script = ExtResource("1_724t1")
 scene = "----------------------------------------------------------------"
+scene_file = ExtResource("1_4m2qc")
 scripting = "----------------------------------------------------------------"
 class_options = "----------------------------------------------------------------"
 classname = "motel"
-description = ""
+description = "motel"
 qodot_internal = false
 base_classes = Array[Resource]([])
 class_properties = {}
@@ -18,5 +20,5 @@ meta_properties = {
 "size": AABB(-8, -8, -8, 8, 8, 8)
 }
 node_options = "----------------------------------------------------------------"
-node_class = ""
+node_class = "MeshInstance3D"
 transient_node = false
