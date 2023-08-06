@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="QodotFGDFile" load_steps=14 format=3 uid="uid://4qg32v6xvets"]
+[gd_resource type="Resource" script_class="QodotFGDFile" load_steps=11 format=3 uid="uid://4qg32v6xvets"]
 
 [ext_resource type="Resource" uid="uid://c36hv0o6g0udo" path="res://addons/qodot/game_definitions/fgd/qodot_fgd.tres" id="1_aagb6"]
 [ext_resource type="Resource" uid="uid://dk5kxg08l1xp7" path="res://maps/fgd/point_classes/spotLight_point.tres" id="2_bkrsb"]
@@ -7,30 +7,9 @@
 [ext_resource type="Resource" uid="uid://b70dbh5v15xno" path="res://addons/qodot/game_definitions/fgd/solid_classes/trigger_solid_class.tres" id="7_2t0fx"]
 [ext_resource type="Resource" uid="uid://dx87vfhoblv4x" path="res://maps/fgd/point_classes/player_point.tres" id="7_ge04j"]
 [ext_resource type="Resource" uid="uid://bh1ds3ob0e5vv" path="res://maps/fgd/point_classes/omniLight_point.tres" id="7_jxl0b"]
-[ext_resource type="Resource" uid="uid://rapm2gv8l37c" path="res://maps/fgd/point_classes/light_omni_point_class.tres" id="8_p2mgw"]
+[ext_resource type="Resource" uid="uid://c7vqtnsw54gra" path="res://maps/fgd/point_classes/motel.tres" id="9_gdy11"]
 [ext_resource type="Resource" uid="uid://c30slr71vxhiq" path="res://maps/fgd/point_classes/grill_point.tres" id="9_wyc3a"]
-[ext_resource type="Resource" uid="uid://c7vqtnsw54gra" path="res://maps/fgd/point_classes/motel.tres" id="10_2j27f"]
 [ext_resource type="Resource" uid="uid://dpmga0oywee7c" path="res://maps/fgd/solid_classes/portal_solid.tres" id="10_j4l43"]
-[ext_resource type="Script" path="res://addons/qodot/src/resources/game-definitions/fgd/qodot_fgd_point_class.gd" id="11_76x8f"]
-
-[sub_resource type="Resource" id="Resource_2afip"]
-script = ExtResource("11_76x8f")
-scene = "----------------------------------------------------------------"
-scripting = "----------------------------------------------------------------"
-class_options = "----------------------------------------------------------------"
-classname = ""
-description = ""
-qodot_internal = false
-base_classes = Array[Resource]([])
-class_properties = {}
-class_property_descriptions = {}
-meta_properties = {
-"color": Color(0.8, 0.8, 0.8, 1),
-"size": AABB(-8, -8, -8, 8, 8, 8)
-}
-node_options = "----------------------------------------------------------------"
-node_class = ""
-transient_node = false
 
 [resource]
 script = ExtResource("6_1hfyh")
@@ -38,4 +17,4 @@ export_file = false
 target_folder = "/Users/nre_kique/Library/Application Support/TrenchBroom/games/Heavy Water"
 fgd_name = "heavyW"
 base_fgd_files = Array[Resource]([ExtResource("1_aagb6")])
-entity_definitions = Array[Resource]([ExtResource("2_bkrsb"), ExtResource("7_jxl0b"), ExtResource("7_ge04j"), ExtResource("5_dxc4i"), ExtResource("10_j4l43"), ExtResource("7_2t0fx"), ExtResource("8_p2mgw"), ExtResource("9_wyc3a"), ExtResource("10_2j27f"), SubResource("Resource_2afip")])
+entity_definitions = Array[Resource]([ExtResource("2_bkrsb"), ExtResource("7_jxl0b"), ExtResource("7_ge04j"), ExtResource("5_dxc4i"), ExtResource("10_j4l43"), ExtResource("7_2t0fx"), ExtResource("9_wyc3a"), ExtResource("9_gdy11")])

@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://x52lgi7yoq7u"]
 
-[ext_resource type="PackedScene" uid="uid://c5d1pvp3im0b2" path="res://entities/models/sphere.tscn" id="1_5sgh3"]
+[ext_resource type="PackedScene" uid="uid://c5d1pvp3im0b2" path="res://maps/fgd/models/sphere.tscn" id="1_5sgh3"]
 
 [sub_resource type="ArrayMesh" id="ArrayMesh_n011d"]
 _surfaces = [{
