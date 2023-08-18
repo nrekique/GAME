@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="QodotFGDFile" load_steps=11 format=3 uid="uid://4qg32v6xvets"]
+[gd_resource type="Resource" script_class="QodotFGDFile" load_steps=10 format=3 uid="uid://4qg32v6xvets"]
 
 [ext_resource type="Resource" uid="uid://c36hv0o6g0udo" path="res://addons/qodot/game_definitions/fgd/qodot_fgd.tres" id="1_aagb6"]
 [ext_resource type="Resource" uid="uid://dk5kxg08l1xp7" path="res://maps/fgd/point_classes/spotLight_point.tres" id="2_bkrsb"]
@@ -7,7 +7,6 @@
 [ext_resource type="Resource" uid="uid://b70dbh5v15xno" path="res://addons/qodot/game_definitions/fgd/solid_classes/trigger_solid_class.tres" id="7_2t0fx"]
 [ext_resource type="Resource" uid="uid://dx87vfhoblv4x" path="res://maps/fgd/point_classes/player_point.tres" id="7_ge04j"]
 [ext_resource type="Resource" uid="uid://bh1ds3ob0e5vv" path="res://maps/fgd/point_classes/omniLight_point.tres" id="7_jxl0b"]
-[ext_resource type="Resource" uid="uid://c6c6k6x4mji2v" path="res://maps/fgd/point_classes/motel.tres" id="9_gdy11"]
 [ext_resource type="Resource" uid="uid://c30slr71vxhiq" path="res://maps/fgd/point_classes/grill_point.tres" id="9_wyc3a"]
 [ext_resource type="Resource" uid="uid://dpmga0oywee7c" path="res://maps/fgd/solid_classes/portal_solid.tres" id="10_j4l43"]
 
@@ -17,4 +16,4 @@ export_file = false
 target_folder = "/Users/nre_kique/Library/Application Support/TrenchBroom/games/Heavy Water"
 fgd_name = "heavyW"
 base_fgd_files = Array[Resource]([ExtResource("1_aagb6")])
-entity_definitions = Array[Resource]([ExtResource("2_bkrsb"), ExtResource("7_jxl0b"), ExtResource("7_ge04j"), ExtResource("5_dxc4i"), ExtResource("10_j4l43"), ExtResource("7_2t0fx"), ExtResource("9_wyc3a"), ExtResource("9_gdy11")])
+entity_definitions = Array[Resource]([ExtResource("2_bkrsb"), ExtResource("7_jxl0b"), ExtResource("7_ge04j"), ExtResource("5_dxc4i"), ExtResource("10_j4l43"), ExtResource("7_2t0fx"), ExtResource("9_wyc3a")])
