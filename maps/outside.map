@@ -21,6 +21,7 @@
 // entity 3
 {
 <<<<<<< HEAD
+<<<<<<< HEAD
 "classname" "func_group"
 "_tb_type" "_tb_group"
 "_tb_name" "low"
@@ -883,6 +884,14 @@
 {
 "classname" "func_group"
 >>>>>>> parent of 5be1442 (everything works importing new assets)
+=======
+"classname" "Grill"
+"origin" "2360 2416 92"
+}
+// entity 4
+{
+"classname" "func_group"
+>>>>>>> parent of 5be1442 (everything works importing new assets)
 "_tb_type" "_tb_layer"
 "_tb_name" "ground"
 "_tb_id" "2451"
@@ -1240,6 +1249,7 @@
 ( 4888 3273 67 ) ( 4888 3295 195 ) ( 4888 3295 67 ) sand 460 0 179.99998 0.5 -0.5
 }
 }
+<<<<<<< HEAD
 <<<<<<< HEAD
 // brush 41
 {
@@ -2125,6 +2135,9 @@
 =======
 // entity 5
 >>>>>>> parent of 5be1442 (everything works importing new assets)
+=======
+// entity 5
+>>>>>>> parent of 5be1442 (everything works importing new assets)
 {
 "classname" "func_group"
 "_tb_type" "_tb_group"
@@ -2180,7 +2193,11 @@
 }
 }
 <<<<<<< HEAD
+<<<<<<< HEAD
 // entity 22
+=======
+// entity 6
+>>>>>>> parent of 5be1442 (everything works importing new assets)
 =======
 // entity 6
 >>>>>>> parent of 5be1442 (everything works importing new assets)
@@ -2432,7 +2449,11 @@
 }
 }
 <<<<<<< HEAD
+<<<<<<< HEAD
 // entity 23
+=======
+// entity 7
+>>>>>>> parent of 5be1442 (everything works importing new assets)
 =======
 // entity 7
 >>>>>>> parent of 5be1442 (everything works importing new assets)
@@ -2684,7 +2705,11 @@
 }
 }
 <<<<<<< HEAD
+<<<<<<< HEAD
 // entity 24
+=======
+// entity 8
+>>>>>>> parent of 5be1442 (everything works importing new assets)
 =======
 // entity 8
 >>>>>>> parent of 5be1442 (everything works importing new assets)
@@ -2725,7 +2750,11 @@
 }
 }
 <<<<<<< HEAD
+<<<<<<< HEAD
 // entity 25
+=======
+// entity 9
+>>>>>>> parent of 5be1442 (everything works importing new assets)
 =======
 // entity 9
 >>>>>>> parent of 5be1442 (everything works importing new assets)
@@ -2784,7 +2813,11 @@
 }
 }
 <<<<<<< HEAD
+<<<<<<< HEAD
 // entity 26
+=======
+// entity 10
+>>>>>>> parent of 5be1442 (everything works importing new assets)
 =======
 // entity 10
 >>>>>>> parent of 5be1442 (everything works importing new assets)
@@ -3036,7 +3069,11 @@
 }
 }
 <<<<<<< HEAD
+<<<<<<< HEAD
 // entity 27
+=======
+// entity 11
+>>>>>>> parent of 5be1442 (everything works importing new assets)
 =======
 // entity 11
 >>>>>>> parent of 5be1442 (everything works importing new assets)
@@ -3288,8 +3325,11 @@
 }
 }
 <<<<<<< HEAD
+<<<<<<< HEAD
 // entity 28
 =======
+=======
+>>>>>>> parent of 5be1442 (everything works importing new assets)
 // entity 12
 {
 "classname" "func_group"
@@ -5035,6 +5075,9 @@
 }
 }
 // entity 22
+<<<<<<< HEAD
+>>>>>>> parent of 5be1442 (everything works importing new assets)
+=======
 >>>>>>> parent of 5be1442 (everything works importing new assets)
 {
 "classname" "func_group"
@@ -5089,7 +5132,11 @@
 }
 }
 <<<<<<< HEAD
+<<<<<<< HEAD
 // entity 29
+=======
+// entity 23
+>>>>>>> parent of 5be1442 (everything works importing new assets)
 =======
 // entity 23
 >>>>>>> parent of 5be1442 (everything works importing new assets)
@@ -5309,7 +5356,11 @@
 }
 }
 <<<<<<< HEAD
+<<<<<<< HEAD
 // entity 30
+=======
+// entity 24
+>>>>>>> parent of 5be1442 (everything works importing new assets)
 =======
 // entity 24
 >>>>>>> parent of 5be1442 (everything works importing new assets)
@@ -5561,7 +5612,11 @@
 }
 }
 <<<<<<< HEAD
+<<<<<<< HEAD
 // entity 31
+=======
+// entity 25
+>>>>>>> parent of 5be1442 (everything works importing new assets)
 =======
 // entity 25
 >>>>>>> parent of 5be1442 (everything works importing new assets)
@@ -5600,8 +5655,11 @@
 }
 }
 <<<<<<< HEAD
+<<<<<<< HEAD
 // entity 32
 =======
+=======
+>>>>>>> parent of 5be1442 (everything works importing new assets)
 // entity 26
 {
 "classname" "func_group"
@@ -6854,6 +6912,76 @@
 {
 "classname" "func_group"
 "_tb_type" "_tb_group"
+"_tb_name" "driveThroughThingy"
+"_tb_id" "642"
+"_tb_layer" "2451"
+// brush 0
+{
+( 4744 -2280 53 ) ( 4744 -2280 54 ) ( 4744 -2281 53 ) concreteBrown -452 0 179.99998 0.5 -0.5
+( 5244 -2280 96.77777777777779 ) ( 5244 -2281 96.77777777777779 ) ( 5243 -2280 96.72222222222223 ) concreteBrown 0 452 179.99998 0.5 0.5
+( 4816 -1824 61 ) ( 4944 -1824 189 ) ( 4944 -1824 61 ) concreteBrown 0 0 180.00002 0.5 -0.5
+( 4924 -1336 65 ) ( 4852 -1336 193 ) ( 4852 -1336 65 ) concreteBrown 0 0 180.00002 0.5 -0.5
+( 5452 -1616 84.33333333333333 ) ( 5451 -1616 84.27777777777779 ) ( 5452 -1617 84.33333333333333 ) concreteBrown 0 452 179.99998 0.5 0.5
+( 4852 -1336 65 ) ( 4852 -1392 65 ) ( 4852 -1392 193 ) concreteBrown -452 0 179.99998 0.5 -0.5
+}
+// brush 1
+{
+( 4852 -1336 64 ) ( 4852 -1392 192 ) ( 4852 -1392 64 ) sand -964 0 179.99998 0.5 -0.5
+( 5244 -2280 95.77777777777779 ) ( 5244 -2281 95.77777777777779 ) ( 5243 -2280 95.72222222222223 ) sand 512 964 179.99998 0.5 0.5
+( 4816 -1824 60 ) ( 4944 -1824 188 ) ( 4944 -1824 60 ) sand 512 0 180.00002 0.5 -0.5
+( 4924 -1336 64 ) ( 4852 -1336 192 ) ( 4852 -1336 64 ) sand 512 0 180.00002 0.5 -0.5
+( 5452 -1616 83.33333333333333 ) ( 5451 -1616 83.27777777777779 ) ( 5452 -1617 83.33333333333333 ) sand 512 964 179.99998 0.5 0.5
+( 4888 -1813 67 ) ( 4888 -1791 195 ) ( 4888 -1791 67 ) sand -964 0 179.99998 0.5 -0.5
+}
+// brush 2
+{
+( 4888 -1956 52 ) ( 4888 -1955 52 ) ( 4888 -1956 53 ) sand 144 0 0 0.5 0.5
+( 4472 -1824 52 ) ( 4472 -1824 53 ) ( 4473 -1824 52 ) sand 0 0 0 0.5 0.5
+( 4472 -1956 52 ) ( 4473 -1956 52 ) ( 4472 -1955 52 ) sand 0 -144 0 0.5 0.5
+( 4680 -1292 76 ) ( 4680 -1291 76 ) ( 4681 -1292 76 ) sand 0 -144 0 0.5 0.5
+( 4680 -1336 60 ) ( 4681 -1336 60 ) ( 4680 -1336 61 ) sand 0 0 0 0.5 0.5
+( 5032 -1292 60 ) ( 5032 -1292 61 ) ( 5032 -1291 60 ) sand 144 0 0 0.5 0.5
+}
+}
+// entity 35
+{
+"classname" "func_group"
+"_tb_type" "_tb_group"
+"_tb_name" "driveThroughThingy"
+"_tb_id" "646"
+"_tb_layer" "2451"
+// brush 0
+{
+( 4744 -3088 53 ) ( 4744 -3088 54 ) ( 4744 -3089 53 ) concreteBrown -20 0 179.99998 0.5 -0.5
+( 5244 -3088 96.77777777777779 ) ( 5244 -3089 96.77777777777779 ) ( 5243 -3088 96.72222222222223 ) concreteBrown 0 20 179.99998 0.5 0.5
+( 4816 -2632 61 ) ( 4944 -2632 189 ) ( 4944 -2632 61 ) concreteBrown 0 0 180.00002 0.5 -0.5
+( 4924 -2144 65 ) ( 4852 -2144 193 ) ( 4852 -2144 65 ) concreteBrown 0 0 180.00002 0.5 -0.5
+( 5452 -2424 84.33333333333333 ) ( 5451 -2424 84.27777777777779 ) ( 5452 -2425 84.33333333333333 ) concreteBrown 0 20 179.99998 0.5 0.5
+( 4852 -2144 65 ) ( 4852 -2200 65 ) ( 4852 -2200 193 ) concreteBrown -20 0 179.99998 0.5 -0.5
+}
+// brush 1
+{
+( 4852 -2144 64 ) ( 4852 -2200 192 ) ( 4852 -2200 64 ) sand -532 0 179.99998 0.5 -0.5
+( 5244 -3088 95.77777777777779 ) ( 5244 -3089 95.77777777777779 ) ( 5243 -3088 95.72222222222223 ) sand 512 532 179.99998 0.5 0.5
+( 4816 -2632 60 ) ( 4944 -2632 188 ) ( 4944 -2632 60 ) sand 512 0 180.00002 0.5 -0.5
+( 4924 -2144 64 ) ( 4852 -2144 192 ) ( 4852 -2144 64 ) sand 512 0 180.00002 0.5 -0.5
+( 5452 -2424 83.33333333333333 ) ( 5451 -2424 83.27777777777779 ) ( 5452 -2425 83.33333333333333 ) sand 512 532 179.99998 0.5 0.5
+( 4888 -2621 67 ) ( 4888 -2599 195 ) ( 4888 -2599 67 ) sand -532 0 179.99998 0.5 -0.5
+}
+// brush 2
+{
+( 4888 -2764 52 ) ( 4888 -2763 52 ) ( 4888 -2764 53 ) sand 736 0 0 0.5 0.5
+( 4472 -2632 52 ) ( 4472 -2632 53 ) ( 4473 -2632 52 ) sand 0 0 0 0.5 0.5
+( 4472 -2764 52 ) ( 4473 -2764 52 ) ( 4472 -2763 52 ) sand 0 -736 0 0.5 0.5
+( 4680 -2100 76 ) ( 4680 -2099 76 ) ( 4681 -2100 76 ) sand 0 -736 0 0.5 0.5
+( 4680 -2144 60 ) ( 4681 -2144 60 ) ( 4680 -2144 61 ) sand 0 0 0 0.5 0.5
+( 5032 -2100 60 ) ( 5032 -2100 61 ) ( 5032 -2099 60 ) sand 736 0 0 0.5 0.5
+}
+}
+// entity 36
+{
+"classname" "func_group"
+"_tb_type" "_tb_group"
 "_tb_name" "2"
 "_tb_id" "270"
 "_tb_linked_group_id" "{9d4de7ec-b949-44f3-9df7-23fd1453afa6}"
@@ -7395,6 +7523,7 @@
 }
 }
 <<<<<<< HEAD
+<<<<<<< HEAD
 // entity 33
 {
 "classname" "func_group"
@@ -7736,12 +7865,15 @@
 }
 // entity 35
 =======
+=======
+>>>>>>> parent of 5be1442 (everything works importing new assets)
 // entity 37
 >>>>>>> parent of 5be1442 (everything works importing new assets)
 {
 "classname" "func_group"
 "_tb_type" "_tb_group"
 "_tb_name" "driveThroughThingy"
+<<<<<<< HEAD
 <<<<<<< HEAD
 "_tb_id" "642"
 "_tb_layer" "2451"
@@ -8991,6 +9123,8 @@
 "_tb_name" "driveThroughThingy"
 =======
 >>>>>>> parent of 5be1442 (everything works importing new assets)
+=======
+>>>>>>> parent of 5be1442 (everything works importing new assets)
 "_tb_id" "265"
 "_tb_layer" "2451"
 // brush 0
@@ -9022,7 +9156,11 @@
 }
 }
 <<<<<<< HEAD
+<<<<<<< HEAD
 // entity 46
+=======
+// entity 38
+>>>>>>> parent of 5be1442 (everything works importing new assets)
 =======
 // entity 38
 >>>>>>> parent of 5be1442 (everything works importing new assets)
@@ -9570,8 +9708,11 @@
 }
 }
 <<<<<<< HEAD
+<<<<<<< HEAD
 // entity 47
 =======
+=======
+>>>>>>> parent of 5be1442 (everything works importing new assets)
 // entity 39
 {
 "classname" "func_group"
@@ -9608,6 +9749,9 @@
 }
 }
 // entity 40
+<<<<<<< HEAD
+>>>>>>> parent of 5be1442 (everything works importing new assets)
+=======
 >>>>>>> parent of 5be1442 (everything works importing new assets)
 {
 "classname" "func_group"
@@ -9641,6 +9785,7 @@
 ( 4852 3784 65 ) ( 4852 3728 65 ) ( 4852 3728 193 ) concreteBrown 400 0 179.99998 0.5 -0.5
 }
 }
+<<<<<<< HEAD
 <<<<<<< HEAD
 // entity 48
 {
@@ -9680,6 +9825,9 @@
 }
 }
 // entity 49
+=======
+// entity 41
+>>>>>>> parent of 5be1442 (everything works importing new assets)
 =======
 // entity 41
 >>>>>>> parent of 5be1442 (everything works importing new assets)
@@ -9726,6 +9874,7 @@
 }
 // brush 4
 {
+<<<<<<< HEAD
 <<<<<<< HEAD
 ( 3964 1303 88.66666666666667 ) ( 3964 983 88.66666666666667 ) ( 3964 983 84.66666666666667 ) groundRed2 396 0.66666675 0 1 1
 ( 4212 983 70.88888888888889 ) ( 4212 1303 70.88888888888889 ) ( 3964 1303 84.66666666666667 ) groundRed2 7.612915 -396 0 0.96875 1
@@ -9787,12 +9936,17 @@
 ( 3956 -769 85.11111111111111 ) ( 3955 -769 85.16666666666666 ) ( 3956 -768 85.11111111111111 ) concreteBrown 16 -24 0 1 1
 ( 4084 -897 78 ) ( 4084 -897 79 ) ( 4084 -896 78 ) concreteBrown 24 -6 0 1 1
 =======
+=======
+>>>>>>> parent of 5be1442 (everything works importing new assets)
 ( 4760 3152 70.88888888888889 ) ( 4760 3153 70.88888888888889 ) ( 4760 3152 71.88888888888889 ) concreteBrown -192 -13.111111 179.99998 1 -1
 ( 4888 3280 86 ) ( 4888 3281 86 ) ( 4889 3280 86.05555555555554 ) concreteBrown 272 192 179.99998 1 1
 ( 4760 3152 70.88888888888889 ) ( 4760 3152 71.88888888888889 ) ( 4761 3152 70.94444444444443 ) concreteBrown 267.11377 -92.08664 183.17984 1.001542 -1
 ( 4760 3152 70.88888888888889 ) ( 4761 3152 70.94444444444443 ) ( 4760 3153 70.88888888888889 ) concreteBrown 272 192 179.99998 1 1
 ( 4760 3184 70.88888888888889 ) ( 4888 3152 78 ) ( 4888 3152 206 ) concreteBrown 267.11377 -92.08664 183.17984 1.001542 -1
 ( 4768 3152 71.33333333333331 ) ( 4768 3152 72.33333333333331 ) ( 4768 3153 71.33333333333331 ) concreteBrown -192 -12.666663 179.99998 1 -1
+<<<<<<< HEAD
+>>>>>>> parent of 5be1442 (everything works importing new assets)
+=======
 >>>>>>> parent of 5be1442 (everything works importing new assets)
 }
 // brush 5
@@ -9987,6 +10141,7 @@
 }
 // brush 27
 {
+<<<<<<< HEAD
 <<<<<<< HEAD
 ( 4192 -877 65 ) ( 4228 -805 65 ) ( 4228 -805 193 ) concreteBrown -368 0 0 0.5 0.5
 ( 3520 -1121 84.33333333333333 ) ( 3521 -1121 84.27777777777779 ) ( 3520 -1120 84.33333333333333 ) concreteBrown 0 368 0 0.5 0.5
@@ -11083,11 +11238,16 @@
 ( 4084 1951 86 ) ( 4084 1950 86 ) ( 4083 1951 86.05555555555554 ) concreteBrown 0 0 0 1 1
 ( 4116 1951 76.22222222222223 ) ( 4084 2079 206 ) ( 4084 2079 78 ) concreteBrown 0 0 0 1 1
 =======
+=======
+>>>>>>> parent of 5be1442 (everything works importing new assets)
 ( 4744 504 53 ) ( 4744 504 54 ) ( 4744 503 53 ) concreteBrown 4 0 179.99998 0.5 -0.5
 ( 4852 1448 73 ) ( 4780 1484 73 ) ( 4780 1484 201 ) concreteBrown 0 0 180.00002 0.5 -0.5
 ( 5244 504 96.77777777777777 ) ( 5244 503 96.77777777777777 ) ( 5243 504 96.72222222222223 ) concreteBrown 0 -4 179.99998 0.5 0.5
 ( 4852 1502 51 ) ( 4744 1502 45 ) ( 4744 1374 45 ) concreteBrown 0 -4 179.99998 0.5 0.5
 ( 4780 1484 73 ) ( 4744 1556 201 ) ( 4744 1556 73 ) concreteBrown 4 0 179.99998 0.5 -0.5
+<<<<<<< HEAD
+>>>>>>> parent of 5be1442 (everything works importing new assets)
+=======
 >>>>>>> parent of 5be1442 (everything works importing new assets)
 }
 // brush 28
@@ -11100,7 +11260,11 @@
 }
 }
 <<<<<<< HEAD
+<<<<<<< HEAD
 // entity 57
+=======
+// entity 42
+>>>>>>> parent of 5be1442 (everything works importing new assets)
 =======
 // entity 42
 >>>>>>> parent of 5be1442 (everything works importing new assets)
@@ -11304,6 +11468,7 @@
 }
 // brush 22
 {
+<<<<<<< HEAD
 <<<<<<< HEAD
 ( 6373.173089340862 2426.745166004057 77 ) ( 6373.173089340864 2517.2548339959358 77 ) ( 6373.173089340864 2517.2548339959358 205 ) groundRed2 231.35449 -8 0 1 1
 ( 6310.947692596447 2290.9806640162406 77 ) ( 6311.654799377634 2291.687770797427 77 ) ( 6310.240585815261 2291.687770797427 77 ) groundRed2 429.19238 -231.35449 179.99998 1 -1
@@ -11611,11 +11776,16 @@
 ( 1412 -3808 82 ) ( 1413 -3808 82 ) ( 1412 -3808 83 ) groundRed2 0 0 0 1 1
 ( 3976 -3664 82 ) ( 3976 -3664 83 ) ( 3976 -3663 82 ) groundRed2 0 0 0 1 1
 =======
+=======
+>>>>>>> parent of 5be1442 (everything works importing new assets)
 ( 4888 1464 82 ) ( 4888 1464 83 ) ( 4888 1463 82 ) groundBrown2 -219.49524 -65.014084 183.17984 1.001542 -1
 ( 4888 1472 82 ) ( 4887 1472 82 ) ( 4888 1472 83 ) groundBrown2 -192 -12.666664 180.00002 1 -1
 ( 5016 1592 78 ) ( 5015 1592 78 ) ( 5016 1591 78 ) groundBrown2 272 680 179.99998 1 1
 ( 4888 1464 82 ) ( 4888 1463 82 ) ( 4887 1464 82 ) groundBrown2 272 680 179.99998 1 1
 ( 4920 1464 78 ) ( 4888 1592 206 ) ( 4888 1592 78 ) groundBrown2 -219.49524 -65.014084 183.17984 1.001542 -1
+<<<<<<< HEAD
+>>>>>>> parent of 5be1442 (everything works importing new assets)
+=======
 >>>>>>> parent of 5be1442 (everything works importing new assets)
 }
 // brush 23
@@ -11628,7 +11798,11 @@
 }
 }
 <<<<<<< HEAD
+<<<<<<< HEAD
 // entity 61
+=======
+// entity 43
+>>>>>>> parent of 5be1442 (everything works importing new assets)
 =======
 // entity 43
 >>>>>>> parent of 5be1442 (everything works importing new assets)
@@ -11676,7 +11850,11 @@
 }
 }
 <<<<<<< HEAD
+<<<<<<< HEAD
 // entity 62
+=======
+// entity 44
+>>>>>>> parent of 5be1442 (everything works importing new assets)
 =======
 // entity 44
 >>>>>>> parent of 5be1442 (everything works importing new assets)
@@ -11889,7 +12067,11 @@
 }
 }
 <<<<<<< HEAD
+<<<<<<< HEAD
 // entity 63
+=======
+// entity 45
+>>>>>>> parent of 5be1442 (everything works importing new assets)
 =======
 // entity 45
 >>>>>>> parent of 5be1442 (everything works importing new assets)
@@ -12102,7 +12284,11 @@
 }
 }
 <<<<<<< HEAD
+<<<<<<< HEAD
 // entity 64
+=======
+// entity 46
+>>>>>>> parent of 5be1442 (everything works importing new assets)
 =======
 // entity 46
 >>>>>>> parent of 5be1442 (everything works importing new assets)
@@ -12315,7 +12501,11 @@
 }
 }
 <<<<<<< HEAD
+<<<<<<< HEAD
 // entity 65
+=======
+// entity 47
+>>>>>>> parent of 5be1442 (everything works importing new assets)
 =======
 // entity 47
 >>>>>>> parent of 5be1442 (everything works importing new assets)
@@ -12528,8 +12718,11 @@
 }
 }
 <<<<<<< HEAD
+<<<<<<< HEAD
 // entity 66
 =======
+=======
+>>>>>>> parent of 5be1442 (everything works importing new assets)
 // entity 48
 {
 "classname" "func_group"
@@ -12566,6 +12759,9 @@
 }
 }
 // entity 49
+<<<<<<< HEAD
+>>>>>>> parent of 5be1442 (everything works importing new assets)
+=======
 >>>>>>> parent of 5be1442 (everything works importing new assets)
 {
 "classname" "func_group"
@@ -12869,7 +13065,11 @@
 }
 }
 <<<<<<< HEAD
+<<<<<<< HEAD
 // entity 67
+=======
+// entity 50
+>>>>>>> parent of 5be1442 (everything works importing new assets)
 =======
 // entity 50
 >>>>>>> parent of 5be1442 (everything works importing new assets)
@@ -12915,6 +13115,7 @@
 }
 // brush 4
 {
+<<<<<<< HEAD
 <<<<<<< HEAD
 ( 4768 -1320 75.33333333333333 ) ( 4768 -1000 71.33333333333333 ) ( 4768 -1000 75.33333333333333 ) groundRed2 0 0 0 1 1
 ( 5008 -1000 88.66666666666667 ) ( 4760 -1320 74.88888888888889 ) ( 4760 -1000 74.88888888888889 ) groundRed2 0 0 0 1 1
@@ -12976,11 +13177,16 @@
 ( 4888 -1320 70 ) ( 4889 -1320 70.05555555555554 ) ( 4888 -1319 70 ) concreteBrown 0 0 0 1 1
 ( 4920 -1320 79.77777777777777 ) ( 4888 -1192 206 ) ( 4888 -1192 78 ) concreteBrown 0 0 0 1 1
 =======
+=======
+>>>>>>> parent of 5be1442 (everything works importing new assets)
 ( 5016 -2744 78 ) ( 4888 -2776 206 ) ( 4888 -2776 78 ) groundRed2 0.39111328 -0.2614746 183.17984 1.001542 -1
 ( 5016 -2776 82 ) ( 5016 -2776 83 ) ( 5017 -2776 82 ) groundRed2 0.39111328 -0.2614746 183.17984 1.001542 -1
 ( 4888 -2648 78 ) ( 4888 -2649 78 ) ( 4889 -2648 78 ) groundRed2 0 846 179.99998 1 1
 ( 5016 -2776 82 ) ( 5017 -2776 82 ) ( 5016 -2777 82 ) groundRed2 0 846 179.99998 1 1
 ( 5008 -2776 82 ) ( 5008 -2777 82 ) ( 5008 -2776 83 ) groundRed2 -846 0.33333588 179.99998 1 -1
+<<<<<<< HEAD
+>>>>>>> parent of 5be1442 (everything works importing new assets)
+=======
 >>>>>>> parent of 5be1442 (everything works importing new assets)
 }
 // brush 5
@@ -13177,6 +13383,7 @@
 }
 // brush 27
 {
+<<<<<<< HEAD
 <<<<<<< HEAD
 ( 4744 -2280 53 ) ( 4744 -2280 54 ) ( 4744 -2281 53 ) concreteBrown 0 0 0 1 1
 ( 5244 -2280 96.77777777777777 ) ( 5244 -2281 96.77777777777777 ) ( 5243 -2280 96.72222222222223 ) concreteBrown 0 0 0 1 1
@@ -14693,11 +14900,16 @@
 ( 3720 7232 98.44444444444444 ) ( 3968 7232 84.66666666666667 ) ( 3968 6912 84.66666666666667 ) concreteBrown 0 0 0 1 1
 ( 3960 7232 81.11111111111111 ) ( 3960 6912 77.11111111111111 ) ( 3960 6912 81.11111111111111 ) concreteBrown 0 0 0 1 1
 =======
+=======
+>>>>>>> parent of 5be1442 (everything works importing new assets)
 ( 4768 -2776 71.33333333333331 ) ( 4768 -2775 71.33333333333331 ) ( 4768 -2776 72.33333333333331 ) groundRed2 -846 0.33333588 179.99998 1 -1
 ( 4888 -2648 82 ) ( 4888 -2647 82 ) ( 4889 -2648 82.05555555555554 ) groundRed2 0 846 179.99998 1 1
 ( 4760 -2776 70.88888888888889 ) ( 4760 -2776 71.88888888888887 ) ( 4761 -2776 70.94444444444444 ) groundRed2 0.77783203 -0.5784912 183.17311 1.0109085 -1.0112225
 ( 4760 -2776 70.88888888888889 ) ( 4761 -2776 70.94444444444444 ) ( 4760 -2775 70.88888888888889 ) groundRed2 0 846 179.99998 1 1
 ( 4760 -2744 70.88888888888889 ) ( 4888 -2776 78 ) ( 4888 -2776 206 ) groundRed2 0.77783203 -0.5784912 183.17311 1.0109085 -1.0112225
+<<<<<<< HEAD
+>>>>>>> parent of 5be1442 (everything works importing new assets)
+=======
 >>>>>>> parent of 5be1442 (everything works importing new assets)
 }
 // brush 28
@@ -14737,6 +14949,7 @@
 }
 // brush 32
 {
+<<<<<<< HEAD
 <<<<<<< HEAD
 ( 4196 6580 65 ) ( 4124 6544 193 ) ( 4124 6544 65 ) concreteBrown 0 0 0 1 1
 ( 3524 6336 84.33333333333333 ) ( 3525 6336 84.27777777777779 ) ( 3524 6337 84.33333333333333 ) concreteBrown 0 0 0 1 1
@@ -16157,11 +16370,16 @@
 ( 4169.576294311861 10730.869663656753 75.31229189060093 ) ( 4168.869187520137 10731.576770427402 75.33313963935211 ) ( 4170.283401082509 10731.576770448475 75.27758408276225 ) concrete 0 0 0 1 1
 ( 4207.679194237081 10713.0874136647 76.58935994480703 ) ( 4241.6203212513155 10611.264037679597 76.25395084095547 ) ( 4241.6203212513155 10611.264037679597 204.25395084095555 ) concrete 0 0 0 1 1
 =======
+=======
+>>>>>>> parent of 5be1442 (everything works importing new assets)
 ( 4924 -2632 60 ) ( 4996 -2668 188 ) ( 4996 -2668 60 ) sand 0 0 0 1 1
 ( 4898 -2748 46 ) ( 4899 -2748 46 ) ( 4898 -2747 46 ) sand 0 -846 0 1 1
 ( 5032 -2632 76 ) ( 5032 -2631 76 ) ( 5033 -2632 76 ) sand 0 -846 0 1 1
 ( 5032 -2632 76 ) ( 5033 -2632 76 ) ( 5032 -2632 77 ) sand 0 0 0 1 1
 ( 5032 -2632 76 ) ( 5032 -2632 77 ) ( 5032 -2631 76 ) sand 846 0 0 1 1
+<<<<<<< HEAD
+>>>>>>> parent of 5be1442 (everything works importing new assets)
+=======
 >>>>>>> parent of 5be1442 (everything works importing new assets)
 }
 // brush 33
@@ -16245,7 +16463,11 @@
 }
 }
 <<<<<<< HEAD
+<<<<<<< HEAD
 // entity 88
+=======
+// entity 53
+>>>>>>> parent of 5be1442 (everything works importing new assets)
 =======
 // entity 53
 >>>>>>> parent of 5be1442 (everything works importing new assets)
@@ -16286,8 +16508,11 @@
 }
 }
 <<<<<<< HEAD
+<<<<<<< HEAD
 // entity 89
 =======
+=======
+>>>>>>> parent of 5be1442 (everything works importing new assets)
 // entity 54
 {
 "classname" "func_group"
@@ -16533,6 +16758,9 @@
 }
 }
 // entity 57
+<<<<<<< HEAD
+>>>>>>> parent of 5be1442 (everything works importing new assets)
+=======
 >>>>>>> parent of 5be1442 (everything works importing new assets)
 {
 "classname" "func_group"
@@ -16690,7 +16918,11 @@
 }
 }
 <<<<<<< HEAD
+<<<<<<< HEAD
 // entity 90
+=======
+// entity 58
+>>>>>>> parent of 5be1442 (everything works importing new assets)
 =======
 // entity 58
 >>>>>>> parent of 5be1442 (everything works importing new assets)
@@ -16713,7 +16945,11 @@
 }
 }
 <<<<<<< HEAD
+<<<<<<< HEAD
 // entity 91
+=======
+// entity 59
+>>>>>>> parent of 5be1442 (everything works importing new assets)
 =======
 // entity 59
 >>>>>>> parent of 5be1442 (everything works importing new assets)
@@ -16736,7 +16972,11 @@
 }
 }
 <<<<<<< HEAD
+<<<<<<< HEAD
 // entity 92
+=======
+// entity 60
+>>>>>>> parent of 5be1442 (everything works importing new assets)
 =======
 // entity 60
 >>>>>>> parent of 5be1442 (everything works importing new assets)
@@ -16759,7 +16999,11 @@
 }
 }
 <<<<<<< HEAD
+<<<<<<< HEAD
 // entity 93
+=======
+// entity 61
+>>>>>>> parent of 5be1442 (everything works importing new assets)
 =======
 // entity 61
 >>>>>>> parent of 5be1442 (everything works importing new assets)
@@ -16782,7 +17026,11 @@
 }
 }
 <<<<<<< HEAD
+<<<<<<< HEAD
 // entity 94
+=======
+// entity 62
+>>>>>>> parent of 5be1442 (everything works importing new assets)
 =======
 // entity 62
 >>>>>>> parent of 5be1442 (everything works importing new assets)
@@ -16805,7 +17053,11 @@
 }
 }
 <<<<<<< HEAD
+<<<<<<< HEAD
 // entity 95
+=======
+// entity 63
+>>>>>>> parent of 5be1442 (everything works importing new assets)
 =======
 // entity 63
 >>>>>>> parent of 5be1442 (everything works importing new assets)
@@ -16828,7 +17080,11 @@
 }
 }
 <<<<<<< HEAD
+<<<<<<< HEAD
 // entity 96
+=======
+// entity 64
+>>>>>>> parent of 5be1442 (everything works importing new assets)
 =======
 // entity 64
 >>>>>>> parent of 5be1442 (everything works importing new assets)
@@ -17335,7 +17591,11 @@
 }
 }
 <<<<<<< HEAD
+<<<<<<< HEAD
 // entity 97
+=======
+// entity 65
+>>>>>>> parent of 5be1442 (everything works importing new assets)
 =======
 // entity 65
 >>>>>>> parent of 5be1442 (everything works importing new assets)
@@ -17552,7 +17812,11 @@
 }
 }
 <<<<<<< HEAD
+<<<<<<< HEAD
 // entity 98
+=======
+// entity 66
+>>>>>>> parent of 5be1442 (everything works importing new assets)
 =======
 // entity 66
 >>>>>>> parent of 5be1442 (everything works importing new assets)
@@ -17652,7 +17916,11 @@
 }
 }
 <<<<<<< HEAD
+<<<<<<< HEAD
 // entity 99
+=======
+// entity 67
+>>>>>>> parent of 5be1442 (everything works importing new assets)
 =======
 // entity 67
 >>>>>>> parent of 5be1442 (everything works importing new assets)
@@ -17752,7 +18020,11 @@
 }
 }
 <<<<<<< HEAD
+<<<<<<< HEAD
 // entity 100
+=======
+// entity 68
+>>>>>>> parent of 5be1442 (everything works importing new assets)
 =======
 // entity 68
 >>>>>>> parent of 5be1442 (everything works importing new assets)
@@ -17983,7 +18255,11 @@
 }
 }
 <<<<<<< HEAD
+<<<<<<< HEAD
 // entity 101
+=======
+// entity 69
+>>>>>>> parent of 5be1442 (everything works importing new assets)
 =======
 // entity 69
 >>>>>>> parent of 5be1442 (everything works importing new assets)
@@ -18023,7 +18299,11 @@
 }
 }
 <<<<<<< HEAD
+<<<<<<< HEAD
 // entity 102
+=======
+// entity 70
+>>>>>>> parent of 5be1442 (everything works importing new assets)
 =======
 // entity 70
 >>>>>>> parent of 5be1442 (everything works importing new assets)
@@ -18142,6 +18422,7 @@
 ( 2832 1528 204 ) ( 2832 1528 203 ) ( 2832 1527 204 ) roofTeal 13.3333435 13.333252 90 0.6 0.6
 }
 }
+<<<<<<< HEAD
 <<<<<<< HEAD
 // entity 103
 {
@@ -19089,6 +19370,9 @@
 }
 }
 // entity 109
+=======
+// entity 71
+>>>>>>> parent of 5be1442 (everything works importing new assets)
 =======
 // entity 71
 >>>>>>> parent of 5be1442 (everything works importing new assets)
@@ -20621,7 +20905,11 @@
 }
 }
 <<<<<<< HEAD
+<<<<<<< HEAD
 // entity 110
+=======
+// entity 72
+>>>>>>> parent of 5be1442 (everything works importing new assets)
 =======
 // entity 72
 >>>>>>> parent of 5be1442 (everything works importing new assets)
@@ -20633,7 +20921,11 @@
 "_tb_layer" "2453"
 }
 <<<<<<< HEAD
+<<<<<<< HEAD
 // entity 111
+=======
+// entity 73
+>>>>>>> parent of 5be1442 (everything works importing new assets)
 =======
 // entity 73
 >>>>>>> parent of 5be1442 (everything works importing new assets)
@@ -21359,7 +21651,11 @@
 }
 }
 <<<<<<< HEAD
+<<<<<<< HEAD
 // entity 112
+=======
+// entity 74
+>>>>>>> parent of 5be1442 (everything works importing new assets)
 =======
 // entity 74
 >>>>>>> parent of 5be1442 (everything works importing new assets)
@@ -21371,7 +21667,11 @@
 "_tb_layer" "2453"
 }
 <<<<<<< HEAD
+<<<<<<< HEAD
 // entity 113
+=======
+// entity 75
+>>>>>>> parent of 5be1442 (everything works importing new assets)
 =======
 // entity 75
 >>>>>>> parent of 5be1442 (everything works importing new assets)
@@ -22097,8 +22397,11 @@
 }
 }
 <<<<<<< HEAD
+<<<<<<< HEAD
 // entity 114
 =======
+=======
+>>>>>>> parent of 5be1442 (everything works importing new assets)
 // entity 76
 {
 "classname" "func_group"
@@ -22890,6 +23193,9 @@
 }
 }
 // entity 78
+<<<<<<< HEAD
+>>>>>>> parent of 5be1442 (everything works importing new assets)
+=======
 >>>>>>> parent of 5be1442 (everything works importing new assets)
 {
 "classname" "func_group"
@@ -22899,7 +23205,11 @@
 "_tb_layer_sort_index" "3"
 }
 <<<<<<< HEAD
+<<<<<<< HEAD
 // entity 115
+=======
+// entity 79
+>>>>>>> parent of 5be1442 (everything works importing new assets)
 =======
 // entity 79
 >>>>>>> parent of 5be1442 (everything works importing new assets)
@@ -23003,6 +23313,7 @@
 }
 }
 <<<<<<< HEAD
+<<<<<<< HEAD
 // entity 116
 {
 "classname" "SpotLight3D"
@@ -23011,6 +23322,9 @@
 "_tb_group" "2442"
 }
 // entity 117
+=======
+// entity 80
+>>>>>>> parent of 5be1442 (everything works importing new assets)
 =======
 // entity 80
 >>>>>>> parent of 5be1442 (everything works importing new assets)
@@ -23114,6 +23428,7 @@
 }
 }
 <<<<<<< HEAD
+<<<<<<< HEAD
 // entity 118
 {
 "classname" "SpotLight3D"
@@ -23122,6 +23437,9 @@
 "_tb_group" "2441"
 }
 // entity 119
+=======
+// entity 81
+>>>>>>> parent of 5be1442 (everything works importing new assets)
 =======
 // entity 81
 >>>>>>> parent of 5be1442 (everything works importing new assets)
@@ -23225,6 +23543,7 @@
 }
 }
 <<<<<<< HEAD
+<<<<<<< HEAD
 // entity 120
 {
 "classname" "SpotLight3D"
@@ -23233,6 +23552,9 @@
 "_tb_group" "2443"
 }
 // entity 121
+=======
+// entity 82
+>>>>>>> parent of 5be1442 (everything works importing new assets)
 =======
 // entity 82
 >>>>>>> parent of 5be1442 (everything works importing new assets)
@@ -23336,6 +23658,7 @@
 }
 }
 <<<<<<< HEAD
+<<<<<<< HEAD
 // entity 122
 {
 "classname" "SpotLight3D"
@@ -23344,6 +23667,9 @@
 "_tb_group" "2444"
 }
 // entity 123
+=======
+// entity 83
+>>>>>>> parent of 5be1442 (everything works importing new assets)
 =======
 // entity 83
 >>>>>>> parent of 5be1442 (everything works importing new assets)
@@ -23447,6 +23773,7 @@
 }
 }
 <<<<<<< HEAD
+<<<<<<< HEAD
 // entity 124
 {
 "classname" "SpotLight3D"
@@ -23454,6 +23781,9 @@
 "_tb_group" "2437"
 }
 // entity 125
+=======
+// entity 84
+>>>>>>> parent of 5be1442 (everything works importing new assets)
 =======
 // entity 84
 >>>>>>> parent of 5be1442 (everything works importing new assets)
@@ -23557,6 +23887,7 @@
 }
 }
 <<<<<<< HEAD
+<<<<<<< HEAD
 // entity 126
 {
 "classname" "SpotLight3D"
@@ -23564,6 +23895,9 @@
 "_tb_group" "2432"
 }
 // entity 127
+=======
+// entity 85
+>>>>>>> parent of 5be1442 (everything works importing new assets)
 =======
 // entity 85
 >>>>>>> parent of 5be1442 (everything works importing new assets)
@@ -23667,6 +24001,7 @@
 }
 }
 <<<<<<< HEAD
+<<<<<<< HEAD
 // entity 128
 {
 "classname" "SpotLight3D"
@@ -23674,6 +24009,9 @@
 "_tb_group" "2430"
 }
 // entity 129
+=======
+// entity 86
+>>>>>>> parent of 5be1442 (everything works importing new assets)
 =======
 // entity 86
 >>>>>>> parent of 5be1442 (everything works importing new assets)
@@ -23777,6 +24115,7 @@
 }
 }
 <<<<<<< HEAD
+<<<<<<< HEAD
 // entity 130
 {
 "classname" "SpotLight3D"
@@ -23784,6 +24123,9 @@
 "_tb_group" "2433"
 }
 // entity 131
+=======
+// entity 87
+>>>>>>> parent of 5be1442 (everything works importing new assets)
 =======
 // entity 87
 >>>>>>> parent of 5be1442 (everything works importing new assets)
@@ -23887,6 +24229,7 @@
 }
 }
 <<<<<<< HEAD
+<<<<<<< HEAD
 // entity 132
 {
 "classname" "SpotLight3D"
@@ -23895,6 +24238,9 @@
 "_tb_group" "2440"
 }
 // entity 133
+=======
+// entity 88
+>>>>>>> parent of 5be1442 (everything works importing new assets)
 =======
 // entity 88
 >>>>>>> parent of 5be1442 (everything works importing new assets)
@@ -23998,6 +24344,7 @@
 }
 }
 <<<<<<< HEAD
+<<<<<<< HEAD
 // entity 134
 {
 "classname" "SpotLight3D"
@@ -24005,6 +24352,9 @@
 "_tb_group" "2434"
 }
 // entity 135
+=======
+// entity 89
+>>>>>>> parent of 5be1442 (everything works importing new assets)
 =======
 // entity 89
 >>>>>>> parent of 5be1442 (everything works importing new assets)
@@ -24124,7 +24474,11 @@
 }
 }
 <<<<<<< HEAD
+<<<<<<< HEAD
 // entity 136
+=======
+// entity 90
+>>>>>>> parent of 5be1442 (everything works importing new assets)
 =======
 // entity 90
 >>>>>>> parent of 5be1442 (everything works importing new assets)
@@ -24348,7 +24702,11 @@
 }
 }
 <<<<<<< HEAD
+<<<<<<< HEAD
 // entity 137
+=======
+// entity 91
+>>>>>>> parent of 5be1442 (everything works importing new assets)
 =======
 // entity 91
 >>>>>>> parent of 5be1442 (everything works importing new assets)
@@ -24563,6 +24921,7 @@
 }
 // brush 21
 {
+<<<<<<< HEAD
 <<<<<<< HEAD
 ( 1769.8895238095283 5082 103.33621933621345 ) ( 1776.0646464646525 5082 94.36075036074672 ) ( 1776.0646464646525 5138 94.36075036074672 ) sky1 -9.139648 26.263718 179.99998 0.4374999 -0.44877335
 ( 1769.8895238095283 5082 103.33621933621345 ) ( 1769.8895238095283 5138 103.33621933621345 ) ( 1783.783549783565 5138 115.90187590186682 ) sky1 -9.139648 -38.143066 270 0.4374999 0.38594523
@@ -25783,12 +26142,17 @@
 ( 4010.666666666667 2463.836734693884 70.90542611079753 ) ( 4010.666666666667 2463.836734693884 71.89989494582677 ) ( 4001.8333333333353 2463.836734693884 70.96067437941018 ) entitiy/clip 0 0 0 1 1
 ( 3984 2463.836734693884 71.34741225969948 ) ( 3984 2458.071428571439 71.34741225969948 ) ( 3984 2463.836734693884 72.34188109472875 ) entitiy/clip 0 0 0 1 1
 =======
+=======
+>>>>>>> parent of 5be1442 (everything works importing new assets)
 ( 1769.8895238095283 5050 103.33621933621345 ) ( 1776.0646464646525 5050 94.36075036074672 ) ( 1776.0646464646525 5106 94.36075036074672 ) sky1 -9.139648 26.263718 179.99998 0.4374999 -0.44877335
 ( 1769.8895238095283 5050 103.33621933621345 ) ( 1769.8895238095283 5106 103.33621933621345 ) ( 1783.783549783565 5106 115.90187590186682 ) sky1 -9.139648 -38.143066 270 0.4374999 0.38594523
 ( 1724 5078 128 ) ( 1852 5078 124 ) ( 1724 5078 124 ) sky1 226.146 82.26372 0 0.3859454 0.44877335
 ( 1769.8895238095283 5106 103.33621933621345 ) ( 1776.0646464646525 5106 94.36075036074672 ) ( 1783.783549783565 5106 101.54112554112011 ) sky1 226.146 82.26372 0 0.3859454 0.44877335
 ( 1776.0646464646525 5050 94.36075036074672 ) ( 1783.783549783565 5050 101.54112554112011 ) ( 1783.783549783565 5106 101.54112554112011 ) sky1 -9.139648 -50.144043 270 0.4374999 0.3859453
 ( 1783.783549783565 5050 101.54112554112011 ) ( 1783.783549783565 5050 115.90187590186682 ) ( 1783.783549783565 5106 115.90187590186682 ) sky1 -9.139648 22.263718 179.99998 0.4374999 -0.44877335
+<<<<<<< HEAD
+>>>>>>> parent of 5be1442 (everything works importing new assets)
+=======
 >>>>>>> parent of 5be1442 (everything works importing new assets)
 }
 }

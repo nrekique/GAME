@@ -1,7 +1,11 @@
 [gd_resource type="Resource" script_class="QodotFGDPointClass" load_steps=3 format=3 uid="uid://durkqru55fj5w"]
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 [ext_resource type="PackedScene" uid="uid://cxdrqbhec2uoq" path="res://maps/fgd/entities/scenes/npc.tscn" id="1_4nlph"]
+=======
+[ext_resource type="PackedScene" uid="uid://cxdrqbhec2uoq" path="res://entities/scenes/npc.tscn" id="1_j5pxa"]
+>>>>>>> parent of 5be1442 (everything works importing new assets)
 =======
 [ext_resource type="PackedScene" uid="uid://cxdrqbhec2uoq" path="res://entities/scenes/npc.tscn" id="1_j5pxa"]
 >>>>>>> parent of 5be1442 (everything works importing new assets)
