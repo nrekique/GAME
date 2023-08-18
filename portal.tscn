@@ -1,0 +1,27 @@
+[gd_scene load_steps=5 format=3 uid="uid://d2pqocm66fbvx"]
+
+[ext_resource type="Script" path="res://Scripts/portal.gd" id="2_fjd7x"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_x2q8l"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_20t35"]
+shading_mode = 0
+
+[sub_resource type="BoxMesh" id="BoxMesh_qvd1r"]
+flip_faces = true
+
+[node name="Portal" type="MeshInstance3D" groups=["Player"]]
+transform = Transform3D(1, 0, 0, 0, 4.22122, 0, 0, 0, 3.08997, 10.5816, 3.18282, -3.04143)
+mesh = SubResource("BoxMesh_x2q8l")
+skeleton = NodePath(".")
+surface_material_override/0 = SubResource("StandardMaterial3D_20t35")
+script = ExtResource("2_fjd7x")
+surface_material_override/0 = SubResource("StandardMaterial3D_20t35")
+
+[node name="helper" type="Node3D" parent="."]
+
+[node name="Portal" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+mesh = SubResource("BoxMesh_qvd1r")
+skeleton = NodePath(".")
+surface_material_override/0 = SubResource("StandardMaterial3D_20t35")

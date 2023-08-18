@@ -1,0 +1,21 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://cbvn8fwufde7c"
+path="res://.godot/imported/bevel-box.obj-50514707d07c4af43044e8b28c150bfb.mesh"
+
+[deps]
+
+files=["res://.godot/imported/bevel-box.obj-50514707d07c4af43044e8b28c150bfb.mesh"]
+
+source_file="res://other/world/box_metal/bevel-box.obj"
+dest_files=["res://.godot/imported/bevel-box.obj-50514707d07c4af43044e8b28c150bfb.mesh", "res://.godot/imported/bevel-box.obj-50514707d07c4af43044e8b28c150bfb.mesh"]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+optimize_mesh=true

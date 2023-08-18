@@ -5,6 +5,8 @@ type="CompressedTexture2D"
 uid="uid://cmqqld2fujx40"
 path="res://.godot/imported/icon.svg-aad0408eebe298e9d92c76d6f2c79cf6.ctex"
 metadata={
+"editor_dark_theme": true,
+"editor_scale": 2.0,
 "has_editor_variant": true,
 "vram_texture": false
 }

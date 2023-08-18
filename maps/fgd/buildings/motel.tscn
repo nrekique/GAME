@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://addons/qodot/src/nodes/qodot_map.gd" id="1_hfyfq"]
 [ext_resource type="Resource" uid="uid://4qg32v6xvets" path="res://maps/fgd/heavyW_fgd.tres" id="2_4w2cd"]
 [ext_resource type="Texture2D" uid="uid://d3bkwi1difi1g" path="res://textures/sand.png" id="3_6gf83"]
-[ext_resource type="Material" uid="uid://duvtrsmqwsll" path="res://textures/entitiy/water.tres" id="3_tv0u6"]
+[ext_resource type="Material" uid="uid://duvtrsmqwsll" path="res://textures/water.tres" id="3_tv0u6"]
 [ext_resource type="Texture2D" uid="uid://boitwp4c61761" path="res://textures/groundRed.png" id="4_5oa47"]
 [ext_resource type="Texture2D" uid="uid://cbllumptx0j7u" path="res://textures/stAsphaltBrn.png" id="5_cuvii"]
 [ext_resource type="Texture2D" uid="uid://dncm48655br5u" path="res://textures/smpconc01.png" id="6_rv31m"]

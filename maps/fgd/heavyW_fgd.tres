@@ -7,7 +7,7 @@
 [ext_resource type="Resource" uid="uid://b70dbh5v15xno" path="res://addons/qodot/game_definitions/fgd/solid_classes/trigger_solid_class.tres" id="7_2t0fx"]
 [ext_resource type="Resource" uid="uid://dx87vfhoblv4x" path="res://maps/fgd/point_classes/player_point.tres" id="7_ge04j"]
 [ext_resource type="Resource" uid="uid://bh1ds3ob0e5vv" path="res://maps/fgd/point_classes/omniLight_point.tres" id="7_jxl0b"]
-[ext_resource type="Resource" uid="uid://c7vqtnsw54gra" path="res://maps/fgd/point_classes/motel_point.tres" id="9_gdy11"]
+[ext_resource type="Resource" uid="uid://c6c6k6x4mji2v" path="res://maps/fgd/point_classes/motel.tres" id="9_gdy11"]
 [ext_resource type="Resource" uid="uid://c30slr71vxhiq" path="res://maps/fgd/point_classes/grill_point.tres" id="9_wyc3a"]
 [ext_resource type="Resource" uid="uid://dpmga0oywee7c" path="res://maps/fgd/solid_classes/portal_solid.tres" id="10_j4l43"]
 

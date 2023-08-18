@@ -9,7 +9,7 @@
 [ext_resource type="Texture2D" uid="uid://c726rr46s3267" path="res://textures/dark1.png" id="6_en6gw"]
 [ext_resource type="Texture2D" uid="uid://ca5gfjlo22wk0" path="res://textures/light1.png" id="7_x1mgc"]
 [ext_resource type="Texture2D" uid="uid://bjxw6724jt3rg" path="res://textures/concrete.png" id="8_5nhc8"]
-[ext_resource type="PackedScene" uid="uid://cckf3rtlfb4vm" path="res://maps/fgd/entities/scenes/player.tscn" id="10_2p2m7"]
+[ext_resource type="PackedScene" uid="uid://cckf3rtlfb4vm" path="res://entities/scenes/player.tscn" id="10_2p2m7"]
 [ext_resource type="PackedScene" path="res://maps/fgd/point_classes/light.tscn" id="10_ksvgv"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_tbrd0"]
