@@ -1,7 +1,7 @@
-[gd_resource type="Resource" load_steps=3 format=3]
+[gd_resource type="Resource" load_steps=3 format=2]
 
-[ext_resource type="Script" path="res://addons/qodot/src/resources/game-definitions/fgd/qodot_fgd_solid_class.gd" id="1"]
-[ext_resource type="Script" path="res://maps/fgd/entities/triggers/trigger_portal.gd" id="2"]
+[ext_resource path="res://addons/qodot/src/resources/game-definitions/fgd/qodot_fgd_solid_class.gd" type="Script" id=1]
+[ext_resource path="res://entities/triggers/trigger_portal.gd" type="Script" id=2]
 
 [resource]
 script = ExtResource( 1 )
