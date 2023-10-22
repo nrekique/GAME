@@ -1,0 +1,2 @@
+GL_NEAREST_MIPMAP_LINEAR
+gl_texturemode "gl_nearest_mipmap_linear"

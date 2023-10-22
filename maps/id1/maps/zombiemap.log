@@ -1,0 +1,76 @@
+---- qbsp / TyrUtils v0.17 ----
+Input file: zombiemap-compile.map
+Output file: zombiemap.bsp
+
+---- LoadMapFile ----
+*** WARNING 06: No info_player_deathmatch entities in level
+         1908 faces
+          314 brushes
+           37 entities
+           12 unique texnames
+          223 texinfo
+
+Opened WAD: /Users/nre_kique/Desktop/heavyWater/quakeDev/wad/START.WAD
+Opened WAD: /Users/nre_kique/Desktop/heavyWater/quakeDev/wad/heavywater-makkon.wad
+Processing hull 0...
+---- Brush_LoadEntity ----
+          314 brushes
+---- CSGFaces ----
+         1908 brushfaces
+         1864 csgfaces
+         1503 mergedfaces
+---- SolidBSP ----
+         3500 split nodes
+         1575 solid leafs
+         1871 empty leafs
+           55 water leafs
+         6538 leaffaces
+         6084 nodefaces
+---- Portalize ----
+         1926 vis leafs
+         1926 vis clusters
+         5758 vis portals
+---- FillOutside ----
+          288 outleafs
+---- MergeAll ----
+         1562 mergefaces
+---- SolidBSP ----
+          832 split nodes
+          374 solid leafs
+          454 empty leafs
+            5 water leafs
+         2780 leaffaces
+         2326 nodefaces
+---- Portalize ----
+          459 vis leafs
+          459 vis clusters
+         1536 vis portals
+---- Tjunc ----
+         1904 world edges
+         7992 edge points
+         1957 edges added by tjunctions
+            0 faces added by tjunctions
+---- MakeFaceEdges ----
+---- GrowRegions ----
+Processing hull 1...
+*** WARNING 19: No entities in empty space -- no filling performed (hull 1)
+Processing hull 2...
+*** WARNING 19: No entities in empty space -- no filling performed (hull 2)
+---- WriteBSPFile ----
+          589 planes            11780
+         3151 vertexes          37812
+          832 nodes             19968
+          223 texinfo            8920
+         2326 faces             46520
+         1841 clipnodes         14728
+          460 leafs             12880
+         2780 marksurfaces       5560
+        11252 surfedges         45008
+         5627 edges             22508
+           12 textures        3552788
+              lightdata             0
+              visdata               0
+              entdata            1054
+
+0.460 seconds elapsed
+Peak memory usage: 15165056 (14.5M)

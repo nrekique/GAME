@@ -1,0 +1,23 @@
+[remap]
+
+importer="bsp"
+type="PackedScene"
+uid="uid://c45j2mi0wj1ul"
+path="res://.godot/imported/outside.bsp-14db6fd3ea91d89b54e5f19353247919.scn"
+
+[deps]
+
+source_file="res://scenes/outside.bsp"
+dest_files=["res://.godot/imported/outside.bsp-14db6fd3ea91d89b54e5f19353247919.scn"]
+
+[params]
+
+inverse_scale_factor=32.0
+material_path_pattern="res://materials/{texture_name}_material.png"
+texture_material_rename={
+"texture_name1": "res://material/texture_name1_material.tres"
+}
+water_scene_template="res://addons/bsp_importer/water_example_template.tscn"
+entity_remap={
+"trigger_example": "res://triggers/trigger_example.tres"
+}

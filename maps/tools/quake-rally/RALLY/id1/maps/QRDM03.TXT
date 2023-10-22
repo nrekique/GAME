@@ -1,0 +1,56 @@
+================================================================
+Title                   : Downtown
+Filename                : downtown.bsp
+Release Date            : July 29th, 1997
+
+Author                  : Jean-Ray Arseneau (aka: Jra)
+URL                     : <none>
+Email Address           : 709751@ican.net
+
+Description             : QuakeRally Deathmatch Track.
+
+================================================================
+
+* Play Information *
+
+Single Player           : Drive around and practice
+Cooperative             : No
+Deathmatch              : 8 Deathmatch Starts
+Difficulty Settings     : No
+New Sounds              : No
+New Graphics            : No
+New Music               : No
+Demos Replaced          : None
+
+* Construction *
+
+Base                    : New Level from Scratch
+Editor(s) used          : Worldcraft v1.1
+Known Bugs              : None so far
+Build Time              : Approximately 30+ hours
+
+Texture Wad used        : QRally.WAD
+                          
+
+Compile machine         : Intel Pentium 200MMX w/32mb
+QBSP256C Time           : 
+Light (-extra) Time     : 
+VIS (-level 4) Time     : 
+
+Brushes                 : 
+Entities                : 
+Models                  : 
+
+* Where to get this level *
+
+Wait for QuakeRally v1.2 to come out
+
+* Copyright / Permissions *
+
+Copyright (c) 1997 Jean-Ray Arseneau.  All rights reserved.
+This level may be electronically distributed only at no charge to
+the recipient, and may not be modified in any way.  This text file
+must be included with the level.
+
+This level may not be distributed on any CD-ROM without the prior,
+explicit consent of Jean-Ray Arseneau.
