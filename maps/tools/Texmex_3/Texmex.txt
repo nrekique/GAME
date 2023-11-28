@@ -1,8 +1,0 @@
-Tex-Mex 3.4
-------------
-
-Release : 16 October 2000
--------------------------
--------------------------------------------------------------------------------------
-Recached:  usefull program, broken link, source lost.
-Madfox 9 nov 2013.
