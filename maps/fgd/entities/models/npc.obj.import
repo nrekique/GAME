@@ -1,0 +1,21 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://b3v72qq01b0mt"
+path="res://.godot/imported/npc.obj-75c8ae1abae0d8fef76e441186a9eb57.mesh"
+
+[deps]
+
+files=["res://.godot/imported/npc.obj-75c8ae1abae0d8fef76e441186a9eb57.mesh"]
+
+source_file="res://maps/fgd/entities/models/npc.obj"
+dest_files=["res://.godot/imported/npc.obj-75c8ae1abae0d8fef76e441186a9eb57.mesh", "res://.godot/imported/npc.obj-75c8ae1abae0d8fef76e441186a9eb57.mesh"]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+optimize_mesh=true

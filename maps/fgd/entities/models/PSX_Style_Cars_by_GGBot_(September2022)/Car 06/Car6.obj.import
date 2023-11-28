@@ -1,0 +1,21 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://bustujxfcgg72"
+path="res://.godot/imported/Car6.obj-56c9cc04a8f8f211c90a1bdf353cf8bd.mesh"
+
+[deps]
+
+files=["res://.godot/imported/Car6.obj-56c9cc04a8f8f211c90a1bdf353cf8bd.mesh"]
+
+source_file="res://maps/fgd/entities/models/PSX_Style_Cars_by_GGBot_(September2022)/Car 06/Car6.obj"
+dest_files=["res://.godot/imported/Car6.obj-56c9cc04a8f8f211c90a1bdf353cf8bd.mesh", "res://.godot/imported/Car6.obj-56c9cc04a8f8f211c90a1bdf353cf8bd.mesh"]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+optimize_mesh=true

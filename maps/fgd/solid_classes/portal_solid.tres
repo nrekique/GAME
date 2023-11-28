@@ -1,0 +1,35 @@
+[gd_resource type="Resource" script_class="QodotFGDSolidClass" load_steps=3 format=3 uid="uid://dpmga0oywee7c"]
+
+[ext_resource type="Script" path="res://addons/qodot/src/resources/game-definitions/fgd/qodot_fgd_solid_class.gd" id="1_qkf5i"]
+[ext_resource type="Script" path="res://Scripts/portal.gd" id="2_pe788"]
+
+[resource]
+script = ExtResource("1_qkf5i")
+spawn = "----------------------------------------------------------------"
+spawn_type = 2
+visual_build = "----------------------------------------------------------------"
+build_visuals = true
+collision_build = "----------------------------------------------------------------"
+collision_shape_type = 0
+scripting = "----------------------------------------------------------------"
+script_class = ExtResource("2_pe788")
+class_options = "----------------------------------------------------------------"
+classname = "Portal"
+description = "Use along with portal texture, and link with another portal brush"
+qodot_internal = false
+base_classes = Array[Resource]([])
+class_properties = {
+"target": "",
+"targetname": ""
+}
+class_property_descriptions = {
+"target": "points to link entities targetname property",
+"targetname": "points to link entities target property"
+}
+meta_properties = {
+"color": Color(0.756863, 0, 0.8, 1),
+"size": AABB(-8, -8, -8, 8, 8, 8)
+}
+node_options = "----------------------------------------------------------------"
+node_class = "MeshInstance3D"
+transient_node = false

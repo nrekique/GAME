@@ -1,0 +1,14 @@
+[remap]
+
+importer="qodot.map"
+type="Resource"
+uid="uid://cfd4g1i1mqad6"
+path="res://.godot/imported/car.map-ef48d9d6ff02568c63d426cd469c499a.tres"
+
+[deps]
+
+source_file="res://maps/buildings/car.map"
+dest_files=["res://.godot/imported/car.map-ef48d9d6ff02568c63d426cd469c499a.tres"]
+
+[params]
+

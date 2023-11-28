@@ -1,0 +1,14 @@
+[remap]
+
+importer="qodot.map"
+type="Resource"
+uid="uid://cb33vfet367bs"
+path="res://.godot/imported/motel.4.map-87ebcedcf227812fdfd549c26eb97981.tres"
+
+[deps]
+
+source_file="res://maps/buildings/autosave/motel.4.map"
+dest_files=["res://.godot/imported/motel.4.map-87ebcedcf227812fdfd549c26eb97981.tres"]
+
+[params]
+
