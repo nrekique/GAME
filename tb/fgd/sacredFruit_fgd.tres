@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="QodotFGDFile" load_steps=14 format=3 uid="uid://drodfn21pybt7"]
+
+[ext_resource type="Resource" uid="uid://wf5th532jj8c" path="res://tb/fgd/base/actor_base.tres" id="1_jh3xp"]
+[ext_resource type="Script" path="res://addons/qodot/src/resources/game-definitions/fgd/qodot_fgd_file.gd" id="1_y2rim"]
+[ext_resource type="Resource" uid="uid://de7dlejpb7lfc" path="res://tb/fgd/base/angle_base.tres" id="2_kqlo1"]
+[ext_resource type="Resource" uid="uid://cmisnbp8biagy" path="res://tb/fgd/base/appearance_base.tres" id="3_dwh7h"]
+[ext_resource type="Resource" uid="uid://cj7cn0kdcqvc5" path="res://tb/fgd/base/func_base.tres" id="4_xrfln"]
+[ext_resource type="Resource" uid="uid://b367vjuln0jxf" path="res://tb/fgd/base/mangle_base.tres" id="5_rwtvt"]
+[ext_resource type="Resource" uid="uid://b5psovarmb5cy" path="res://tb/fgd/base/shadow_base.tres" id="6_5fhs3"]
+[ext_resource type="Resource" uid="uid://clsagy4vei41j" path="res://tb/fgd/base/sound_base.tres" id="7_48340"]
+[ext_resource type="Resource" uid="uid://duyhlflwotisv" path="res://tb/fgd/base/target_base.tres" id="8_k3olq"]
+[ext_resource type="Resource" uid="uid://d2mtm7v4j3bdn" path="res://tb/fgd/point/actor_marsfrog.tres" id="9_73y8s"]
+[ext_resource type="Resource" uid="uid://due4ouly5tc4b" path="res://tb/fgd/point/info_intermission.tres" id="10_bifhj"]
+[ext_resource type="Resource" uid="uid://cjfejg6sdbfmg" path="res://tb/fgd/point/sound_3d.tres" id="11_ts1nc"]
+[ext_resource type="Resource" uid="uid://co3vpg6mccwv1" path="res://tb/fgd/solid/func_geo.tres" id="12_arcnf"]
+
+[resource]
+script = ExtResource("1_y2rim")
+export_file = false
+target_folder = "/Users/nre_kique/Library/Application Support/TrenchBroom/games/Sacred Fruit"
+fgd_name = "sacredFruit"
+base_fgd_files = Array[Resource]([])
+entity_definitions = Array[Resource]([ExtResource("1_jh3xp"), ExtResource("2_kqlo1"), ExtResource("3_dwh7h"), ExtResource("4_xrfln"), ExtResource("5_rwtvt"), ExtResource("6_5fhs3"), ExtResource("7_48340"), ExtResource("8_k3olq"), ExtResource("9_73y8s"), ExtResource("10_bifhj"), ExtResource("11_ts1nc"), ExtResource("12_arcnf")])

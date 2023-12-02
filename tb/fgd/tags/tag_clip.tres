@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="TrenchBroomTag" load_steps=2 format=3 uid="uid://e28748a4178r"]
+
+[ext_resource type="Script" path="res://addons/qodot/src/resources/game-definitions/trenchbroom/trenchbroom_tag.gd" id="1_4cfvl"]
+
+[resource]
+script = ExtResource("1_4cfvl")
+tag_name = "Clip"
+tag_attributes = Array[String](["transparent"])
+tag_match_type = 0
+tag_pattern = "clip"
+texture_name = ""

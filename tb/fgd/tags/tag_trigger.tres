@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="TrenchBroomTag" load_steps=2 format=3 uid="uid://cu34gq7mb0v0g"]
+
+[ext_resource type="Script" path="res://addons/qodot/src/resources/game-definitions/trenchbroom/trenchbroom_tag.gd" id="1_vjxb2"]
+
+[resource]
+script = ExtResource("1_vjxb2")
+tag_name = "trigger"
+tag_attributes = Array[String](["transparent"])
+tag_match_type = 4
+tag_pattern = "trigger*"
+texture_name = "trigger"

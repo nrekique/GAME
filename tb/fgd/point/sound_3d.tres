@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="QodotFGDPointClass" load_steps=4 format=3 uid="uid://cjfejg6sdbfmg"]
+
+[ext_resource type="Script" path="res://addons/qodot/src/resources/game-definitions/fgd/qodot_fgd_point_class.gd" id="1_h8u50"]
+[ext_resource type="Resource" uid="uid://clsagy4vei41j" path="res://tb/fgd/base/sound_base.tres" id="1_l8gt8"]
+[ext_resource type="Script" path="res://entities/sound_3d.gd" id="3_cwclj"]
+
+[resource]
+script = ExtResource("1_h8u50")
+script_class = ExtResource("3_cwclj")
+apply_rotation_on_map_build = true
+classname = "sound_3d"
+description = "Positional sound."
+qodot_internal = false
+base_classes = Array[Resource]([ExtResource("1_l8gt8")])
+class_properties = {}
+class_property_descriptions = {}
+meta_properties = {}
+node_class = "AudioStreamPlayer3D"
+transient_node = false

@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="QodotFGDBaseClass" load_steps=2 format=3 uid="uid://de7dlejpb7lfc"]
+
+[ext_resource type="Script" path="res://addons/qodot/src/resources/game-definitions/fgd/qodot_fgd_base_class.gd" id="1_eowna"]
+
+[resource]
+script = ExtResource("1_eowna")
+classname = "Angle"
+description = ""
+qodot_internal = false
+base_classes = Array[Resource]([])
+class_properties = {
+"angle": 0.0
+}
+class_property_descriptions = {
+"angle": "Entity rotation in degrees."
+}
+meta_properties = {
+"color": Color(0.8, 0.8, 0.8, 1),
+"size": AABB(-8, -8, -8, 8, 8, 8)
+}
+node_class = ""
+transient_node = false

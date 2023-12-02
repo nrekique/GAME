@@ -11,9 +11,14 @@ config_version=5
 [application]
 
 config/name="Sacred Heart"
+run/main_scene="res://maps/marsfrog.tscn"
 config/features=PackedStringArray("4.2", "Forward Plus")
 config/icon="res://icon.svg"
 
 [autoload]
 
 GAME="*res://GameManager.gd"
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/qodot/plugin.cfg")

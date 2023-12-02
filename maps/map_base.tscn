@@ -1,0 +1,16 @@
+[gd_scene load_steps=4 format=3 uid="uid://dm22cvleefmmy"]
+
+[ext_resource type="Script" path="res://addons/qodot/src/nodes/qodot_map.gd" id="1_k45hp"]
+[ext_resource type="Resource" uid="uid://drodfn21pybt7" path="res://tb/fgd/sacredFruit_fgd.tres" id="2_jdsfu"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_jxydk"]
+
+[node name="Node3D" type="Node3D"]
+
+[node name="QodotMap" type="Node3D" parent="."]
+script = ExtResource("1_k45hp")
+inverse_scale_factor = 32.0
+entity_fgd = ExtResource("2_jdsfu")
+base_texture_dir = "res://tb/textures"
+texture_file_extensions = PackedStringArray("png", "jpg", "jpeg", "bmp")
+default_material = SubResource("StandardMaterial3D_jxydk")

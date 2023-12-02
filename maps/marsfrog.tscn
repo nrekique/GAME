@@ -1,0 +1,126 @@
+[gd_scene load_steps=14 format=3 uid="uid://bsj0kuhumthlp"]
+
+[ext_resource type="Script" path="res://addons/qodot/src/nodes/qodot_map.gd" id="1_jibye"]
+[ext_resource type="Resource" uid="uid://drodfn21pybt7" path="res://tb/fgd/sacredFruit_fgd.tres" id="2_l2vbn"]
+[ext_resource type="Script" path="res://addons/qodot/src/nodes/qodot_entity.gd" id="3_y3wg3"]
+[ext_resource type="Texture2D" uid="uid://bntqem1f6idi6" path="res://tb/textures/mars/mars_dirt.png" id="4_4egot"]
+[ext_resource type="Texture2D" uid="uid://c51vxkpc4po6b" path="res://tb/textures/mars/mars_cliff.png" id="5_3r4wn"]
+[ext_resource type="Script" path="res://entities/intermission_camera.gd" id="6_3v186"]
+[ext_resource type="PackedScene" uid="uid://cdgvh0hb5l57k" path="res://entities/actors/marsfrog/marsfrog.tscn" id="7_to6sv"]
+[ext_resource type="AudioStream" uid="uid://bfha55v4yoanq" path="res://sounds/amazing.wav" id="8_apk0q"]
+[ext_resource type="Script" path="res://entities/sound_3d.gd" id="9_uv28t"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_jxydk"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_upgdd"]
+albedo_texture = ExtResource("4_4egot")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_yy620"]
+albedo_texture = ExtResource("5_3r4wn")
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_vqsrg"]
+_surfaces = [{
+"aabb": AABB(-4, -0.95, -4, 8.00001, 1.00136e-05, 8),
+"attribute_data": PackedByteArray(0, 0, 96, 191, 0, 0, 96, 191, 0, 0, 144, 63, 0, 0, 96, 191, 0, 0, 144, 63, 0, 0, 144, 63, 0, 0, 96, 191, 0, 0, 144, 63),
+"format": 34359742487,
+"index_count": 6,
+"index_data": PackedByteArray(0, 0, 1, 0, 2, 0, 0, 0, 2, 0, 3, 0),
+"material": SubResource("StandardMaterial3D_upgdd"),
+"name": "mars/mars_dirt",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 4,
+"vertex_data": PackedByteArray(0, 0, 128, 64, 51, 51, 115, 191, 0, 0, 128, 192, 0, 0, 128, 64, 51, 51, 115, 191, 0, 0, 128, 64, 0, 0, 128, 192, 51, 51, 115, 191, 0, 0, 128, 64, 0, 0, 128, 192, 51, 51, 115, 191, 0, 0, 128, 192, 255, 127, 255, 255, 255, 127, 255, 191, 255, 127, 255, 255, 255, 127, 255, 191, 255, 127, 255, 255, 255, 127, 255, 191, 255, 127, 255, 255, 255, 127, 255, 191)
+}, {
+"aabb": AABB(-4, -0.95, -4, 8, 2.50001, 8),
+"attribute_data": PackedByteArray(0, 0, 16, 191, 0, 0, 160, 190, 0, 0, 224, 62, 0, 0, 160, 190, 0, 0, 224, 62, 0, 0, 0, 0, 0, 0, 16, 191, 0, 0, 0, 0, 0, 0, 224, 62, 0, 0, 160, 190, 0, 0, 224, 62, 0, 0, 0, 0, 0, 0, 16, 191, 0, 0, 0, 0, 0, 0, 16, 191, 0, 0, 160, 190, 0, 0, 0, 63, 0, 0, 160, 190, 0, 0, 0, 63, 0, 0, 0, 0, 0, 0, 0, 191, 0, 0, 0, 0, 0, 0, 0, 191, 0, 0, 160, 190, 0, 0, 0, 191, 0, 0, 160, 190, 0, 0, 0, 63, 0, 0, 160, 190, 0, 0, 0, 63, 0, 0, 0, 0, 0, 0, 0, 191, 0, 0, 0, 0),
+"format": 34359742487,
+"index_count": 24,
+"index_data": PackedByteArray(0, 0, 1, 0, 2, 0, 0, 0, 2, 0, 3, 0, 4, 0, 5, 0, 6, 0, 4, 0, 6, 0, 7, 0, 8, 0, 9, 0, 10, 0, 8, 0, 10, 0, 11, 0, 12, 0, 13, 0, 14, 0, 12, 0, 14, 0, 15, 0),
+"material": SubResource("StandardMaterial3D_yy620"),
+"name": "mars/mars_cliff",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 16,
+"vertex_data": PackedByteArray(0, 0, 128, 192, 102, 102, 198, 63, 0, 0, 128, 192, 0, 0, 128, 64, 102, 102, 198, 63, 0, 0, 128, 192, 0, 0, 128, 64, 51, 51, 115, 191, 0, 0, 128, 192, 0, 0, 128, 192, 51, 51, 115, 191, 0, 0, 128, 192, 0, 0, 128, 192, 102, 102, 198, 63, 0, 0, 128, 64, 0, 0, 128, 192, 51, 51, 115, 191, 0, 0, 128, 64, 0, 0, 128, 64, 51, 51, 115, 191, 0, 0, 128, 64, 0, 0, 128, 64, 102, 102, 198, 63, 0, 0, 128, 64, 0, 0, 128, 192, 102, 102, 198, 63, 0, 0, 128, 192, 0, 0, 128, 192, 51, 51, 115, 191, 0, 0, 128, 192, 0, 0, 128, 192, 51, 51, 115, 191, 0, 0, 128, 64, 0, 0, 128, 192, 102, 102, 198, 63, 0, 0, 128, 64, 0, 0, 128, 64, 102, 102, 198, 63, 0, 0, 128, 192, 0, 0, 128, 64, 102, 102, 198, 63, 0, 0, 128, 64, 0, 0, 128, 64, 51, 51, 115, 191, 0, 0, 128, 64, 0, 0, 128, 64, 51, 51, 115, 191, 0, 0, 128, 192, 255, 127, 255, 127, 255, 255, 255, 191, 255, 127, 255, 127, 255, 255, 255, 191, 255, 127, 255, 127, 255, 255, 255, 191, 255, 127, 255, 127, 255, 255, 255, 191, 255, 255, 255, 255, 0, 0, 255, 191, 255, 255, 255, 255, 0, 0, 255, 191, 255, 255, 255, 255, 0, 0, 255, 191, 255, 255, 255, 255, 0, 0, 255, 191, 255, 255, 255, 127, 255, 255, 255, 255, 255, 255, 255, 127, 255, 255, 255, 255, 255, 255, 255, 127, 255, 255, 255, 255, 255, 255, 255, 127, 255, 255, 255, 255, 0, 0, 255, 127, 255, 127, 255, 191, 0, 0, 255, 127, 255, 127, 255, 191, 0, 0, 255, 127, 255, 127, 255, 191, 0, 0, 255, 127, 255, 127, 255, 191)
+}]
+
+[node name="Node3D" type="Node3D"]
+
+[node name="QodotMap" type="Node3D" parent="."]
+script = ExtResource("1_jibye")
+map_file = "/Users/nre_kique/Documents/GitHub/Heavy-Water/tb/marsfrog.map"
+inverse_scale_factor = 32.0
+entity_fgd = ExtResource("2_l2vbn")
+base_texture_dir = "res://tb/textures"
+texture_file_extensions = PackedStringArray("png", "jpg", "jpeg", "bmp")
+default_material = SubResource("StandardMaterial3D_jxydk")
+
+[node name="entity_0_worldspawn" type="Node3D" parent="QodotMap"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.08165e-12, 0.95, 2.08165e-12)
+script = ExtResource("3_y3wg3")
+properties = {
+"_tb_mod": "textures",
+"_tb_textures": "textures;textures/mars;textures/special",
+"classname": "worldspawn",
+"mapversion": "220",
+"targetname": ""
+}
+
+[node name="entity_0_mesh_instance" type="MeshInstance3D" parent="QodotMap/entity_0_worldspawn"]
+cast_shadow = 2
+gi_mode = 0
+mesh = SubResource("ArrayMesh_vqsrg")
+
+[node name="entity_1_info_intermission" type="Camera3D" parent="QodotMap"]
+transform = Transform3D(0.903705, 0, -0.428155, 0, 1, 0, 0.428155, 0, 0.903705, -1.25, 0.25, 1.25)
+script = ExtResource("6_3v186")
+properties = {
+"appearance_flags": 0,
+"classname": "info_intermission",
+"mangle": Vector3(0, 140, 0),
+"message": "",
+"origin": "40 -40 8",
+"target": "",
+"targetname": ""
+}
+
+[node name="entity_2_actor_marsfrog" parent="QodotMap" instance=ExtResource("7_to6sv")]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0.25, 0.25, 1.25)
+properties = {
+"angle": 0.0,
+"appearance_flags": 2,
+"classname": "actor_marsfrog",
+"message": "",
+"origin": "40 8 8",
+"target": "",
+"targetname": ""
+}
+
+[node name="entity_3_actor_marsfrog" parent="QodotMap" instance=ExtResource("7_to6sv")]
+transform = Transform3D(-0.5, 0, 0.866025, 0, 1, 0, -0.866025, 0, -0.5, -0.25, 0.25, -0.75)
+properties = {
+"angle": -60.0,
+"appearance_flags": 0,
+"classname": "actor_marsfrog",
+"message": "",
+"origin": "-24 -8 8",
+"target": "",
+"targetname": "froggy"
+}
+
+[node name="entity_4_sound_3d" type="AudioStreamPlayer3D" parent="QodotMap"]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, -2.25, 2.75, 3.25)
+stream = ExtResource("8_apk0q")
+autoplay = true
+script = ExtResource("9_uv28t")
+properties = {
+"appearance_flags": 0,
+"classname": "sound_3d",
+"message": "Little Marsfrog! Little Marsfrog!",
+"origin": "104 -72 88",
+"sound": "amazing.wav",
+"target": "froggy",
+"targetname": "",
+"volume": 1.0
+}

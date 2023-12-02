@@ -1,0 +1,14 @@
+[remap]
+
+importer="qodot.map"
+type="Resource"
+uid="uid://blb41f0mvdr2e"
+path="res://.godot/imported/marsfrog.map-e5f259904329daa3ba87e5c1820285f4.tres"
+
+[deps]
+
+source_file="res://tb/marsfrog.map"
+dest_files=["res://.godot/imported/marsfrog.map-e5f259904329daa3ba87e5c1820285f4.tres"]
+
+[params]
+

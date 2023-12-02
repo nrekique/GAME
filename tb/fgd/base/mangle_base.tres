@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="QodotFGDBaseClass" load_steps=2 format=3 uid="uid://b367vjuln0jxf"]
+
+[ext_resource type="Script" path="res://addons/qodot/src/resources/game-definitions/fgd/qodot_fgd_base_class.gd" id="1_hp0c0"]
+
+[resource]
+script = ExtResource("1_hp0c0")
+classname = "Mangle"
+description = ""
+qodot_internal = false
+base_classes = Array[Resource]([])
+class_properties = {
+"mangle": Vector3(0, 0, 0)
+}
+class_property_descriptions = {
+"mangle": "Entity rotation in degrees."
+}
+meta_properties = {
+"color": Color(0.8, 0.8, 0.8, 1),
+"size": AABB(-8, -8, -8, 8, 8, 8)
+}
+node_class = ""
+transient_node = false
