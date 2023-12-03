@@ -10,9 +10,10 @@ config_version=5
 
 [application]
 
-config/name="Sacred Heart"
-run/main_scene="res://maps/marsfrog.tscn"
+config/name="Sacred Fruit"
+run/main_scene="res://maps/grill_test.tscn"
 config/features=PackedStringArray("4.2", "Forward Plus")
+boot_splash/show_image=false
 config/icon="res://icon.svg"
 
 [autoload]
@@ -80,3 +81,8 @@ key_exit={
 [physics]
 
 3d/physics_engine="JoltPhysics3D"
+
+[rendering]
+
+textures/canvas_textures/default_texture_filter=0
+occlusion_culling/use_occlusion_culling=true
