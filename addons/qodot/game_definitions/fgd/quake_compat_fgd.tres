@@ -12,7 +12,7 @@
 [ext_resource type="Resource" uid="uid://b70dbh5v15xno" path="res://addons/qodot/game_definitions/fgd/solid_classes/trigger_solid_class.tres" id="9_3imc6"]
 [ext_resource type="Resource" uid="uid://bu2f3lupsjhfp" path="res://addons/qodot/game_definitions/fgd/solid_classes/wall_solid_class.tres" id="10_nvy6q"]
 [ext_resource type="Resource" uid="uid://dxp37dladbquv" path="res://addons/qodot/game_definitions/fgd/solid_classes/worldspawn_solid_class.tres" id="11_4x00y"]
-[ext_resource type="Resource" uid="uid://ccwosedfa8v8d" path="res://addons/qodot/game_definitions/fgd/point_classes/light_point_class.tres" id="12_es8us"]
+[ext_resource type="Resource" uid="uid://ccwosedfa8v8d" path="res://tb/fgd/point/light_point_class.tres" id="12_es8us"]
 
 [resource]
 script = ExtResource("1_w8ykl")

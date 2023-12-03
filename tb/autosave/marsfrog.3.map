@@ -1,0 +1,108 @@
+// Game: Sacred_Fruit
+// Format: Valve
+// entity 0
+{
+"mapversion" "220"
+"classname" "worldspawn"
+"_tb_mod" "textures"
+"_tb_textures" "textures;textures/mars;textures/special"
+"targetname" ""
+// brush 0
+{
+( -128 -80 -16 ) ( -128 -79 -16 ) ( -128 -80 -15 ) special/skip [ 0 -1 0 16 ] [ 0 0 -1 0 ] 0 1 1
+( -112 -128 -16 ) ( -112 -128 -15 ) ( -111 -128 -16 ) special/skip [ 1 0 0 16 ] [ 0 0 -1 0 ] 0 1 1
+( -112 -80 -16 ) ( -111 -80 -16 ) ( -112 -79 -16 ) special/skip [ -1 0 0 -16 ] [ 0 -1 0 16 ] 0 1 1
+( 16 48 0 ) ( 16 49 0 ) ( 17 48 0 ) mars/mars_dirt [ 1 0 0 16 ] [ 0 -1 0 16 ] 0 1 1
+( 16 128 16 ) ( 17 128 16 ) ( 16 128 17 ) special/skip [ -1 0 0 -16 ] [ 0 0 -1 0 ] 0 1 1
+( 128 48 16 ) ( 128 48 17 ) ( 128 49 16 ) special/skip [ 0 1 0 -16 ] [ 0 0 -1 0 ] 0 1 1
+}
+// brush 1
+{
+( -144 -48 0 ) ( -144 -47 0 ) ( -144 -48 1 ) special/skip [ 0 -1 0 16 ] [ 0 0 -1 0 ] 0 1 1
+( -144 -128 0 ) ( -144 -128 1 ) ( -143 -128 0 ) special/skip [ 1 0 0 0 ] [ 0 0 -1 0 ] 0 1 1
+( -144 -48 0 ) ( -143 -48 0 ) ( -144 -47 0 ) special/skip [ -1 0 0 0 ] [ 0 -1 0 16 ] 0 1 1
+( -128 32 80 ) ( -128 33 80 ) ( -127 32 80 ) special/skip [ 1 0 0 0 ] [ 0 -1 0 16 ] 0 1 1
+( -128 128 16 ) ( -127 128 16 ) ( -128 128 17 ) special/skip [ -1 0 0 0 ] [ 0 0 -1 0 ] 0 1 1
+( -128 32 16 ) ( -128 32 17 ) ( -128 33 16 ) mars/mars_cliff [ 0 1 0 -16 ] [ 0 0 -1 0 ] 0 1 1
+}
+// brush 2
+{
+( 128 -48 0 ) ( 128 -47 0 ) ( 128 -48 1 ) mars/mars_cliff [ 0 -1 0 -16 ] [ 0 0 -1 0 ] 0 1 1
+( 128 -128 0 ) ( 128 -128 1 ) ( 129 -128 0 ) special/skip [ 1 0 0 -16 ] [ 0 0 -1 0 ] 0 1 1
+( 128 -48 0 ) ( 129 -48 0 ) ( 128 -47 0 ) special/skip [ -1 0 0 16 ] [ 0 -1 0 -16 ] 0 1 1
+( 144 32 80 ) ( 144 33 80 ) ( 145 32 80 ) special/skip [ 1 0 0 -16 ] [ 0 -1 0 -16 ] 0 1 1
+( 144 128 16 ) ( 145 128 16 ) ( 144 128 17 ) special/skip [ -1 0 0 16 ] [ 0 0 -1 0 ] 0 1 1
+( 144 32 16 ) ( 144 32 17 ) ( 144 33 16 ) special/skip [ 0 1 0 16 ] [ 0 0 -1 0 ] 0 1 1
+}
+// brush 3
+{
+( -128 -224 0 ) ( -128 -223 0 ) ( -128 -224 1 ) special/skip [ 0 -1 0 0 ] [ 0 0 -1 0 ] 0 1 1
+( 16 -144 0 ) ( 16 -144 1 ) ( 17 -144 0 ) special/skip [ 1 0 0 0 ] [ 0 0 -1 0 ] 0 1 1
+( 16 -224 0 ) ( 17 -224 0 ) ( 16 -223 0 ) special/skip [ -1 0 0 0 ] [ 0 -1 0 0 ] 0 1 1
+( 32 -144 80 ) ( 32 -143 80 ) ( 33 -144 80 ) special/skip [ 1 0 0 0 ] [ 0 -1 0 0 ] 0 1 1
+( 32 -128 16 ) ( 33 -128 16 ) ( 32 -128 17 ) mars/mars_cliff [ -1 0 0 0 ] [ 0 0 -1 0 ] 0 1 1
+( 128 -144 16 ) ( 128 -144 17 ) ( 128 -143 16 ) special/skip [ 0 1 0 0 ] [ 0 0 -1 0 ] 0 1 1
+}
+// brush 4
+{
+( -128 48 0 ) ( -128 49 0 ) ( -128 48 1 ) special/skip [ 0 -1 0 -16 ] [ 0 0 -1 0 ] 0 1 1
+( 16 128 0 ) ( 16 128 1 ) ( 17 128 0 ) mars/mars_cliff [ 1 0 0 0 ] [ 0 0 -1 0 ] 0 1 1
+( 16 48 0 ) ( 17 48 0 ) ( 16 49 0 ) special/skip [ -1 0 0 0 ] [ 0 -1 0 -16 ] 0 1 1
+( 32 128 80 ) ( 32 129 80 ) ( 33 128 80 ) special/skip [ 1 0 0 0 ] [ 0 -1 0 -16 ] 0 1 1
+( 32 144 16 ) ( 33 144 16 ) ( 32 144 17 ) special/skip [ -1 0 0 0 ] [ 0 0 -1 0 ] 0 1 1
+( 128 128 16 ) ( 128 128 17 ) ( 128 129 16 ) special/skip [ 0 1 0 16 ] [ 0 0 -1 0 ] 0 1 1
+}
+}
+// entity 1
+{
+"classname" "info_intermission"
+"origin" "40 -40 8"
+"mangle" "0 140 0"
+"targetname" ""
+}
+// entity 2
+{
+"classname" "actor_marsfrog"
+"origin" "40 8 8"
+"appearance_flags" "2"
+"targetname" ""
+}
+// entity 3
+{
+"classname" "actor_marsfrog"
+"origin" "-24 -8 8"
+"targetname" "froggy"
+"angle" "-60 0 0"
+}
+// entity 4
+{
+"classname" "sound_3d"
+"origin" "104 -72 88"
+"target" "froggy"
+"message" "Little Marsfrog! Little Marsfrog!"
+"sound" "amazing.wav"
+"targetname" ""
+}
+// entity 5
+{
+"classname" "light"
+"origin" "8 24 24"
+}
+// entity 6
+{
+"classname" "physics_ball"
+"origin" "-24 -24 8"
+}
+// entity 7
+{
+"classname" "button"
+// brush 0
+{
+( -80 -96 0 ) ( -80 -95 0 ) ( -80 -96 1 ) mars/mars_dirt [ 0 -1 0 0 ] [ 0 0 -1 0 ] 0 1 1
+( -80 -64 0 ) ( -80 -64 1 ) ( -79 -64 0 ) mars/mars_dirt [ 1 0 0 48 ] [ 0 0 -1 0 ] 0 1 1
+( -80 -96 0 ) ( -79 -96 0 ) ( -80 -95 0 ) mars/mars_dirt [ -1 0 0 -48 ] [ 0 -1 0 0 ] 0 1 1
+( -16 -32 16 ) ( -16 -31 16 ) ( -15 -32 16 ) mars/mars_dirt [ 1 0 0 48 ] [ 0 -1 0 0 ] 0 1 1
+( -16 -32 16 ) ( -15 -32 16 ) ( -16 -32 17 ) mars/mars_dirt [ -1 0 0 -48 ] [ 0 0 -1 0 ] 0 1 1
+( -48 -32 16 ) ( -48 -32 17 ) ( -48 -31 16 ) mars/mars_dirt [ 0 1 0 0 ] [ 0 0 -1 0 ] 0 1 1
+}
+}
