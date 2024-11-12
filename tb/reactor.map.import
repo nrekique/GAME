@@ -1,0 +1,14 @@
+[remap]
+
+importer="qodot.map"
+type="Resource"
+uid="uid://v728dv32p10u"
+path="res://.godot/imported/reactor.map-e5362d8c389f69673b931edad4372a15.tres"
+
+[deps]
+
+source_file="res://tb/reactor.map"
+dest_files=["res://.godot/imported/reactor.map-e5362d8c389f69673b931edad4372a15.tres"]
+
+[params]
+

@@ -4,7 +4,7 @@
 {
 "mapversion" "220"
 "classname" "worldspawn"
-"_tb_textures" "textures;textures/$lib;textures/$lib/funcs;textures/mars;textures/special"
+"_tb_textures" "textures;textures/Color;textures/special"
 // brush 0
 {
 ( 664 408 0 ) ( 664 409 0 ) ( 664 408 1 ) special/skip [ 0 -1 0 0 ] [ 0 0 -1 0 ] 0 1 1

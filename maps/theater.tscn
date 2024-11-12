@@ -1,29 +1,25 @@
-[gd_scene load_steps=1340 format=3 uid="uid://b0ffmkthhca0p"]
+[gd_scene load_steps=1336 format=3 uid="uid://b0ffmkthhca0p"]
 
 [ext_resource type="Environment" uid="uid://dw4yuv5d6eltn" path="res://gillEenviroment.tres" id="1_4yst5"]
 [ext_resource type="Script" path="res://addons/qodot/src/nodes/qodot_map.gd" id="1_yfh8s"]
 [ext_resource type="Resource" uid="uid://c36hv0o6g0udo" path="res://addons/qodot/game_definitions/fgd/qodot_fgd.tres" id="3_l3qn8"]
-[ext_resource type="Texture2D" uid="uid://bh0gmunuw07q4" path="res://tb/textures/dark1.png" id="4_x5f0a"]
-[ext_resource type="Texture2D" uid="uid://b075s7nmh2lto" path="res://tb/textures/skystar1.png" id="5_8knm5"]
-[ext_resource type="Texture2D" uid="uid://dermr8lovf7r4" path="res://tb/textures/light1.png" id="6_mpw5u"]
-[ext_resource type="Texture2D" uid="uid://da45pcqs4k10p" path="res://tb/textures/cutains.png" id="8_8286q"]
-[ext_resource type="Texture2D" uid="uid://c7fbidtsjebbm" path="res://tb/textures/curtainsBlack.png" id="9_3yyxt"]
-[ext_resource type="Texture2D" uid="uid://dawsktxebnct7" path="res://tb/textures/sky.png" id="10_718y8"]
-[ext_resource type="Texture2D" uid="uid://buy2u26up8eub" path="res://tb/textures/concreteWhite.png" id="11_hhsj1"]
-[ext_resource type="Texture2D" uid="uid://xxir5rlrruup" path="res://tb/textures/wood1_1.png" id="12_ifutk"]
-[ext_resource type="Texture2D" uid="uid://doii8q6s42067" path="res://tb/textures/light12.png" id="13_jb8b5"]
-[ext_resource type="Texture2D" uid="uid://5c8482yrwl1d" path="res://tb/textures/stAsphaltBlk.png" id="14_aw77u"]
-[ext_resource type="Texture2D" uid="uid://bs80b02wwmrki" path="res://tb/textures/wizwood1_3.png" id="15_0oldr"]
-[ext_resource type="Texture2D" uid="uid://fkho7p8rjx18" path="res://tb/textures/grass_floor1.png" id="16_sh84y"]
-[ext_resource type="Texture2D" uid="uid://cvh11aadmc7lw" path="res://tb/textures/wizwood1_8.png" id="17_uu6ts"]
-[ext_resource type="Texture2D" uid="uid://drpstafjbduck" path="res://tb/textures/Assunto.png" id="18_ppsri"]
-[ext_resource type="Texture2D" uid="uid://b6n0mgpvhtv7w" path="res://tb/textures/cutout1.png" id="19_xx02m"]
-[ext_resource type="Texture2D" uid="uid://dg28c8ga7jxh6" path="res://tb/textures/coop.png" id="20_od13v"]
-[ext_resource type="Texture2D" uid="uid://snsnw2ethgq2" path="res://tb/textures/cutout4.png" id="21_o1vrw"]
-[ext_resource type="Texture2D" uid="uid://c4cs5f0ixbdgk" path="res://tb/textures/cutout12.png" id="22_octkk"]
-[ext_resource type="Texture2D" uid="uid://dx435pes2pel1" path="res://tb/textures/cutout5.png" id="23_1ahns"]
-[ext_resource type="Texture2D" uid="uid://c7iuppw2sxlfh" path="res://tb/textures/cutout2.png" id="24_11o5u"]
-[ext_resource type="Texture2D" uid="uid://ruaikr7b8dje" path="res://tb/textures/cutout11.png" id="25_ubdy2"]
+[ext_resource type="Texture2D" uid="uid://dvvgnt82klxij" path="res://tb/textures/cutains.png" id="8_8286q"]
+[ext_resource type="Texture2D" uid="uid://bdquvrvl0awlq" path="res://tb/textures/curtainsBlack.png" id="9_3yyxt"]
+[ext_resource type="Texture2D" uid="uid://bj2ty35j0gt5v" path="res://tb/textures/sky.png" id="10_718y8"]
+[ext_resource type="Texture2D" uid="uid://cssvfjtowylh0" path="res://tb/textures/concreteWhite.png" id="11_hhsj1"]
+[ext_resource type="Texture2D" uid="uid://bb0njky2vnenh" path="res://tb/textures/wood1_1.png" id="12_ifutk"]
+[ext_resource type="Texture2D" uid="uid://copf161embmsf" path="res://tb/textures/stAsphaltBlk.png" id="14_aw77u"]
+[ext_resource type="Texture2D" uid="uid://bquhrwybm7kon" path="res://tb/textures/wizwood1_3.png" id="15_0oldr"]
+[ext_resource type="Texture2D" uid="uid://7rwn85sf0ka0" path="res://tb/textures/grass_floor1.png" id="16_sh84y"]
+[ext_resource type="Texture2D" uid="uid://dj2a4uwtx8lqn" path="res://tb/textures/wizwood1_8.png" id="17_uu6ts"]
+[ext_resource type="Texture2D" uid="uid://d3ihuthsme75l" path="res://tb/textures/Assunto.png" id="18_ppsri"]
+[ext_resource type="Texture2D" uid="uid://brny47smcnk33" path="res://tb/textures/cutout1.png" id="19_xx02m"]
+[ext_resource type="Texture2D" uid="uid://c4h6xytbfhqev" path="res://tb/textures/coop.png" id="20_od13v"]
+[ext_resource type="Texture2D" uid="uid://btst8wp4poqwf" path="res://tb/textures/cutout4.png" id="21_o1vrw"]
+[ext_resource type="Texture2D" uid="uid://cekovk540xuw4" path="res://tb/textures/cutout12.png" id="22_octkk"]
+[ext_resource type="Texture2D" uid="uid://cgyf8kr611cab" path="res://tb/textures/cutout5.png" id="23_1ahns"]
+[ext_resource type="Texture2D" uid="uid://d2baqbicsyb62" path="res://tb/textures/cutout2.png" id="24_11o5u"]
+[ext_resource type="Texture2D" uid="uid://dtovwh3p5bb3o" path="res://tb/textures/cutout11.png" id="25_ubdy2"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_forwn"]
 emission_enabled = true
@@ -37,13 +33,10 @@ height = 4.0
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_mot5d"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_if6td"]
-albedo_texture = ExtResource("5_8knm5")
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_gg5f2"]
-albedo_texture = ExtResource("4_x5f0a")
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_jolh6"]
-albedo_texture = ExtResource("6_mpw5u")
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_g0dna"]
 albedo_texture = ExtResource("10_718y8")
@@ -52,7 +45,6 @@ albedo_texture = ExtResource("10_718y8")
 albedo_texture = ExtResource("12_ifutk")
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ye2kk"]
-albedo_texture = ExtResource("13_jb8b5")
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_qblt7"]
 albedo_texture = ExtResource("11_hhsj1")
