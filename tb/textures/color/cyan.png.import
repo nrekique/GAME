@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://jf6wesy3rvxu"
-path="res://.godot/imported/cyan.png-a9010b5d492eec7e7efd971b0470bf72.ctex"
+path="res://.godot/imported/cyan.png-beacf0b903d1f2d356ba521430f93a36.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://tb/textures/Color/cyan.png"
-dest_files=["res://.godot/imported/cyan.png-a9010b5d492eec7e7efd971b0470bf72.ctex"]
+source_file="res://tb/textures/color/cyan.png"
+dest_files=["res://.godot/imported/cyan.png-beacf0b903d1f2d356ba521430f93a36.ctex"]
 
 [params]
 
