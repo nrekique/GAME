@@ -1,4 +1,11 @@
-[gd_resource type="Environment" load_steps=3 format=3 uid="uid://dw4yuv5d6eltn"]
+[gd_resource type="Environment" load_steps=5 format=3 uid="uid://dw4yuv5d6eltn"]
+
+[sub_resource type="Curve" id="Curve_y26mu"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.466425, 0.537849), 1.48177, 1.48177, 0, 0, Vector2(1, 0.99004), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_pljtv"]
+curve = SubResource("Curve_y26mu")
 
 [sub_resource type="ProceduralSkyMaterial" id="1"]
 sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
@@ -12,10 +19,10 @@ sky_material = SubResource("1")
 background_mode = 2
 sky = SubResource("2")
 ambient_light_source = 3
-ambient_light_color = Color(0.14902, 0.227451, 0.188235, 1)
-ambient_light_energy = 1.95
-reflected_light_source = 2
+ambient_light_color = Color(0.211765, 0.505882, 0.380392, 1)
+ambient_light_energy = 7.09
 tonemap_mode = 3
+ssr_enabled = true
 ssao_enabled = true
 ssao_radius = 2.16
 ssao_intensity = 2.32
@@ -27,6 +34,7 @@ ssil_radius = 0.54
 ssil_intensity = 1.53
 ssil_sharpness = 0.0
 sdfgi_enabled = true
+sdfgi_use_occlusion = true
 sdfgi_bounce_feedback = 1.0
 sdfgi_min_cell_size = 7.62
 sdfgi_y_scale = 2
@@ -36,11 +44,21 @@ glow_intensity = 1.3
 glow_strength = 0.44
 glow_bloom = 0.29
 fog_enabled = true
-fog_light_color = Color(0.0117647, 0.105882, 0.0941176, 1)
-fog_light_energy = 1.75
-fog_density = 0.1433
-fog_height = 332.89
+fog_light_color = Color(0.0666667, 0.113725, 0.156863, 1)
+fog_light_energy = 2.23
+fog_density = 0.1632
+fog_height = -413.07
+volumetric_fog_enabled = true
 volumetric_fog_density = 0.0272
+volumetric_fog_albedo = Color(0.129412, 0.415686, 0.364706, 1)
+volumetric_fog_emission = Color(0.0235294, 0.0313726, 0.12549, 1)
+volumetric_fog_gi_inject = 3.52
 volumetric_fog_anisotropy = -0.86
 volumetric_fog_length = 45.3
-volumetric_fog_detail_spread = 2.43676
+volumetric_fog_detail_spread = 1.97926
+volumetric_fog_ambient_inject = 1.19
+adjustment_enabled = true
+adjustment_brightness = 1.21
+adjustment_contrast = 1.16
+adjustment_saturation = 0.81
+adjustment_color_correction = SubResource("CurveTexture_pljtv")
