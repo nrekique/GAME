@@ -1,0 +1,327 @@
+[gd_scene load_steps=17 format=3 uid="uid://bhcruaphgit42"]
+
+[ext_resource type="Script" uid="uid://b0e2x8lqrv4vn" path="res://addons/dolly-camera-controller/demo/demo_dolly_effect_controller_main.gd" id="1_1qpfs"]
+[ext_resource type="Material" uid="uid://kuiuxbah4gx3" path="res://addons/dolly-camera-controller/demo/assets/Materials/prototype_floor.tres" id="1_oo04s"]
+[ext_resource type="Material" uid="uid://f6bno2rrybq7" path="res://addons/dolly-camera-controller/demo/assets/Materials/prototype_object.tres" id="2_dh3f4"]
+[ext_resource type="ArrayMesh" uid="uid://b5qu6sl83efxg" path="res://addons/dolly-camera-controller/demo/assets/Models/suzane.obj" id="3_1qpfs"]
+[ext_resource type="Material" uid="uid://drlmht1p8cktt" path="res://addons/dolly-camera-controller/demo/assets/Materials/prototype_subject.tres" id="4_njar0"]
+[ext_resource type="Script" uid="uid://6bq3mrsfcw1m" path="res://addons/dolly-camera-controller/classes/DollyEffectController.gd" id="5_dh3f4"]
+
+[sub_resource type="Animation" id="Animation_1qpfs"]
+length = 0.001
+tracks/0/type = "bezier"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Scene3d/Camera3D:position:x")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"handle_modes": PackedInt32Array(0),
+"points": PackedFloat32Array(0, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0)
+}
+tracks/1/type = "bezier"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Scene3d/Camera3D:position:y")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"handle_modes": PackedInt32Array(0),
+"points": PackedFloat32Array(1.25, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0)
+}
+tracks/2/type = "bezier"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Scene3d/Camera3D:position:z")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"handle_modes": PackedInt32Array(0),
+"points": PackedFloat32Array(2, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0)
+}
+
+[sub_resource type="Animation" id="Animation_dh3f4"]
+resource_name = "dolly_in"
+length = 5.0
+tracks/0/type = "bezier"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Scene3d/Camera3D:position:x")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"handle_modes": PackedInt32Array(0, 0),
+"points": PackedFloat32Array(0, -0.25, 0, 0.25, 0, 0, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0, 4.95)
+}
+tracks/1/type = "bezier"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Scene3d/Camera3D:position:y")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"handle_modes": PackedInt32Array(0, 0),
+"points": PackedFloat32Array(1.25, -0.25, 0, 0.25, 0, 1.25, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0, 4.95)
+}
+tracks/2/type = "bezier"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Scene3d/Camera3D:position:z")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"handle_modes": PackedInt32Array(0, 0),
+"points": PackedFloat32Array(2, -0.25, 0, 0.25, 0, 10, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0, 4.95)
+}
+
+[sub_resource type="Animation" id="Animation_njar0"]
+resource_name = "dolly_out"
+length = 5.0
+tracks/0/type = "bezier"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Scene3d/Camera3D:position:x")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"handle_modes": PackedInt32Array(0, 0),
+"points": PackedFloat32Array(0, -0.25, 0, 0.25, 0, 0, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0, 4.9)
+}
+tracks/1/type = "bezier"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Scene3d/Camera3D:position:y")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"handle_modes": PackedInt32Array(0, 0),
+"points": PackedFloat32Array(1.25, -0.25, 0, 0.25, 0, 1.25, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0, 4.9)
+}
+tracks/2/type = "bezier"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Scene3d/Camera3D:position:z")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"handle_modes": PackedInt32Array(0, 0),
+"points": PackedFloat32Array(10, -0.25, 0, 0.25, 0, 2, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0, 4.9)
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_njar0"]
+_data = {
+&"RESET": SubResource("Animation_1qpfs"),
+&"dolly_in": SubResource("Animation_dh3f4"),
+&"dolly_out": SubResource("Animation_njar0")
+}
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_vcj16"]
+material = ExtResource("1_oo04s")
+size = Vector2(50, 50)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_sg44p"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_i8e0j"]
+size = Vector3(2, 2, 2)
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_dh3f4"]
+sky_top_color = Color(0.732485, 0.780192, 0.846776, 1)
+sky_horizon_color = Color(0.465096, 0.474972, 0.490563, 1)
+sky_energy_multiplier = 2.5
+
+[sub_resource type="Sky" id="Sky_1qpfs"]
+sky_material = SubResource("ProceduralSkyMaterial_dh3f4")
+
+[sub_resource type="Environment" id="Environment_njar0"]
+background_mode = 2
+sky = SubResource("Sky_1qpfs")
+
+[node name="DemoDollyEffectControllerMain" type="Node"]
+script = ExtResource("1_1qpfs")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_njar0")
+}
+autoplay = "RESET"
+
+[node name="Scene3d" type="Node3D" parent="."]
+
+[node name="Lights" type="Node3D" parent="Scene3d"]
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="Scene3d/Lights"]
+transform = Transform3D(0.5, -0.75, 0.433013, 1.13133e-08, 0.5, 0.866025, -0.866025, -0.433013, 0.25, 0, 3, 0)
+light_color = Color(0.836404, 0.88697, 0.874786, 1)
+shadow_enabled = true
+
+[node name="SpotLight3D" type="SpotLight3D" parent="Scene3d/Lights"]
+transform = Transform3D(0.528174, -0.575177, 0.624663, 0.12707, 0.7809, 0.611594, -0.839575, -0.243652, 0.485539, 2, 2.81459, 2)
+shadow_enabled = true
+spot_range = 17.757
+spot_angle = 24.43
+metadata/_edit_group_ = true
+
+[node name="SpotLight3D2" type="SpotLight3D" parent="Scene3d/Lights"]
+transform = Transform3D(0.839575, 0.243652, -0.485539, 0.12707, 0.7809, 0.611594, 0.528174, -0.575177, 0.624663, -2, 2.81459, 2)
+shadow_enabled = true
+spot_range = 17.757
+spot_angle = 24.43
+metadata/_edit_group_ = true
+
+[node name="Set" type="Node3D" parent="Scene3d"]
+
+[node name="Floor" type="MeshInstance3D" parent="Scene3d/Set"]
+material_override = ExtResource("1_oo04s")
+mesh = SubResource("PlaneMesh_vcj16")
+skeleton = NodePath("../..")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Scene3d/Set"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.674009, 1, 2.54438)
+material_override = ExtResource("2_dh3f4")
+mesh = SubResource("CylinderMesh_sg44p")
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="Scene3d/Set"]
+transform = Transform3D(0.95735, 0.288932, 0, -0.288932, 0.95735, 0, 0, 0, 1, -3, 0.748562, -3)
+material_override = ExtResource("2_dh3f4")
+mesh = SubResource("BoxMesh_i8e0j")
+
+[node name="MeshInstance3D3" type="MeshInstance3D" parent="Scene3d/Set"]
+transform = Transform3D(0.767415, -0.409302, 0.493504, 0.344262, 0.912399, 0.221386, -0.540886, 0, 0.841096, -1.19714, 0.397676, -4.28719)
+material_override = ExtResource("2_dh3f4")
+mesh = SubResource("BoxMesh_i8e0j")
+
+[node name="MeshInstance3D4" type="MeshInstance3D" parent="Scene3d/Set"]
+transform = Transform3D(0.74629, 0, -0.665621, 0, 2.22303, 0, 0.665621, 0, 0.74629, 1.19227, 1.88866, -4.24793)
+material_override = ExtResource("2_dh3f4")
+mesh = SubResource("BoxMesh_i8e0j")
+
+[node name="MeshInstance3D5" type="MeshInstance3D" parent="Scene3d/Set"]
+transform = Transform3D(0.82806, 0.120389, -1.20463, 0, 0.976672, 0.472418, 0.560639, -0.177814, 1.77924, -5.20917, 0.425717, -0.744016)
+material_override = ExtResource("2_dh3f4")
+mesh = SubResource("BoxMesh_i8e0j")
+
+[node name="MeshInstance3D6" type="MeshInstance3D" parent="Scene3d/Set"]
+transform = Transform3D(0.799982, 0.26429, 1.1851, -0.313694, 0.949524, 0, -0.511492, -0.168982, 1.85352, 3.54239, 0.531256, -2.21398)
+material_override = ExtResource("2_dh3f4")
+mesh = SubResource("BoxMesh_i8e0j")
+
+[node name="Label3D" type="Label3D" parent="Scene3d/Set"]
+transform = Transform3D(0.88056, 0, 0.473935, 0, 1, 0, -0.473935, 0, 0.88056, -0.277224, 2.08618, 0.122798)
+text = "Dolly / Vertigo Effct Test"
+
+[node name="Subject" type="MeshInstance3D" parent="Scene3d"]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 1.22287, 0)
+mesh = ExtResource("3_1qpfs")
+surface_material_override/0 = ExtResource("4_njar0")
+
+[node name="Camera3D" type="Camera3D" parent="Scene3d"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.25, 2)
+fov = 34.997
+near = 0.0501841
+
+[node name="DollyEffectController" type="Node" parent="Scene3d/Camera3D" node_paths=PackedStringArray("camera", "subject")]
+script = ExtResource("5_dh3f4")
+camera = NodePath("..")
+camera_fov = 35.0
+start_distance = 2.0
+use_subject = 1.0
+subject = NodePath("../../Subject")
+metadata/_custom_type_script = "uid://6bq3mrsfcw1m"
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="Scene3d"]
+environment = SubResource("Environment_njar0")
+
+[node name="Control" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Control"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Control/HBoxContainer"]
+custom_minimum_size = Vector2(500, 0)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Control/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 12
+theme_override_font_sizes/font_size = 32
+text = "Dolly Zoom Test"
+horizontal_alignment = 1
+
+[node name="Label_Info_Cam" type="Label" parent="Control/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.517184, 0.517184, 0.517184, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 14
+text = "< Here are displayed dolly zoom controller instance info >
+
+< Here are displayed dolly zoom controller instance info >
+
+< Here are displayed dolly zoom controller instance info >
+
+< Here are displayed dolly zoom controller instance info >
+
+< Here are displayed dolly zoom controller instance info >
+
+< Here are displayed dolly zoom controller instance info >
+
+< Here are displayed dolly zoom controller instance info >
+
+< Here are displayed dolly zoom controller instance info >"
+
+[node name="Label_Info" type="Label" parent="Control/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.517184, 0.517184, 0.517184, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 14
+text = "< Here are displayed dolly zoom controller instance info >
+
+< Here are displayed dolly zoom controller instance info >
+
+< Here are displayed dolly zoom controller instance info >
+
+< Here are displayed dolly zoom controller instance info >
+
+< Here are displayed dolly zoom controller instance info >
+
+< Here are displayed dolly zoom controller instance info >
+
+< Here are displayed dolly zoom controller instance info >
+
+< Here are displayed dolly zoom controller instance info >"
+
+[node name="ContainerBtn" type="VBoxContainer" parent="Control/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+alignment = 2
+
+[node name="Button_Dolly_In" type="Button" parent="Control/HBoxContainer/VBoxContainer/ContainerBtn"]
+layout_mode = 2
+text = "Dolly In"
+
+[node name="Button_Dolly_Out" type="Button" parent="Control/HBoxContainer/VBoxContainer/ContainerBtn"]
+layout_mode = 2
+text = "Dolly Out
+"

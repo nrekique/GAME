@@ -1,0 +1,8 @@
+[gd_resource type="StandardMaterial3D" load_steps=2 format=3 uid="uid://kuiuxbah4gx3"]
+
+[ext_resource type="Texture2D" uid="uid://cx1pksjcv2846" path="res://addons/dolly-camera-controller/demo/assets/Textures/prototype_texture/prototype_512x512_grey4.png" id="1_bpuy8"]
+
+[resource]
+albedo_texture = ExtResource("1_bpuy8")
+roughness = 0.76
+uv1_triplanar = true

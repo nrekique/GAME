@@ -1,26 +1,25 @@
-[gd_scene load_steps=103 format=3 uid="uid://bpm3o5liarjku"]
+[gd_scene load_steps=102 format=3 uid="uid://bpm3o5liarjku"]
 
 [ext_resource type="Environment" uid="uid://dw4yuv5d6eltn" path="res://gillEenviroment.tres" id="1_1rl6e"]
 [ext_resource type="Script" path="res://addons/qodot/src/nodes/qodot_map.gd" id="2_faamd"]
 [ext_resource type="Resource" uid="uid://c36hv0o6g0udo" path="res://addons/qodot/game_definitions/fgd/qodot_fgd.tres" id="3_4klm3"]
 [ext_resource type="Script" path="res://addons/qodot/src/nodes/qodot_entity.gd" id="4_1picr"]
 [ext_resource type="Texture2D" uid="uid://bdquvrvl0awlq" path="res://tb/textures/curtainsBlack.png" id="5_t2jy2"]
-[ext_resource type="Texture2D" uid="uid://c8jhbti6a1osf" path="res://tb/textures/color/black.png" id="6_w0s7f"]
 [ext_resource type="Texture2D" uid="uid://dh2o6t6f82rf0" path="res://tb/textures/color/white.png" id="7_nww70"]
 [ext_resource type="Texture2D" uid="uid://c8pjpcio1asnk" path="res://tb/textures/plaster.png" id="8_k0gmq"]
 [ext_resource type="Texture2D" uid="uid://cssvfjtowylh0" path="res://tb/textures/concreteWhite.png" id="9_uqjg4"]
-[ext_resource type="Texture2D" uid="uid://c8jhbti6a1osf" path="res://tb/textures/Color/black.png" id="10_6f47f"]
+[ext_resource type="Texture2D" uid="uid://c8jhbti6a1osf" path="res://tb/textures/color/black.png" id="10_6f47f"]
 [ext_resource type="Texture2D" uid="uid://dj2a4uwtx8lqn" path="res://tb/textures/wizwood1_8.png" id="11_ucygd"]
 [ext_resource type="Material" uid="uid://rkug1pr86hep" path="res://tb/textures/special/glass.tres" id="12_3xqlm"]
 [ext_resource type="Texture2D" uid="uid://bnr3503wk7rbt" path="res://tb/textures/concreteBrown.png" id="13_kbiyq"]
-[ext_resource type="Texture2D" uid="uid://bp2xwrqhv68rh" path="res://tb/textures/Color/bGray.png" id="14_3cygn"]
-[ext_resource type="Texture2D" uid="uid://hyetoberc8iv" path="res://tb/textures/Color/wGray.png" id="15_4nedt"]
+[ext_resource type="Texture2D" uid="uid://bp2xwrqhv68rh" path="res://tb/textures/color/bGray.png" id="14_3cygn"]
+[ext_resource type="Texture2D" uid="uid://hyetoberc8iv" path="res://tb/textures/color/wGray.png" id="15_4nedt"]
 [ext_resource type="Texture2D" uid="uid://dhxwoumyr1oxd" path="res://tb/textures/wood01.png" id="16_ajjh2"]
-[ext_resource type="Texture2D" uid="uid://d3111wgurkuh5" path="res://tb/textures/Color/grey.png" id="17_h7n5e"]
+[ext_resource type="Texture2D" uid="uid://d3111wgurkuh5" path="res://tb/textures/color/grey.png" id="17_h7n5e"]
 [ext_resource type="Texture2D" uid="uid://h8pjqqoonycw" path="res://tb/textures/concreteWhite2.png" id="18_8hdgq"]
 [ext_resource type="Texture2D" uid="uid://bisonjdvje0yj" path="res://tb/textures/color/magentaT.png" id="19_ocns8"]
 [ext_resource type="PackedScene" uid="uid://kicjwmh02uwf" path="res://scenes/player.tscn" id="19_vw0pk"]
-[ext_resource type="Texture2D" uid="uid://cimkdaymksolr" path="res://tb/textures/Color/magenta.png" id="20_gecvs"]
+[ext_resource type="Texture2D" uid="uid://cimkdaymksolr" path="res://tb/textures/color/magenta.png" id="20_gecvs"]
 [ext_resource type="Texture2D" uid="uid://2bv1rik6ibn5" path="res://tb/textures/color/yGreenS.png" id="21_ugqjc"]
 [ext_resource type="Texture2D" uid="uid://bm5ufad33r601" path="res://tb/textures/cearth1_6.png" id="22_vpcb8"]
 [ext_resource type="Texture2D" uid="uid://d4j2fjy3om7f0" path="res://tb/textures/tunnleTrim.png" id="23_w3q4g"]
@@ -47,7 +46,7 @@ _surfaces = [{
 }]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_xvmuj"]
-albedo_texture = ExtResource("6_w0s7f")
+albedo_texture = ExtResource("10_6f47f")
 
 [sub_resource type="ArrayMesh" id="ArrayMesh_odvd5"]
 _surfaces = [{

@@ -10,7 +10,7 @@
 [resource]
 script = ExtResource("6_njttq")
 export_file = false
-trenchbroom_games_folder = "/Users/nre_kique/Library/Application Support/TrenchBroom/games"
+trenchbroom_games_folder = "/Users/nre/Library/Application Support/TrenchBroom/games"
 game_name = "Sacred_Fruit"
 icon = ExtResource("5_fbodh")
 map_formats = Array[Dictionary]([{
@@ -25,10 +25,9 @@ map_formats = Array[Dictionary]([{
 }, {
 "format": "Quake3"
 }])
+texture_exclusion_patterns = Array[String](["*_ao", "*_emission", "*_heightmap", "*_metallic", "*_normal", "*_orm", "*_roughness", "*_sss", "*_albedo"])
 fgd_files = Array[Resource]([ExtResource("4_ou300")])
 entity_scale = "32"
 default_uv_scale = Vector2(1, 1)
 brush_tags = Array[Resource]([ExtResource("1_gfsxj")])
 face_tags = Array[Resource]([ExtResource("2_hshsh"), ExtResource("3_sxvps")])
-face_attrib_surface_flags = Array[Resource]([])
-face_attrib_content_flags = Array[Resource]([])

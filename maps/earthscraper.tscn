@@ -1,7 +1,7 @@
 [gd_scene load_steps=59 format=3 uid="uid://d1v3hfmrky5ot"]
 
 [ext_resource type="Script" path="res://addons/qodot/src/nodes/qodot_map.gd" id="1_xvors"]
-[ext_resource type="Resource" uid="uid://c36hv0o6g0udo" path="res://addons/qodot/game_definitions/fgd/qodot_fgd.tres" id="2_2bx4d"]
+[ext_resource type="Resource" uid="uid://drodfn21pybt7" path="res://tb/fgd/sacredFruit_fgd.tres" id="2_6vawp"]
 [ext_resource type="Script" path="res://addons/qodot/src/nodes/qodot_entity.gd" id="3_ytgyq"]
 [ext_resource type="Material" uid="uid://rkug1pr86hep" path="res://tb/textures/special/glass.tres" id="4_p7ql4"]
 [ext_resource type="Texture2D" uid="uid://cssvfjtowylh0" path="res://tb/textures/concreteWhite.png" id="5_bo3lo"]
@@ -1288,11 +1288,11 @@ directional_shadow_max_distance = 1053.1
 directional_shadow_pancake_size = 133.9
 
 [node name="QodotMap" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0359344, 0, 0.0192871)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.43047, 6.72384, 13.9738)
 script = ExtResource("1_xvors")
-map_file = "/Users/nre_kique/Documents/GitHub/Heavy-Water/tb/Rascasuelos.map"
+map_file = "/Users/nre/Documents/GitHub/Heavy-Water/tb/Rascasuelos.map"
 inverse_scale_factor = 32.0
-entity_fgd = ExtResource("2_2bx4d")
+entity_fgd = ExtResource("2_6vawp")
 base_texture_dir = "res://tb/textures"
 texture_file_extensions = PackedStringArray("png", "jpg", "jpeg", "bmp")
 default_material = SubResource("StandardMaterial3D_jxydk")
