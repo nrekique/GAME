@@ -1,0 +1,6 @@
+newmtl entitiy/skip
+map_Kd textures/entitiy/skip.png
+
+newmtl kh-floor2
+map_Kd textures/kh-floor2.png
+

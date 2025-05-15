@@ -1,0 +1,62 @@
+---- qbsp / TyrUtils v0.17 ----
+Input file: outside-compile.map
+Output file: outside.bsp
+
+---- LoadMapFile ----
+*** WARNING 05: No info_player_start entity in level
+*** WARNING 06: No info_player_deathmatch entities in level
+        12408 faces
+         1952 brushes
+          116 entities
+           26 unique texnames
+         2497 texinfo
+
+*** WARNING 00: No wad or _wad key exists in the worldmodel
+Unable to open WAD: outside-compile.wad
+Processing hull 0...
+Processing hull 1...
+Processing hull 2...
+*** WARNING 16: Texture sand not found
+*** WARNING 16: Texture roofTeal not found
+*** WARNING 16: Texture concreteWhite not found
+*** WARNING 16: Texture concreteBrown not found
+*** WARNING 16: Texture stBlkHighway not found
+*** WARNING 16: Texture streetbrown2 not found
+*** WARNING 16: Texture groundRed2 not found
+*** WARNING 16: Texture stAsphaltBrn not found
+*** WARNING 16: Texture groundBrown2 not found
+*** WARNING 16: Texture concrete not found
+*** WARNING 16: Texture stAsphaltBlk not found
+*** WARNING 16: Texture grass_floor1 not found
+*** WARNING 16: Texture wizwood1_8 not found
+*** WARNING 16: Texture light1 not found
+*** WARNING 16: Texture dark1 not found
+*** WARNING 16: Texture wizwood1_3 not found
+*** WARNING 16: Texture wood03 not found
+*** WARNING 16: Texture smpfloor04 not found
+*** WARNING 16: Texture skystar1 not found
+*** WARNING 16: Texture sky1 not found
+*** WARNING 16: Texture car3 not found
+*** WARNING 16: Texture metalwiz not found
+*** WARNING 16: Texture wood01 not found
+*** WARNING 16: Texture bricksRed2 not found
+*** WARNING 16: Texture roofTealRough not found
+*** WARNING 16: Texture clip not found
+---- WriteBSPFile ----
+            0 planes                0
+            0 vertexes              0
+            0 nodes                 0
+         2497 texinfo           99880
+            0 faces                 0
+            0 clipnodes             0
+            1 leafs                28
+            0 marksurfaces          0
+            0 surfedges             0
+            1 edges                 4
+           26 textures            108
+              lightdata             0
+              visdata               0
+              entdata            1031
+
+0.156 seconds elapsed
+Peak memory usage: 3248706 (3.1M)

@@ -1,0 +1,12 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=3 uid="uid://c3ybcypn3uhf0"]
+
+[ext_resource type="Shader" uid="uid://c7iw7i0hrnelf" path="res://tb/textures/shaders/vertexLighting.gdshader" id="1_wew6v"]
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_wew6v")
+shader_parameter/range = 0.0
+shader_parameter/falloff = 0.0
+shader_parameter/segment_scale = 0.0
+shader_parameter/flip_x = false
+shader_parameter/flip_y = false

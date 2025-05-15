@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 64 64" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <g transform="matrix(0.877308,0,0,1.03571,-240.029,28.5028)">
+        <rect id="omnilight" x="273.597" y="-27.52" width="72.95" height="61.793" style="fill:none;"/>
+        <g id="omnilight1" serif:id="omnilight">
+            <g transform="matrix(2.27561,0,0,2.27561,-354.029,31.296)">
+                <g transform="matrix(1.30876,0,0,1.10859,271.053,-29.9229)">
+                    <rect x="14.457" y="25.232" width="3.026" height="1.639" style="fill:rgb(235,235,235);"/>
+                </g>
+                <g transform="matrix(1.30876,0,0,1.10859,271.013,-29.9229)">
+                    <path d="M13,19.587C10.219,18.415 8.264,15.662 8.264,12.456C8.264,8.186 11.73,4.72 16,4.72C20.27,4.72 23.736,8.186 23.736,12.456C23.736,15.662 21.781,18.415 19,19.587L19,22.174C19,22.624 18.821,23.057 18.502,23.376C18.183,23.694 17.751,23.873 17.3,23.873L14.7,23.873C14.249,23.873 13.817,23.694 13.498,23.376C13.179,23.057 13,22.624 13,22.174L13,19.587ZM16,7.209C13.104,7.209 10.753,9.56 10.753,12.456C10.753,15.351 13.104,17.702 16,17.702C18.896,17.702 21.247,15.351 21.247,12.456C21.247,9.56 18.896,7.209 16,7.209Z" style="fill:rgb(235,235,235);"/>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

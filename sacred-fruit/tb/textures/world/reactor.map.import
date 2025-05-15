@@ -1,0 +1,14 @@
+[remap]
+
+importer="func_godot.map"
+type="Resource"
+uid="uid://v728dv32p10u"
+path="res://.godot/imported/reactor.map-8debec27e9b709126e430bee028ff3d9.tres"
+
+[deps]
+
+source_file="res://tb/textures/world/reactor.map"
+dest_files=["res://.godot/imported/reactor.map-8debec27e9b709126e430bee028ff3d9.tres"]
+
+[params]
+

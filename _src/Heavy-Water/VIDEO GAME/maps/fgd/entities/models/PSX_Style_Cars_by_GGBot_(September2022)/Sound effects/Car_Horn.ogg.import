@@ -1,0 +1,19 @@
+[remap]
+
+importer="oggvorbisstr"
+type="AudioStreamOggVorbis"
+uid="uid://652rp62rvrj7"
+path="res://.godot/imported/Car_Horn.ogg-ea80395b32bab5d47c8409feeea11ede.oggvorbisstr"
+
+[deps]
+
+source_file="res://maps/fgd/models/PSX_Style_Cars_by_GGBot_(September2022)/Sound effects/Car_Horn.ogg"
+dest_files=["res://.godot/imported/Car_Horn.ogg-ea80395b32bab5d47c8409feeea11ede.oggvorbisstr"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

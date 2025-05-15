@@ -1,0 +1,8 @@
+[gd_resource type="StandardMaterial3D" load_steps=2 format=3 uid="uid://b4rpgj5sm7lvg"]
+
+[ext_resource type="Texture2D" uid="uid://bisonjdvje0yj" path="res://tb/textures/color/magentaT.png" id="1_r4060"]
+
+[resource]
+albedo_texture = ExtResource("1_r4060")
+metallic_specular = 0.0
+texture_filter = 2

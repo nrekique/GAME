@@ -1,0 +1,11 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=3 uid="uid://boi54cggix05i"]
+
+[ext_resource type="Shader" uid="uid://bw0tpclav83gc" path="res://tb/textures/shaders/ps1model.gdshader" id="1_q21ib"]
+
+[resource]
+render_priority = 1
+shader = ExtResource("1_q21ib")
+shader_parameter/affine_mapping = true
+shader_parameter/alpha_scissor = 0.5
+shader_parameter/jitter = 0.482
+shader_parameter/resolution = Vector2i(320, 240)
