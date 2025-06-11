@@ -1,0 +1,8 @@
+[gd_resource type="StandardMaterial3D" load_steps=2 format=3 uid="uid://cumg6j3s6x4m6"]
+
+[ext_resource type="Texture2D" uid="uid://52wy1k6c3sgi" path="res://tb/textures/world/brass.png" id="1_jo87k"]
+
+[resource]
+albedo_texture = ExtResource("1_jo87k")
+metallic_specular = 0.0
+texture_filter = 2

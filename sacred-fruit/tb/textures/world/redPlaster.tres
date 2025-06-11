@@ -1,0 +1,8 @@
+[gd_resource type="StandardMaterial3D" load_steps=2 format=3 uid="uid://hi2fman4g6e6"]
+
+[ext_resource type="Texture2D" uid="uid://k0pymn50t7lh" path="res://tb/textures/world/redPlaster.png" id="1_fkh2i"]
+
+[resource]
+albedo_texture = ExtResource("1_fkh2i")
+metallic_specular = 0.0
+texture_filter = 2

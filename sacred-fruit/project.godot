@@ -11,6 +11,7 @@ config_version=5
 [application]
 
 config/name="Sacred Fruit"
+run/main_scene="uid://bmqpag63evpac"
 config/features=PackedStringArray("4.4", "Forward Plus")
 boot_splash/show_image=false
 config/icon="uid://cvub4msnlx0e3"
