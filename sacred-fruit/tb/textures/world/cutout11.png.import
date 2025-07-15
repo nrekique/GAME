@@ -4,15 +4,16 @@ importer="texture"
 type="CompressedTexture2D"
 uid="uid://dtovwh3p5bb3o"
 path.s3tc="res://.godot/imported/cutout11.png-4619a93d3a12622f041ffaa9303cc59b.s3tc.ctex"
+path.etc2="res://.godot/imported/cutout11.png-4619a93d3a12622f041ffaa9303cc59b.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
 source_file="res://tb/textures/world/cutout11.png"
-dest_files=["res://.godot/imported/cutout11.png-4619a93d3a12622f041ffaa9303cc59b.s3tc.ctex"]
+dest_files=["res://.godot/imported/cutout11.png-4619a93d3a12622f041ffaa9303cc59b.s3tc.ctex", "res://.godot/imported/cutout11.png-4619a93d3a12622f041ffaa9303cc59b.etc2.ctex"]
 
 [params]
 

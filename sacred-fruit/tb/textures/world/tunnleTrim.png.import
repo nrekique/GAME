@@ -4,15 +4,16 @@ importer="texture"
 type="CompressedTexture2D"
 uid="uid://d4j2fjy3om7f0"
 path.s3tc="res://.godot/imported/tunnleTrim.png-4250f0e81473175b56b828183a23d441.s3tc.ctex"
+path.etc2="res://.godot/imported/tunnleTrim.png-4250f0e81473175b56b828183a23d441.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
 source_file="res://tb/textures/world/tunnleTrim.png"
-dest_files=["res://.godot/imported/tunnleTrim.png-4250f0e81473175b56b828183a23d441.s3tc.ctex"]
+dest_files=["res://.godot/imported/tunnleTrim.png-4250f0e81473175b56b828183a23d441.s3tc.ctex", "res://.godot/imported/tunnleTrim.png-4250f0e81473175b56b828183a23d441.etc2.ctex"]
 
 [params]
 

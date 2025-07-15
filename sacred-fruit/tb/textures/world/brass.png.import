@@ -4,15 +4,16 @@ importer="texture"
 type="CompressedTexture2D"
 uid="uid://52wy1k6c3sgi"
 path.s3tc="res://.godot/imported/brass.png-1a741fb762efd033dbfaf267fb772ddf.s3tc.ctex"
+path.etc2="res://.godot/imported/brass.png-1a741fb762efd033dbfaf267fb772ddf.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
 source_file="res://tb/textures/world/brass.png"
-dest_files=["res://.godot/imported/brass.png-1a741fb762efd033dbfaf267fb772ddf.s3tc.ctex"]
+dest_files=["res://.godot/imported/brass.png-1a741fb762efd033dbfaf267fb772ddf.s3tc.ctex", "res://.godot/imported/brass.png-1a741fb762efd033dbfaf267fb772ddf.etc2.ctex"]
 
 [params]
 

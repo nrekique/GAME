@@ -4,15 +4,16 @@ importer="texture"
 type="CompressedTexture2D"
 uid="uid://dnl373yu6lbrv"
 path.s3tc="res://.godot/imported/stBlkHighway.png-034e3dcb1752a6ec80ec01ab18804f45.s3tc.ctex"
+path.etc2="res://.godot/imported/stBlkHighway.png-034e3dcb1752a6ec80ec01ab18804f45.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
 source_file="res://tb/textures/world/stBlkHighway.png"
-dest_files=["res://.godot/imported/stBlkHighway.png-034e3dcb1752a6ec80ec01ab18804f45.s3tc.ctex"]
+dest_files=["res://.godot/imported/stBlkHighway.png-034e3dcb1752a6ec80ec01ab18804f45.s3tc.ctex", "res://.godot/imported/stBlkHighway.png-034e3dcb1752a6ec80ec01ab18804f45.etc2.ctex"]
 
 [params]
 

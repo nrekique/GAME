@@ -11,18 +11,23 @@ config_version=5
 [application]
 
 config/name="Sacred Fruit"
+config/name_localized={
+"es_MX": "Fruta Sagrada",
+"pt_BR": "Fruto Sagrado"
+}
 run/main_scene="uid://bmqpag63evpac"
 config/features=PackedStringArray("4.4", "Forward Plus")
 boot_splash/show_image=false
-config/icon="uid://cvub4msnlx0e3"
+config/icon="uid://11wvyxmo2gpm"
 
 [autoload]
 
+gameManager="*res://game_manager.gd"
 Exit="*res://scripts/exit.gd"
 
 [display]
 
-window/size/viewport_width=1440
+window/size/viewport_width=1439
 window/size/viewport_height=960
 
 [editor_plugins]
@@ -76,3 +81,10 @@ jump={
 "events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":32,"key_label":0,"unicode":32,"location":0,"echo":false,"script":null)
 ]
 }
+
+[rendering]
+
+textures/canvas_textures/default_texture_filter=0
+textures/vram_compression/import_etc2_astc=true
+anti_aliasing/quality/msaa_3d=1
+anti_aliasing/quality/screen_space_aa=1

@@ -4,15 +4,16 @@ importer="texture"
 type="CompressedTexture2D"
 uid="uid://cvs4d23oogdfc"
 path.s3tc="res://.godot/imported/groundBrown3.png-ee975bc0c6f8a8f4731631c8f2f37e05.s3tc.ctex"
+path.etc2="res://.godot/imported/groundBrown3.png-ee975bc0c6f8a8f4731631c8f2f37e05.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
 source_file="res://tb/textures/world/groundBrown3.png"
-dest_files=["res://.godot/imported/groundBrown3.png-ee975bc0c6f8a8f4731631c8f2f37e05.s3tc.ctex"]
+dest_files=["res://.godot/imported/groundBrown3.png-ee975bc0c6f8a8f4731631c8f2f37e05.s3tc.ctex", "res://.godot/imported/groundBrown3.png-ee975bc0c6f8a8f4731631c8f2f37e05.etc2.ctex"]
 
 [params]
 

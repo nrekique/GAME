@@ -4,15 +4,16 @@ importer="texture"
 type="CompressedTexture2D"
 uid="uid://bisonjdvje0yj"
 path.s3tc="res://.godot/imported/magentaT.png-ef77538cd90913454db692d62e1f37a6.s3tc.ctex"
+path.etc2="res://.godot/imported/magentaT.png-ef77538cd90913454db692d62e1f37a6.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
 source_file="res://tb/textures/color/magentaT.png"
-dest_files=["res://.godot/imported/magentaT.png-ef77538cd90913454db692d62e1f37a6.s3tc.ctex"]
+dest_files=["res://.godot/imported/magentaT.png-ef77538cd90913454db692d62e1f37a6.s3tc.ctex", "res://.godot/imported/magentaT.png-ef77538cd90913454db692d62e1f37a6.etc2.ctex"]
 
 [params]
 

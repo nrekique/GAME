@@ -4,15 +4,16 @@ importer="texture"
 type="CompressedTexture2D"
 uid="uid://cpr5obklwkabq"
 path.s3tc="res://.godot/imported/city4_6.png-33ba8d20d62fd6d5b10c9a14b36b7cdf.s3tc.ctex"
+path.etc2="res://.godot/imported/city4_6.png-33ba8d20d62fd6d5b10c9a14b36b7cdf.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
 source_file="res://tb/textures/world/city4_6.png"
-dest_files=["res://.godot/imported/city4_6.png-33ba8d20d62fd6d5b10c9a14b36b7cdf.s3tc.ctex"]
+dest_files=["res://.godot/imported/city4_6.png-33ba8d20d62fd6d5b10c9a14b36b7cdf.s3tc.ctex", "res://.godot/imported/city4_6.png-33ba8d20d62fd6d5b10c9a14b36b7cdf.etc2.ctex"]
 
 [params]
 

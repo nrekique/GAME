@@ -4,15 +4,16 @@ importer="texture"
 type="CompressedTexture2D"
 uid="uid://mbev1q32j1tq"
 path.s3tc="res://.godot/imported/trigger.png-86d24a843e411fa88b24e6a8d4090e6f.s3tc.ctex"
+path.etc2="res://.godot/imported/trigger.png-86d24a843e411fa88b24e6a8d4090e6f.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
 source_file="res://tb/textures/special/trigger.png"
-dest_files=["res://.godot/imported/trigger.png-86d24a843e411fa88b24e6a8d4090e6f.s3tc.ctex"]
+dest_files=["res://.godot/imported/trigger.png-86d24a843e411fa88b24e6a8d4090e6f.s3tc.ctex", "res://.godot/imported/trigger.png-86d24a843e411fa88b24e6a8d4090e6f.etc2.ctex"]
 
 [params]
 

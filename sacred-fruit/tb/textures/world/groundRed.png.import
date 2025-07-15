@@ -4,15 +4,16 @@ importer="texture"
 type="CompressedTexture2D"
 uid="uid://bow66okboasbw"
 path.s3tc="res://.godot/imported/groundRed.png-9c0300e01f5d4d842496251e9b14b52f.s3tc.ctex"
+path.etc2="res://.godot/imported/groundRed.png-9c0300e01f5d4d842496251e9b14b52f.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
 source_file="res://tb/textures/world/groundRed.png"
-dest_files=["res://.godot/imported/groundRed.png-9c0300e01f5d4d842496251e9b14b52f.s3tc.ctex"]
+dest_files=["res://.godot/imported/groundRed.png-9c0300e01f5d4d842496251e9b14b52f.s3tc.ctex", "res://.godot/imported/groundRed.png-9c0300e01f5d4d842496251e9b14b52f.etc2.ctex"]
 
 [params]
 

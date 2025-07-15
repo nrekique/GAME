@@ -4,15 +4,16 @@ importer="texture"
 type="CompressedTexture2D"
 uid="uid://db1yvolqk8ryp"
 path.s3tc="res://.godot/imported/roofTealRough.png-4ee1c63e2886efd80b50ed4500d40726.s3tc.ctex"
+path.etc2="res://.godot/imported/roofTealRough.png-4ee1c63e2886efd80b50ed4500d40726.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
 source_file="res://tb/textures/world/roofTealRough.png"
-dest_files=["res://.godot/imported/roofTealRough.png-4ee1c63e2886efd80b50ed4500d40726.s3tc.ctex"]
+dest_files=["res://.godot/imported/roofTealRough.png-4ee1c63e2886efd80b50ed4500d40726.s3tc.ctex", "res://.godot/imported/roofTealRough.png-4ee1c63e2886efd80b50ed4500d40726.etc2.ctex"]
 
 [params]
 

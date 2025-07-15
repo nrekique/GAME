@@ -4,15 +4,16 @@ importer="texture"
 type="CompressedTexture2D"
 uid="uid://bjplyxv6hb40j"
 path.s3tc="res://.godot/imported/smpfloor04.png-7b808c5f678749372895b9a9ac79f6ac.s3tc.ctex"
+path.etc2="res://.godot/imported/smpfloor04.png-7b808c5f678749372895b9a9ac79f6ac.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
 source_file="res://tb/textures/world/smpfloor04.png"
-dest_files=["res://.godot/imported/smpfloor04.png-7b808c5f678749372895b9a9ac79f6ac.s3tc.ctex"]
+dest_files=["res://.godot/imported/smpfloor04.png-7b808c5f678749372895b9a9ac79f6ac.s3tc.ctex", "res://.godot/imported/smpfloor04.png-7b808c5f678749372895b9a9ac79f6ac.etc2.ctex"]
 
 [params]
 

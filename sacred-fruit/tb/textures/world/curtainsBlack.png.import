@@ -4,15 +4,16 @@ importer="texture"
 type="CompressedTexture2D"
 uid="uid://bdquvrvl0awlq"
 path.s3tc="res://.godot/imported/curtainsBlack.png-dd3d9b1418630cdde5b48ab17b61bbbc.s3tc.ctex"
+path.etc2="res://.godot/imported/curtainsBlack.png-dd3d9b1418630cdde5b48ab17b61bbbc.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
 source_file="res://tb/textures/world/curtainsBlack.png"
-dest_files=["res://.godot/imported/curtainsBlack.png-dd3d9b1418630cdde5b48ab17b61bbbc.s3tc.ctex"]
+dest_files=["res://.godot/imported/curtainsBlack.png-dd3d9b1418630cdde5b48ab17b61bbbc.s3tc.ctex", "res://.godot/imported/curtainsBlack.png-dd3d9b1418630cdde5b48ab17b61bbbc.etc2.ctex"]
 
 [params]
 

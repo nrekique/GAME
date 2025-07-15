@@ -1,0 +1,14 @@
+[remap]
+
+importer="func_godot.map"
+type="Resource"
+uid="uid://dsuwrhraoxhl4"
+path="res://.godot/imported/door.map-47ff66a620e5f6c73eda12e579f85314.tres"
+
+[deps]
+
+source_file="res://tb/door.map"
+dest_files=["res://.godot/imported/door.map-47ff66a620e5f6c73eda12e579f85314.tres"]
+
+[params]
+

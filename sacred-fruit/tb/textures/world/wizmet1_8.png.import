@@ -4,15 +4,16 @@ importer="texture"
 type="CompressedTexture2D"
 uid="uid://ipinp4jtpdhc"
 path.s3tc="res://.godot/imported/wizmet1_8.png-f0099926e1a09b197e3e84cf87601975.s3tc.ctex"
+path.etc2="res://.godot/imported/wizmet1_8.png-f0099926e1a09b197e3e84cf87601975.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
 source_file="res://tb/textures/world/wizmet1_8.png"
-dest_files=["res://.godot/imported/wizmet1_8.png-f0099926e1a09b197e3e84cf87601975.s3tc.ctex"]
+dest_files=["res://.godot/imported/wizmet1_8.png-f0099926e1a09b197e3e84cf87601975.s3tc.ctex", "res://.godot/imported/wizmet1_8.png-f0099926e1a09b197e3e84cf87601975.etc2.ctex"]
 
 [params]
 

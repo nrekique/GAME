@@ -4,15 +4,16 @@ importer="texture"
 type="CompressedTexture2D"
 uid="uid://bp2xwrqhv68rh"
 path.s3tc="res://.godot/imported/bGray.png-c0b4b25bb1a015dc10953c4c166898ea.s3tc.ctex"
+path.etc2="res://.godot/imported/bGray.png-c0b4b25bb1a015dc10953c4c166898ea.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
 source_file="res://tb/textures/color/bGray.png"
-dest_files=["res://.godot/imported/bGray.png-c0b4b25bb1a015dc10953c4c166898ea.s3tc.ctex"]
+dest_files=["res://.godot/imported/bGray.png-c0b4b25bb1a015dc10953c4c166898ea.s3tc.ctex", "res://.godot/imported/bGray.png-c0b4b25bb1a015dc10953c4c166898ea.etc2.ctex"]
 
 [params]
 

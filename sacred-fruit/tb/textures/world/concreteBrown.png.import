@@ -4,15 +4,16 @@ importer="texture"
 type="CompressedTexture2D"
 uid="uid://bnr3503wk7rbt"
 path.s3tc="res://.godot/imported/concreteBrown.png-cb5aa03e448f5d38bf7a0931fdd03f65.s3tc.ctex"
+path.etc2="res://.godot/imported/concreteBrown.png-cb5aa03e448f5d38bf7a0931fdd03f65.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
 source_file="res://tb/textures/world/concreteBrown.png"
-dest_files=["res://.godot/imported/concreteBrown.png-cb5aa03e448f5d38bf7a0931fdd03f65.s3tc.ctex"]
+dest_files=["res://.godot/imported/concreteBrown.png-cb5aa03e448f5d38bf7a0931fdd03f65.s3tc.ctex", "res://.godot/imported/concreteBrown.png-cb5aa03e448f5d38bf7a0931fdd03f65.etc2.ctex"]
 
 [params]
 

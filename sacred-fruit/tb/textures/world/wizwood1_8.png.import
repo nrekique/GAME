@@ -4,15 +4,16 @@ importer="texture"
 type="CompressedTexture2D"
 uid="uid://dj2a4uwtx8lqn"
 path.s3tc="res://.godot/imported/wizwood1_8.png-0f3566cf2d2763e0337867ba2e14ee4e.s3tc.ctex"
+path.etc2="res://.godot/imported/wizwood1_8.png-0f3566cf2d2763e0337867ba2e14ee4e.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
 source_file="res://tb/textures/world/wizwood1_8.png"
-dest_files=["res://.godot/imported/wizwood1_8.png-0f3566cf2d2763e0337867ba2e14ee4e.s3tc.ctex"]
+dest_files=["res://.godot/imported/wizwood1_8.png-0f3566cf2d2763e0337867ba2e14ee4e.s3tc.ctex", "res://.godot/imported/wizwood1_8.png-0f3566cf2d2763e0337867ba2e14ee4e.etc2.ctex"]
 
 [params]
 
