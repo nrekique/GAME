@@ -13,5 +13,6 @@
 script = ExtResource("5_utngd")
 game_name = "Sacred Fruit"
 icon = ExtResource("7_syglu")
+filesystem_search_path = "tb"
 fgd_file = ExtResource("5_437bd")
 brush_tags = Array[Resource]([ExtResource("1_kwmkr"), ExtResource("2_aoq2g")])

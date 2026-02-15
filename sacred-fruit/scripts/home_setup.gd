@@ -3,6 +3,11 @@ extends Node3D
 @export var spawn_collectibles: bool = false
 @export var spawn_exit: bool = false
 
+# If false, this script will not auto-run in _ready(). Call run_setup() manually.
+@export var auto_run: bool = true
+
+var _has_run: bool = false
+
 # If map-authored collectibles are missing (e.g. scene wasn't rebuilt after map edits),
 # this will parse the .map file and spawn them at runtime as a fallback.
 @export var fallback_spawn_collectibles_from_map: bool = true
@@ -22,6 +27,15 @@ extends Node3D
 func _ready() -> void:
 	if Engine.is_editor_hint():
 		return
+	if not auto_run:
+		return
+	await run_setup()
+
+
+func run_setup() -> void:
+	if _has_run:
+		return
+	_has_run = true
 	# Let the instanced HOME scene enter the tree first.
 	await get_tree().process_frame
 

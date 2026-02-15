@@ -41,7 +41,7 @@ func _on_body_entered(body: Node) -> void:
 			var current = body.get("health")
 			var max_health = body.get("max_health")
 			if typeof(current) in [TYPE_INT, TYPE_FLOAT] and typeof(max_health) in [TYPE_INT, TYPE_FLOAT]:
-				var cap := max_health
+				var cap := float(max_health)
 				if allow_overheal:
 					var max_over = body.get("max_overhealth")
 					if typeof(max_over) in [TYPE_INT, TYPE_FLOAT]:

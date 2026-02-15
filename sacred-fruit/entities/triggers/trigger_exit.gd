@@ -12,6 +12,23 @@ var _fired: bool = false
 
 const EXIT_VFX: PackedScene = preload("res://scenes/vfx/exit_burst.tscn")
 
+
+static func _parse_bool(value: Variant, default_value: bool = false) -> bool:
+	match typeof(value):
+		TYPE_BOOL:
+			return value
+		TYPE_INT, TYPE_FLOAT:
+			return float(value) != 0.0
+		TYPE_STRING:
+			var s := (value as String).strip_edges().to_lower()
+			if s in ["1", "true", "yes", "y", "on"]:
+				return true
+			if s in ["0", "false", "no", "n", "off", ""]:
+				return false
+			return default_value
+		_:
+			return default_value
+
 func _func_godot_apply_properties(props: Dictionary) -> void:
 	if props.has("targetname"):
 		targetname = props["targetname"] as String
@@ -27,9 +44,9 @@ func _func_godot_apply_properties(props: Dictionary) -> void:
 		# TrenchBroom values often arrive as strings.
 		delay = float(props["delay"])
 	if props.has("show_volume"):
-		show_volume = bool(props["show_volume"])
+		show_volume = _parse_bool(props["show_volume"], show_volume)
 	if props.has("one_shot"):
-		one_shot = bool(props["one_shot"])
+		one_shot = _parse_bool(props["one_shot"], one_shot)
 
 
 func _init() -> void:

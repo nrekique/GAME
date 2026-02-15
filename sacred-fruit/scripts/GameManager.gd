@@ -12,7 +12,7 @@ static func demangler(properties: Dictionary, mangle_type: int = 0)->Vector3:
 			mangle = properties["mangle"]
 		elif properties["mangle"] is String:
 			var arr: Array[String] = (properties["mangle"] as String).split(" ")
-			for i in maxi(arr.size(), 3):
+			for i in mini(arr.size(), 3):
 				mangle[i] = arr[i].to_float()
 		match mangle_type:
 			0: mangle = Vector3(mangle.x, mangle.y + 180.0, -mangle.z) # common

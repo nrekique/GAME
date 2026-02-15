@@ -1,9 +1,9 @@
-[gd_resource type="Resource" script_class="FuncGodotFGDPointClass" load_steps=4 format=3]
+[gd_resource type="Resource" script_class="FuncGodotFGDPointClass" format=3 uid="uid://8yvlbibxyoop"]
 
-[ext_resource type="Script" path="res://addons/func_godot/src/fgd/func_godot_fgd_point_class.gd" id="1_point"]
-[ext_resource type="Resource" path="res://tb/fgd/base/targetname_base.tres" id="2_targetname"]
-[ext_resource type="Resource" path="res://tb/fgd/base/target_base.tres" id="3_target_base"]
-[ext_resource type="Script" path="res://entities/path_corner.gd" id="4_script"]
+[ext_resource type="Script" uid="uid://dne2nmlkaibt5" path="res://addons/func_godot/src/fgd/func_godot_fgd_point_class.gd" id="1_point"]
+[ext_resource type="Resource" uid="uid://cwbnifad3sdgw" path="res://tb/fgd/base/targetname_base.tres" id="2_targetname"]
+[ext_resource type="Resource" uid="uid://kerywjgft7vh" path="res://tb/fgd/base/target_base.tres" id="3_target_base"]
+[ext_resource type="Script" uid="uid://c626m3xima30y" path="res://entities/path_corner.gd" id="4_script"]
 
 [resource]
 script = ExtResource("1_point")
@@ -12,7 +12,6 @@ apply_rotation_on_map_build = false
 apply_scale_on_map_build = false
 classname = "path_corner"
 description = "Path point for func_train"
-func_godot_internal = false
 base_classes = Array[Resource]([ExtResource("2_targetname"), ExtResource("3_target_base")])
 class_properties = {
 "wait": 0.0
@@ -20,10 +19,8 @@ class_properties = {
 class_property_descriptions = {
 "wait": "Seconds to pause at this corner."
 }
-auto_apply_to_matching_node_properties = false
 meta_properties = {
 "color": Color(0.9, 0.4, 1, 1),
 "size": AABB(-8, -8, -8, 8, 8, 8)
 }
 node_class = "Marker3D"
-name_property = ""

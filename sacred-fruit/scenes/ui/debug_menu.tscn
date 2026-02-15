@@ -1,0 +1,87 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/debug_menu.gd" id="1_debug_menu"]
+
+[node name="DebugMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("1_debug_menu")
+
+[node name="Backdrop" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+color = Color(0, 0, 0, 0.35)
+
+[node name="Center" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Panel" type="PanelContainer" parent="Center"]
+custom_minimum_size = Vector2(720, 420)
+layout_mode = 2
+
+[node name="Margin" type="MarginContainer" parent="Center/Panel"]
+layout_mode = 2
+add_theme_constant_override("margin_left", 24)
+add_theme_constant_override("margin_right", 24)
+add_theme_constant_override("margin_top", 24)
+add_theme_constant_override("margin_bottom", 24)
+
+[node name="VBox" type="VBoxContainer" parent="Center/Panel/Margin"]
+layout_mode = 2
+add_theme_constant_override("separation", 10)
+
+[node name="Title" type="Label" parent="Center/Panel/Margin/VBox"]
+layout_mode = 2
+text = "DEBUG MENU"
+horizontal_alignment = 1
+size_flags_horizontal = 3
+
+[node name="TopBar" type="HBoxContainer" parent="Center/Panel/Margin/VBox"]
+layout_mode = 2
+add_theme_constant_override("separation", 10)
+size_flags_horizontal = 3
+
+[node name="Search" type="LineEdit" parent="Center/Panel/Margin/VBox/TopBar"]
+unique_name_in_owner = true
+size_flags_horizontal = 3
+placeholder_text = "Filter maps (e.g. home, grill…)"
+
+[node name="IncludeAutosave" type="CheckBox" parent="Center/Panel/Margin/VBox/TopBar"]
+unique_name_in_owner = true
+text = "Autosave"
+
+[node name="MapList" type="ItemList" parent="Center/Panel/Margin/VBox"]
+unique_name_in_owner = true
+size_flags_vertical = 3
+allow_reselect = true
+
+[node name="Status" type="Label" parent="Center/Panel/Margin/VBox"]
+unique_name_in_owner = true
+text = "Select a map. Press F1 to close."
+autowrap_mode = 3
+
+[node name="Buttons" type="HBoxContainer" parent="Center/Panel/Margin/VBox"]
+layout_mode = 2
+add_theme_constant_override("separation", 10)
+alignment = 2
+size_flags_horizontal = 3
+
+[node name="PhotoMode" type="Button" parent="Center/Panel/Margin/VBox/Buttons"]
+unique_name_in_owner = true
+text = "Photo Mode"
+
+[node name="BuildRun" type="Button" parent="Center/Panel/Margin/VBox/Buttons"]
+unique_name_in_owner = true
+text = "Build + Run"
+
+[node name="Close" type="Button" parent="Center/Panel/Margin/VBox/Buttons"]
+unique_name_in_owner = true
+text = "Close"

@@ -45,8 +45,15 @@ func use_targets(activator: Node, target: String) -> void:
 			targ.call(f)
 
 func set_targetname(node: Node, targetname: String) -> void:
-	if node != null and not targetname.is_empty():
-		node.add_to_group(targetname)
+	if node == null:
+		return
+	if targetname.is_empty():
+		return
+	# Allow comma-delimited targetnames (Quake convention).
+	for t in targetname.split(","):
+		var name := String(t).strip_edges()
+		if not name.is_empty():
+			node.add_to_group(name)
 
 # Converts Quake 1 axis to Godot axis
 static func id_vec_to_godot_vec(vec: Variant)->Vector3:
@@ -55,8 +62,8 @@ static func id_vec_to_godot_vec(vec: Variant)->Vector3:
 		org = vec
 	elif vec is String:
 		var arr: PackedFloat64Array = (vec as String).split_floats(" ")
-		for i in max(arr.size(), 3):
-			org[i] = arr[i]
+		for i in min(arr.size(), 3):
+			org[i] = float(arr[i])
 	return Vector3(org.y, org.z, org.x)
 
 
@@ -65,13 +72,36 @@ func _ready() -> void:
 		return
 
 	_reset_objective_state()
-	_spawn_hud_if_missing()
+	# Spawn HUD only in gameplay scenes (not in menus). It will be shown/hidden
+	# automatically when scenes change.
+	get_tree().root.child_entered_tree.connect(_on_root_child_entered_tree)
+	call_deferred("_handle_scene_change")
 	# For huge baked func_godot scenes (like HOME.tscn), this can reduce node count
 	# and speed up physics broadphase by replacing thousands of brush colliders with
 	# a single trimesh collider derived from the visual mesh.
 	call_deferred("_optimize_worldspawn_collisions")
 	# In case player registers before GAME is ready, try to find one.
 	call_deferred("_try_register_existing_player")
+
+
+func _on_root_child_entered_tree(_node: Node) -> void:
+	# When the scene root changes, update HUD visibility.
+	call_deferred("_handle_scene_change")
+
+
+func _handle_scene_change() -> void:
+	var current := get_tree().current_scene
+	if current == null:
+		return
+	var in_ui := current is Control
+	if in_ui:
+		if _hud != null:
+			_hud.visible = false
+		return
+
+	_spawn_hud_if_missing()
+	if _hud != null:
+		_hud.visible = true
 
 
 func _try_register_existing_player() -> void:

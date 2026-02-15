@@ -1,22 +1,19 @@
-[gd_resource type="Resource" script_class="FuncGodotFGDFile" load_steps=13 format=3 uid="uid://dcahi87src2x1"]
+[gd_resource type="Resource" script_class="FuncGodotFGDFile" format=3 uid="uid://dcahi87src2x1"]
 
-[ext_resource type="Script" uid="uid://d4krlpn1lm6t5" path="res://addons/func_godot/src/fgd/func_godot_fgd_file.gd" id="1_3atn5"]
+[ext_resource type="Script" uid="uid://oqca3vmn1ssq" path="res://addons/func_godot/src/fgd/func_godot_fgd_file.gd" id="1_3atn5"]
 [ext_resource type="Resource" uid="uid://c2qu0oxubiqrv" path="res://tb/fgd/point/actors/actor_marsfrog.tres" id="1_7urq8"]
 [ext_resource type="Resource" uid="uid://ia1t5p4mhom3" path="res://tb/fgd/point/lights/light_omni.tres" id="2_vstcb"]
 [ext_resource type="Resource" uid="uid://dbvwttrr1uq6e" path="res://tb/fgd/point/lights/light_spot.tres" id="3_nmgj0"]
 [ext_resource type="Resource" uid="uid://drhgccbh1koh8" path="res://tb/fgd/point/info_camera.tres" id="4_wjef5"]
-[ext_resource type="Resource" path="res://tb/fgd/point/items/item_collectible.tres" id="5_item_collectible"]
-[ext_resource type="Resource" path="res://tb/fgd/point/info_player_start.tres" id="6_info_player_start"]
-[ext_resource type="Resource" path="res://tb/fgd/point/light.tres" id="7_light"]
-[ext_resource type="Resource" path="res://tb/fgd/point/items/item_health.tres" id="8_item_health"]
-[ext_resource type="Resource" path="res://tb/fgd/point/info_intermission.tres" id="9_info_intermission"]
-[ext_resource type="Resource" path="res://tb/fgd/point/path_corner.tres" id="10_path_corner"]
-[ext_resource type="Resource" path="res://tb/fgd/point/items/item_ammo.tres" id="11_item_ammo"]
+[ext_resource type="Resource" uid="uid://cg8j3a3dr0dgh" path="res://tb/fgd/point/items/item_collectible.tres" id="5_item_collectible"]
+[ext_resource type="Resource" uid="uid://7dex3tqd5pq5" path="res://tb/fgd/point/info_player_start.tres" id="6_info_player_start"]
+[ext_resource type="Resource" uid="uid://oqjelcojyla2" path="res://tb/fgd/point/light.tres" id="7_light"]
+[ext_resource type="Resource" uid="uid://cpig8n3fjnsmg" path="res://tb/fgd/point/items/item_health.tres" id="8_item_health"]
+[ext_resource type="Resource" uid="uid://bym32txt4ikin" path="res://tb/fgd/point/info_intermission.tres" id="9_info_intermission"]
+[ext_resource type="Resource" uid="uid://8yvlbibxyoop" path="res://tb/fgd/point/path_corner.tres" id="10_path_corner"]
+[ext_resource type="Resource" uid="uid://dq0v3apk0gnsu" path="res://tb/fgd/point/items/item_ammo.tres" id="11_item_ammo"]
 
 [resource]
 script = ExtResource("1_3atn5")
-export_file = false
-target_map_editor = 1
 fgd_name = "PointFGD"
-base_fgd_files = Array[Resource]([])
 entity_definitions = Array[Resource]([ExtResource("1_7urq8"), ExtResource("2_vstcb"), ExtResource("3_nmgj0"), ExtResource("4_wjef5"), ExtResource("5_item_collectible"), ExtResource("6_info_player_start"), ExtResource("7_light"), ExtResource("8_item_health"), ExtResource("9_info_intermission"), ExtResource("10_path_corner"), ExtResource("11_item_ammo")])

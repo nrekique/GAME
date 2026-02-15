@@ -1,0 +1,162 @@
+extends Node3D
+
+# Builds a FuncGodot map at runtime and then spawns the player.
+# Map path is provided by the DEBUG autoload (pending_runtime_map_path).
+
+const PLAYER_SCENE: PackedScene = preload("res://scenes/player.tscn")
+const SPECTATOR_SCENE: PackedScene = preload("res://scenes/spectator.tscn")
+const HOME_SETUP_SCRIPT := preload("res://scripts/home_setup.gd")
+
+var _map: FuncGodotMap
+var _player: Node3D
+
+
+func _ready() -> void:
+	if Engine.is_editor_hint():
+		return
+
+	# Minimal loading indicator.
+	var status := _make_status_label("Building map…")
+	add_child(status)
+
+	var dbg := get_node_or_null("/root/DEBUG")
+	var map_path := ""
+	if dbg != null and "pending_runtime_map_path" in dbg:
+		map_path = String(dbg.pending_runtime_map_path)
+	if map_path.is_empty():
+		(status as Label).text = "No map selected (open debug menu with F1)"
+		return
+
+	_map = FuncGodotMap.new()
+	_map.name = "FuncGodotMap"
+	_map.local_map_file = map_path
+	add_child(_map)
+
+	var ok := await _build_map(_map, status as Label)
+	if not ok:
+		return
+
+	(status as Label).text = "Spawning player…"
+	var has_player := _spawn_player()
+	var has_start := _position_player_at_start()
+	if not has_player or not has_start:
+		if _player:
+			_player.queue_free()
+			_player = null
+		(status as Label).text = "No player start found — spectator mode"
+		_spawn_spectator()
+		_ensure_fallback_light()
+	else:
+		_ensure_player_camera()
+		_ensure_fallback_light()
+
+	# Run the existing fallback spawner AFTER build so we don't duplicate entities.
+	var setup := Node3D.new()
+	setup.name = "HomeSetup"
+	setup.set_script(HOME_SETUP_SCRIPT)
+	add_child(setup)
+	# Configure it for manual run.
+	if "auto_run" in setup:
+		setup.auto_run = false
+	if setup.has_method("run_setup"):
+		await setup.call("run_setup")
+
+	(status as Label).queue_free()
+
+
+func _make_status_label(text: String) -> Label:
+	var l := Label.new()
+	l.name = "RuntimeStatus"
+	l.text = text
+	l.position = Vector2(12, 12)
+	l.add_theme_color_override("font_color", Color(1, 1, 1))
+	l.add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0.8))
+	l.add_theme_constant_override("shadow_offset_x", 1)
+	l.add_theme_constant_override("shadow_offset_y", 1)
+	return l
+
+
+func _build_map(map: FuncGodotMap, status: Label) -> bool:
+	var done := [false]
+	var success := [false]
+
+	map.build_progress.connect(func(step, progress):
+		if status:
+			status.text = "Building %s (%d%%)" % [String(step), int(progress * 100.0)]
+	)
+	map.build_complete.connect(func():
+		done[0] = true
+		success[0] = true
+	)
+	map.build_failed.connect(func():
+		done[0] = true
+		success[0] = false
+		if status:
+			status.text = "Build failed (see output)"
+	)
+
+	map.verify_and_build()
+	while not done[0]:
+		await get_tree().process_frame
+	return success[0]
+
+
+func _spawn_player() -> bool:
+	if PLAYER_SCENE == null:
+		return false
+	var p := PLAYER_SCENE.instantiate()
+	add_child(p)
+	if p is Node3D:
+		_player = p as Node3D
+		return true
+	return false
+
+
+func _position_player_at_start() -> bool:
+	if _player == null:
+		return false
+	# Find an active info_player_start.
+	var starts := find_children("*", "Marker3D", true, false)
+	for s in starts:
+		if s is InfoPlayerStart and (s as InfoPlayerStart).active:
+			_player.global_position = (s as InfoPlayerStart).global_position
+			_player.rotation_degrees = (s as InfoPlayerStart).angles
+			return true
+	return false
+
+
+func _ensure_player_camera() -> void:
+	if _player == null:
+		return
+	var cam := _player.find_child("Camera", true, false) as Camera3D
+	if cam:
+		cam.current = true
+		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+
+
+func _spawn_spectator() -> void:
+	if SPECTATOR_SCENE == null:
+		return
+	var spec := SPECTATOR_SCENE.instantiate()
+	add_child(spec)
+	if spec is Node3D:
+		var spec_node := spec as Node3D
+		var start_pos := Vector3(0, 2.0, 0)
+		if _map:
+			var meshes := _map.find_children("*", "MeshInstance3D", true, false)
+			if meshes.size() > 0:
+				var mesh := meshes[0] as MeshInstance3D
+				if mesh:
+					start_pos = mesh.global_position + Vector3(0, 2.0, 0)
+		spec_node.global_position = start_pos
+
+
+func _ensure_fallback_light() -> void:
+	# Only add a light if the map has none.
+	var existing := find_children("*", "Light3D", true, false)
+	if existing.size() > 0:
+		return
+	var light := DirectionalLight3D.new()
+	light.name = "RuntimeFallbackLight"
+	light.rotation_degrees = Vector3(-45, 45, 0)
+	add_child(light)

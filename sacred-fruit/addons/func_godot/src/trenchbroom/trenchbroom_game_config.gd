@@ -35,6 +35,11 @@ enum GameConfigVersion {
 	{ "format": "Quake3" }
 ]
 
+@export_category("Filesystem")
+
+## Filesystem search path relative to the Game Path used by TrenchBroom.
+@export var filesystem_search_path: String = "."
+
 @export_category("Textures")
 
 ## Path to top level textures folder relative to the game path. Also referred to as materials in the latest versions of TrenchBroom.
@@ -118,6 +123,7 @@ func build_class_text() -> String:
 			config_text = get_game_config_v9v8_text() % [
 				game_name,
 				map_formats_str,
+				filesystem_search_path,
 				textures_root_folder,
 				texture_exclusion_patterns_str,
 				palette_path,
@@ -132,6 +138,7 @@ func build_class_text() -> String:
 			config_text = get_game_config_v4_text() % [
 				game_name,
 				map_formats_str,
+				filesystem_search_path,
 				textures_root_folder,
 				texture_exclusion_patterns_str,
 				palette_path,
@@ -245,7 +252,7 @@ func get_game_config_v4_text() -> String:
 		%s
 	],
 	"filesystem": {
-		"searchpath": ".",
+		"searchpath": "%s",
 		"packageformat": { "extension": ".zip", "format": "zip" }
 	},
 	"textures": {
@@ -289,7 +296,7 @@ func get_game_config_v9v8_text() -> String:
 		%s
 	],
 	"filesystem": {
-		"searchpath": ".",
+		"searchpath": "%s",
 		"packageformat": { "extension": ".zip", "format": "zip" }
 	},
 	"materials": {

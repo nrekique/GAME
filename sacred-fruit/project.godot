@@ -29,11 +29,14 @@ config/icon="uid://11wvyxmo2gpm"
 GAME="*res://game_manager.gd"
 Exit="*res://scripts/exit.gd"
 SETTINGS="*res://scripts/settings.gd"
+DEBUG="*res://scripts/debug.gd"
 
 [display]
 
 window/size/viewport_width=1439
 window/size/viewport_height=960
+window/stretch/mode="canvas_items"
+window/stretch/aspect="expand"
 
 [editor_plugins]
 
