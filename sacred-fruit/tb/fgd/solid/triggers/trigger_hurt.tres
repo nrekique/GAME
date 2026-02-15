@@ -1,0 +1,48 @@
+[gd_resource type="Resource" script_class="FuncGodotFGDSolidClass" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://addons/func_godot/src/fgd/func_godot_fgd_solid_class.gd" id="1_solid"]
+[ext_resource type="Resource" path="res://tb/fgd/base/trigger_base.tres" id="2_trigger_base"]
+[ext_resource type="Script" path="res://entities/triggers/trigger_hurt.gd" id="3_script"]
+
+[resource]
+script = ExtResource("1_solid")
+spawn_type = 2
+origin_type = 4
+build_visuals = false
+use_in_baked_light = false
+shadow_casting_setting = 0
+build_occlusion = false
+render_layers = 0
+collision_shape_type = 1
+collision_layer = 0
+collision_mask = 1
+collision_priority = 1.0
+collision_shape_margin = 0.04
+add_textures_metadata = false
+add_vertex_metadata = false
+add_face_position_metadata = false
+add_face_normal_metadata = false
+add_collision_shape_face_range_metadata = false
+script_class = ExtResource("3_script")
+classname = "trigger_hurt"
+description = "Damages players while they are inside the volume (Quake-ish: dmg per second, wait tick interval)."
+func_godot_internal = false
+base_classes = Array[Resource]([ExtResource("2_trigger_base")])
+class_properties = {
+"dmg": 20.0,
+"wait": 0.25,
+"start_disabled": false,
+"one_shot": false
+}
+class_property_descriptions = {
+"dmg": "Damage per second applied to the player while inside.",
+"wait": "Damage tick interval in seconds.",
+"start_disabled": "If true, starts disabled and must be enabled via Use/targetname.",
+"one_shot": "If true, applies damage once then disables itself."
+}
+auto_apply_to_matching_node_properties = false
+meta_properties = {
+"color": Color(0.9, 0.6, 0.2, 1)
+}
+node_class = "Area3D"
+name_property = ""

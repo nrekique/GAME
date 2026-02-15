@@ -175,6 +175,9 @@ func set_owner_editor(node: Node) -> void:
 	
 	node.set_owner(edited_scene_root)
 
+func _map_vec_to_godot(map_vec: Vector3) -> Vector3:
+	return Vector3(map_vec.y, map_vec.z, map_vec.x)
+
 var build_step_index : int = 0
 var build_step_count : int = 0
 var build_steps : Array = []
@@ -463,13 +466,18 @@ func build_entity_nodes() -> Array:
 								var scale_arr: PackedStringArray = (scale_prop as String).split(" ")
 								match scale_arr.size():
 									1: scale_prop = scale_arr[0].to_float()
-									3: scale_prop = Vector3(scale_arr[1].to_float(), scale_arr[2].to_float(), scale_arr[0].to_float())
+									3:
+										var scale_map := Vector3(scale_arr[0].to_float(), scale_arr[1].to_float(), scale_arr[2].to_float())
+										scale_prop = _map_vec_to_godot(scale_map)
 									2: scale_prop = Vector2(scale_arr[0].to_float(), scale_arr[0].to_float())
 							if typeof(scale_prop) == TYPE_FLOAT or typeof(scale_prop) == TYPE_INT:
 								node.scale *= scale_prop as float
 							elif node.scale is Vector3:
-								if typeof(scale_prop) == TYPE_VECTOR3 or typeof(scale_prop) == TYPE_VECTOR3I:
-									node.scale *= scale_prop as Vector3
+									if typeof(scale_prop) == TYPE_VECTOR3 or typeof(scale_prop) == TYPE_VECTOR3I:
+										var scale_vec: Vector3 = scale_prop
+										if typeof(scale_prop) == TYPE_VECTOR3I:
+											scale_vec = Vector3(scale_prop.x, scale_prop.y, scale_prop.z)
+										node.scale *= _map_vec_to_godot(scale_vec)
 							elif node.scale is Vector2:
 								if typeof(scale_prop) == TYPE_VECTOR2 or typeof(scale_prop) == TYPE_VECTOR2I:
 									node.scale *= scale_prop as Vector2
@@ -486,7 +494,8 @@ func build_entity_nodes() -> Array:
 			var origin_vec: Vector3 = Vector3.ZERO
 			var origin_comps: PackedFloat64Array = properties['origin'].split_floats(' ')
 			if origin_comps.size() > 2:
-				origin_vec = Vector3(origin_comps[1], origin_comps[2], origin_comps[0])
+				var origin_map := Vector3(origin_comps[0], origin_comps[1], origin_comps[2])
+				origin_vec = _map_vec_to_godot(origin_map)
 			else:
 				push_error("Invalid vector format for \'origin\' in " + node.name)
 			if 'position' in node:
@@ -497,7 +506,12 @@ func build_entity_nodes() -> Array:
 		else:
 			if entity_idx != 0 and 'position' in node:
 				if node.position is Vector3:
-					node.position = entity_dict['center'] * map_settings.scale_factor
+					var center_vec: Vector3
+					if entity_dict.has("center_raw"):
+						center_vec = _map_vec_to_godot(entity_dict["center_raw"])
+					else:
+						center_vec = entity_dict["center"]
+					node.position = center_vec * map_settings.scale_factor
 		
 		entity_nodes[entity_idx] = node
 		

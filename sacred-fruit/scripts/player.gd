@@ -1,5 +1,16 @@
 extends CharacterBody3D
 
+signal health_changed(current: int, max_health: int, max_overhealth: int)
+signal died
+
+# Quake-ish health model
+@export var max_health: int = 100
+@export var max_overhealth: int = 200
+@export var health: int = 100
+@export var overheal_decay_per_sec: float = 5.0
+@export var respawn_on_death: bool = true
+@export var respawn_delay: float = 1.0
+
 @export var JUMP_VELOCITY = 4.5
 @export var WALKING_SPEED = 5.0
 @export var SPRINTING_SPEED = 8.0
@@ -47,6 +58,23 @@ var _was_on_floor: bool = false
 func _ready():
 	add_to_group("PLAYER")
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+	# Pull mouse sensitivity from SETTINGS if present.
+	var settings := get_node_or_null("/root/SETTINGS")
+	if settings != null and "mouse_sens" in settings:
+		MOUSE_SENS = float(settings.mouse_sens)
+		if settings.has_signal("settings_applied"):
+			settings.settings_applied.connect(_on_settings_applied)
+	# Register with GAME so HUD and items can route health changes.
+	var game := get_node_or_null("/root/GAME")
+	if game != null and game.has_method("register_player"):
+		game.call("register_player", self)
+	_emit_health_changed()
+
+
+func _on_settings_applied() -> void:
+	var settings := get_node_or_null("/root/SETTINGS")
+	if settings != null and "mouse_sens" in settings:
+		MOUSE_SENS = float(settings.mouse_sens)
 
 
 func _input(event):
@@ -223,6 +251,14 @@ func _physics_process(delta):
 		elif impact_speed >= 5.0:
 			$Neck/Head/Eyes/AnimationPlayer.play("landing")
 
+	# Quake-ish overhealth decay.
+	if health > max_health and overheal_decay_per_sec > 0.0:
+		var new_health := maxf(float(max_health), float(health) - overheal_decay_per_sec * delta)
+		var rounded := int(floor(new_health + 0.5))
+		if rounded != health:
+			health = rounded
+			_emit_health_changed()
+
 
 func _on_sliding_timer_timeout():
 	is_free_looking = false
@@ -230,3 +266,47 @@ func _on_sliding_timer_timeout():
 
 func _on_animation_player_animation_finished(anim_name):
 	stand_after_roll = anim_name == "roll"
+
+
+func add_health(amount: int, allow_overheal: bool = false, overheal_cap: int = 0) -> void:
+	if amount <= 0:
+		return
+	var cap := max_health
+	if allow_overheal:
+		cap = max_overhealth
+		if overheal_cap > 0:
+			cap = min(cap, overheal_cap)
+	health = clampi(health + amount, 0, cap)
+	_emit_health_changed()
+
+
+func apply_damage(amount: float) -> void:
+	if amount <= 0.0:
+		return
+	health = maxi(0, int(floor(float(health) - amount + 0.5)))
+	_emit_health_changed()
+	if health <= 0:
+		die()
+
+
+func reset_health() -> void:
+	health = max_health
+	_emit_health_changed()
+
+
+func die() -> void:
+	if health > 0:
+		health = 0
+	_emit_health_changed()
+	emit_signal("died")
+
+	if not respawn_on_death:
+		return
+	# Ask GAME to respawn us (keeps logic centralized).
+	var game := get_node_or_null("/root/GAME")
+	if game != null and game.has_method("handle_player_death"):
+		game.call("handle_player_death", self, respawn_delay)
+
+
+func _emit_health_changed() -> void:
+	emit_signal("health_changed", health, max_health, max_overhealth)

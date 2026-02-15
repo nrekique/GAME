@@ -8,6 +8,10 @@
 
 config_version=5
 
+[animation]
+
+compatibility/default_parent_skeleton_in_mesh_instance_3d=true
+
 [application]
 
 config/name="Sacred Fruit"
@@ -15,8 +19,8 @@ config/name_localized={
 "es_MX": "Fruta Sagrada",
 "pt_BR": "Fruto Sagrado"
 }
-run/main_scene="res://scenes/HOME_play.tscn"
-config/features=PackedStringArray("4.4", "Forward Plus")
+run/main_scene="res://scenes/ui/main_menu.tscn"
+config/features=PackedStringArray("4.6", "Forward Plus")
 boot_splash/show_image=false
 config/icon="uid://11wvyxmo2gpm"
 
@@ -24,6 +28,7 @@ config/icon="uid://11wvyxmo2gpm"
 
 GAME="*res://game_manager.gd"
 Exit="*res://scripts/exit.gd"
+SETTINGS="*res://scripts/settings.gd"
 
 [display]
 

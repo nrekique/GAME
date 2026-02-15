@@ -3,13 +3,33 @@ class_name TriggerExit
 extends Area3D
 
 @export var targetname: String = ""
+@export var map_path: String = ""
+@export var delay: float = 0.0
 @export var show_volume: bool = true
+@export var one_shot: bool = true
+
+var _fired: bool = false
 
 const EXIT_VFX: PackedScene = preload("res://scenes/vfx/exit_burst.tscn")
 
 func _func_godot_apply_properties(props: Dictionary) -> void:
 	if props.has("targetname"):
 		targetname = props["targetname"] as String
+	if props.has("map"):
+		map_path = props["map"] as String
+	elif props.has("map_path"):
+		map_path = props["map_path"] as String
+	elif props.has("scene"):
+		map_path = props["scene"] as String
+	elif props.has("next_scene"):
+		map_path = props["next_scene"] as String
+	if props.has("delay"):
+		# TrenchBroom values often arrive as strings.
+		delay = float(props["delay"])
+	if props.has("show_volume"):
+		show_volume = bool(props["show_volume"])
+	if props.has("one_shot"):
+		one_shot = bool(props["one_shot"])
 
 
 func _init() -> void:
@@ -30,9 +50,19 @@ func _ready() -> void:
 func _on_body_entered(body: Node) -> void:
 	if Engine.is_editor_hint():
 		return
+	if one_shot and _fired:
+		return
 	if body != null and body.is_in_group("PLAYER"):
+		_fired = true
+		if one_shot:
+			# Prevent re-triggering on subsequent overlap events.
+			set_deferred("monitoring", false)
 		_spawn_exit_vfx()
-		GAME.try_exit()
+		var ok := GAME.try_exit()
+		if ok and map_path != "":
+			if delay > 0.0:
+				await get_tree().create_timer(delay).timeout
+			get_tree().change_scene_to_file(map_path)
 
 
 func _spawn_exit_vfx() -> void:
@@ -77,7 +107,7 @@ func _get_collision_aabb() -> AABB:
 	var has_any := false
 	for ch in get_children():
 		if ch is CollisionShape3D and ch.shape != null:
-			var shape_aabb := ch.shape.get_aabb()
+			var shape_aabb: AABB = ch.shape.get_aabb()
 			shape_aabb.position += ch.position
 			if not has_any:
 				aabb = shape_aabb

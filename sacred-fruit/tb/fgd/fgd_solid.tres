@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="FuncGodotFGDFile" load_steps=9 format=3 uid="uid://cnrh5xw6qygo7"]
+[gd_resource type="Resource" script_class="FuncGodotFGDFile" load_steps=16 format=3 uid="uid://cnrh5xw6qygo7"]
 
 [ext_resource type="Resource" uid="uid://bv37jafqtfyuw" path="res://tb/fgd/solid/funcs/func_detail.tres" id="1_clqpq"]
 [ext_resource type="Script" uid="uid://d4krlpn1lm6t5" path="res://addons/func_godot/src/fgd/func_godot_fgd_file.gd" id="1_n87v7"]
@@ -8,6 +8,13 @@
 [ext_resource type="Resource" uid="uid://b3t000ocefkge" path="res://tb/fgd/solid/funcs/func_move.tres" id="5_tk340"]
 [ext_resource type="Resource" uid="uid://ptvum0fd8lvk" path="res://tb/fgd/solid/triggers/trigger_area.tres" id="6_2qosd"]
 [ext_resource type="Resource" path="res://tb/fgd/solid/triggers/trigger_exit.tres" id="7_trigger_exit"]
+[ext_resource type="Resource" path="res://tb/fgd/solid/triggers/trigger_changelevel.tres" id="8_trigger_changelevel"]
+[ext_resource type="Resource" path="res://tb/fgd/solid/triggers/trigger_hurt.tres" id="14_trigger_hurt"]
+[ext_resource type="Resource" path="res://tb/fgd/solid/funcs/func_door.tres" id="9_func_door"]
+[ext_resource type="Resource" path="res://tb/fgd/solid/funcs/func_button.tres" id="10_func_button"]
+[ext_resource type="Resource" path="res://tb/fgd/solid/triggers/trigger_once.tres" id="11_trigger_once"]
+[ext_resource type="Resource" path="res://tb/fgd/solid/triggers/trigger_multiple.tres" id="12_trigger_multiple"]
+[ext_resource type="Resource" path="res://tb/fgd/solid/funcs/func_train.tres" id="13_func_train"]
 
 [resource]
 script = ExtResource("1_n87v7")
@@ -15,4 +22,4 @@ export_file = false
 target_map_editor = 1
 fgd_name = "SolidFGD"
 base_fgd_files = Array[Resource]([])
-entity_definitions = Array[Resource]([ExtResource("1_clqpq"), ExtResource("2_g488m"), ExtResource("3_mqtmv"), ExtResource("4_2y1us"), ExtResource("5_tk340"), ExtResource("6_2qosd"), ExtResource("7_trigger_exit")])
+entity_definitions = Array[Resource]([ExtResource("1_clqpq"), ExtResource("2_g488m"), ExtResource("3_mqtmv"), ExtResource("4_2y1us"), ExtResource("5_tk340"), ExtResource("6_2qosd"), ExtResource("7_trigger_exit"), ExtResource("8_trigger_changelevel"), ExtResource("14_trigger_hurt"), ExtResource("9_func_door"), ExtResource("10_func_button"), ExtResource("11_trigger_once"), ExtResource("12_trigger_multiple"), ExtResource("13_func_train")])

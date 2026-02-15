@@ -87,7 +87,8 @@ func create_func_godot_map_control() -> Control:
 	icon.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	
 	var build_button = Button.new()
-	build_button.text = "Build"
+	build_button.text = "Build (Rebuild All)"
+	build_button.tooltip_text = "Rebuild the map scene from the .map file (removes generated children and regenerates meshes/collisions)."
 	build_button.connect("pressed",Callable(self,"func_godot_map_build"))
 	
 	var unwrap_uv2_button = Button.new()
@@ -135,7 +136,7 @@ func func_godot_map_build() -> void:
 	set_func_godot_map_control_disabled(true)
 	edited_object.build_progress.connect(func_godot_map_build_progress)
 	edited_object.build_complete.connect(func_godot_map_build_complete.bind(edited_object))
-	edited_object.build_failed.connect(func_godot_map_build_complete.bind(edited_object))
+	edited_object.build_failed.connect(func_godot_map_build_failed.bind(edited_object))
 
 	edited_object.verify_and_build()
 
@@ -184,3 +185,22 @@ func func_godot_map_build_complete(func_godot_map: FuncGodotMap) -> void:
 
 	if func_godot_map.is_connected("build_failed",Callable(self,"func_godot_map_build_complete")):
 		func_godot_map.disconnect("build_failed",Callable(self,"func_godot_map_build_complete"))
+
+	if func_godot_map.is_connected("build_failed",Callable(self,"func_godot_map_build_failed")):
+		func_godot_map.disconnect("build_failed",Callable(self,"func_godot_map_build_failed"))
+
+## Callback for when the build process for a [FuncGodotMap] fails.
+func func_godot_map_build_failed(func_godot_map: FuncGodotMap) -> void:
+	var progress_label = func_godot_map_progress_bar.get_node("ProgressLabel")
+	progress_label.text = "Build Failed (check errors)"
+
+	set_func_godot_map_control_disabled(false)
+
+	if func_godot_map.is_connected("build_progress",Callable(self,"func_godot_map_build_progress")):
+		func_godot_map.disconnect("build_progress",Callable(self,"func_godot_map_build_progress"))
+
+	if func_godot_map.is_connected("build_complete",Callable(self,"func_godot_map_build_complete")):
+		func_godot_map.disconnect("build_complete",Callable(self,"func_godot_map_build_complete"))
+
+	if func_godot_map.is_connected("build_failed",Callable(self,"func_godot_map_build_failed")):
+		func_godot_map.disconnect("build_failed",Callable(self,"func_godot_map_build_failed"))

@@ -24,3 +24,6 @@ autowrap_mode = 3
 
 [node name="Collect" type="Label" parent="Margin/VBox"]
 text = "0/0"
+
+[node name="Health" type="Label" parent="Margin/VBox"]
+text = "HP: 0"

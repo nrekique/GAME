@@ -25,11 +25,17 @@ add_face_normal_metadata = false
 add_collision_shape_face_range_metadata = false
 script_class = ExtResource("3_script")
 classname = "trigger_exit"
-description = "Exit trigger volume. Calls GAME.try_exit() when the PLAYER enters."
+description = "Exit trigger volume. Calls GAME.try_exit() when the PLAYER enters. Optionally loads a scene if 'map' is set."
 func_godot_internal = false
 base_classes = Array[Resource]([ExtResource("2_targetname")])
-class_properties = {}
-class_property_descriptions = {}
+class_properties = {
+"map": "",
+"delay": 0.0
+}
+class_property_descriptions = {
+"map": "Scene to load on successful exit (e.g. res://scenes/grill.tscn). Leave empty to just call GAME.try_exit().",
+"delay": "Seconds to wait before loading the next scene."
+}
 auto_apply_to_matching_node_properties = false
 meta_properties = {
 "color": Color(0.2, 0.9, 0.35, 1)

@@ -1,0 +1,51 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/main_menu.gd" id="1_main_menu"]
+
+[node name="MainMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("1_main_menu")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.06, 0.06, 0.075, 1)
+
+[node name="Center" type="CenterContainer" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Panel" type="PanelContainer" parent="Center"]
+custom_minimum_size = Vector2(420, 0)
+
+[node name="Margin" type="MarginContainer" parent="Center/Panel"]
+add_theme_constant_override("margin_left", 18)
+add_theme_constant_override("margin_right", 18)
+add_theme_constant_override("margin_top", 18)
+add_theme_constant_override("margin_bottom", 18)
+
+[node name="VBox" type="VBoxContainer" parent="Center/Panel/Margin"]
+add_theme_constant_override("separation", 10)
+
+[node name="Title" type="Label" parent="Center/Panel/Margin/VBox"]
+text = "SACRED FRUIT"
+horizontal_alignment = 1
+
+[node name="PlayButton" type="Button" parent="Center/Panel/Margin/VBox"]
+unique_name_in_owner = true
+text = "Play"
+
+[node name="OptionsButton" type="Button" parent="Center/Panel/Margin/VBox"]
+unique_name_in_owner = true
+text = "Options"
+
+[node name="QuitButton" type="Button" parent="Center/Panel/Margin/VBox"]
+unique_name_in_owner = true
+text = "Quit"

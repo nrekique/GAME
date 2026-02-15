@@ -56,6 +56,7 @@ func get_entity_dicts() -> Array:
 			brush_indices[b] = b
 		
 		dict["brush_indices"] = brush_indices
+		dict["center_raw"] = entity.center
 		dict["center"] = Vector3(entity.center.y, entity.center.z, entity.center.x)
 		dict["properties"] = entity.properties
 		

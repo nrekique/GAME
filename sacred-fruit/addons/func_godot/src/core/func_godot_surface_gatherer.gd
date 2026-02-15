@@ -122,7 +122,13 @@ func run() -> void:
 				for v in range(face_geo.vertices.size()):
 					var vert: FuncGodotMapData.FuncGodotFaceVertex = face_geo.vertices[v].duplicate()
 					
-					if entity.spawn_type == FuncGodotMapData.FuncGodotEntitySpawnType.ENTITY:
+					# Keep WORLDSPAWN geometry in absolute map-space.
+					# In some edge cases (misconfigured entity definitions / build order) worldspawn can
+					# incorrectly remain spawn_type == ENTITY, which would wrongly center the entire map.
+					var classname := ""
+					if entity.properties and entity.properties.has("classname"):
+						classname = str(entity.properties["classname"])
+					if entity.spawn_type == FuncGodotMapData.FuncGodotEntitySpawnType.ENTITY and classname != "worldspawn":
 						vert.vertex -= entity.center
 					
 					surf.vertices.append(vert)

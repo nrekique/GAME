@@ -4,7 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://kicjwmh02uwf" path="res://scenes/player.tscn" id="2_7u1mx"]
 [ext_resource type="Shader" uid="uid://dj64nm71nxict" path="res://tb/textures/shaders/outline.gdshader" id="3_hushr"]
 [ext_resource type="Script" uid="uid://br6nldk1val40" path="res://addons/func_godot/src/map/func_godot_map.gd" id="4_fxbwu"]
-[ext_resource type="Resource" uid="uid://bkhxcqsquw1yg" path="res://addons/func_godot/func_godot_default_map_settings.tres" id="5_8st70"]
+[ext_resource type="Resource" path="res://tb/fgd/map_settings_grill.tres" id="5_8st70"]
 [ext_resource type="Texture2D" uid="uid://cyg2snr1w5xw5" path="res://addons/func_godot/textures/default_texture.png" id="6_hteh0"]
 [ext_resource type="Material" uid="uid://30u725yagtru" path="res://tb/textures/special/water.tres" id="8_4qjc6"]
 [ext_resource type="Material" uid="uid://boi54cggix05i" path="res://tb/textures/special/trigger.tres" id="9_4qjc6"]
