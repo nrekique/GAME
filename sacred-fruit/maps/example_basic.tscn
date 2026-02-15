@@ -1,7 +1,7 @@
 [gd_scene load_steps=25 format=4 uid="uid://bbhji8qxm5hpx"]
 
 [ext_resource type="Script" uid="uid://cbinx7nthy7uc" path="res://addons/func_godot/src/map/func_godot_map.gd" id="1_123pv"]
-[ext_resource type="Resource" uid="uid://cnci07xmp76ix" path="res://tb/map_settings.tres" id="2_ra3tx"]
+[ext_resource type="Resource" uid="uid://cnci07xmp76ix" path="res://tb/fgd/map_settings.tres" id="2_ra3tx"]
 [ext_resource type="PackedScene" uid="uid://bi51vakf1lv8k" path="res://entities/actors/marsfrog/marsfrog.tscn" id="4_4n4xy"]
 [ext_resource type="Texture2D" uid="uid://dhf77ycwlwn8v" path="res://tb/textures/mars/mars_cave0.png" id="5_floj3"]
 [ext_resource type="Script" uid="uid://cm1d60bvyoko4" path="res://entities/info_camera.gd" id="5_m03ov"]

@@ -1,0 +1,9 @@
+[gd_scene load_steps=3 format=3 uid="uid://cmpskbmnvti3a"]
+
+[ext_resource type="PackedScene" uid="uid://bmqpag63evpac" path="res://scenes/HOME.tscn" id="1_home"]
+[ext_resource type="Script" uid="uid://bvhr1labe7taw" path="res://scripts/home_setup.gd" id="2_setup"]
+
+[node name="HOMEPlay" type="Node3D"]
+script = ExtResource("2_setup")
+
+[node name="HOME" parent="." instance=ExtResource("1_home")]

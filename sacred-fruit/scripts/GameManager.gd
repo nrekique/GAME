@@ -1,5 +1,5 @@
 extends Node
-class_name GameManager
+class_name GameManagerLegacy
 
 # This GDScript 2 function helps reorient Point Entities imported from Trenchbroom via Qodot that utilize the "mangle" key value pair.
 # This assumes your entities are intended to be -Z forward as per Godot's position system.

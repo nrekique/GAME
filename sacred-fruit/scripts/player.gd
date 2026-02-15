@@ -18,6 +18,11 @@ extends CharacterBody3D
 @export var WIGGLE_ON_CROUCHING_INTENSITY = 0.05
 @export var BUNNY_HOP_ACCELERATION = 0.1
 
+# Feel helpers
+@export var COYOTE_TIME = 0.12
+@export var JUMP_BUFFER = 0.12
+@export var SLIDE_RESTART_COOLDOWN = 0.2
+
 var current_speed = 5.0
 var gravity = ProjectSettings.get_setting("physics/3d/default_gravity")
 var direction = Vector3.ZERO
@@ -33,8 +38,14 @@ var bunny_hop_speed = SPRINTING_SPEED
 var last_velocity = Vector3.ZERO
 var stand_after_roll = false
 
+var _coyote_left: float = 0.0
+var _jump_buffer_left: float = 0.0
+var _slide_cooldown_left: float = 0.0
+var _was_on_floor: bool = false
+
 
 func _ready():
+	add_to_group("PLAYER")
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 
 
@@ -50,12 +61,24 @@ func _input(event):
 
 
 func _physics_process(delta):
+	_slide_cooldown_left = maxf(0.0, _slide_cooldown_left - delta)
+
+	# Jump buffering ("I pressed jump slightly early")
+	if Input.is_action_just_pressed("jump"):
+		_jump_buffer_left = JUMP_BUFFER
+	else:
+		_jump_buffer_left = maxf(0.0, _jump_buffer_left - delta)
+
 	var input_dir = Input.get_vector("left", "right", "forward", "back")
 	
 	if stand_after_roll:
-		$Neck/Head.position.y = lerp($Neck/Head.position.y, 0.0, delta * LERP_SPEED)
-		$StandingCollisionShape.disabled = true
-		$CrouchingCollisionShape.disabled = false
+		# Roll finished: try to stand if there is headroom and player isn't holding crouch.
+		var wants_crouch: bool = Input.is_action_pressed("crouch") or $RayCast.is_colliding()
+		if not wants_crouch:
+			$Neck/Head.position.y = lerp($Neck/Head.position.y, 0.0, delta * LERP_SPEED)
+			$StandingCollisionShape.disabled = false
+			$CrouchingCollisionShape.disabled = true
+			is_crouching = false
 		stand_after_roll = false
 	
 	if Input.is_action_pressed("crouch") or $RayCast.is_colliding():
@@ -66,10 +89,11 @@ func _physics_process(delta):
 		$CrouchingCollisionShape.disabled = false
 		wiggle_current_intensity = WIGGLE_ON_CROUCHING_INTENSITY
 		wiggle_index += WIGGLE_ON_CROUCHING_SPEED * delta
-		if is_sprinting and input_dir != Vector2.ZERO and is_on_floor():
+		if is_sprinting and input_dir != Vector2.ZERO and is_on_floor() and $SlidingTimer.is_stopped() and _slide_cooldown_left <= 0.0:
 			$SlidingTimer.start()
 			slide_vector = input_dir
-		elif !Input.is_action_pressed("sprint"):
+			_slide_cooldown_left = SLIDE_RESTART_COOLDOWN
+		elif not Input.is_action_pressed("sprint"):
 			$SlidingTimer.stop()
 		is_walking = false
 		is_sprinting = false
@@ -80,7 +104,7 @@ func _physics_process(delta):
 		$CrouchingCollisionShape.disabled = true
 		$SlidingTimer.stop()
 		if Input.is_action_pressed("sprint"):
-			if !Input.is_action_pressed("jump"):
+			if not Input.is_action_pressed("jump"):
 				bunny_hop_speed = SPRINTING_SPEED
 			current_speed = lerp(current_speed, bunny_hop_speed, delta * LERP_SPEED)
 			wiggle_current_intensity = WIGGLE_ON_SPRINTING_INTENSITY
@@ -96,7 +120,7 @@ func _physics_process(delta):
 			is_sprinting = false
 			is_crouching = false
 	
-	if Input.is_action_pressed("free_look") or !$SlidingTimer.is_stopped():
+	if Input.is_action_pressed("free_look") or (not $SlidingTimer.is_stopped()):
 		is_free_looking = true
 		if $SlidingTimer.is_stopped():
 			$Neck/Head/Eyes.rotation.z = -deg_to_rad(
@@ -120,7 +144,11 @@ func _physics_process(delta):
 	
 	if not is_on_floor():
 		velocity.y -= gravity * delta
-	elif $SlidingTimer.is_stopped() and input_dir != Vector2.ZERO:
+		_coyote_left = maxf(0.0, _coyote_left - delta)
+	else:
+		_coyote_left = COYOTE_TIME
+
+	if is_on_floor() and $SlidingTimer.is_stopped() and input_dir != Vector2.ZERO:
 		wiggle_vector.y = sin(wiggle_index)
 		wiggle_vector.x = sin(wiggle_index / 2) + 0.5
 		$Neck/Head/Eyes.position.y = lerp(
@@ -136,17 +164,13 @@ func _physics_process(delta):
 	else:
 		$Neck/Head/Eyes.position.y = lerp($Neck/Head/Eyes.position.y, 0.0, delta * LERP_SPEED)
 		$Neck/Head/Eyes.position.x = lerp($Neck/Head/Eyes.position.x, 0.0, delta * LERP_SPEED)
-		if last_velocity.y <= -7.5:
-			$Neck/Head.position.y = lerp($Neck/Head.position.y, CROUCHING_DEPTH, delta * LERP_SPEED)
-			$StandingCollisionShape.disabled = false
-			$CrouchingCollisionShape.disabled = true
-			$Neck/Head/Eyes/AnimationPlayer.play("roll")
-		elif last_velocity.y <= -5.0:
-			$Neck/Head/Eyes/AnimationPlayer.play("landing")
-	
-	if Input.is_action_pressed("jump") and is_on_floor():
+
+	# Jump handling (buffer + coyote)
+	if _jump_buffer_left > 0.0 and _coyote_left > 0.0:
 		$Neck/Head/Eyes/AnimationPlayer.play("jump")
-		if !$SlidingTimer.is_stopped():
+		_jump_buffer_left = 0.0
+		_coyote_left = 0.0
+		if not $SlidingTimer.is_stopped():
 			velocity.y = JUMP_VELOCITY * 1.5
 			$SlidingTimer.stop()
 		else:
@@ -183,8 +207,21 @@ func _physics_process(delta):
 		velocity.z = move_toward(velocity.z, 0, current_speed)
 	
 	last_velocity = velocity
-	
+	var pre_move_velocity_y := velocity.y
+	var was_on_floor := _was_on_floor
 	move_and_slide()
+	_was_on_floor = is_on_floor()
+
+	# Landing/roll triggers (only on the landing frame)
+	if _was_on_floor and not was_on_floor:
+		var impact_speed := -pre_move_velocity_y
+		if impact_speed >= 7.5:
+			$Neck/Head.position.y = lerp($Neck/Head.position.y, CROUCHING_DEPTH, delta * LERP_SPEED)
+			$StandingCollisionShape.disabled = true
+			$CrouchingCollisionShape.disabled = false
+			$Neck/Head/Eyes/AnimationPlayer.play("roll")
+		elif impact_speed >= 5.0:
+			$Neck/Head/Eyes/AnimationPlayer.play("landing")
 
 
 func _on_sliding_timer_timeout():
@@ -192,4 +229,4 @@ func _on_sliding_timer_timeout():
 
 
 func _on_animation_player_animation_finished(anim_name):
-	stand_after_roll = anim_name == 'roll' and !is_crouching
+	stand_after_roll = anim_name == "roll"
