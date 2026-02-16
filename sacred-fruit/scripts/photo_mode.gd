@@ -56,7 +56,7 @@ func _deferred_build_map(map: FuncGodotMap) -> void:
 @export var fast_multiplier: float = 3.0
 @export var mouse_sens: float = 0.25
 @export var enable_runtime_layout_repair: bool = false
-@export var enable_layout_debug_print: bool = false
+@export var enable_layout_debug_print: bool = true
 
 var _map: FuncGodotMap
 var _yaw: float = 0.0
@@ -196,6 +196,14 @@ var _auto_focus_enabled: bool = true
 var _auto_focus_timer: float = 0.0
 var _auto_exposure_enabled: bool = false
 var _last_viewport_size: Vector2 = Vector2.ZERO
+var _top_bar: Control
+var _main_vbox: VBoxContainer
+var _bottom_bar: Control
+var _always_show_viewport_toggle: CheckBox
+var _contact_strip: HBoxContainer
+var _session_captures: Array = []
+var _capture_preview_panel: Window
+var _always_show_viewport_enabled: bool = false
 
 
 # --- Export / Import helpers (moved below variable declarations) ---
@@ -494,6 +502,8 @@ func _ready() -> void:
 		call_deferred("_ensure_ui_layout")
 	if enable_layout_debug_print:
 		call_deferred("_debug_layout")
+	# Always attempt a deferred layout repair once to apply the toolbar/top/bottom changes
+	call_deferred("_ensure_ui_layout")
 	await _build_map_from_debug()
 	_position_camera_at_start()
 	_ensure_camera_active()
@@ -828,7 +838,12 @@ func _ensure_ui_layout() -> void:
 	if _ui_root and canvas_layer:
 		var layer_children := canvas_layer.get_children().duplicate()
 		for ch in layer_children:
-			if ch is Control and ch != _ui_root and ch != _guides and ch != _viewfinder:
+			# Reparent most canvas-layer Controls into the PhotoUI so layout manages them.
+			# Keep the viewfinder separate for now so it can be positioned as a sibling of the panel.
+			if ch is Control and ch != _ui_root and ch != _guides:
+				# _viewfinder will be reparented later into the RootHBox so it resizes with the panel
+				if ch == _viewfinder:
+					continue
 				_reparent(ch, _ui_root)
 	# If PhotoUI is still empty, sweep stray Controls from the scene root.
 	if _ui_root and _ui_root.get_child_count() == 0:
@@ -877,6 +892,73 @@ func _repair_scene_tree_if_needed() -> void:
 		(root_hbox as HBoxContainer).size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		(root_hbox as HBoxContainer).size_flags_vertical = Control.SIZE_EXPAND_FILL
 
+	# Wrap the existing RootHBox in a MainVBox so we can place a TopBar above and BottomBar below
+	var main_vbox := _get_or_create_container("MainVBox", VBoxContainer, root_margin)
+	if root_hbox.get_parent() != main_vbox:
+		_reparent(root_hbox, main_vbox)
+	# Ensure the MainVBox expands
+	if main_vbox is VBoxContainer:
+		(main_vbox as VBoxContainer).size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		(main_vbox as VBoxContainer).size_flags_vertical = Control.SIZE_EXPAND_FILL
+
+	# Top bar (slim toolbar) — create under _ui_root so it sits at the absolute top
+	var top_bar := _get_or_create_container("TopBar", HBoxContainer, main_vbox)
+	if top_bar is HBoxContainer:
+		(top_bar as HBoxContainer).add_theme_constant_override("separation", 8)
+		(top_bar as Control).custom_minimum_size = Vector2(0, 28)
+		(top_bar as Control).size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		# Let the top bar shrink vertically so it doesn't become a large box
+		(top_bar as Control).size_flags_vertical = Control.SIZE_SHRINK_BEGIN
+		# remove any themed panel background so it appears as a slim bar
+		var empty_sb := StyleBoxEmpty.new()
+		(top_bar as Control).add_theme_stylebox_override("panel", empty_sb)
+		# Ensure the top bar is placed in a high-priority CanvasLayer so it sits above viewports
+		var top_layer := get_node_or_null("PhotoTopBarLayer") as CanvasLayer
+		if top_layer == null:
+			top_layer = CanvasLayer.new()
+			top_layer.name = "PhotoTopBarLayer"
+			top_layer.layer = 100
+			add_child(top_layer)
+		if top_bar.get_parent() != top_layer:
+			_reparent(top_bar, top_layer)
+		# Anchor to top full-width and give a fixed minimal height
+		if top_bar is Control:
+			(top_bar as Control).anchor_left = 0.0
+			(top_bar as Control).anchor_top = 0.0
+			(top_bar as Control).anchor_right = 1.0
+			(top_bar as Control).anchor_bottom = 0.0
+			# padding from edges so toolbar isn't flush to screen
+			(top_bar as Control).offset_left = 12
+			(top_bar as Control).offset_top = 6
+			(top_bar as Control).offset_right = -12
+			# toolbar height: small (20px) -> offset_bottom should be offset_top + height
+			(top_bar as Control).offset_bottom = 26
+			(top_bar as Control).custom_minimum_size = Vector2(0, 20)
+			(top_bar as Control).z_index = 200
+			# ensure mouse events reach the toolbar (don't let viewfinder ignore them)
+			(top_bar as Control).mouse_filter = Control.MOUSE_FILTER_STOP
+			(top_bar as Control).visible = true
+		# Ensure _top_bar references the node now that it may have been reparented
+		_top_bar = _ui_root.get_node_or_null("TopBar") as Control if _ui_root else null
+		# If the AlwaysShow toggle is missing, add it into the top bar here so it appears
+		if _top_bar and _always_show_viewport_toggle == null:
+			var cb := _top_bar.get_node_or_null("AlwaysShowViewport") as CheckBox
+			if cb == null:
+				cb = CheckBox.new()
+				cb.name = "AlwaysShowViewport"
+				cb.text = "Always show viewport"
+				cb.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
+				cb.add_theme_constant_override("margin_right", 8)
+				_top_bar.add_child(cb)
+				cb.toggled.connect(_on_always_show_viewport_toggled)
+			_always_show_viewport_toggle = cb
+
+	# Bottom bar (contact strip) below tabs/panel
+	var bottom_bar := _get_or_create_container("BottomBar", HBoxContainer, main_vbox)
+	if bottom_bar is Control:
+		(bottom_bar as Control).custom_minimum_size = Vector2(0, 96)
+		(bottom_bar as Control).size_flags_horizontal = Control.SIZE_EXPAND_FILL
+
 	var tabs_panel := _get_or_create_container("TabsPanel", PanelContainer, root_hbox)
 	if tabs_panel is Control:
 		(tabs_panel as Control).size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
@@ -903,6 +985,20 @@ func _repair_scene_tree_if_needed() -> void:
 	elif _tabs_panel != tabs_panel:
 		_reparent(_tabs_panel, root_hbox)
 
+	# Keep the PhotoViewfinder under the CanvasLayer so it overlays the 3D viewport
+	# (the user expects the scene to render to the main viewport, not be confined
+	# inside the Photo UI). Ensure it fills the full rect and ignores mouse input.
+	if _viewfinder != null:
+		var canvas_layer_node := get_node_or_null("CanvasLayer")
+		if canvas_layer_node != null and _viewfinder.get_parent() != canvas_layer_node:
+			_reparent(_viewfinder, canvas_layer_node)
+		if _viewfinder is Control:
+			# Make it cover the full canvas so the viewport content is visible behind UI
+			_viewfinder.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+			_viewfinder.mouse_filter = Control.MOUSE_FILTER_IGNORE
+			_viewfinder.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			_viewfinder.size_flags_vertical = Control.SIZE_EXPAND_FILL
+
 	var panel := _get_or_create_container("Panel", PanelContainer, root_hbox)
 	if panel is Control:
 		(panel as Control).size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
@@ -916,6 +1012,25 @@ func _repair_scene_tree_if_needed() -> void:
 		(margin as MarginContainer).add_theme_constant_override("margin_top", 24)
 		(margin as MarginContainer).add_theme_constant_override("margin_bottom", 24)
 	var vbox := _get_or_create_container("VBox", VBoxContainer, margin)
+
+	# Ensure TopBar/BottomBar references and create basic controls if missing
+	_top_bar = main_vbox.get_node_or_null("TopBar") as Control if main_vbox else null
+	_bottom_bar = main_vbox.get_node_or_null("BottomBar") as Control if main_vbox else null
+	if _top_bar and _always_show_viewport_toggle == null:
+		# Create an Always Show Viewport toggle in the top bar
+		_always_show_viewport_toggle = _top_bar.get_node_or_null("AlwaysShowViewport") as CheckBox
+		if _always_show_viewport_toggle == null:
+			var cb := CheckBox.new()
+			cb.name = "AlwaysShowViewport"
+			cb.text = "Always show viewport"
+			# keep toggle compact
+			cb.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
+			# add a small right spacing via theme constant (avoid assigning non-existent margin_* props)
+			cb.add_theme_constant_override("margin_right", 8)
+			_top_bar.add_child(cb)
+			cb.toggled.connect(_on_always_show_viewport_toggled)
+			_always_show_viewport_toggle = cb
+
 
 	# Reparent known nodes back into VBox (in case they were dragged out)
 	var vbox_nodes := [
@@ -1011,6 +1126,38 @@ func _repair_scene_tree_if_needed() -> void:
 			if ch is Control and ch != vbox:
 				_reparent(ch, vbox)
 
+func _on_always_show_viewport_toggled(pressed: bool) -> void:
+	_always_show_viewport_enabled = pressed
+	if pressed:
+		_set_viewfinder_visible(true)
+	else:
+		# restore visibility based on current tab
+		_set_viewfinder_visible(_current_tab == "Capture")
+
+	# Setup contact strip container
+	if _bottom_bar and _contact_strip == null:
+		_contact_strip = _bottom_bar.get_node_or_null("ContactStrip") as HBoxContainer
+		if _contact_strip == null:
+			_contact_strip = HBoxContainer.new()
+			_contact_strip.name = "ContactStrip"
+			_contact_strip.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			_contact_strip.custom_minimum_size = Vector2(0, 88)
+			_bottom_bar.add_child(_contact_strip)
+
+	# Create capture preview dialog (lazy)
+	if _capture_preview_panel == null:
+		_capture_preview_panel = Window.new()
+		_capture_preview_panel.name = "CapturePreview"
+		_capture_preview_panel.window_title = "Capture Preview"
+		_capture_preview_panel.resizable = true
+		_capture_preview_panel.rect_min_size = Vector2(400, 300)
+		add_child(_capture_preview_panel)
+		var img = TextureRect.new()
+		img.name = "PreviewImage"
+		img.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		img.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		img.size_flags_vertical = Control.SIZE_EXPAND_FILL
+		_capture_preview_panel.add_child(img)
 
 func _debug_layout() -> void:
 	await get_tree().process_frame
@@ -1764,7 +1911,8 @@ func _apply_tab(tab_name: String) -> void:
 		if node2 is CanvasItem:
 			(node2 as CanvasItem).visible = true
 	_apply_collapsed()
-	_set_viewfinder_visible(tab_name == "Capture")
+	# Respect the Always Show Viewport toggle: keep viewfinder visible if enabled
+	_set_viewfinder_visible(_always_show_viewport_enabled or tab_name == "Capture")
 	if tab_name != "Passes":
 		_clear_pass_preview()
 
@@ -2180,6 +2328,8 @@ func _on_pass_preview_selected(_index: int) -> void:
 func _get_preview_pass_name() -> String:
 	if _pass_preview_options == null:
 		return ""
+	if _pass_preview_options.get_item_count() == 0 or _pass_preview_options.selected < 0:
+		return ""
 	var label := _pass_preview_options.get_item_text(_pass_preview_options.selected)
 	match label:
 		"Beauty":
@@ -2206,7 +2356,8 @@ func _apply_pass_preview() -> void:
 
 func _clear_pass_preview() -> void:
 	if _pass_preview_options:
-		_pass_preview_options.select(0)
+		if _pass_preview_options.get_item_count() > 0:
+			_pass_preview_options.select(0)
 	_restore_pass_state()
 
 
@@ -2253,6 +2404,13 @@ func _on_contrast_changed(value: float) -> void:
 func _apply_color_adjustments() -> void:
 	if _world_env == null or _world_env.environment == null:
 		return
+
+	if enable_layout_debug_print:
+		print("[PhotoMode DEBUG] _apply_color_adjustments: world_env=", _world_env, " env=", _world_env.environment)
+		var props := []
+		for p in _world_env.environment.get_property_list():
+			props.append(p.name)
+		print("[PhotoMode DEBUG] environment properties sample=", props.slice(0, 30))
 	_set_attr_if_exists(_world_env.environment, "adjustment_enabled", true)
 	if _saturation_slider:
 		_set_attr_if_exists(_world_env.environment, "adjustment_saturation", _saturation_slider.value)
@@ -2267,26 +2425,46 @@ func _apply_color_adjustments() -> void:
 	color.r = clampf(color.r, 0.6, 1.4)
 	color.g = clampf(color.g, 0.6, 1.4)
 	color.b = clampf(color.b, 0.6, 1.4)
+	# Primary: set environment adjustment color
 	_set_attr_if_exists(_world_env.environment, "adjustment_color", color)
+	# Fallbacks: some engine versions expose different property names
+	_set_attr_if_exists(_world_env.environment, "adjustment_color_correction", color)
+
+	# Also nudge key light and ambient color so temperature/tint are visible even if env adjustment isn't effective
+	if _key_light:
+		# blend key_light color with computed adjustment
+		_key_light.light_color = _key_light.light_color.lerp(color, 0.25)
+	# Also try nudging ambient_light_color on the environment (if present)
+	_set_attr_if_exists(_world_env.environment, "ambient_light_color", color)
 
 
 func _on_vignette_changed(value: float) -> void:
 	if _vignette_value:
 		_vignette_value.text = "%.2f" % value
 	if _world_env and _world_env.environment:
+		if enable_layout_debug_print:
+			print("[PhotoMode DEBUG] setting vignette to", value)
 		_set_attr_if_exists(_world_env.environment, "vignette_enabled", value > 0.001)
 		_set_attr_if_exists(_world_env.environment, "vignette_intensity", value)
 		_set_attr_if_exists(_world_env.environment, "vignette_smoothness", 0.5)
 		_set_attr_if_exists(_world_env.environment, "vignette_roundness", 0.5)
+		# Fallback names for other engine variants
+		_set_attr_if_exists(_world_env.environment, "vignette", value)
+		_set_attr_if_exists(_world_env.environment, "vignette_strength", value)
 
 
 func _on_grain_changed(value: float) -> void:
 	if _grain_value:
 		_grain_value.text = "%.2f" % value
 	if _world_env and _world_env.environment:
+		if enable_layout_debug_print:
+			print("[PhotoMode DEBUG] setting grain to", value)
 		_set_attr_if_exists(_world_env.environment, "film_grain", value)
+		_set_attr_if_exists(_world_env.environment, "film_grain_enabled", value > 0.001)
 		_set_attr_if_exists(_world_env.environment, "grain_strength", value)
 		_set_attr_if_exists(_world_env.environment, "grain", value)
+		# Older/newer variants
+		_set_attr_if_exists(_world_env.environment, "film_grain_amount", value)
 
 
 func _on_bloom_changed(value: float) -> void:
@@ -2581,6 +2759,8 @@ func _apply_preset_state(preset: Dictionary) -> void:
 
 func _get_selected_aspect_ratio(base_size: Vector2) -> float:
 	if _aspect_options:
+		if _aspect_options.get_item_count() == 0 or _aspect_options.selected < 0:
+			return base_size.x / maxf(base_size.y, 1.0)
 		var meta: Variant = _aspect_options.get_item_metadata(_aspect_options.selected)
 		if meta is Dictionary:
 			var ratio := float((meta as Dictionary).get("ratio", 0.0))
@@ -2669,6 +2849,54 @@ func _on_capture_path_dir_selected(dir: String) -> void:
 		_capture_path_edit.text = dir
 
 
+func _add_capture_thumbnail(capture: Dictionary) -> void:
+	if capture == null or _contact_strip == null:
+		return
+	# Create thumbnail button
+	var thumb_btn := Button.new()
+	thumb_btn.name = "Thumb_%d" % _contact_strip.get_child_count()
+	var tex: Texture = capture.get("thumb", null) as Texture
+	if tex != null and tex is Texture:
+		var tr := TextureRect.new()
+		tr.texture = tex
+		tr.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+		tr.rect_min_size = Vector2(160, 88)
+		tr.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		thumb_btn.add_child(tr)
+	else:
+		thumb_btn.text = "Img"
+	# store metadata
+	thumb_btn.set_meta("capture", capture)
+	thumb_btn.pressed.connect(func():
+		_open_capture_preview(capture)
+	)
+	_contact_strip.add_child(thumb_btn)
+
+
+func _open_capture_preview(capture: Dictionary) -> void:
+	if capture == null or _capture_preview_panel == null:
+		return
+	var img_node := _capture_preview_panel.get_node_or_null("PreviewImage") as TextureRect
+	if img_node and capture.has("thumb") and capture.thumb != null:
+		img_node.texture = capture.thumb
+	_capture_preview_panel.popup_centered_ratio(0.8)
+	# add restore-camera button if not present
+	if _capture_preview_panel.get_node_or_null("RestoreBtn") == null:
+		var btn := Button.new()
+		btn.name = "RestoreBtn"
+		btn.text = "Restore Camera"
+		btn.rect_min_size = Vector2(140, 32)
+		btn.pressed.connect(func():
+			if capture.has("camera") and _camera:
+				_camera.global_position = capture.camera.position
+				_camera.rotation_degrees = capture.camera.rotation
+				_yaw = _camera.rotation_degrees.y
+				_pitch = _camera.rotation_degrees.x
+				_capture_preview_panel.hide()
+		)
+		_capture_preview_panel.add_child(btn)
+
+
 func _on_capture_pressed() -> void:
 	var size := _get_capture_size()
 	await _capture_image(size)
@@ -2744,6 +2972,27 @@ func _save_image(image: Image) -> void:
 			image.save_png(full_path)
 	if _status:
 		_status.text = "Saved: %s" % full_path
+
+	# Add to session captures and contact strip
+	var cam_state := {
+		"position": _camera.global_position if _camera else Vector3.ZERO,
+		"rotation": _camera.rotation_degrees if _camera else Vector3.ZERO,
+		"fov": _camera.fov if _camera else 60.0
+	}
+	var capture: Dictionary = {"path": full_path, "thumb": null, "camera": cam_state}
+	# create thumbnail
+	var thumb := image.duplicate()
+	var tw := 160
+	var th := int(round(tw * (float(image.get_height()) / maxf(image.get_width(), 1))))
+	if th <= 0:
+		th = 90
+	thumb.resize(tw, th, Image.INTERPOLATE_BILINEAR)
+	# store thumbnail as ImageTexture
+	# Create an ImageTexture from the thumb image (use static constructor)
+	var tex := ImageTexture.create_from_image(thumb)
+	capture.thumb = tex
+	_session_captures.append(capture)
+	_add_capture_thumbnail(capture)
 
 
 func _capture_layers_exr(size: Vector2i) -> void:
@@ -2991,3 +3240,7 @@ func _set_attr_if_exists(obj: Object, prop_name: String, value: Variant) -> void
 		if prop.name == prop_name:
 			obj.set(prop_name, value)
 			return
+
+	# Fallback: attempt to set the property directly (some resources expose properties differently)
+	# This may print an engine warning if the property doesn't exist, but it's harmless.
+	obj.set(prop_name, value)
