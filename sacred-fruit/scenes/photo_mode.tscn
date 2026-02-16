@@ -1,341 +1,920 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene format=3 uid="uid://uatps07qdk4p"]
 
-[ext_resource type="Script" path="res://scripts/photo_mode.gd" id="1_photo_mode"]
-[ext_resource type="Script" path="res://scripts/photo_guides.gd" id="2_guides"]
+[ext_resource type="Script" uid="uid://ccpok0mbjcacr" path="res://scripts/photo_mode.gd" id="1_photo_mode"]
+[ext_resource type="Script" uid="uid://cyvr6tbkekioc" path="res://scripts/photo_guides.gd" id="2_guides"]
+[ext_resource type="Script" uid="uid://df5gxsjrtw4ba" path="res://scripts/photo_histogram.gd" id="3_histogram"]
+[ext_resource type="Theme" path="res://themes/rapidraw_photo_theme.tres" id="4_photo_theme"]
+[ext_resource type="Texture2D" path="res://themes/icons/tab_all.svg" id="5_tab_all"]
+[ext_resource type="Texture2D" uid="uid://dp5wiw4ibbp8p" path="res://themes/icons/tab_camera.svg" id="6_tab_camera"]
+[ext_resource type="Texture2D" uid="uid://bhjvg6r5201re" path="res://themes/icons/tab_exposure.svg" id="7_tab_exposure"]
+[ext_resource type="Texture2D" uid="uid://fkgoabq83uxr" path="res://themes/icons/tab_guides.svg" id="8_tab_guides"]
+[ext_resource type="Texture2D" uid="uid://e7h3vxx4s0ap" path="res://themes/icons/tab_capture.svg" id="9_tab_capture"]
+[ext_resource type="Texture2D" uid="uid://cytmapo1tkj1g" path="res://themes/icons/tab_passes.svg" id="10_tab_passes"]
+[ext_resource type="Texture2D" uid="uid://b7okxodlbqfc8" path="res://themes/icons/tab_light.svg" id="11_tab_light"]
+[ext_resource type="Texture2D" uid="uid://8ohfcpx6op4j" path="res://themes/icons/tab_environment.svg" id="12_tab_environment"]
+[ext_resource type="Texture2D" uid="uid://d24jb478xpgkp" path="res://themes/icons/tab_export.svg" id="13_tab_export"]
+[ext_resource type="Texture2D" uid="uid://dflmndju42xk4" path="res://themes/icons/tab_color.svg" id="14_tab_color"]
+[ext_resource type="Texture2D" uid="uid://dtnhmeupj1axa" path="res://themes/icons/tab_effects.svg" id="15_tab_effects"]
+[ext_resource type="Texture2D" uid="uid://cbfuothb2ef7c" path="res://themes/icons/tab_composition.svg" id="16_tab_composition"]
+[ext_resource type="Texture2D" uid="uid://bs7yqq254p5b5" path="res://themes/icons/tab_presets.svg" id="17_tab_presets"]
+[ext_resource type="Script" path="res://scripts/photo_viewfinder.gd" id="18_viewfinder"]
 
-[node name="PhotoMode" type="Node3D"]
+[node name="PhotoMode" type="Node3D" unique_id=33282436]
 script = ExtResource("1_photo_mode")
+enable_layout_debug_print = true
+enable_runtime_layout_repair = true
 
-[node name="PhotoCamera" type="Camera3D" parent="."]
+[node name="PhotoCamera" type="Camera3D" parent="." unique_id=642954770]
 current = true
 fov = 60.0
 near = 0.1
 far = 2000.0
 
-[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1367253747]
 
-[node name="LightRig" type="Node3D" parent="."]
+[node name="LightRig" type="Node3D" parent="." unique_id=734772621]
 
-[node name="KeyLight" type="DirectionalLight3D" parent="LightRig"]
+[node name="KeyLight" type="DirectionalLight3D" parent="LightRig" unique_id=686653700]
+transform = Transform3D(0.70710677, -0.4055798, 0.579228, 0, 0.81915206, 0.57357645, -0.70710677, -0.4055798, 0.579228, 0, 0, 0)
 light_energy = 3.5
-rotation_degrees = Vector3(-35, 45, 0)
 
-[node name="FillLight" type="DirectionalLight3D" parent="LightRig"]
-light_energy = 1.5
+[node name="FillLight" type="DirectionalLight3D" parent="LightRig" unique_id=873314324]
+transform = Transform3D(0.81915206, 0.1961747, -0.53898555, 0, 0.9396926, 0.34202012, 0.57357645, -0.28016648, 0.76975113, 0, 0, 0)
 light_color = Color(0.9, 0.95, 1, 1)
-rotation_degrees = Vector3(-20, -35, 0)
+light_energy = 1.5
 
-[node name="RimLight" type="DirectionalLight3D" parent="LightRig"]
-light_energy = 2.0
+[node name="RimLight" type="DirectionalLight3D" parent="LightRig" unique_id=1557815630]
+transform = Transform3D(-0.70710677, -0.29883623, 0.6408563, 0, 0.90630776, 0.42261827, -0.70710677, 0.29883623, -0.6408563, 0, 0, 0)
 light_color = Color(1, 0.9, 0.85, 1)
-rotation_degrees = Vector3(-25, 135, 0)
+light_energy = 2.0
 
-[node name="TopLight" type="DirectionalLight3D" parent="LightRig"]
-light_energy = 1.0
-rotation_degrees = Vector3(-80, 0, 0)
+[node name="TopLight" type="DirectionalLight3D" parent="LightRig" unique_id=1304155242]
+transform = Transform3D(1, 0, 0, 0, 0.17364822, 0.9848077, 0, -0.9848077, 0.17364822, 0, 0, 0)
 
-[node name="BounceLight" type="DirectionalLight3D" parent="LightRig"]
-light_energy = 0.8
+[node name="BounceLight" type="DirectionalLight3D" parent="LightRig" unique_id=638639472]
+transform = Transform3D(-0.9396926, -0.26200265, -0.21984632, 0, 0.64278764, -0.76604444, 0.34202015, -0.7198463, -0.6040228, 0, 0, 0)
 light_color = Color(1, 0.95, 0.85, 1)
-rotation_degrees = Vector3(50, 200, 0)
+light_energy = 0.8
 
-[node name="CanvasLayer" type="CanvasLayer" parent="."]
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=817130787]
 
-[node name="PhotoUI" type="Control" parent="CanvasLayer"]
+[node name="PhotoUI" type="Control" parent="CanvasLayer" unique_id=193405656]
+layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("4_photo_theme")
 
-[node name="Panel" type="PanelContainer" parent="CanvasLayer/PhotoUI"]
-anchors_preset = 0
-anchor_right = 0.0
-anchor_bottom = 0.0
+[node name="RootMargin" type="MarginContainer" parent="CanvasLayer/PhotoUI" unique_id=1209523890]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
 offset_left = 16.0
 offset_top = 16.0
-offset_right = 420.0
-offset_bottom = 620.0
+offset_right = -16.0
+offset_bottom = -16.0
+grow_horizontal = 2
+grow_vertical = 2
 
-[node name="Margin" type="MarginContainer" parent="CanvasLayer/PhotoUI/Panel"]
-add_theme_constant_override("margin_left", 16)
-add_theme_constant_override("margin_right", 16)
-add_theme_constant_override("margin_top", 16)
-add_theme_constant_override("margin_bottom", 16)
+[node name="RootHBox" type="HBoxContainer" parent="CanvasLayer/PhotoUI/RootMargin" unique_id=1013125939]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
 
-[node name="VBox" type="VBoxContainer" parent="CanvasLayer/PhotoUI/Panel/Margin"]
-add_theme_constant_override("separation", 8)
+[node name="TabsPanel" type="PanelContainer" parent="CanvasLayer/PhotoUI/RootMargin/RootHBox"]
+layout_mode = 2
+custom_minimum_size = Vector2(116, 0)
+size_flags_horizontal = 1
+size_flags_vertical = 3
 
-[node name="Title" type="Label" parent="CanvasLayer/PhotoUI/Panel/Margin/VBox"]
+[node name="TabsMargin" type="MarginContainer" parent="CanvasLayer/PhotoUI/RootMargin/RootHBox/TabsPanel"]
+layout_mode = 2
+add_theme_constant_override("margin_left", 12)
+add_theme_constant_override("margin_right", 12)
+add_theme_constant_override("margin_top", 12)
+add_theme_constant_override("margin_bottom", 12)
+
+[node name="TabsVBox" type="VBoxContainer" parent="CanvasLayer/PhotoUI/RootMargin/RootHBox/TabsPanel/TabsMargin"]
+layout_mode = 2
+add_theme_constant_override("separation", 6)
+
+[node name="SidebarTitle" type="Label" parent="CanvasLayer/PhotoUI/RootMargin/RootHBox/TabsPanel/TabsMargin/TabsVBox"]
+layout_mode = 2
 text = "PHOTO MODE"
 horizontal_alignment = 1
+
+[node name="Panel" type="PanelContainer" parent="CanvasLayer/PhotoUI/RootMargin/RootHBox" unique_id=1209051103]
+layout_mode = 2
 size_flags_horizontal = 3
+size_flags_vertical = 3
 
-[node name="Status" type="Label" parent="CanvasLayer/PhotoUI/Panel/Margin/VBox"]
-text = "Ready"
-autowrap_mode = 3
+[node name="Margin" type="MarginContainer" parent="CanvasLayer/PhotoUI/RootMargin/RootHBox/Panel" unique_id=1419070580]
+layout_mode = 2
+size_flags_horizontal = 3
+add_theme_constant_override("margin_left", 24)
+add_theme_constant_override("margin_right", 24)
+add_theme_constant_override("margin_top", 24)
+add_theme_constant_override("margin_bottom", 24)
 
-[node name="FOVRow" type="HBoxContainer" parent="CanvasLayer/PhotoUI/Panel/Margin/VBox"]
+[node name="VBox" type="VBoxContainer" parent="CanvasLayer/PhotoUI/RootMargin/RootHBox/Panel/Margin"]
+layout_mode = 2
 add_theme_constant_override("separation", 8)
 
-[node name="FOVLabel" type="Label" parent="CanvasLayer/PhotoUI/Panel/Margin/VBox/FOVRow"]
-text = "FOV"
+[node name="PhotoGuides" type="Control" parent="CanvasLayer" unique_id=436993213]
+layout_mode = 1
+anchors_preset = 15
+size_flags_horizontal = 1
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("2_guides")
+
+[node name="PhotoViewfinder" type="Control" parent="CanvasLayer"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("18_viewfinder")
+
+[node name="TabCamera" type="Button" parent="CanvasLayer/PhotoUI" unique_id=1025479674]
+tooltip_text = "Camera and lens controls"
+toggle_mode = true
+text = "Camera"
+icon = ExtResource("6_tab_camera")
+
+[node name="TabExposure" type="Button" parent="CanvasLayer/PhotoUI" unique_id=141722438]
+tooltip_text = "Exposure adjustments"
+toggle_mode = true
+text = "Exposure"
+icon = ExtResource("7_tab_exposure")
+
+[node name="TabGuides" type="Button" parent="CanvasLayer/PhotoUI" unique_id=1600055165]
+tooltip_text = "Composition guides"
+toggle_mode = true
+text = "Guides"
+icon = ExtResource("8_tab_guides")
+
+[node name="TabCapture" type="Button" parent="CanvasLayer/PhotoUI" unique_id=1945748159]
+tooltip_text = "Capture & export"
+toggle_mode = true
+text = "Capture"
+icon = ExtResource("9_tab_capture")
+
+[node name="TabPasses" type="Button" parent="CanvasLayer/PhotoUI" unique_id=1691082874]
+tooltip_text = "Render passes"
+toggle_mode = true
+text = "Passes"
+icon = ExtResource("10_tab_passes")
+
+[node name="TabLight" type="Button" parent="CanvasLayer/PhotoUI" unique_id=632262332]
+tooltip_text = "Light rig controls"
+toggle_mode = true
+text = "Light"
+icon = ExtResource("11_tab_light")
+
+[node name="TabEnvironment" type="Button" parent="CanvasLayer/PhotoUI" unique_id=1786919639]
+tooltip_text = "Environment controls"
+toggle_mode = true
+text = "Environment"
+icon = ExtResource("12_tab_environment")
+
+[node name="TabExport" type="Button" parent="CanvasLayer/PhotoUI" unique_id=461303321]
+tooltip_text = "Export settings"
+toggle_mode = true
+text = "Export"
+icon = ExtResource("13_tab_export")
+
+[node name="TabColor" type="Button" parent="CanvasLayer/PhotoUI" unique_id=25032761]
+tooltip_text = "Color grading"
+toggle_mode = true
+text = "Color"
+icon = ExtResource("14_tab_color")
+
+[node name="TabEffects" type="Button" parent="CanvasLayer/PhotoUI" unique_id=1549786071]
+tooltip_text = "Effects and stylization"
+toggle_mode = true
+text = "Effects"
+icon = ExtResource("15_tab_effects")
+
+[node name="TabComposition" type="Button" parent="CanvasLayer/PhotoUI" unique_id=1757028050]
+tooltip_text = "Composition tools"
+toggle_mode = true
+text = "Composition"
+icon = ExtResource("16_tab_composition")
+
+[node name="TabPresets" type="Button" parent="CanvasLayer/PhotoUI" unique_id=632553630]
+tooltip_text = "Save/load presets"
+toggle_mode = true
+text = "Presets"
+icon = ExtResource("17_tab_presets")
+
+[node name="HistogramCard" type="MarginContainer" parent="CanvasLayer/PhotoUI" unique_id=937111110]
+custom_minimum_size = Vector2(0, 96)
+size_flags_horizontal = 3
+tooltip_text = "Histogram (RGB + Luma)"
+script = ExtResource("3_histogram")
+
+[node name="Title" type="Label" parent="CanvasLayer/PhotoUI" unique_id=84945833]
+size_flags_horizontal = 3
+text = "Camera"
+horizontal_alignment = 1
+
+[node name="Status" type="Label" parent="CanvasLayer/PhotoUI" unique_id=1758588944]
+text = ""
+autowrap_mode = 3
+
+[node name="FOVRow" type="HBoxContainer" parent="CanvasLayer/PhotoUI" unique_id=1739086329]
 custom_minimum_size = Vector2(80, 0)
 
-[node name="FOVSlider" type="HSlider" parent="CanvasLayer/PhotoUI/Panel/Margin/VBox/FOVRow"]
+[node name="FOVSlider" type="HSlider" parent="CanvasLayer/PhotoUI" unique_id=2123968409]
 size_flags_horizontal = 3
+tooltip_text = "Field of view"
 min_value = 20.0
 max_value = 110.0
 value = 60.0
-step = 1.0
 
-[node name="FOVValue" type="Label" parent="CanvasLayer/PhotoUI/Panel/Margin/VBox/FOVRow"]
-text = "60°"
+[node name="FOVValue" type="Label" parent="CanvasLayer/PhotoUI" unique_id=1931458575]
 custom_minimum_size = Vector2(60, 0)
+text = "60°"
 
-[node name="FocalRow" type="HBoxContainer" parent="CanvasLayer/PhotoUI/Panel/Margin/VBox"]
-add_theme_constant_override("separation", 8)
-
-[node name="FocalLabel" type="Label" parent="CanvasLayer/PhotoUI/Panel/Margin/VBox/FocalRow"]
-text = "Focal"
+[node name="FocalRow" type="HBoxContainer" parent="CanvasLayer/PhotoUI" unique_id=1678799417]
 custom_minimum_size = Vector2(80, 0)
 
-[node name="FocalOptions" type="OptionButton" parent="CanvasLayer/PhotoUI/Panel/Margin/VBox/FocalRow"]
+[node name="FocalOptions" type="OptionButton" parent="CanvasLayer/PhotoUI" unique_id=596766811]
 size_flags_horizontal = 3
-items = ["18mm", 0, false, "24mm", 1, false, "35mm", 2, false, "50mm", 3, false, "85mm", 4, false, "100mm", 5, false]
-selected = 2
+tooltip_text = "Focal length preset"
 
-[node name="ISORow" type="HBoxContainer" parent="CanvasLayer/PhotoUI/Panel/Margin/VBox"]
-add_theme_constant_override("separation", 8)
-
-[node name="ISOLabel" type="Label" parent="CanvasLayer/PhotoUI/Panel/Margin/VBox/ISORow"]
-text = "ISO"
+[node name="ISORow" type="HBoxContainer" parent="CanvasLayer/PhotoUI" unique_id=669449023]
 custom_minimum_size = Vector2(80, 0)
 
-[node name="ISOSlider" type="HSlider" parent="CanvasLayer/PhotoUI/Panel/Margin/VBox/ISORow"]
+[node name="ISOSlider" type="HSlider" parent="CanvasLayer/PhotoUI" unique_id=422385553]
 size_flags_horizontal = 3
+tooltip_text = "ISO sensitivity"
 min_value = 50.0
 max_value = 3200.0
-value = 200.0
 step = 50.0
+value = 400.0
 
-[node name="ISOValue" type="Label" parent="CanvasLayer/PhotoUI/Panel/Margin/VBox/ISORow"]
-text = "200"
+[node name="ISOValue" type="Label" parent="CanvasLayer/PhotoUI" unique_id=315444272]
 custom_minimum_size = Vector2(60, 0)
+text = "400"
 
-[node name="ApertureRow" type="HBoxContainer" parent="CanvasLayer/PhotoUI/Panel/Margin/VBox"]
-add_theme_constant_override("separation", 8)
-
-[node name="ApertureLabel" type="Label" parent="CanvasLayer/PhotoUI/Panel/Margin/VBox/ApertureRow"]
-text = "Aperture"
+[node name="ApertureRow" type="HBoxContainer" parent="CanvasLayer/PhotoUI" unique_id=1586942358]
 custom_minimum_size = Vector2(80, 0)
 
-[node name="ApertureSlider" type="HSlider" parent="CanvasLayer/PhotoUI/Panel/Margin/VBox/ApertureRow"]
+[node name="ApertureSlider" type="HSlider" parent="CanvasLayer/PhotoUI" unique_id=1223227163]
 size_flags_horizontal = 3
+tooltip_text = "Aperture (f-stop)"
 min_value = 1.4
 max_value = 16.0
-value = 4.0
 step = 0.1
+value = 2.8
 
-[node name="ApertureValue" type="Label" parent="CanvasLayer/PhotoUI/Panel/Margin/VBox/ApertureRow"]
-text = "f/4.0"
+[node name="ApertureValue" type="Label" parent="CanvasLayer/PhotoUI" unique_id=1565378145]
 custom_minimum_size = Vector2(60, 0)
+text = "f/2.8"
 
-[node name="ShutterRow" type="HBoxContainer" parent="CanvasLayer/PhotoUI/Panel/Margin/VBox"]
-add_theme_constant_override("separation", 8)
-
-[node name="ShutterLabel" type="Label" parent="CanvasLayer/PhotoUI/Panel/Margin/VBox/ShutterRow"]
-text = "Shutter"
+[node name="ShutterRow" type="HBoxContainer" parent="CanvasLayer/PhotoUI" unique_id=373531287]
 custom_minimum_size = Vector2(80, 0)
 
-[node name="ShutterSlider" type="HSlider" parent="CanvasLayer/PhotoUI/Panel/Margin/VBox/ShutterRow"]
+[node name="ShutterSlider" type="HSlider" parent="CanvasLayer/PhotoUI" unique_id=880567674]
 size_flags_horizontal = 3
+tooltip_text = "Shutter speed (seconds)"
 min_value = 0.002
 max_value = 0.1
-value = 0.008
 step = 0.001
+value = 0.016
 
-[node name="ShutterValue" type="Label" parent="CanvasLayer/PhotoUI/Panel/Margin/VBox/ShutterRow"]
-text = "1/125"
+[node name="ShutterValue" type="Label" parent="CanvasLayer/PhotoUI" unique_id=1985328100]
 custom_minimum_size = Vector2(60, 0)
+text = "1/125"
 
-[node name="ExposureRow" type="HBoxContainer" parent="CanvasLayer/PhotoUI/Panel/Margin/VBox"]
-add_theme_constant_override("separation", 8)
-
-[node name="ExposureLabel" type="Label" parent="CanvasLayer/PhotoUI/Panel/Margin/VBox/ExposureRow"]
-text = "Exposure"
+[node name="FocusRow" type="HBoxContainer" parent="CanvasLayer/PhotoUI"]
 custom_minimum_size = Vector2(80, 0)
 
-[node name="ExposureSlider" type="HSlider" parent="CanvasLayer/PhotoUI/Panel/Margin/VBox/ExposureRow"]
+[node name="FocusSlider" type="HSlider" parent="CanvasLayer/PhotoUI"]
 size_flags_horizontal = 3
+tooltip_text = "Focus distance (meters)"
+min_value = 0.5
+max_value = 50.0
+step = 0.1
+value = 5.0
+
+[node name="FocusValue" type="Label" parent="CanvasLayer/PhotoUI"]
+custom_minimum_size = Vector2(60, 0)
+text = "5.0m"
+
+[node name="ShootingModeRow" type="HBoxContainer" parent="CanvasLayer/PhotoUI"]
+custom_minimum_size = Vector2(80, 0)
+
+[node name="ShootingModeOptions" type="OptionButton" parent="CanvasLayer/PhotoUI"]
+size_flags_horizontal = 3
+tooltip_text = "Shooting mode preset"
+
+[node name="AutoFocusRow" type="HBoxContainer" parent="CanvasLayer/PhotoUI"]
+custom_minimum_size = Vector2(80, 0)
+
+[node name="AutoFocusToggle" type="CheckBox" parent="CanvasLayer/PhotoUI"]
+text = "On"
+tooltip_text = "Enable auto focus"
+
+[node name="ExposureHeaderRow" type="HBoxContainer" parent="CanvasLayer/PhotoUI" unique_id=610565568]
+size_flags_horizontal = 3
+
+[node name="ExposureCollapse" type="Button" parent="CanvasLayer/PhotoUI" unique_id=951068675]
+custom_minimum_size = Vector2(24, 0)
+tooltip_text = "Collapse section"
+toggle_mode = true
+button_pressed = true
+text = "–"
+flat = true
+visible = false
+
+[node name="ExposureRow" type="HBoxContainer" parent="CanvasLayer/PhotoUI" unique_id=115893042]
+custom_minimum_size = Vector2(80, 0)
+
+[node name="ExposureSlider" type="HSlider" parent="CanvasLayer/PhotoUI" unique_id=1441204889]
+size_flags_horizontal = 3
+tooltip_text = "Exposure compensation"
 min_value = -2.0
 max_value = 2.0
-value = 0.0
 step = 0.05
 
-[node name="ExposureValue" type="Label" parent="CanvasLayer/PhotoUI/Panel/Margin/VBox/ExposureRow"]
-text = "0.00"
+[node name="ExposureValue" type="Label" parent="CanvasLayer/PhotoUI" unique_id=1114131269]
 custom_minimum_size = Vector2(60, 0)
+text = "0.00"
 
-[node name="EnvRow" type="HBoxContainer" parent="CanvasLayer/PhotoUI/Panel/Margin/VBox"]
-add_theme_constant_override("separation", 8)
-
-[node name="EnvLabel" type="Label" parent="CanvasLayer/PhotoUI/Panel/Margin/VBox/EnvRow"]
-text = "Environment"
+[node name="AutoExposureRow" type="HBoxContainer" parent="CanvasLayer/PhotoUI"]
 custom_minimum_size = Vector2(80, 0)
 
-[node name="EnvOptions" type="OptionButton" parent="CanvasLayer/PhotoUI/Panel/Margin/VBox/EnvRow"]
-size_flags_horizontal = 3
+[node name="AutoExposureToggle" type="CheckBox" parent="CanvasLayer/PhotoUI"]
+text = "On"
+tooltip_text = "Enable auto exposure"
 
-[node name="ResRow" type="HBoxContainer" parent="CanvasLayer/PhotoUI/Panel/Margin/VBox"]
-add_theme_constant_override("separation", 8)
-
-[node name="ResLabel" type="Label" parent="CanvasLayer/PhotoUI/Panel/Margin/VBox/ResRow"]
-text = "Resolution"
+[node name="AutoExposureSpeedRow" type="HBoxContainer" parent="CanvasLayer/PhotoUI"]
 custom_minimum_size = Vector2(80, 0)
 
-[node name="ResOptions" type="OptionButton" parent="CanvasLayer/PhotoUI/Panel/Margin/VBox/ResRow"]
+[node name="AutoExposureSpeedSlider" type="HSlider" parent="CanvasLayer/PhotoUI"]
 size_flags_horizontal = 3
-items = ["1x", 0, false, "2x", 1, false, "4x", 2, false]
-selected = 0
+tooltip_text = "Auto exposure speed"
+min_value = 0.05
+max_value = 4.0
+step = 0.05
+value = 1.0
 
-[node name="GuidesRow" type="HBoxContainer" parent="CanvasLayer/PhotoUI/Panel/Margin/VBox"]
-add_theme_constant_override("separation", 8)
+[node name="AutoExposureSpeedValue" type="Label" parent="CanvasLayer/PhotoUI"]
+custom_minimum_size = Vector2(60, 0)
+text = "1.00"
 
-[node name="GuidesCheck" type="CheckBox" parent="CanvasLayer/PhotoUI/Panel/Margin/VBox/GuidesRow"]
+[node name="AutoExposureRangeRow" type="HBoxContainer" parent="CanvasLayer/PhotoUI"]
+custom_minimum_size = Vector2(80, 0)
+
+[node name="AutoExposureMinSlider" type="HSlider" parent="CanvasLayer/PhotoUI"]
+size_flags_horizontal = 3
+tooltip_text = "Auto exposure min"
+min_value = -4.0
+max_value = 0.0
+step = 0.1
+value = -2.0
+
+[node name="AutoExposureMinValue" type="Label" parent="CanvasLayer/PhotoUI"]
+custom_minimum_size = Vector2(50, 0)
+text = "-2.0"
+
+[node name="AutoExposureMaxSlider" type="HSlider" parent="CanvasLayer/PhotoUI"]
+size_flags_horizontal = 3
+tooltip_text = "Auto exposure max"
+min_value = 0.0
+max_value = 4.0
+step = 0.1
+value = 2.0
+
+[node name="AutoExposureMaxValue" type="Label" parent="CanvasLayer/PhotoUI"]
+custom_minimum_size = Vector2(50, 0)
+text = "2.0"
+
+[node name="EnvRow" type="HBoxContainer" parent="CanvasLayer/PhotoUI" unique_id=650677537]
+custom_minimum_size = Vector2(80, 0)
+
+[node name="EnvOptions" type="OptionButton" parent="CanvasLayer/PhotoUI" unique_id=2017972590]
+size_flags_horizontal = 3
+tooltip_text = "Environment preset"
+
+[node name="ResRow" type="HBoxContainer" parent="CanvasLayer/PhotoUI" unique_id=197610738]
+custom_minimum_size = Vector2(80, 0)
+
+[node name="ResOptions" type="OptionButton" parent="CanvasLayer/PhotoUI" unique_id=203911229]
+size_flags_horizontal = 3
+tooltip_text = "Capture resolution preset"
+
+[node name="AspectRow" type="HBoxContainer" parent="CanvasLayer/PhotoUI"]
+custom_minimum_size = Vector2(80, 0)
+
+[node name="AspectOptions" type="OptionButton" parent="CanvasLayer/PhotoUI"]
+size_flags_horizontal = 3
+tooltip_text = "Capture aspect ratio"
+
+[node name="CaptureFormatRow" type="HBoxContainer" parent="CanvasLayer/PhotoUI"]
+custom_minimum_size = Vector2(80, 0)
+
+[node name="CaptureFormatOptions" type="OptionButton" parent="CanvasLayer/PhotoUI"]
+size_flags_horizontal = 3
+tooltip_text = "Capture file format"
+
+[node name="CapturePathRow" type="HBoxContainer" parent="CanvasLayer/PhotoUI"]
+custom_minimum_size = Vector2(80, 0)
+
+[node name="CapturePathEdit" type="LineEdit" parent="CanvasLayer/PhotoUI"]
+size_flags_horizontal = 3
+placeholder_text = "user://photo_captures"
+tooltip_text = "Save path (folder)"
+
+[node name="CapturePathButton" type="Button" parent="CanvasLayer/PhotoUI"]
+tooltip_text = "Choose a save folder"
+text = "Browse"
+
+[node name="CapturePathDialog" type="FileDialog" parent="CanvasLayer/PhotoUI"]
+access = 2
+file_mode = 2
+title = "Select Capture Folder"
+
+[node name="GuidesHeaderRow" type="HBoxContainer" parent="CanvasLayer/PhotoUI" unique_id=1795995507]
+size_flags_horizontal = 3
+
+[node name="GuidesCollapse" type="Button" parent="CanvasLayer/PhotoUI" unique_id=1156431537]
+custom_minimum_size = Vector2(24, 0)
+tooltip_text = "Collapse section"
+toggle_mode = true
+button_pressed = true
+text = "–"
+flat = true
+visible = false
+
+[node name="GuidesRow" type="HBoxContainer" parent="CanvasLayer/PhotoUI" unique_id=1475835919]
+tooltip_text = "Toggle guides"
+
+[node name="GuidesCheck" type="CheckBox" parent="CanvasLayer/PhotoUI"]
+tooltip_text = "Show guides"
 text = "Guides"
 button_pressed = true
 
-[node name="GoldenCheck" type="CheckBox" parent="CanvasLayer/PhotoUI/Panel/Margin/VBox/GuidesRow"]
-text = "Golden"
+[node name="GuideTypeOptions" type="OptionButton" parent="CanvasLayer/PhotoUI"]
+size_flags_horizontal = 3
+tooltip_text = "Guide type"
 
-[node name="SafeCheck" type="CheckBox" parent="CanvasLayer/PhotoUI/Panel/Margin/VBox/GuidesRow"]
-text = "Safe"
 
-[node name="ButtonsRow" type="HBoxContainer" parent="CanvasLayer/PhotoUI/Panel/Margin/VBox"]
-add_theme_constant_override("separation", 10)
+[node name="GuidesOpacityRow" type="HBoxContainer" parent="CanvasLayer/PhotoUI" unique_id=1548056034]
+custom_minimum_size = Vector2(110, 0)
 
-[node name="CaptureButton" type="Button" parent="CanvasLayer/PhotoUI/Panel/Margin/VBox/ButtonsRow"]
-text = "Capture PNG"
+[node name="GuidesOpacitySlider" type="HSlider" parent="CanvasLayer/PhotoUI" unique_id=2091056113]
+size_flags_horizontal = 3
+tooltip_text = "Guide opacity"
+min_value = 0.1
+max_value = 1.0
+step = 0.05
+value = 0.1
 
-[node name="CaptureLayersButton" type="Button" parent="CanvasLayer/PhotoUI/Panel/Margin/VBox/ButtonsRow"]
+[node name="GuidesOpacityValue" type="Label" parent="CanvasLayer/PhotoUI" unique_id=2038616035]
+custom_minimum_size = Vector2(50, 0)
+text = "0.50"
+
+[node name="CaptureHeaderRow" type="HBoxContainer" parent="CanvasLayer/PhotoUI" unique_id=1033098187]
+size_flags_horizontal = 3
+
+[node name="CaptureCollapse" type="Button" parent="CanvasLayer/PhotoUI" unique_id=628842064]
+custom_minimum_size = Vector2(24, 0)
+tooltip_text = "Collapse section"
+toggle_mode = true
+button_pressed = true
+text = "–"
+flat = true
+
+[node name="ButtonsRow" type="HBoxContainer" parent="CanvasLayer/PhotoUI" unique_id=795664896]
+tooltip_text = "Save a PNG screenshot"
+
+[node name="CaptureButton" type="Button" parent="CanvasLayer/PhotoUI"]
+tooltip_text = "Capture a still image"
+text = "Capture"
+
+[node name="CaptureLayersButton" type="Button" parent="CanvasLayer/PhotoUI" unique_id=729703724]
+tooltip_text = "Save layered EXR passes"
 text = "Capture Layers (EXR)"
 
-[node name="BackButton" type="Button" parent="CanvasLayer/PhotoUI/Panel/Margin/VBox/ButtonsRow"]
+[node name="BackButton" type="Button" parent="CanvasLayer/PhotoUI" unique_id=1199569325]
+tooltip_text = "Return to main menu"
 text = "Back"
 
-[node name="PassesLabel" type="Label" parent="CanvasLayer/PhotoUI/Panel/Margin/VBox"]
-text = "Passes"
+[node name="PassesHeaderRow" type="HBoxContainer" parent="CanvasLayer/PhotoUI" unique_id=1925308935]
+size_flags_horizontal = 3
 
-[node name="PassesGrid" type="GridContainer" parent="CanvasLayer/PhotoUI/Panel/Margin/VBox"]
+[node name="PassPreviewRow" type="HBoxContainer" parent="CanvasLayer/PhotoUI"]
+custom_minimum_size = Vector2(80, 0)
+
+[node name="PassPreviewOptions" type="OptionButton" parent="CanvasLayer/PhotoUI"]
+size_flags_horizontal = 3
+tooltip_text = "Preview a render pass"
+
+[node name="PassesCollapse" type="Button" parent="CanvasLayer/PhotoUI" unique_id=235835287]
+custom_minimum_size = Vector2(24, 0)
+tooltip_text = "Collapse section"
+toggle_mode = true
+button_pressed = true
+text = "–"
+flat = true
+
+[node name="PassesGrid" type="GridContainer" parent="CanvasLayer/PhotoUI" unique_id=588149526]
 columns = 2
 
-[node name="PassBeauty" type="CheckBox" parent="CanvasLayer/PhotoUI/Panel/Margin/VBox/PassesGrid"]
+[node name="EnvironmentHeaderRow" type="HBoxContainer" parent="CanvasLayer/PhotoUI" unique_id=1264724807]
+size_flags_horizontal = 3
+
+[node name="EnvironmentRow" type="HBoxContainer" parent="CanvasLayer/PhotoUI" unique_id=1414383887]
+custom_minimum_size = Vector2(80, 0)
+
+[node name="SunAngleSlider" type="HSlider" parent="CanvasLayer/PhotoUI" unique_id=617334574]
+size_flags_horizontal = 3
+tooltip_text = "Sun elevation (future control)"
+min_value = -90.0
+max_value = 90.0
+value = -35.0
+
+[node name="SunAngleValue" type="Label" parent="CanvasLayer/PhotoUI" unique_id=2036318597]
+custom_minimum_size = Vector2(60, 0)
+text = "-35°"
+
+[node name="AmbientRow" type="HBoxContainer" parent="CanvasLayer/PhotoUI" unique_id=593791003]
+custom_minimum_size = Vector2(80, 0)
+
+[node name="AmbientSlider" type="HSlider" parent="CanvasLayer/PhotoUI" unique_id=957542612]
+size_flags_horizontal = 3
+tooltip_text = "Ambient intensity (future control)"
+max_value = 2.0
+step = 0.05
+value = 1.0
+
+[node name="AmbientValue" type="Label" parent="CanvasLayer/PhotoUI" unique_id=196385004]
+custom_minimum_size = Vector2(60, 0)
+text = "1.00"
+
+[node name="FogRow" type="HBoxContainer" parent="CanvasLayer/PhotoUI" unique_id=925820501]
+custom_minimum_size = Vector2(80, 0)
+
+[node name="FogNote" type="Label" parent="CanvasLayer/PhotoUI" unique_id=1569048958]
+theme_override_colors/font_color = Color(0.65, 0.68, 0.72, 1)
+theme_override_font_sizes/font_size = 11
+text = "(future)"
+
+[node name="ExportHeaderRow" type="HBoxContainer" parent="CanvasLayer/PhotoUI" unique_id=1799387164]
+size_flags_horizontal = 3
+
+[node name="ExportNote" type="Label" parent="CanvasLayer/PhotoUI" unique_id=146106873]
+theme_override_colors/font_color = Color(0.65, 0.68, 0.72, 1)
+theme_override_font_sizes/font_size = 11
+text = "Use Capture + Passes to export PNG/EXR"
+
+[node name="ColorHeaderRow" type="HBoxContainer" parent="CanvasLayer/PhotoUI" unique_id=125611704]
+size_flags_horizontal = 3
+
+[node name="TempRow" type="HBoxContainer" parent="CanvasLayer/PhotoUI" unique_id=929234533]
+custom_minimum_size = Vector2(80, 0)
+
+[node name="TempSlider" type="HSlider" parent="CanvasLayer/PhotoUI" unique_id=1154162780]
+size_flags_horizontal = 3
+tooltip_text = "White balance temperature"
+min_value = -1.0
+max_value = 1.0
+step = 0.01
+
+[node name="TempValue" type="Label" parent="CanvasLayer/PhotoUI" unique_id=1921806382]
+custom_minimum_size = Vector2(60, 0)
+text = "0.00"
+
+[node name="TintRow" type="HBoxContainer" parent="CanvasLayer/PhotoUI" unique_id=880300134]
+custom_minimum_size = Vector2(80, 0)
+
+[node name="TintSlider" type="HSlider" parent="CanvasLayer/PhotoUI" unique_id=212894]
+size_flags_horizontal = 3
+tooltip_text = "Green/Magenta tint"
+min_value = -1.0
+max_value = 1.0
+step = 0.01
+
+[node name="TintValue" type="Label" parent="CanvasLayer/PhotoUI" unique_id=1430499119]
+custom_minimum_size = Vector2(60, 0)
+text = "0.00"
+
+[node name="SaturationRow" type="HBoxContainer" parent="CanvasLayer/PhotoUI" unique_id=564237]
+custom_minimum_size = Vector2(80, 0)
+
+[node name="SaturationSlider" type="HSlider" parent="CanvasLayer/PhotoUI" unique_id=1551771885]
+size_flags_horizontal = 3
+tooltip_text = "Saturation"
+max_value = 2.0
+step = 0.01
+value = 1.0
+
+[node name="SaturationValue" type="Label" parent="CanvasLayer/PhotoUI" unique_id=648125950]
+custom_minimum_size = Vector2(60, 0)
+text = "1.00"
+
+[node name="ContrastRow" type="HBoxContainer" parent="CanvasLayer/PhotoUI" unique_id=252073901]
+custom_minimum_size = Vector2(80, 0)
+
+[node name="ContrastSlider" type="HSlider" parent="CanvasLayer/PhotoUI" unique_id=604854610]
+size_flags_horizontal = 3
+tooltip_text = "Contrast"
+max_value = 2.0
+step = 0.01
+value = 1.0
+
+[node name="ContrastValue" type="Label" parent="CanvasLayer/PhotoUI" unique_id=579028994]
+custom_minimum_size = Vector2(60, 0)
+text = "1.00"
+
+[node name="EffectsHeaderRow" type="HBoxContainer" parent="CanvasLayer/PhotoUI" unique_id=1254366621]
+size_flags_horizontal = 3
+
+[node name="VignetteRow" type="HBoxContainer" parent="CanvasLayer/PhotoUI" unique_id=1349872597]
+custom_minimum_size = Vector2(80, 0)
+
+[node name="VignetteSlider" type="HSlider" parent="CanvasLayer/PhotoUI" unique_id=1829372231]
+size_flags_horizontal = 3
+tooltip_text = "Vignette intensity"
+max_value = 1.0
+step = 0.01
+
+[node name="VignetteValue" type="Label" parent="CanvasLayer/PhotoUI" unique_id=938874358]
+custom_minimum_size = Vector2(60, 0)
+text = "0.00"
+
+[node name="GrainRow" type="HBoxContainer" parent="CanvasLayer/PhotoUI" unique_id=593589286]
+custom_minimum_size = Vector2(80, 0)
+
+[node name="GrainSlider" type="HSlider" parent="CanvasLayer/PhotoUI" unique_id=117604213]
+size_flags_horizontal = 3
+tooltip_text = "Film grain"
+max_value = 1.0
+step = 0.01
+
+[node name="GrainValue" type="Label" parent="CanvasLayer/PhotoUI" unique_id=1911756940]
+custom_minimum_size = Vector2(60, 0)
+text = "0.00"
+
+[node name="BloomRow" type="HBoxContainer" parent="CanvasLayer/PhotoUI" unique_id=422301123]
+custom_minimum_size = Vector2(80, 0)
+
+[node name="BloomSlider" type="HSlider" parent="CanvasLayer/PhotoUI" unique_id=627142408]
+size_flags_horizontal = 3
+tooltip_text = "Bloom intensity"
+max_value = 1.0
+step = 0.01
+
+[node name="BloomValue" type="Label" parent="CanvasLayer/PhotoUI" unique_id=1520526177]
+custom_minimum_size = Vector2(60, 0)
+text = "0.00"
+
+[node name="CompositionHeaderRow" type="HBoxContainer" parent="CanvasLayer/PhotoUI" unique_id=671746850]
+size_flags_horizontal = 3
+
+[node name="CompositionNote" type="Label" parent="CanvasLayer/PhotoUI" unique_id=1194721471]
+theme_override_colors/font_color = Color(0.65, 0.68, 0.72, 1)
+theme_override_font_sizes/font_size = 11
+text = "Crop, tilt, horizon lock (future)"
+
+[node name="PresetsHeaderRow" type="HBoxContainer" parent="CanvasLayer/PhotoUI" unique_id=182997711]
+size_flags_horizontal = 3
+
+[node name="PresetsRow" type="HBoxContainer" parent="CanvasLayer/PhotoUI" unique_id=1705089926]
+custom_minimum_size = Vector2(80, 0)
+
+[node name="PresetsOptions" type="OptionButton" parent="CanvasLayer/PhotoUI" unique_id=1285173491]
+size_flags_horizontal = 3
+tooltip_text = "Saved presets"
+
+[node name="PresetNameRow" type="HBoxContainer" parent="CanvasLayer/PhotoUI" unique_id=1961606005]
+custom_minimum_size = Vector2(80, 0)
+
+[node name="PresetName" type="LineEdit" parent="CanvasLayer/PhotoUI" unique_id=2040850746]
+size_flags_horizontal = 3
+placeholder_text = "Preset name"
+
+[node name="PresetButtonsRow" type="HBoxContainer" parent="CanvasLayer/PhotoUI" unique_id=1582073521]
+
+[node name="PresetSave" type="Button" parent="CanvasLayer/PhotoUI" unique_id=1001077146]
+tooltip_text = "Save preset"
+text = "Save"
+
+[node name="PresetLoad" type="Button" parent="CanvasLayer/PhotoUI" unique_id=497776823]
+tooltip_text = "Load selected preset"
+text = "Load"
+
+[node name="PresetDelete" type="Button" parent="CanvasLayer/PhotoUI" unique_id=2041829627]
+tooltip_text = "Delete selected preset"
+text = "Delete"
+
+[node name="PassBeauty" type="CheckBox" parent="CanvasLayer/PhotoUI" unique_id=2639071]
+tooltip_text = "Beauty pass"
+button_pressed = true
 text = "Beauty"
-button_pressed = true
 
-[node name="PassAlbedo" type="CheckBox" parent="CanvasLayer/PhotoUI/Panel/Margin/VBox/PassesGrid"]
+[node name="PassAlbedo" type="CheckBox" parent="CanvasLayer/PhotoUI" unique_id=567664018]
+tooltip_text = "Albedo pass"
+button_pressed = true
 text = "Albedo"
-button_pressed = true
 
-[node name="PassNormals" type="CheckBox" parent="CanvasLayer/PhotoUI/Panel/Margin/VBox/PassesGrid"]
+[node name="PassNormals" type="CheckBox" parent="CanvasLayer/PhotoUI" unique_id=698316659]
+tooltip_text = "Normals pass"
+button_pressed = true
 text = "Normals"
-button_pressed = true
 
-[node name="PassDepth" type="CheckBox" parent="CanvasLayer/PhotoUI/Panel/Margin/VBox/PassesGrid"]
+[node name="PassDepth" type="CheckBox" parent="CanvasLayer/PhotoUI" unique_id=135443023]
+tooltip_text = "Depth pass"
+button_pressed = true
 text = "Depth"
-button_pressed = true
 
-[node name="PassLighting" type="CheckBox" parent="CanvasLayer/PhotoUI/Panel/Margin/VBox/PassesGrid"]
+[node name="PassLighting" type="CheckBox" parent="CanvasLayer/PhotoUI" unique_id=1201997137]
+tooltip_text = "Lighting pass"
+button_pressed = true
 text = "Lighting"
+
+[node name="LightRigHeaderRow" type="HBoxContainer" parent="CanvasLayer/PhotoUI" unique_id=1104985897]
+size_flags_horizontal = 3
+
+[node name="LightRigCollapse" type="Button" parent="CanvasLayer/PhotoUI" unique_id=2065440810]
+custom_minimum_size = Vector2(24, 0)
+tooltip_text = "Collapse section"
+toggle_mode = true
 button_pressed = true
+text = "–"
+flat = true
 
-[node name="LightRigLabel" type="Label" parent="CanvasLayer/PhotoUI/Panel/Margin/VBox"]
-text = "Light Rig"
-
-[node name="LightRigGrid" type="GridContainer" parent="CanvasLayer/PhotoUI/Panel/Margin/VBox"]
+[node name="LightRigGrid" type="GridContainer" parent="CanvasLayer/PhotoUI" unique_id=1431511243]
 columns = 4
 
-[node name="KeyEnabled" type="CheckBox" parent="CanvasLayer/PhotoUI/Panel/Margin/VBox/LightRigGrid"]
-text = "Key"
-button_pressed = true
+[node name="LightColEnable" type="Label" parent="CanvasLayer/PhotoUI/LightRigGrid"]
+text = "Enable"
 
-[node name="KeyColor" type="ColorPickerButton" parent="CanvasLayer/PhotoUI/Panel/Margin/VBox/LightRigGrid"]
+[node name="LightColColor" type="Label" parent="CanvasLayer/PhotoUI/LightRigGrid"]
+text = "Color"
+
+[node name="LightColIntensity" type="Label" parent="CanvasLayer/PhotoUI/LightRigGrid"]
+text = "Intensity"
+
+[node name="LightColSpacer" type="Control" parent="CanvasLayer/PhotoUI/LightRigGrid"]
+custom_minimum_size = Vector2(8, 0)
+
+[node name="LightSectionKey" type="Label" parent="CanvasLayer/PhotoUI/LightRigGrid"]
+theme_override_font_sizes/font_size = 12
+text = "Key"
+
+[node name="LightSectionKeySep1" type="HSeparator" parent="CanvasLayer/PhotoUI/LightRigGrid"]
+
+[node name="LightSectionKeySep2" type="HSeparator" parent="CanvasLayer/PhotoUI/LightRigGrid"]
+
+[node name="LightSectionKeySep3" type="HSeparator" parent="CanvasLayer/PhotoUI/LightRigGrid"]
+
+[node name="KeyEnabled" type="CheckBox" parent="CanvasLayer/PhotoUI" unique_id=264017979]
+tooltip_text = "Key light"
+button_pressed = true
+text = "Key"
+
+[node name="KeyColor" type="ColorPickerButton" parent="CanvasLayer/PhotoUI" unique_id=365366890]
+tooltip_text = "Key light color"
 color = Color(1, 1, 1, 1)
 
-[node name="KeyIntensity" type="HSlider" parent="CanvasLayer/PhotoUI/Panel/Margin/VBox/LightRigGrid"]
-min_value = 0.0
-max_value = 8.0
-value = 3.5
-step = 0.1
+[node name="KeyIntensity" type="HSlider" parent="CanvasLayer/PhotoUI" unique_id=208901246]
 size_flags_horizontal = 3
+tooltip_text = "Key light intensity"
+max_value = 8.0
+step = 0.1
+value = 4.0
 
-[node name="KeySpacer" type="Control" parent="CanvasLayer/PhotoUI/Panel/Margin/VBox/LightRigGrid"]
+[node name="KeySpacer" type="Control" parent="CanvasLayer/PhotoUI" unique_id=2022507448]
+layout_mode = 3
+anchors_preset = 0
 
-[node name="FillEnabled" type="CheckBox" parent="CanvasLayer/PhotoUI/Panel/Margin/VBox/LightRigGrid"]
+[node name="LightSectionFill" type="Label" parent="CanvasLayer/PhotoUI/LightRigGrid"]
+theme_override_font_sizes/font_size = 12
 text = "Fill"
-button_pressed = true
 
-[node name="FillColor" type="ColorPickerButton" parent="CanvasLayer/PhotoUI/Panel/Margin/VBox/LightRigGrid"]
+[node name="LightSectionFillSep1" type="HSeparator" parent="CanvasLayer/PhotoUI/LightRigGrid"]
+
+[node name="LightSectionFillSep2" type="HSeparator" parent="CanvasLayer/PhotoUI/LightRigGrid"]
+
+[node name="LightSectionFillSep3" type="HSeparator" parent="CanvasLayer/PhotoUI/LightRigGrid"]
+
+[node name="FillEnabled" type="CheckBox" parent="CanvasLayer/PhotoUI" unique_id=1603463187]
+tooltip_text = "Fill light"
+button_pressed = true
+text = "Fill"
+
+[node name="FillColor" type="ColorPickerButton" parent="CanvasLayer/PhotoUI" unique_id=258627346]
+tooltip_text = "Fill light color"
 color = Color(0.9, 0.95, 1, 1)
 
-[node name="FillIntensity" type="HSlider" parent="CanvasLayer/PhotoUI/Panel/Margin/VBox/LightRigGrid"]
-min_value = 0.0
-max_value = 6.0
-value = 1.5
-step = 0.1
+[node name="FillIntensity" type="HSlider" parent="CanvasLayer/PhotoUI" unique_id=1221250734]
 size_flags_horizontal = 3
+tooltip_text = "Fill light intensity"
+max_value = 6.0
+step = 0.1
+value = 2.0
 
-[node name="FillSpacer" type="Control" parent="CanvasLayer/PhotoUI/Panel/Margin/VBox/LightRigGrid"]
+[node name="FillSpacer" type="Control" parent="CanvasLayer/PhotoUI" unique_id=144573718]
+layout_mode = 3
+anchors_preset = 0
 
-[node name="RimEnabled" type="CheckBox" parent="CanvasLayer/PhotoUI/Panel/Margin/VBox/LightRigGrid"]
+[node name="LightSectionRim" type="Label" parent="CanvasLayer/PhotoUI/LightRigGrid"]
+theme_override_font_sizes/font_size = 12
 text = "Rim"
-button_pressed = true
 
-[node name="RimColor" type="ColorPickerButton" parent="CanvasLayer/PhotoUI/Panel/Margin/VBox/LightRigGrid"]
+[node name="LightSectionRimSep1" type="HSeparator" parent="CanvasLayer/PhotoUI/LightRigGrid"]
+
+[node name="LightSectionRimSep2" type="HSeparator" parent="CanvasLayer/PhotoUI/LightRigGrid"]
+
+[node name="LightSectionRimSep3" type="HSeparator" parent="CanvasLayer/PhotoUI/LightRigGrid"]
+
+[node name="RimEnabled" type="CheckBox" parent="CanvasLayer/PhotoUI" unique_id=202484003]
+tooltip_text = "Rim light"
+button_pressed = true
+text = "Rim"
+
+[node name="RimColor" type="ColorPickerButton" parent="CanvasLayer/PhotoUI" unique_id=70116750]
+tooltip_text = "Rim light color"
 color = Color(1, 0.9, 0.85, 1)
 
-[node name="RimIntensity" type="HSlider" parent="CanvasLayer/PhotoUI/Panel/Margin/VBox/LightRigGrid"]
-min_value = 0.0
-max_value = 8.0
-value = 2.0
-step = 0.1
+[node name="RimIntensity" type="HSlider" parent="CanvasLayer/PhotoUI" unique_id=2091909500]
 size_flags_horizontal = 3
+tooltip_text = "Rim light intensity"
+max_value = 8.0
+step = 0.1
+value = 2.0
 
-[node name="RimSpacer" type="Control" parent="CanvasLayer/PhotoUI/Panel/Margin/VBox/LightRigGrid"]
+[node name="RimSpacer" type="Control" parent="CanvasLayer/PhotoUI" unique_id=452722653]
+layout_mode = 3
+anchors_preset = 0
 
-[node name="TopEnabled" type="CheckBox" parent="CanvasLayer/PhotoUI/Panel/Margin/VBox/LightRigGrid"]
+[node name="LightSectionTop" type="Label" parent="CanvasLayer/PhotoUI/LightRigGrid"]
+theme_override_font_sizes/font_size = 12
 text = "Top"
-button_pressed = true
 
-[node name="TopColor" type="ColorPickerButton" parent="CanvasLayer/PhotoUI/Panel/Margin/VBox/LightRigGrid"]
+[node name="LightSectionTopSep1" type="HSeparator" parent="CanvasLayer/PhotoUI/LightRigGrid"]
+
+[node name="LightSectionTopSep2" type="HSeparator" parent="CanvasLayer/PhotoUI/LightRigGrid"]
+
+[node name="LightSectionTopSep3" type="HSeparator" parent="CanvasLayer/PhotoUI/LightRigGrid"]
+
+[node name="TopEnabled" type="CheckBox" parent="CanvasLayer/PhotoUI" unique_id=761073549]
+tooltip_text = "Top light"
+button_pressed = true
+text = "Top"
+
+[node name="TopColor" type="ColorPickerButton" parent="CanvasLayer/PhotoUI" unique_id=2073692458]
+tooltip_text = "Top light color"
 color = Color(1, 1, 1, 1)
 
-[node name="TopIntensity" type="HSlider" parent="CanvasLayer/PhotoUI/Panel/Margin/VBox/LightRigGrid"]
-min_value = 0.0
-max_value = 6.0
-value = 1.0
-step = 0.1
+[node name="TopIntensity" type="HSlider" parent="CanvasLayer/PhotoUI" unique_id=239313605]
 size_flags_horizontal = 3
+tooltip_text = "Top light intensity"
+max_value = 6.0
+step = 0.1
+value = 1.0
 
-[node name="TopSpacer" type="Control" parent="CanvasLayer/PhotoUI/Panel/Margin/VBox/LightRigGrid"]
+[node name="TopSpacer" type="Control" parent="CanvasLayer/PhotoUI" unique_id=1880851823]
+layout_mode = 3
+anchors_preset = 0
 
-[node name="BounceEnabled" type="CheckBox" parent="CanvasLayer/PhotoUI/Panel/Margin/VBox/LightRigGrid"]
+[node name="LightSectionBounce" type="Label" parent="CanvasLayer/PhotoUI/LightRigGrid"]
+theme_override_font_sizes/font_size = 12
 text = "Bounce"
-button_pressed = true
 
-[node name="BounceColor" type="ColorPickerButton" parent="CanvasLayer/PhotoUI/Panel/Margin/VBox/LightRigGrid"]
+[node name="LightSectionBounceSep1" type="HSeparator" parent="CanvasLayer/PhotoUI/LightRigGrid"]
+
+[node name="LightSectionBounceSep2" type="HSeparator" parent="CanvasLayer/PhotoUI/LightRigGrid"]
+
+[node name="LightSectionBounceSep3" type="HSeparator" parent="CanvasLayer/PhotoUI/LightRigGrid"]
+
+[node name="BounceEnabled" type="CheckBox" parent="CanvasLayer/PhotoUI" unique_id=194160913]
+tooltip_text = "Bounce light"
+button_pressed = true
+text = "Bounce"
+
+[node name="BounceColor" type="ColorPickerButton" parent="CanvasLayer/PhotoUI" unique_id=75058174]
+tooltip_text = "Bounce light color"
 color = Color(1, 0.95, 0.85, 1)
 
-[node name="BounceIntensity" type="HSlider" parent="CanvasLayer/PhotoUI/Panel/Margin/VBox/LightRigGrid"]
-min_value = 0.0
-max_value = 6.0
-value = 0.8
-step = 0.1
+[node name="BounceIntensity" type="HSlider" parent="CanvasLayer/PhotoUI" unique_id=1767364230]
 size_flags_horizontal = 3
+tooltip_text = "Bounce light intensity"
+max_value = 6.0
+step = 0.1
+value = 1.0
 
-[node name="BounceSpacer" type="Control" parent="CanvasLayer/PhotoUI/Panel/Margin/VBox/LightRigGrid"]
-
-[node name="PhotoGuides" type="Control" parent="CanvasLayer/PhotoUI"]
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-script = ExtResource("2_guides")
+[node name="BounceSpacer" type="Control" parent="CanvasLayer/PhotoUI" unique_id=32667293]
+layout_mode = 3
+anchors_preset = 0

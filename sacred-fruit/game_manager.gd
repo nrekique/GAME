@@ -28,6 +28,7 @@ var _player: Node = null
 var player_health: int = 0
 var player_max_health: int = 0
 var player_max_overhealth: int = 0
+const NO_HUD_GROUP := "NO_HUD"
 
 func use_targets(activator: Node, target: String) -> void:
 	# Targetnames are really Godot Groups, so we can have multiple entities 
@@ -95,6 +96,10 @@ func _handle_scene_change() -> void:
 		return
 	var in_ui := current is Control
 	if in_ui:
+		if _hud != null:
+			_hud.visible = false
+		return
+	if current.is_in_group(NO_HUD_GROUP):
 		if _hud != null:
 			_hud.visible = false
 		return

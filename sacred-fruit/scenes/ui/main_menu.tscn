@@ -1,8 +1,8 @@
-[gd_scene format=3 uid="uid://r1xn7rlu12ml"]
+[gd_scene format=3]
 
-[ext_resource type="Script" uid="uid://bgg487vrrl86o" path="res://scripts/main_menu.gd" id="1_main_menu"]
+[ext_resource type="Script" path="res://scripts/main_menu.gd" id="1_main_menu"]
 
-[node name="MainMenu" type="Control" unique_id=1028424694]
+[node name="MainMenu" type="Control"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -11,7 +11,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_main_menu")
 
-[node name="Background" type="ColorRect" parent="." unique_id=1288878812]
+[node name="Background" type="ColorRect" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -21,7 +21,7 @@ grow_vertical = 2
 mouse_filter = 2
 color = Color(0.06, 0.06, 0.075, 1)
 
-[node name="Center" type="CenterContainer" parent="." unique_id=1852095155]
+[node name="Center" type="CenterContainer" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -29,33 +29,39 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Panel" type="PanelContainer" parent="Center" unique_id=484111706]
+[node name="Panel" type="PanelContainer" parent="."]
 custom_minimum_size = Vector2(420, 0)
 layout_mode = 2
 
-[node name="Margin" type="MarginContainer" parent="Center/Panel" unique_id=406873845]
+[node name="Margin" type="MarginContainer" parent="."]
 layout_mode = 2
+add_theme_constant_override("margin_left", 24)
+add_theme_constant_override("margin_right", 24)
+add_theme_constant_override("margin_top", 24)
+add_theme_constant_override("margin_bottom", 24)
 
-[node name="Center_Panel_Margin_VBox#Title" type="Label" parent="." unique_id=690133172]
-layout_mode = 0
+[node name="VBox" type="VBoxContainer" parent="."]
+layout_mode = 2
+add_theme_constant_override("separation", 10)
+alignment = 0
+
+[node name="Title" type="Label" parent="."]
+layout_mode = 2
 size_flags_horizontal = 3
 text = "SACRED FRUIT"
 horizontal_alignment = 1
 
-[node name="Center_Panel_Margin_VBox#PlayButton" type="Button" parent="." unique_id=1634066357]
-unique_name_in_owner = true
-layout_mode = 0
+[node name="PlayButton" type="Button" parent="."]
+layout_mode = 2
 size_flags_horizontal = 3
 text = "Play"
 
-[node name="Center_Panel_Margin_VBox#OptionsButton" type="Button" parent="." unique_id=1395049799]
-unique_name_in_owner = true
-layout_mode = 0
+[node name="OptionsButton" type="Button" parent="."]
+layout_mode = 2
 size_flags_horizontal = 3
 text = "Options"
 
-[node name="Center_Panel_Margin_VBox#QuitButton" type="Button" parent="." unique_id=439869086]
-unique_name_in_owner = true
-layout_mode = 0
+[node name="QuitButton" type="Button" parent="."]
+layout_mode = 2
 size_flags_horizontal = 3
 text = "Quit"

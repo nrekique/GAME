@@ -14,6 +14,7 @@ var _player: Node3D
 func _ready() -> void:
 	if Engine.is_editor_hint():
 		return
+	add_to_group("NO_HUD")
 
 	# Minimal loading indicator.
 	var status := _make_status_label("Building map…")
@@ -37,18 +38,27 @@ func _ready() -> void:
 		return
 
 	(status as Label).text = "Spawning player…"
-	var has_player := _spawn_player()
-	var has_start := _position_player_at_start()
-	if not has_player or not has_start:
-		if _player:
-			_player.queue_free()
-			_player = null
-		(status as Label).text = "No player start found — spectator mode"
+	var force_spectator := false
+	if dbg != null and "pending_force_spectator" in dbg:
+		force_spectator = bool(dbg.pending_force_spectator)
+		dbg.pending_force_spectator = false
+	if force_spectator:
+		(status as Label).text = "Spectator mode"
 		_spawn_spectator()
 		_ensure_fallback_light()
 	else:
-		_ensure_player_camera()
-		_ensure_fallback_light()
+		var has_player := _spawn_player()
+		var has_start := _position_player_at_start()
+		if not has_player or not has_start:
+			if _player:
+				_player.queue_free()
+				_player = null
+			(status as Label).text = "No player start found — spectator mode"
+			_spawn_spectator()
+			_ensure_fallback_light()
+		else:
+			_ensure_player_camera()
+			_ensure_fallback_light()
 
 	# Run the existing fallback spawner AFTER build so we don't duplicate entities.
 	var setup := Node3D.new()

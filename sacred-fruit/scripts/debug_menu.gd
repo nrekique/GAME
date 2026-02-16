@@ -56,7 +56,7 @@ func _ready() -> void:
 		center.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 
 	_resolve_nodes()
-	call_deferred("_ensure_layout")
+	call_deferred("_ensure_layout_and_resolve")
 	if search:
 		search.text_changed.connect(_on_filter_changed)
 	if include_autosave:
@@ -71,14 +71,26 @@ func _ready() -> void:
 		close_button.pressed.connect(_on_close_pressed)
 
 
+func _ensure_layout_and_resolve() -> void:
+	_ensure_layout()
+	_resolve_nodes()
+
+
 func _ensure_layout() -> void:
 	var center := _get_or_create_container("Center", CenterContainer, self) as Control
 	if center:
 		center.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		center.layout_mode = 1
 
 	var panel := _get_or_create_container("Panel", PanelContainer, center)
 	var margin := _get_or_create_container("Margin", MarginContainer, panel)
 	var vbox := _get_or_create_container("VBox", VBoxContainer, margin)
+	if panel is Control:
+		(panel as Control).layout_mode = 2
+	if margin is Control:
+		(margin as Control).layout_mode = 2
+	if vbox is Control:
+		(vbox as Control).layout_mode = 2
 	if vbox is VBoxContainer:
 		(vbox as VBoxContainer).alignment = BoxContainer.ALIGNMENT_BEGIN
 		(vbox as VBoxContainer).add_theme_constant_override("separation", 10)
@@ -102,6 +114,12 @@ func _ensure_layout() -> void:
 	_reparent_by_name("MapList", vbox)
 	_reparent_by_name("Status", vbox)
 	_reparent(buttons, vbox)
+	var map_list_node := _find_node("MapList", "ItemList") as ItemList
+	if map_list_node:
+		map_list_node.size_flags_vertical = Control.SIZE_EXPAND_FILL
+		map_list_node.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		map_list_node.custom_minimum_size = Vector2(0, 240)
+		map_list_node.visible = true
 
 	# Top bar children
 	_reparent_by_name("Search", topbar)
@@ -124,8 +142,11 @@ func _ensure_layout() -> void:
 
 
 func refresh() -> void:
+	_ensure_layout_and_resolve()
 	if include_autosave == null or map_list == null or status == null or search == null:
-		return
+		_resolve_nodes()
+		if include_autosave == null or map_list == null or status == null or search == null:
+			return
 	_paths = _scan_maps(include_autosave.button_pressed)
 	_apply_filter(search.text)
 	status.text = "Found %d maps" % _paths.size()

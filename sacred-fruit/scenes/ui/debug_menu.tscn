@@ -1,4 +1,4 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene format=3]
 
 [ext_resource type="Script" path="res://scripts/debug_menu.gd" id="1_debug_menu"]
 
@@ -23,65 +23,58 @@ anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 
-[node name="Panel" type="PanelContainer" parent="Center"]
+[node name="Panel" type="PanelContainer" parent="."]
 custom_minimum_size = Vector2(720, 420)
 layout_mode = 2
 
-[node name="Margin" type="MarginContainer" parent="Center/Panel"]
+[node name="Margin" type="MarginContainer" parent="."]
 layout_mode = 2
 add_theme_constant_override("margin_left", 24)
 add_theme_constant_override("margin_right", 24)
 add_theme_constant_override("margin_top", 24)
 add_theme_constant_override("margin_bottom", 24)
 
-[node name="VBox" type="VBoxContainer" parent="Center/Panel/Margin"]
+[node name="VBox" type="VBoxContainer" parent="."]
 layout_mode = 2
 add_theme_constant_override("separation", 10)
 
-[node name="Title" type="Label" parent="Center/Panel/Margin/VBox"]
+[node name="Title" type="Label" parent="."]
 layout_mode = 2
 text = "DEBUG MENU"
 horizontal_alignment = 1
 size_flags_horizontal = 3
 
-[node name="TopBar" type="HBoxContainer" parent="Center/Panel/Margin/VBox"]
+[node name="TopBar" type="HBoxContainer" parent="."]
 layout_mode = 2
 add_theme_constant_override("separation", 10)
 size_flags_horizontal = 3
 
-[node name="Search" type="LineEdit" parent="Center/Panel/Margin/VBox/TopBar"]
-unique_name_in_owner = true
+[node name="Search" type="LineEdit" parent="."]
 size_flags_horizontal = 3
 placeholder_text = "Filter maps (e.g. home, grill…)"
 
-[node name="IncludeAutosave" type="CheckBox" parent="Center/Panel/Margin/VBox/TopBar"]
-unique_name_in_owner = true
+[node name="IncludeAutosave" type="CheckBox" parent="."]
 text = "Autosave"
 
-[node name="MapList" type="ItemList" parent="Center/Panel/Margin/VBox"]
-unique_name_in_owner = true
+[node name="MapList" type="ItemList" parent="."]
 size_flags_vertical = 3
 allow_reselect = true
 
-[node name="Status" type="Label" parent="Center/Panel/Margin/VBox"]
-unique_name_in_owner = true
+[node name="Status" type="Label" parent="."]
 text = "Select a map. Press F1 to close."
 autowrap_mode = 3
 
-[node name="Buttons" type="HBoxContainer" parent="Center/Panel/Margin/VBox"]
+[node name="Buttons" type="HBoxContainer" parent="."]
 layout_mode = 2
 add_theme_constant_override("separation", 10)
 alignment = 2
 size_flags_horizontal = 3
 
-[node name="PhotoMode" type="Button" parent="Center/Panel/Margin/VBox/Buttons"]
-unique_name_in_owner = true
+[node name="PhotoMode" type="Button" parent="."]
 text = "Photo Mode"
 
-[node name="BuildRun" type="Button" parent="Center/Panel/Margin/VBox/Buttons"]
-unique_name_in_owner = true
+[node name="BuildRun" type="Button" parent="."]
 text = "Build + Run"
 
-[node name="Close" type="Button" parent="Center/Panel/Margin/VBox/Buttons"]
-unique_name_in_owner = true
+[node name="Close" type="Button" parent="."]
 text = "Close"

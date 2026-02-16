@@ -37,6 +37,10 @@ func run_setup() -> void:
 		return
 	_has_run = true
 	# Let the instanced HOME scene enter the tree first.
+	if not is_inside_tree():
+		await tree_entered
+	if get_tree() == null:
+		return
 	await get_tree().process_frame
 
 	var player := _find_player()
