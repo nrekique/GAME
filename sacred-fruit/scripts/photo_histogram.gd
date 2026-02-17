@@ -1,9 +1,9 @@
 extends Control
 
-@export var sample_interval: float = 1.0 # increased interval to reduce CPU/GPU reads
+@export var sample_interval: float = 0.4
 @export var bins: int = 256
 @export var downsample_size: Vector2i = Vector2i(96, 54) # smaller default downsample for cheaper reads
-@export var use_subviewport: bool = true # render histogram from a dedicated small SubViewport when available
+@export var use_subviewport: bool = false
 @export var show_luma: bool = true
 @export var show_rgb: bool = true
 @export var background_color: Color = Color(0, 0, 0, 0.55)
@@ -27,11 +27,14 @@ func _ready() -> void:
 	size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	custom_minimum_size = Vector2(0, 64)
+	set_process(true)
 	_set_hist_size(bins)
 	# Disable in headless/server runs to avoid dummy-texture backend errors
-	if OS.has_feature("headless") or OS.has_feature("server"):
+	if OS.has_feature("headless") or OS.has_feature("server") or DisplayServer.get_name() == "headless":
 		visible = false
+		set_process(false)
 		return
+	call_deferred("_update_histogram")
 
 	# Create a small SubViewport to render a low-res copy of the scene for histogram sampling.
 	if use_subviewport:
@@ -71,7 +74,7 @@ func _process(delta: float) -> void:
 
 func _update_histogram() -> void:
 	# Avoid running in headless/server environments where viewport textures may be invalid.
-	if OS.has_feature("headless"):
+	if OS.has_feature("headless") or OS.has_feature("server") or DisplayServer.get_name() == "headless":
 		return
 
 	# Prefer SubViewport texture when available (cheaper and isolated)

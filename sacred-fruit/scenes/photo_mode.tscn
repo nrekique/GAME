@@ -20,7 +20,7 @@
 
 [node name="PhotoMode" type="Node3D" unique_id=33282436]
 script = ExtResource("1_photo_mode")
-enable_runtime_layout_repair = true
+enable_runtime_layout_repair = false
 
 [node name="PhotoCamera" type="Camera3D" parent="." unique_id=642954770]
 current = true
@@ -65,6 +65,16 @@ grow_horizontal = 2
 grow_vertical = 2
 theme = ExtResource("4_photo_theme")
 
+[node name="PhotoGuides" type="Control" parent="CanvasLayer" unique_id=380740905]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("2_guides")
+
 [node name="RootMargin" type="MarginContainer" parent="CanvasLayer/PhotoUI" unique_id=1209523890]
 layout_mode = 1
 anchors_preset = 15
@@ -90,9 +100,15 @@ size_flags_vertical = 3
 [node name="TabsMargin" type="MarginContainer" parent="CanvasLayer/PhotoUI/RootMargin/RootHBox/TabsPanel" unique_id=1739068256]
 layout_mode = 2
 
-[node name="Panel" type="PanelContainer" parent="CanvasLayer/PhotoUI/RootMargin/RootHBox" unique_id=1209051103]
+[node name="TabsVBox" type="VBoxContainer" parent="CanvasLayer/PhotoUI/RootMargin/RootHBox/TabsPanel/TabsMargin" unique_id=430795193]
 layout_mode = 2
 size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Panel" type="PanelContainer" parent="CanvasLayer/PhotoUI/RootMargin/RootHBox" unique_id=1209051103]
+custom_minimum_size = Vector2(560, 0)
+layout_mode = 2
+size_flags_horizontal = 1
 size_flags_vertical = 3
 
 [node name="Margin" type="MarginContainer" parent="CanvasLayer/PhotoUI/RootMargin/RootHBox/Panel" unique_id=1419070580]
@@ -102,11 +118,12 @@ size_flags_vertical = 3
 
 [node name="SettingsScroll" type="ScrollContainer" parent="CanvasLayer/PhotoUI/RootMargin/RootHBox/Panel/Margin" unique_id=2100046210]
 layout_mode = 2
-mouse_filter = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+mouse_filter = 0
 
 [node name="VBox" type="VBoxContainer" parent="CanvasLayer/PhotoUI/RootMargin/RootHBox/Panel/Margin/SettingsScroll" unique_id=2100046209]
 layout_mode = 2
-script = ExtResource("2_guides")
 
 [node name="TabCamera" type="Button" parent="CanvasLayer/PhotoUI/RootMargin/RootHBox/TabsPanel/TabsMargin/TabsVBox" unique_id=1025479674]
 layout_mode = 2
@@ -210,36 +227,40 @@ layout_mode = 2
 autowrap_mode = 3
 
 [node name="FOVRow" type="HBoxContainer" parent="CanvasLayer/PhotoUI/RootMargin/RootHBox/Panel/Margin/SettingsScroll/VBox" unique_id=1739086329]
-custom_minimum_size = Vector2(80, 0)
+custom_minimum_size = Vector2(0, 46)
 layout_mode = 2
 
 [node name="FOVSlider" type="HSlider" parent="CanvasLayer/PhotoUI/RootMargin/RootHBox/Panel/Margin/SettingsScroll/VBox/FOVRow" unique_id=2123968409]
+custom_minimum_size = Vector2(0, 34)
 layout_mode = 2
 size_flags_horizontal = 3
 tooltip_text = "Field of view"
 min_value = 20.0
 max_value = 110.0
+step = 0.5
 value = 60.0
 
 [node name="FOVValue" type="Label" parent="CanvasLayer/PhotoUI/RootMargin/RootHBox/Panel/Margin/SettingsScroll/VBox/FOVRow" unique_id=1931458575]
-custom_minimum_size = Vector2(60, 0)
+custom_minimum_size = Vector2(92, 34)
 layout_mode = 2
 text = "60°"
 
 [node name="FocalRow" type="HBoxContainer" parent="CanvasLayer/PhotoUI/RootMargin/RootHBox/Panel/Margin/SettingsScroll/VBox" unique_id=1678799417]
-custom_minimum_size = Vector2(80, 0)
+custom_minimum_size = Vector2(0, 46)
 layout_mode = 2
 
 [node name="FocalOptions" type="OptionButton" parent="CanvasLayer/PhotoUI/RootMargin/RootHBox/Panel/Margin/SettingsScroll/VBox/FocalRow" unique_id=596766811]
+custom_minimum_size = Vector2(0, 36)
 layout_mode = 2
 size_flags_horizontal = 3
 tooltip_text = "Focal length preset"
 
 [node name="ISORow" type="HBoxContainer" parent="CanvasLayer/PhotoUI/RootMargin/RootHBox/Panel/Margin/SettingsScroll/VBox" unique_id=669449023]
-custom_minimum_size = Vector2(80, 0)
+custom_minimum_size = Vector2(0, 46)
 layout_mode = 2
 
 [node name="ISOSlider" type="HSlider" parent="CanvasLayer/PhotoUI/RootMargin/RootHBox/Panel/Margin/SettingsScroll/VBox/ISORow" unique_id=422385553]
+custom_minimum_size = Vector2(0, 34)
 layout_mode = 2
 size_flags_horizontal = 3
 tooltip_text = "ISO sensitivity"
@@ -249,15 +270,16 @@ step = 50.0
 value = 400.0
 
 [node name="ISOValue" type="Label" parent="CanvasLayer/PhotoUI/RootMargin/RootHBox/Panel/Margin/SettingsScroll/VBox/ISORow" unique_id=315444272]
-custom_minimum_size = Vector2(60, 0)
+custom_minimum_size = Vector2(92, 34)
 layout_mode = 2
 text = "400"
 
 [node name="ApertureRow" type="HBoxContainer" parent="CanvasLayer/PhotoUI/RootMargin/RootHBox/Panel/Margin/SettingsScroll/VBox" unique_id=1586942358]
-custom_minimum_size = Vector2(80, 0)
+custom_minimum_size = Vector2(0, 46)
 layout_mode = 2
 
 [node name="ApertureSlider" type="HSlider" parent="CanvasLayer/PhotoUI/RootMargin/RootHBox/Panel/Margin/SettingsScroll/VBox/ApertureRow" unique_id=1223227163]
+custom_minimum_size = Vector2(0, 34)
 layout_mode = 2
 size_flags_horizontal = 3
 tooltip_text = "Aperture (f-stop)"
@@ -267,15 +289,16 @@ step = 0.1
 value = 2.8
 
 [node name="ApertureValue" type="Label" parent="CanvasLayer/PhotoUI/RootMargin/RootHBox/Panel/Margin/SettingsScroll/VBox/ApertureRow" unique_id=1565378145]
-custom_minimum_size = Vector2(60, 0)
+custom_minimum_size = Vector2(92, 34)
 layout_mode = 2
 text = "f/2.8"
 
 [node name="ShutterRow" type="HBoxContainer" parent="CanvasLayer/PhotoUI/RootMargin/RootHBox/Panel/Margin/SettingsScroll/VBox" unique_id=373531287]
-custom_minimum_size = Vector2(80, 0)
+custom_minimum_size = Vector2(0, 46)
 layout_mode = 2
 
 [node name="ShutterSlider" type="HSlider" parent="CanvasLayer/PhotoUI/RootMargin/RootHBox/Panel/Margin/SettingsScroll/VBox/ShutterRow" unique_id=880567674]
+custom_minimum_size = Vector2(0, 34)
 layout_mode = 2
 size_flags_horizontal = 3
 tooltip_text = "Shutter speed (seconds)"
@@ -285,15 +308,16 @@ step = 0.001
 value = 0.016
 
 [node name="ShutterValue" type="Label" parent="CanvasLayer/PhotoUI/RootMargin/RootHBox/Panel/Margin/SettingsScroll/VBox/ShutterRow" unique_id=1985328100]
-custom_minimum_size = Vector2(60, 0)
+custom_minimum_size = Vector2(92, 34)
 layout_mode = 2
 text = "1/125"
 
 [node name="FocusRow" type="HBoxContainer" parent="CanvasLayer/PhotoUI/RootMargin/RootHBox/Panel/Margin/SettingsScroll/VBox" unique_id=1906402365]
-custom_minimum_size = Vector2(80, 0)
+custom_minimum_size = Vector2(0, 46)
 layout_mode = 2
 
 [node name="FocusSlider" type="HSlider" parent="CanvasLayer/PhotoUI/RootMargin/RootHBox/Panel/Margin/SettingsScroll/VBox/FocusRow" unique_id=82338978]
+custom_minimum_size = Vector2(0, 34)
 layout_mode = 2
 size_flags_horizontal = 3
 tooltip_text = "Focus distance (meters)"
@@ -303,24 +327,26 @@ step = 0.1
 value = 5.0
 
 [node name="FocusValue" type="Label" parent="CanvasLayer/PhotoUI/RootMargin/RootHBox/Panel/Margin/SettingsScroll/VBox/FocusRow" unique_id=870518844]
-custom_minimum_size = Vector2(60, 0)
+custom_minimum_size = Vector2(92, 34)
 layout_mode = 2
 text = "5.0m"
 
 [node name="ShootingModeRow" type="HBoxContainer" parent="CanvasLayer/PhotoUI/RootMargin/RootHBox/Panel/Margin/SettingsScroll/VBox" unique_id=495180831]
-custom_minimum_size = Vector2(80, 0)
+custom_minimum_size = Vector2(0, 46)
 layout_mode = 2
 
 [node name="ShootingModeOptions" type="OptionButton" parent="CanvasLayer/PhotoUI/RootMargin/RootHBox/Panel/Margin/SettingsScroll/VBox/ShootingModeRow" unique_id=167439040]
+custom_minimum_size = Vector2(0, 36)
 layout_mode = 2
 size_flags_horizontal = 3
 tooltip_text = "Shooting mode preset"
 
 [node name="AutoFocusRow" type="HBoxContainer" parent="CanvasLayer/PhotoUI/RootMargin/RootHBox/Panel/Margin/SettingsScroll/VBox" unique_id=2102012513]
-custom_minimum_size = Vector2(80, 0)
+custom_minimum_size = Vector2(0, 46)
 layout_mode = 2
 
 [node name="AutoFocusToggle" type="CheckBox" parent="CanvasLayer/PhotoUI/RootMargin/RootHBox/Panel/Margin/SettingsScroll/VBox/AutoFocusRow" unique_id=1445694642]
+custom_minimum_size = Vector2(0, 36)
 layout_mode = 2
 tooltip_text = "Enable auto focus"
 text = "On"
@@ -1073,9 +1099,16 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
+[node name="ViewfinderToggle" type="Button" parent="CanvasLayer/PhotoUI/Toolbar/ToolbarHBox" unique_id=138778260]
+layout_mode = 2
+toggle_mode = true
+button_pressed = true
+text = "Viewfinder"
+
 [node name="GuidesToggle" type="Button" parent="CanvasLayer/PhotoUI/Toolbar/ToolbarHBox" unique_id=376753370]
 layout_mode = 2
 toggle_mode = true
+button_pressed = true
 text = "Guides"
 
 [node name="ToolbarCaptureButton" type="Button" parent="CanvasLayer/PhotoUI/Toolbar/ToolbarHBox" unique_id=1262503443]

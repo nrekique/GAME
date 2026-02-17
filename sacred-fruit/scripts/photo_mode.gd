@@ -56,7 +56,7 @@ func _deferred_build_map(map: FuncGodotMap) -> void:
 @export var fast_multiplier: float = 3.0
 @export var mouse_sens: float = 0.25
 @export var enable_runtime_layout_repair: bool = false
-@export var enable_layout_debug_print: bool = true
+@export var enable_layout_debug_print: bool = false
 
 var _map: FuncGodotMap
 var _yaw: float = 0.0
@@ -74,6 +74,11 @@ const PASS_ALBEDO := "albedo"
 const PASS_NORMALS := "normals"
 const PASS_DEPTH := "depth"
 const PASS_LIGHTING := "lighting"
+const THUMB_MENU_PREVIEW := 0
+const THUMB_MENU_SHOW_IN_FINDER := 1
+const THUMB_MENU_EXPORT := 2
+const THUMB_MENU_REAPPLY := 3
+const THUMB_MENU_DELETE := 4
 
 var _normal_pass_material: ShaderMaterial
 var _depth_pass_material: ShaderMaterial
@@ -181,7 +186,7 @@ var _pass_normals: CheckBox
 var _pass_depth: CheckBox
 var _pass_lighting: CheckBox
 var _pass_preview_options: OptionButton
- 
+
 var _rim_enabled: CheckBox
 var _rim_color: ColorPickerButton
 var _rim_intensity: HSlider
@@ -219,6 +224,66 @@ var _thumb_export_dialog: FileDialog
 var _selected_capture_idx: int = -1
 var _menu_target_capture_index: int = -1
 var _thumb_export_target_index: int = -1
+var _preview_capture: Dictionary = {}
+var _preview_capture_index: int = -1
+var _preview_zoom: float = 1.0
+var _preview_show_compare: bool = false
+var _preview_compare_capture: Dictionary = {}
+var _preview_primary_texture: Texture2D
+var _preview_compare_texture: Texture2D
+var _preview_image_size: Vector2 = Vector2.ZERO
+var _preview_scroll: ScrollContainer
+var _preview_image_node: TextureRect
+var _capture_sequence_counter: int = 0
+
+var _capture_timer_slider: HSlider
+var _capture_timer_value: Label
+var _capture_burst_options: OptionButton
+var _capture_bracket_options: OptionButton
+var _capture_bracket_step_slider: HSlider
+var _capture_bracket_step_value: Label
+var _capture_watermark_toggle: CheckBox
+var _capture_watermark_text: LineEdit
+
+var _fog_toggle: CheckBox
+var _fog_density_slider: HSlider
+var _fog_density_value: Label
+var _fog_begin_slider: HSlider
+var _fog_begin_value: Label
+var _fog_end_slider: HSlider
+var _fog_end_value: Label
+var _sun_shadow_toggle: CheckBox
+var _sun_shadow_opacity_slider: HSlider
+var _sun_shadow_opacity_value: Label
+var _sun_softness_slider: HSlider
+var _sun_softness_value: Label
+var _sun_color_picker: ColorPickerButton
+var _ambient_color_picker: ColorPickerButton
+var _fog_color_picker: ColorPickerButton
+var _fog_height_toggle: CheckBox
+var _fog_height_density_slider: HSlider
+var _fog_height_density_value: Label
+var _fog_height_falloff_slider: HSlider
+var _fog_height_falloff_value: Label
+var _volumetric_fog_toggle: CheckBox
+var _volumetric_fog_density_slider: HSlider
+var _volumetric_fog_density_value: Label
+var _volumetric_fog_aniso_slider: HSlider
+var _volumetric_fog_aniso_value: Label
+
+var _composition_crop_options: OptionButton
+var _composition_offset_x_slider: HSlider
+var _composition_offset_x_value: Label
+var _composition_offset_y_slider: HSlider
+var _composition_offset_y_value: Label
+var _composition_roll_slider: HSlider
+var _composition_roll_value: Label
+var _composition_snap_toggle: CheckBox
+
+var _composition_crop_ratio: float = 0.0
+var _composition_crop_offset: Vector2 = Vector2.ZERO
+var _composition_horizon_roll: float = 0.0
+var _composition_thirds_snap_enabled: bool = false
 
 
 # --- Export / Import helpers (moved below variable declarations) ---
@@ -238,7 +303,16 @@ func export_photo_mode_state(path: String) -> void:
 		"auto_focus": _auto_focus_enabled,
 	}
 	state["exposure"] = { "base": _base_exposure, "auto": _auto_exposure_enabled }
-	state["environment"] = { "preset": _env_options.get_item_text(_env_options.selected) if _env_options else "" }
+	state["environment"] = {
+		"preset": _env_options.get_item_text(_env_options.selected) if _env_options else "",
+		"sun_angle": _sun_angle_slider.value if _sun_angle_slider else -35.0,
+		"ambient_energy": _ambient_slider.value if _ambient_slider else 1.0,
+		"sun_shadows": _sun_shadow_toggle.button_pressed if _sun_shadow_toggle else true,
+		"sun_shadow_opacity": _sun_shadow_opacity_slider.value if _sun_shadow_opacity_slider else 1.0,
+		"sun_softness": _sun_softness_slider.value if _sun_softness_slider else 0.0,
+		"sun_color": _sun_color_picker.color if _sun_color_picker else (_key_light.light_color if _key_light else Color(1.0, 0.98, 0.92)),
+		"ambient_color": _ambient_color_picker.color if _ambient_color_picker else (_world_env.environment.ambient_light_color if _world_env and _world_env.environment else Color(0.6, 0.65, 0.7))
+	}
 	state["resolution"] = { "preset": _res_options.get_item_text(_res_options.selected) if _res_options else "" }
 	state["aspect"] = { "preset": _aspect_options.get_item_text(_aspect_options.selected) if _aspect_options else "" }
 	state["guides"] = { "enabled": _guides.visible if _guides else false, "type": _guide_type_options.get_item_text(_guide_type_options.selected) if _guide_type_options else "" }
@@ -262,7 +336,36 @@ func export_photo_mode_state(path: String) -> void:
 		"bloom": _bloom_slider.value if _bloom_slider else 0.0
 	}
 	# Capture
-	state["capture"] = { "format": _capture_format_options.get_item_text(_capture_format_options.selected) if _capture_format_options else "PNG", "path": _capture_path_edit.text if _capture_path_edit else "" }
+	state["capture"] = {
+		"format": _capture_format_options.get_item_text(_capture_format_options.selected) if _capture_format_options else "PNG",
+		"path": _capture_path_edit.text if _capture_path_edit else "",
+		"timer_seconds": _capture_timer_slider.value if _capture_timer_slider else 0.0,
+		"burst_count": _get_capture_burst_count(),
+		"bracket_count": _get_capture_bracket_count(),
+		"bracket_step_ev": _capture_bracket_step_slider.value if _capture_bracket_step_slider else 1.0,
+		"watermark_enabled": _capture_watermark_toggle.button_pressed if _capture_watermark_toggle else false,
+		"watermark_text": _capture_watermark_text.text if _capture_watermark_text else ""
+	}
+	state["fog"] = {
+		"enabled": _fog_toggle.button_pressed if _fog_toggle else false,
+		"color": _fog_color_picker.color if _fog_color_picker else Color(0.72, 0.77, 0.83),
+		"density": _fog_density_slider.value if _fog_density_slider else 0.0,
+		"begin": _fog_begin_slider.value if _fog_begin_slider else 5.0,
+		"end": _fog_end_slider.value if _fog_end_slider else 200.0,
+		"height_enabled": _fog_height_toggle.button_pressed if _fog_height_toggle else false,
+		"height_density": _fog_height_density_slider.value if _fog_height_density_slider else 0.05,
+		"height_falloff": _fog_height_falloff_slider.value if _fog_height_falloff_slider else 0.5,
+		"volumetric_enabled": _volumetric_fog_toggle.button_pressed if _volumetric_fog_toggle else false,
+		"volumetric_density": _volumetric_fog_density_slider.value if _volumetric_fog_density_slider else 0.03,
+		"volumetric_aniso": _volumetric_fog_aniso_slider.value if _volumetric_fog_aniso_slider else 0.0
+	}
+	state["composition"] = {
+		"crop_ratio": _composition_crop_ratio,
+		"offset_x": _composition_offset_x_slider.value if _composition_offset_x_slider else 0.0,
+		"offset_y": _composition_offset_y_slider.value if _composition_offset_y_slider else 0.0,
+		"roll": _composition_roll_slider.value if _composition_roll_slider else _composition_horizon_roll,
+		"thirds_snap": _composition_snap_toggle.button_pressed if _composition_snap_toggle else false
+	}
 	# Passes
 	state["passes"] = {
 		"beauty": _pass_beauty.button_pressed if _pass_beauty else false,
@@ -402,12 +505,29 @@ func import_photo_mode_state(path: String) -> void:
 				_auto_exposure_toggle.button_pressed = _auto_exposure_enabled
 
 	# Environment / presets
-	if state.has("environment") and _env_options:
-		var env = state["environment"].get("preset", "")
-		for i in range(_env_options.get_item_count()):
-			if _env_options.get_item_text(i) == env:
-				_env_options.selected = i
-				break
+	if state.has("environment") and state["environment"] is Dictionary:
+		var env_state: Dictionary = state["environment"] as Dictionary
+		if _env_options and env_state.has("preset"):
+			var env_name := String(env_state.get("preset", ""))
+			for i in range(_env_options.get_item_count()):
+				if _env_options.get_item_text(i) == env_name:
+					_env_options.selected = i
+					_on_environment_selected(i)
+					break
+		if env_state.has("sun_angle") and _sun_angle_slider:
+			_sun_angle_slider.value = float(env_state["sun_angle"])
+		if env_state.has("ambient_energy") and _ambient_slider:
+			_ambient_slider.value = float(env_state["ambient_energy"])
+		if env_state.has("sun_shadows") and _sun_shadow_toggle:
+			_set_check_value(_sun_shadow_toggle, bool(env_state["sun_shadows"]))
+		if env_state.has("sun_shadow_opacity") and _sun_shadow_opacity_slider:
+			_sun_shadow_opacity_slider.value = float(env_state["sun_shadow_opacity"])
+		if env_state.has("sun_softness") and _sun_softness_slider:
+			_sun_softness_slider.value = float(env_state["sun_softness"])
+		if env_state.has("sun_color") and _sun_color_picker:
+			_sun_color_picker.color = _to_color(env_state["sun_color"], _sun_color_picker.color)
+		if env_state.has("ambient_color") and _ambient_color_picker:
+			_ambient_color_picker.color = _to_color(env_state["ambient_color"], _ambient_color_picker.color)
 
 	# Resolution / aspect
 	if state.has("resolution") and _res_options:
@@ -475,6 +595,67 @@ func import_photo_mode_state(path: String) -> void:
 					break
 		if cap.has("path") and _capture_path_edit:
 			_capture_path_edit.text = str(cap["path"])
+		if cap.has("timer_seconds") and _capture_timer_slider:
+			_capture_timer_slider.value = float(cap["timer_seconds"])
+		if cap.has("bracket_step_ev") and _capture_bracket_step_slider:
+			_capture_bracket_step_slider.value = float(cap["bracket_step_ev"])
+		if cap.has("watermark_enabled") and _capture_watermark_toggle:
+			_capture_watermark_toggle.button_pressed = bool(cap["watermark_enabled"])
+		if cap.has("watermark_text") and _capture_watermark_text:
+			_capture_watermark_text.text = String(cap["watermark_text"])
+		if cap.has("burst_count") and _capture_burst_options:
+			var burst_count := int(cap["burst_count"])
+			for i in range(_capture_burst_options.get_item_count()):
+				var burst_meta: Variant = _capture_burst_options.get_item_metadata(i)
+				if int(burst_meta) == burst_count:
+					_capture_burst_options.select(i)
+					break
+		if cap.has("bracket_count") and _capture_bracket_options:
+			var bracket_count := int(cap["bracket_count"])
+			for i in range(_capture_bracket_options.get_item_count()):
+				var bracket_meta: Variant = _capture_bracket_options.get_item_metadata(i)
+				if int(bracket_meta) == bracket_count:
+					_capture_bracket_options.select(i)
+					break
+
+	if state.has("fog") and state["fog"] is Dictionary:
+		var fog: Dictionary = state["fog"] as Dictionary
+		if fog.has("enabled") and _fog_toggle:
+			_set_check_value(_fog_toggle, bool(fog["enabled"]))
+		if fog.has("color") and _fog_color_picker:
+			_fog_color_picker.color = _to_color(fog["color"], _fog_color_picker.color)
+		if fog.has("density") and _fog_density_slider:
+			_fog_density_slider.value = float(fog["density"])
+		if fog.has("begin") and _fog_begin_slider:
+			_fog_begin_slider.value = float(fog["begin"])
+		if fog.has("end") and _fog_end_slider:
+			_fog_end_slider.value = float(fog["end"])
+		if fog.has("height_enabled") and _fog_height_toggle:
+			_set_check_value(_fog_height_toggle, bool(fog["height_enabled"]))
+		if fog.has("height_density") and _fog_height_density_slider:
+			_fog_height_density_slider.value = float(fog["height_density"])
+		if fog.has("height_falloff") and _fog_height_falloff_slider:
+			_fog_height_falloff_slider.value = float(fog["height_falloff"])
+		if fog.has("volumetric_enabled") and _volumetric_fog_toggle:
+			_set_check_value(_volumetric_fog_toggle, bool(fog["volumetric_enabled"]))
+		if fog.has("volumetric_density") and _volumetric_fog_density_slider:
+			_volumetric_fog_density_slider.value = float(fog["volumetric_density"])
+		if fog.has("volumetric_aniso") and _volumetric_fog_aniso_slider:
+			_volumetric_fog_aniso_slider.value = float(fog["volumetric_aniso"])
+
+	if state.has("composition") and state["composition"] is Dictionary:
+		var comp: Dictionary = state["composition"] as Dictionary
+		if comp.has("crop_ratio"):
+			_composition_crop_ratio = float(comp["crop_ratio"])
+		if comp.has("offset_x") and _composition_offset_x_slider:
+			_composition_offset_x_slider.value = float(comp["offset_x"])
+		if comp.has("offset_y") and _composition_offset_y_slider:
+			_composition_offset_y_slider.value = float(comp["offset_y"])
+		if comp.has("roll") and _composition_roll_slider:
+			_composition_roll_slider.value = float(comp["roll"])
+		if comp.has("thirds_snap") and _composition_snap_toggle:
+			_composition_snap_toggle.button_pressed = bool(comp["thirds_snap"])
+		_update_viewfinder()
 
 	# Passes
 	if state.has("passes"):
@@ -494,6 +675,9 @@ func import_photo_mode_state(path: String) -> void:
 	_setup_camera_attributes()
 	_apply_physical_exposure()
 	_apply_auto_exposure_settings()
+	_apply_sun_environment_settings()
+	_sync_environment_controls_from_scene()
+	_apply_fog_settings()
 
 
 func _ready() -> void:
@@ -511,13 +695,6 @@ func _ready() -> void:
 	if _ui_root:
 		_ui_root.visible = _ui_visible
 	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE if _ui_visible else Input.MOUSE_MODE_CAPTURED)
-	if enable_runtime_layout_repair:
-		_ensure_ui_layout()
-		call_deferred("_ensure_ui_layout")
-		# After layout repair runs, force any misplaced authored controls into the
-		# Settings VBox so tabs show content in the lower panel. This is a safe
-		# post-startup sweep that reparents known rows and their children.
-		call_deferred("_force_reparent_settings")
 	if enable_layout_debug_print:
 		call_deferred("_debug_layout")
 	await _build_map_from_debug()
@@ -570,34 +747,12 @@ func _resolve_nodes() -> void:
 	_top_light = get_node_or_null("LightRig/TopLight") as DirectionalLight3D
 	_bounce_light = get_node_or_null("LightRig/BounceLight") as DirectionalLight3D
 	_ui_root = get_node_or_null("CanvasLayer/PhotoUI") as Control
-	if _ui_root == null:
-		_ui_root = _find_node("PhotoUI", "Control") as Control
-	# If the authored scene places PhotoUI under a CanvasLayer (common), ensure it
-	# has a Control parent so layout anchors/presets compute correctly. If the
-	# immediate parent is not a Control, create a lightweight wrapper Control and
-	# reparent PhotoUI under it. This fixes cases where parent_is_control is false
-	# and parent_size was reported as (-1,-1) which prevents resizing.
-	if _ui_root and _ui_root.get_parent() and not (_ui_root.get_parent() is Control):
-		var wrapper := Control.new()
-		wrapper.name = "PhotoUIWrapper"
-		# Make wrapper fill available rect so PhotoUI anchors behave as expected
-		wrapper.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-		# Add wrapper to the scene root (Viewport) so it acts as a standalone Control
-		# parent. Adding under the SceneTree root ensures the wrapper receives a
-		# proper control-sized rect even when the authored PhotoUI was under a
-		# CanvasLayer.
-		var scene_root := get_tree().get_root()
-		scene_root.add_child(wrapper)
-		# Reparent the authored PhotoUI under the wrapper so its parent is a Control
-		# Use the helper that removes the node from any existing parent first.
-		_reparent(_ui_root, wrapper)
-		if enable_layout_debug_print:
-			print("[PhotoMode DEBUG] Reparented PhotoUI under PhotoUIWrapper to enable Control-based layout")
 	if _ui_root:
 		_ui_root.visible = true
-	_tabs_panel = _ui_root.get_node_or_null("RootMargin/RootHBox/TabsPanel") as Control if _ui_root else _find_node("TabsPanel", "Control") as Control
-	_status = _find_node("Status", "Label") as Label
-	_guides = _find_node("PhotoGuides", "Control") as Control
+	_tabs_panel = get_node_or_null("CanvasLayer/PhotoUI/RootMargin/RootHBox/TabsPanel") as Control
+	_status = get_node_or_null("CanvasLayer/PhotoUI/RootMargin/RootHBox/Panel/Margin/SettingsScroll/VBox/Status") as Label
+	_guides = get_node_or_null("CanvasLayer/PhotoGuides") as Control
+	_viewfinder = get_node_or_null("CanvasLayer/PhotoViewfinder") as Control
 	_fov_slider = _find_node("FOVSlider", "HSlider") as HSlider
 	_fov_value = _find_node("FOVValue", "Label") as Label
 	_focal_options = _find_node("FocalOptions", "OptionButton") as OptionButton
@@ -620,12 +775,12 @@ func _resolve_nodes() -> void:
 	_auto_exposure_max_value = _find_node("AutoExposureMaxValue", "Label") as Label
 
 	# toolbar / filmstrip nodes
-	_viewfinder_toggle = _find_node("ViewfinderToggle", "Button") as Button
-	_guides_toggle = _find_node("GuidesToggle", "Button") as Button
-	_toolbar_capture = _find_node("ToolbarCaptureButton", "Button") as Button
-	_toolbar_layers = _find_node("ToolbarEXRLayers", "Button") as Button
-	_toolbar_back = _find_node("ToolbarBack", "Button") as Button
-	_filmstrip_hbox = _find_node("FilmstripHBox", "HBoxContainer") as HBoxContainer
+	_viewfinder_toggle = get_node_or_null("CanvasLayer/PhotoUI/Toolbar/ToolbarHBox/ViewfinderToggle") as Button
+	_guides_toggle = get_node_or_null("CanvasLayer/PhotoUI/Toolbar/ToolbarHBox/GuidesToggle") as Button
+	_toolbar_capture = get_node_or_null("CanvasLayer/PhotoUI/Toolbar/ToolbarHBox/ToolbarCaptureButton") as Button
+	_toolbar_layers = get_node_or_null("CanvasLayer/PhotoUI/Toolbar/ToolbarHBox/ToolbarEXRLayers") as Button
+	_toolbar_back = get_node_or_null("CanvasLayer/PhotoUI/Toolbar/ToolbarHBox/ToolbarBack") as Button
+	_filmstrip_hbox = get_node_or_null("CanvasLayer/PhotoUI/Filmstrip/FilmstripScroll/FilmstripHBox") as HBoxContainer
 
 	# initialize toolbar toggle states
 	if _viewfinder_toggle:
@@ -681,7 +836,6 @@ func _resolve_nodes() -> void:
 	_capture_path_edit = _find_node("CapturePathEdit", "LineEdit") as LineEdit
 	_capture_path_button = _find_node("CapturePathButton", "Button") as Button
 	_capture_path_dialog = _find_node("CapturePathDialog", "FileDialog") as FileDialog
-	_viewfinder = _find_node("PhotoViewfinder", "Control") as Control
 	_pass_beauty = _find_node("PassBeauty", "CheckBox") as CheckBox
 	_pass_albedo = _find_node("PassAlbedo", "CheckBox") as CheckBox
 	_pass_normals = _find_node("PassNormals", "CheckBox") as CheckBox
@@ -716,42 +870,332 @@ func _find_node(name_hint: String, type_hint: String) -> Node:
 	if by_name != null and (type_hint.is_empty() or by_name.is_class(type_hint)):
 		return by_name
 
-	# 3) Safe global lookup across the SceneTree root.
-	# Some engine root objects (Window/SceneTree) don't expose convenience
-	# helpers like find_node/find_children — perform a guarded search instead.
+	# 3) Exact-name global lookup across scene root.
 	var scene_root: Node = get_tree().get_root()
 	if scene_root != null:
-		# Prefer built-in find_node when available
-		if scene_root.has_method("find_node"):
-			var root_match: Node = scene_root.find_node(name_hint, true, false)
-			if root_match != null and (type_hint.is_empty() or root_match.is_class(type_hint)):
-				return root_match
-
-		# Fallback: manual DFS over the scene root's children (safe)
 		var stack: Array = [scene_root]
 		while stack.size() > 0:
 			var node: Node = stack.pop_back() as Node
 			if node == null:
 				continue
-			# exact-name or substring match helps find mangled nodes
-			if String(node.name).find(name_hint) != -1 and (type_hint.is_empty() or node.is_class(type_hint)):
+			if String(node.name) == name_hint and (type_hint.is_empty() or node.is_class(type_hint)):
 				return node
 			for ch in node.get_children():
 				stack.push_back(ch)
-
-	# 4) Local-subtree substring fallback (handles mangled local names)
-	for n in find_children("*", "", true, false):
-		if String(n.name).find(name_hint) != -1:
-			if type_hint.is_empty() or n.is_class(type_hint):
-				return n
 
 	# Nothing matched
 	return null
 
 
+func _get_settings_vbox() -> VBoxContainer:
+	return get_node_or_null("CanvasLayer/PhotoUI/RootMargin/RootHBox/Panel/Margin/SettingsScroll/VBox") as VBoxContainer
+
+
+func _ensure_row_at(vbox: VBoxContainer, row_name: String, before_name: String = "") -> HBoxContainer:
+	if vbox == null:
+		return null
+	var row := vbox.get_node_or_null(row_name) as HBoxContainer
+	if row == null:
+		row = HBoxContainer.new()
+		row.name = row_name
+		row.custom_minimum_size = Vector2(0.0, 44.0)
+		row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		row.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		vbox.add_child(row)
+		if before_name != "" and vbox.has_node(before_name):
+			var before_node := vbox.get_node(before_name)
+			vbox.move_child(row, before_node.get_index())
+	return row
+
+
+func _ensure_label(row: HBoxContainer, label_name: String, text: String) -> Label:
+	if row == null:
+		return null
+	var label := row.get_node_or_null(label_name) as Label
+	if label == null:
+		label = Label.new()
+		label.name = label_name
+		row.add_child(label)
+		row.move_child(label, 0)
+	label.text = text
+	label.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+	label.custom_minimum_size = Vector2(112.0, 0.0)
+	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	return label
+
+
+func _ensure_value_label(row: HBoxContainer, label_name: String, text: String) -> Label:
+	if row == null:
+		return null
+	var label := row.get_node_or_null(label_name) as Label
+	if label == null:
+		label = Label.new()
+		label.name = label_name
+		row.add_child(label)
+	label.text = text
+	label.size_flags_horizontal = Control.SIZE_SHRINK_END
+	label.custom_minimum_size = Vector2(92.0, 0.0)
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	return label
+
+
+func _ensure_slider(row: HBoxContainer, slider_name: String, min_v: float, max_v: float, step_v: float, value: float) -> HSlider:
+	if row == null:
+		return null
+	var slider := row.get_node_or_null(slider_name) as HSlider
+	if slider == null:
+		slider = HSlider.new()
+		slider.name = slider_name
+		row.add_child(slider)
+	slider.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	slider.min_value = min_v
+	slider.max_value = max_v
+	slider.step = step_v
+	slider.value = clampf(value, min_v, max_v)
+	return slider
+
+
+func _ensure_option(row: HBoxContainer, option_name: String) -> OptionButton:
+	if row == null:
+		return null
+	var option := row.get_node_or_null(option_name) as OptionButton
+	if option == null:
+		option = OptionButton.new()
+		option.name = option_name
+		row.add_child(option)
+	option.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	option.fit_to_longest_item = true
+	return option
+
+
+func _ensure_checkbox(row: HBoxContainer, check_name: String, text: String) -> CheckBox:
+	if row == null:
+		return null
+	var check := row.get_node_or_null(check_name) as CheckBox
+	if check == null:
+		check = CheckBox.new()
+		check.name = check_name
+		row.add_child(check)
+	check.text = text
+	return check
+
+
+func _ensure_line_edit(row: HBoxContainer, edit_name: String, placeholder: String) -> LineEdit:
+	if row == null:
+		return null
+	var edit := row.get_node_or_null(edit_name) as LineEdit
+	if edit == null:
+		edit = LineEdit.new()
+		edit.name = edit_name
+		row.add_child(edit)
+	edit.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	edit.placeholder_text = placeholder
+	return edit
+
+
+func _ensure_color_picker(row: HBoxContainer, picker_name: String, color: Color) -> ColorPickerButton:
+	if row == null:
+		return null
+	var picker := row.get_node_or_null(picker_name) as ColorPickerButton
+	if picker == null:
+		picker = ColorPickerButton.new()
+		picker.name = picker_name
+		row.add_child(picker)
+	picker.color = color
+	return picker
+
+
+func _ensure_advanced_feature_rows() -> void:
+	var vbox := _get_settings_vbox()
+	if vbox == null:
+		return
+
+	# Capture workflow rows (timer/burst/bracket/watermark) are inserted above Export section.
+	var capture_before := "ExportHeaderRow"
+	var row_timer := _ensure_row_at(vbox, "CaptureTimerRow", capture_before)
+	_ensure_label(row_timer, "CaptureTimerLabel", "Timer")
+	_capture_timer_slider = _ensure_slider(row_timer, "CaptureTimerSlider", 0.0, 10.0, 1.0, 0.0)
+	_capture_timer_value = _ensure_value_label(row_timer, "CaptureTimerValue", "0s")
+
+	var row_burst := _ensure_row_at(vbox, "CaptureBurstRow", capture_before)
+	_ensure_label(row_burst, "CaptureBurstLabel", "Burst")
+	_capture_burst_options = _ensure_option(row_burst, "CaptureBurstOptions")
+
+	var row_bracket := _ensure_row_at(vbox, "CaptureBracketRow", capture_before)
+	_ensure_label(row_bracket, "CaptureBracketLabel", "Bracket")
+	_capture_bracket_options = _ensure_option(row_bracket, "CaptureBracketOptions")
+
+	var row_bracket_step := _ensure_row_at(vbox, "CaptureBracketStepRow", capture_before)
+	_ensure_label(row_bracket_step, "CaptureBracketStepLabel", "Bracket EV")
+	_capture_bracket_step_slider = _ensure_slider(row_bracket_step, "CaptureBracketStepSlider", 0.3, 2.0, 0.1, 1.0)
+	_capture_bracket_step_value = _ensure_value_label(row_bracket_step, "CaptureBracketStepValue", "1.0")
+
+	var row_watermark := _ensure_row_at(vbox, "CaptureWatermarkRow", capture_before)
+	_ensure_label(row_watermark, "CaptureWatermarkLabel", "Watermark")
+	_capture_watermark_toggle = _ensure_checkbox(row_watermark, "CaptureWatermarkToggle", "On")
+
+	var row_watermark_text := _ensure_row_at(vbox, "CaptureWatermarkTextRow", capture_before)
+	_ensure_label(row_watermark_text, "CaptureWatermarkTextLabel", "Watermark Text")
+	_capture_watermark_text = _ensure_line_edit(row_watermark_text, "CaptureWatermarkText", "Sacred Fruit")
+	if _capture_watermark_text and _capture_watermark_text.text.strip_edges().is_empty():
+		_capture_watermark_text.text = "Sacred Fruit"
+
+	# Fog controls replace the old "(future)" placeholder.
+	var fog_row := _ensure_row_at(vbox, "FogRow", "FogNote")
+	_ensure_label(fog_row, "FogLabel", "Fog")
+	_fog_toggle = _ensure_checkbox(fog_row, "FogToggle", "On")
+
+	var row_sun_shadow := _ensure_row_at(vbox, "SunShadowRow", "FogRow")
+	_ensure_label(row_sun_shadow, "SunShadowLabel", "Sun Shadows")
+	_sun_shadow_toggle = _ensure_checkbox(row_sun_shadow, "SunShadowToggle", "On")
+
+	var row_sun_shadow_opacity := _ensure_row_at(vbox, "SunShadowOpacityRow", "FogRow")
+	_ensure_label(row_sun_shadow_opacity, "SunShadowOpacityLabel", "Shadow Opacity")
+	_sun_shadow_opacity_slider = _ensure_slider(row_sun_shadow_opacity, "SunShadowOpacitySlider", 0.0, 1.0, 0.01, 1.0)
+	_sun_shadow_opacity_value = _ensure_value_label(row_sun_shadow_opacity, "SunShadowOpacityValue", "1.00")
+
+	var row_sun_softness := _ensure_row_at(vbox, "SunSoftnessRow", "FogRow")
+	_ensure_label(row_sun_softness, "SunSoftnessLabel", "Sun Softness")
+	_sun_softness_slider = _ensure_slider(row_sun_softness, "SunSoftnessSlider", 0.0, 6.0, 0.05, 0.0)
+	_sun_softness_value = _ensure_value_label(row_sun_softness, "SunSoftnessValue", "0.00")
+
+	var row_sun_color := _ensure_row_at(vbox, "SunColorRow", "FogRow")
+	_ensure_label(row_sun_color, "SunColorLabel", "Sun Color")
+	_sun_color_picker = _ensure_color_picker(row_sun_color, "SunColorPicker", Color(1.0, 0.98, 0.92, 1.0))
+
+	var row_ambient_color := _ensure_row_at(vbox, "AmbientColorRow", "FogRow")
+	_ensure_label(row_ambient_color, "AmbientColorLabel", "Ambient Color")
+	_ambient_color_picker = _ensure_color_picker(row_ambient_color, "AmbientColorPicker", Color(0.6, 0.65, 0.7, 1.0))
+
+	var row_fog_color := _ensure_row_at(vbox, "FogColorRow", "FogNote")
+	_ensure_label(row_fog_color, "FogColorLabel", "Fog Color")
+	_fog_color_picker = _ensure_color_picker(row_fog_color, "FogColorPicker", Color(0.72, 0.77, 0.83, 1.0))
+
+	var row_fog_density := _ensure_row_at(vbox, "FogDensityRow", "FogNote")
+	_ensure_label(row_fog_density, "FogDensityLabel", "Fog Density")
+	_fog_density_slider = _ensure_slider(row_fog_density, "FogDensitySlider", 0.0, 0.2, 0.002, 0.0)
+	_fog_density_value = _ensure_value_label(row_fog_density, "FogDensityValue", "0.000")
+
+	var row_fog_begin := _ensure_row_at(vbox, "FogBeginRow", "FogNote")
+	_ensure_label(row_fog_begin, "FogBeginLabel", "Fog Near")
+	_fog_begin_slider = _ensure_slider(row_fog_begin, "FogBeginSlider", 0.0, 200.0, 1.0, 5.0)
+	_fog_begin_value = _ensure_value_label(row_fog_begin, "FogBeginValue", "5m")
+
+	var row_fog_end := _ensure_row_at(vbox, "FogEndRow", "FogNote")
+	_ensure_label(row_fog_end, "FogEndLabel", "Fog Far")
+	_fog_end_slider = _ensure_slider(row_fog_end, "FogEndSlider", 20.0, 800.0, 1.0, 200.0)
+	_fog_end_value = _ensure_value_label(row_fog_end, "FogEndValue", "200m")
+
+	var row_fog_height := _ensure_row_at(vbox, "FogHeightRow", "FogNote")
+	_ensure_label(row_fog_height, "FogHeightLabel", "Height Fog")
+	_fog_height_toggle = _ensure_checkbox(row_fog_height, "FogHeightToggle", "On")
+
+	var row_fog_height_density := _ensure_row_at(vbox, "FogHeightDensityRow", "FogNote")
+	_ensure_label(row_fog_height_density, "FogHeightDensityLabel", "Height Density")
+	_fog_height_density_slider = _ensure_slider(row_fog_height_density, "FogHeightDensitySlider", 0.0, 0.4, 0.002, 0.05)
+	_fog_height_density_value = _ensure_value_label(row_fog_height_density, "FogHeightDensityValue", "0.050")
+
+	var row_fog_height_falloff := _ensure_row_at(vbox, "FogHeightFalloffRow", "FogNote")
+	_ensure_label(row_fog_height_falloff, "FogHeightFalloffLabel", "Height Falloff")
+	_fog_height_falloff_slider = _ensure_slider(row_fog_height_falloff, "FogHeightFalloffSlider", 0.05, 2.0, 0.01, 0.5)
+	_fog_height_falloff_value = _ensure_value_label(row_fog_height_falloff, "FogHeightFalloffValue", "0.50")
+
+	var row_volumetric := _ensure_row_at(vbox, "VolumetricFogRow", "FogNote")
+	_ensure_label(row_volumetric, "VolumetricFogLabel", "Volumetric Fog")
+	_volumetric_fog_toggle = _ensure_checkbox(row_volumetric, "VolumetricFogToggle", "On")
+
+	var row_vol_density := _ensure_row_at(vbox, "VolumetricDensityRow", "FogNote")
+	_ensure_label(row_vol_density, "VolumetricDensityLabel", "Vol Density")
+	_volumetric_fog_density_slider = _ensure_slider(row_vol_density, "VolumetricDensitySlider", 0.0, 0.2, 0.002, 0.03)
+	_volumetric_fog_density_value = _ensure_value_label(row_vol_density, "VolumetricDensityValue", "0.030")
+
+	var row_vol_aniso := _ensure_row_at(vbox, "VolumetricAnisoRow", "FogNote")
+	_ensure_label(row_vol_aniso, "VolumetricAnisoLabel", "Vol Anisotropy")
+	_volumetric_fog_aniso_slider = _ensure_slider(row_vol_aniso, "VolumetricAnisoSlider", -0.9, 0.9, 0.01, 0.0)
+	_volumetric_fog_aniso_value = _ensure_value_label(row_vol_aniso, "VolumetricAnisoValue", "0.00")
+
+	var fog_note := vbox.get_node_or_null("FogNote") as CanvasItem
+	if fog_note:
+		fog_note.visible = false
+
+	# Composition tools replace the old note-only section.
+	var row_crop := _ensure_row_at(vbox, "CompositionCropRow", "CompositionNote")
+	_ensure_label(row_crop, "CompositionCropLabel", "Crop Box")
+	_composition_crop_options = _ensure_option(row_crop, "CompositionCropOptions")
+
+	var row_offset_x := _ensure_row_at(vbox, "CompositionOffsetXRow", "CompositionNote")
+	_ensure_label(row_offset_x, "CompositionOffsetXLabel", "Crop X")
+	_composition_offset_x_slider = _ensure_slider(row_offset_x, "CompositionOffsetXSlider", -1.0, 1.0, 0.01, 0.0)
+	_composition_offset_x_value = _ensure_value_label(row_offset_x, "CompositionOffsetXValue", "0.00")
+
+	var row_offset_y := _ensure_row_at(vbox, "CompositionOffsetYRow", "CompositionNote")
+	_ensure_label(row_offset_y, "CompositionOffsetYLabel", "Crop Y")
+	_composition_offset_y_slider = _ensure_slider(row_offset_y, "CompositionOffsetYSlider", -1.0, 1.0, 0.01, 0.0)
+	_composition_offset_y_value = _ensure_value_label(row_offset_y, "CompositionOffsetYValue", "0.00")
+
+	var row_roll := _ensure_row_at(vbox, "CompositionRollRow", "CompositionNote")
+	_ensure_label(row_roll, "CompositionRollLabel", "Horizon")
+	_composition_roll_slider = _ensure_slider(row_roll, "CompositionRollSlider", -45.0, 45.0, 0.1, 0.0)
+	_composition_roll_value = _ensure_value_label(row_roll, "CompositionRollValue", "0.0°")
+
+	var row_snap := _ensure_row_at(vbox, "CompositionSnapRow", "CompositionNote")
+	_ensure_label(row_snap, "CompositionSnapLabel", "Thirds Snap")
+	_composition_snap_toggle = _ensure_checkbox(row_snap, "CompositionSnapToggle", "On")
+
+	var composition_note := vbox.get_node_or_null("CompositionNote") as CanvasItem
+	if composition_note:
+		composition_note.visible = false
+
+
+func _populate_capture_workflow_options() -> void:
+	if _capture_burst_options:
+		_capture_burst_options.clear()
+		var burst_counts := [1, 3, 5]
+		for i in range(burst_counts.size()):
+			var count: int = burst_counts[i]
+			_capture_burst_options.add_item("%dx" % count)
+			_capture_burst_options.set_item_metadata(i, count)
+		_capture_burst_options.select(0)
+	if _capture_bracket_options:
+		_capture_bracket_options.clear()
+		var bracket_modes := [1, 3, 5]
+		for i in range(bracket_modes.size()):
+			var count: int = bracket_modes[i]
+			_capture_bracket_options.add_item("%d exposures" % count)
+			_capture_bracket_options.set_item_metadata(i, count)
+		_capture_bracket_options.select(0)
+	_on_capture_timer_changed(_capture_timer_slider.value if _capture_timer_slider else 0.0)
+	_on_capture_bracket_step_changed(_capture_bracket_step_slider.value if _capture_bracket_step_slider else 1.0)
+
+
+func _populate_composition_options() -> void:
+	if _composition_crop_options == null:
+		return
+	_composition_crop_options.clear()
+	var items := [
+		{"label": "Follow Capture Aspect", "ratio": 0.0},
+		{"label": "16:9", "ratio": 16.0 / 9.0},
+		{"label": "3:2", "ratio": 3.0 / 2.0},
+		{"label": "4:3", "ratio": 4.0 / 3.0},
+		{"label": "1:1", "ratio": 1.0},
+		{"label": "4:5", "ratio": 4.0 / 5.0},
+		{"label": "9:16", "ratio": 9.0 / 16.0}
+	]
+	for i in range(items.size()):
+		var item: Dictionary = items[i]
+		_composition_crop_options.add_item(String(item["label"]))
+		_composition_crop_options.set_item_metadata(i, item)
+	_composition_crop_options.select(0)
+	_on_composition_crop_selected(0)
+
+
 func _setup_ui() -> void:
+	_ensure_advanced_feature_rows()
 	if _guides:
 		_guides.visible = true
+		_guides.z_index = -1
+		_guides.z_as_relative = false
 	if _fov_slider:
 		_fov_slider.value_changed.connect(_on_fov_changed)
 		_on_fov_changed(_fov_slider.value)
@@ -823,6 +1267,38 @@ func _setup_ui() -> void:
 	if _ambient_slider:
 		_ambient_slider.value_changed.connect(_on_ambient_changed)
 		_on_ambient_changed(_ambient_slider.value)
+	if _sun_shadow_toggle:
+		_sun_shadow_toggle.toggled.connect(_on_sun_shadow_toggled)
+	if _sun_shadow_opacity_slider:
+		_sun_shadow_opacity_slider.value_changed.connect(_on_sun_shadow_opacity_changed)
+	if _sun_softness_slider:
+		_sun_softness_slider.value_changed.connect(_on_sun_softness_changed)
+	if _sun_color_picker:
+		_sun_color_picker.color_changed.connect(_on_sun_color_changed)
+	if _ambient_color_picker:
+		_ambient_color_picker.color_changed.connect(_on_ambient_color_changed)
+	if _fog_color_picker:
+		_fog_color_picker.color_changed.connect(_on_fog_color_changed)
+	if _fog_toggle:
+		_fog_toggle.toggled.connect(_on_fog_toggled)
+	if _fog_density_slider:
+		_fog_density_slider.value_changed.connect(_on_fog_density_changed)
+	if _fog_begin_slider:
+		_fog_begin_slider.value_changed.connect(_on_fog_begin_changed)
+	if _fog_end_slider:
+		_fog_end_slider.value_changed.connect(_on_fog_end_changed)
+	if _fog_height_toggle:
+		_fog_height_toggle.toggled.connect(_on_fog_height_toggled)
+	if _fog_height_density_slider:
+		_fog_height_density_slider.value_changed.connect(_on_fog_height_density_changed)
+	if _fog_height_falloff_slider:
+		_fog_height_falloff_slider.value_changed.connect(_on_fog_height_falloff_changed)
+	if _volumetric_fog_toggle:
+		_volumetric_fog_toggle.toggled.connect(_on_volumetric_fog_toggled)
+	if _volumetric_fog_density_slider:
+		_volumetric_fog_density_slider.value_changed.connect(_on_volumetric_density_changed)
+	if _volumetric_fog_aniso_slider:
+		_volumetric_fog_aniso_slider.value_changed.connect(_on_volumetric_aniso_changed)
 	if _temp_slider:
 		_temp_slider.value_changed.connect(_on_temp_changed)
 		_on_temp_changed(_temp_slider.value)
@@ -850,6 +1326,26 @@ func _setup_ui() -> void:
 		_preset_load.pressed.connect(_on_preset_load)
 	if _preset_delete:
 		_preset_delete.pressed.connect(_on_preset_delete)
+	if _capture_timer_slider:
+		_capture_timer_slider.value_changed.connect(_on_capture_timer_changed)
+	if _capture_bracket_step_slider:
+		_capture_bracket_step_slider.value_changed.connect(_on_capture_bracket_step_changed)
+	if _capture_watermark_toggle:
+		_capture_watermark_toggle.toggled.connect(_on_capture_watermark_toggled)
+	if _capture_watermark_text:
+		_capture_watermark_text.text_submitted.connect(_on_capture_watermark_text_submitted)
+	if _composition_crop_options:
+		_populate_composition_options()
+		_composition_crop_options.item_selected.connect(_on_composition_crop_selected)
+	if _composition_offset_x_slider:
+		_composition_offset_x_slider.value_changed.connect(_on_composition_offset_x_changed)
+	if _composition_offset_y_slider:
+		_composition_offset_y_slider.value_changed.connect(_on_composition_offset_y_changed)
+	if _composition_roll_slider:
+		_composition_roll_slider.value_changed.connect(_on_composition_roll_changed)
+		_on_composition_roll_changed(_composition_roll_slider.value)
+	if _composition_snap_toggle:
+		_composition_snap_toggle.toggled.connect(_on_composition_snap_toggled)
 
 	# Export / Import state buttons (use preset buttons row if present)
 	var export_btn := _find_node("ExportState", "Button") as Button
@@ -877,6 +1373,8 @@ func _setup_ui() -> void:
 	_load_presets()
 	_setup_collapsibles()
 	_setup_tabs()
+	_ensure_settings_labels()
+	_ensure_contact_strip()
 	if _capture_button:
 		if not _capture_button.is_connected("pressed", Callable(self, "_on_capture_pressed")):
 			_capture_button.pressed.connect(_on_capture_pressed)
@@ -899,6 +1397,9 @@ func _setup_ui() -> void:
 			_toolbar_back.pressed.connect(_on_back_pressed)
 	if _capture_format_options:
 		_populate_capture_formats()
+	_populate_capture_workflow_options()
+	if _capture_watermark_toggle:
+		_on_capture_watermark_toggled(_capture_watermark_toggle.button_pressed)
 	if _capture_path_button:
 		if not _capture_path_button.is_connected("pressed", Callable(self, "_on_capture_path_browse")):
 			_capture_path_button.pressed.connect(_on_capture_path_browse)
@@ -917,7 +1418,10 @@ func _setup_ui() -> void:
 		_pass_preview_options.item_selected.connect(_on_pass_preview_selected)
 	if _capture_path_edit and _capture_path_edit.text.strip_edges().is_empty():
 		_capture_path_edit.text = PHOTO_CAPTURE_DIR
+	_sync_environment_controls_from_scene()
+	_apply_fog_settings()
 	_update_viewfinder()
+	_apply_ui_density_tuning()
 	# Setup thumbnail menu and export dialog
 	if _ui_root:
 		_thumb_menu = _ui_root.get_node_or_null("ThumbnailMenu") as PopupMenu
@@ -926,10 +1430,12 @@ func _setup_ui() -> void:
 			_thumb_menu.name = "ThumbnailMenu"
 			_ui_root.add_child(_thumb_menu)
 		_thumb_menu.clear()
-		_thumb_menu.add_item("Select", 0)
-		_thumb_menu.add_item("Fullscreen", 1)
-		_thumb_menu.add_item("Export...", 2)
-		_thumb_menu.add_item("Reveal in Finder", 3)
+		_thumb_menu.add_item("Preview", THUMB_MENU_PREVIEW)
+		_thumb_menu.add_item("Reapply Settings", THUMB_MENU_REAPPLY)
+		_thumb_menu.add_item("Show in Finder", THUMB_MENU_SHOW_IN_FINDER)
+		_thumb_menu.add_separator()
+		_thumb_menu.add_item("Export...", THUMB_MENU_EXPORT)
+		_thumb_menu.add_item("Delete", THUMB_MENU_DELETE)
 		if not _thumb_menu.is_connected("id_pressed", Callable(self, "_on_thumb_menu_id_pressed")):
 			_thumb_menu.id_pressed.connect(_on_thumb_menu_id_pressed)
 
@@ -968,6 +1474,151 @@ func _setup_ui_chrome() -> void:
 		filmstrip.visible = true
 		filmstrip.z_index = 200
 		filmstrip.mouse_filter = Control.MOUSE_FILTER_STOP
+
+
+func _apply_ui_density_tuning() -> void:
+	var panel := get_node_or_null("CanvasLayer/PhotoUI/RootMargin/RootHBox/Panel") as Control
+	if panel:
+		panel.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+		var viewport_width := get_viewport().get_visible_rect().size.x
+		var target_width := clampf(viewport_width * 0.38, 520.0, 700.0)
+		panel.custom_minimum_size = Vector2(target_width, 0.0)
+
+	var margin := get_node_or_null("CanvasLayer/PhotoUI/RootMargin/RootHBox/Panel/Margin") as MarginContainer
+	if margin:
+		margin.add_theme_constant_override("margin_left", 20)
+		margin.add_theme_constant_override("margin_right", 20)
+		margin.add_theme_constant_override("margin_top", 14)
+		margin.add_theme_constant_override("margin_bottom", 14)
+
+	var scroll := get_node_or_null("CanvasLayer/PhotoUI/RootMargin/RootHBox/Panel/Margin/SettingsScroll") as ScrollContainer
+	if scroll:
+		scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+		scroll.mouse_filter = Control.MOUSE_FILTER_STOP
+
+	var vbox := get_node_or_null("CanvasLayer/PhotoUI/RootMargin/RootHBox/Panel/Margin/SettingsScroll/VBox") as VBoxContainer
+	if vbox:
+		vbox.add_theme_constant_override("separation", 8)
+		for child in vbox.get_children():
+			if child is HBoxContainer:
+				var row := child as HBoxContainer
+				row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+				row.custom_minimum_size = Vector2(0.0, 40.0)
+				row.add_theme_constant_override("separation", 10)
+				for row_child in row.get_children():
+					if not (row_child is Control):
+						continue
+					var ctrl := row_child as Control
+					ctrl.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+					if ctrl is HSlider:
+						ctrl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+						ctrl.custom_minimum_size = Vector2(220.0, 30.0)
+					elif ctrl is OptionButton or ctrl is LineEdit or ctrl is ColorPickerButton:
+						ctrl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+						ctrl.custom_minimum_size = Vector2(220.0, 34.0)
+						ctrl.add_theme_font_size_override("font_size", 15)
+					elif ctrl is CheckBox:
+						ctrl.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+						ctrl.custom_minimum_size = Vector2(0.0, 34.0)
+						ctrl.add_theme_font_size_override("font_size", 15)
+					elif ctrl is Label:
+						var label := ctrl as Label
+						if String(label.name).ends_with("Value"):
+							label.size_flags_horizontal = Control.SIZE_SHRINK_END
+							label.custom_minimum_size = Vector2(92.0, 0.0)
+							label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+						elif String(label.name).ends_with("Label") or String(label.name).ends_with("Header"):
+							label.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+							label.custom_minimum_size = Vector2(112.0, 0.0)
+						label.add_theme_font_size_override("font_size", 15)
+			elif child is GridContainer:
+				var grid := child as GridContainer
+				grid.add_theme_constant_override("h_separation", 8)
+				grid.add_theme_constant_override("v_separation", 6)
+
+
+func _ensure_settings_labels() -> void:
+	var base_path := "CanvasLayer/PhotoUI/RootMargin/RootHBox/Panel/Margin/SettingsScroll/VBox"
+	var label_rows: Array[Dictionary] = [
+		{"row": "FOVRow", "name": "FOVLabel", "text": "FOV"},
+		{"row": "FocalRow", "name": "FocalLabel", "text": "Focal"},
+		{"row": "ISORow", "name": "ISOLabel", "text": "ISO"},
+		{"row": "ApertureRow", "name": "ApertureLabel", "text": "Aperture"},
+		{"row": "ShutterRow", "name": "ShutterLabel", "text": "Shutter"},
+		{"row": "FocusRow", "name": "FocusLabel", "text": "Focus"},
+		{"row": "ShootingModeRow", "name": "ShootingModeLabel", "text": "Mode"},
+		{"row": "AutoFocusRow", "name": "AutoFocusLabel", "text": "Auto Focus"},
+		{"row": "ExposureRow", "name": "ExposureLabel", "text": "Exposure"},
+		{"row": "AutoExposureRow", "name": "AutoExposureLabel", "text": "Auto Exposure"},
+		{"row": "AutoExposureSpeedRow", "name": "AutoExposureSpeedLabel", "text": "AE Speed"},
+		{"row": "AutoExposureRangeRow", "name": "AutoExposureRangeLabel", "text": "AE Range"},
+		{"row": "GuidesRow", "name": "GuidesLabel", "text": "Guides"},
+		{"row": "GuidesOpacityRow", "name": "GuidesOpacityLabel", "text": "Opacity"},
+		{"row": "ResRow", "name": "ResLabel", "text": "Resolution"},
+		{"row": "AspectRow", "name": "AspectLabel", "text": "Aspect"},
+		{"row": "CaptureFormatRow", "name": "CaptureFormatLabel", "text": "Format"},
+		{"row": "CapturePathRow", "name": "CapturePathLabel", "text": "Save Path"},
+		{"row": "CaptureTimerRow", "name": "CaptureTimerLabel", "text": "Timer"},
+		{"row": "CaptureBurstRow", "name": "CaptureBurstLabel", "text": "Burst"},
+		{"row": "CaptureBracketRow", "name": "CaptureBracketLabel", "text": "Bracket"},
+		{"row": "CaptureBracketStepRow", "name": "CaptureBracketStepLabel", "text": "Bracket EV"},
+		{"row": "CaptureWatermarkRow", "name": "CaptureWatermarkLabel", "text": "Watermark"},
+		{"row": "CaptureWatermarkTextRow", "name": "CaptureWatermarkTextLabel", "text": "Watermark Text"},
+		{"row": "PassPreviewRow", "name": "PassPreviewLabel", "text": "Preview"},
+		{"row": "EnvRow", "name": "EnvLabel", "text": "Environment"},
+		{"row": "SunAngleRow", "name": "SunAngleLabel", "text": "Sun Angle"},
+		{"row": "AmbientRow", "name": "AmbientLabel", "text": "Ambient"},
+		{"row": "SunShadowRow", "name": "SunShadowLabel", "text": "Sun Shadows"},
+		{"row": "SunShadowOpacityRow", "name": "SunShadowOpacityLabel", "text": "Shadow Opacity"},
+		{"row": "SunSoftnessRow", "name": "SunSoftnessLabel", "text": "Sun Softness"},
+		{"row": "SunColorRow", "name": "SunColorLabel", "text": "Sun Color"},
+		{"row": "AmbientColorRow", "name": "AmbientColorLabel", "text": "Ambient Color"},
+		{"row": "FogRow", "name": "FogLabel", "text": "Fog"},
+		{"row": "FogColorRow", "name": "FogColorLabel", "text": "Fog Color"},
+		{"row": "FogDensityRow", "name": "FogDensityLabel", "text": "Fog Density"},
+		{"row": "FogBeginRow", "name": "FogBeginLabel", "text": "Fog Near"},
+		{"row": "FogEndRow", "name": "FogEndLabel", "text": "Fog Far"},
+		{"row": "FogHeightRow", "name": "FogHeightLabel", "text": "Height Fog"},
+		{"row": "FogHeightDensityRow", "name": "FogHeightDensityLabel", "text": "Height Density"},
+		{"row": "FogHeightFalloffRow", "name": "FogHeightFalloffLabel", "text": "Height Falloff"},
+		{"row": "VolumetricFogRow", "name": "VolumetricFogLabel", "text": "Volumetric Fog"},
+		{"row": "VolumetricDensityRow", "name": "VolumetricDensityLabel", "text": "Vol Density"},
+		{"row": "VolumetricAnisoRow", "name": "VolumetricAnisoLabel", "text": "Vol Anisotropy"},
+		{"row": "TempRow", "name": "TempLabel", "text": "Temperature"},
+		{"row": "TintRow", "name": "TintLabel", "text": "Tint"},
+		{"row": "SaturationRow", "name": "SaturationLabel", "text": "Saturation"},
+		{"row": "ContrastRow", "name": "ContrastLabel", "text": "Contrast"},
+		{"row": "VignetteRow", "name": "VignetteLabel", "text": "Vignette"},
+		{"row": "GrainRow", "name": "GrainLabel", "text": "Grain"},
+		{"row": "BloomRow", "name": "BloomLabel", "text": "Bloom"},
+		{"row": "CompositionCropRow", "name": "CompositionCropLabel", "text": "Crop Box"},
+		{"row": "CompositionOffsetXRow", "name": "CompositionOffsetXLabel", "text": "Crop X"},
+		{"row": "CompositionOffsetYRow", "name": "CompositionOffsetYLabel", "text": "Crop Y"},
+		{"row": "CompositionRollRow", "name": "CompositionRollLabel", "text": "Horizon"},
+		{"row": "CompositionSnapRow", "name": "CompositionSnapLabel", "text": "Thirds Snap"},
+		{"row": "PresetsRow", "name": "PresetsLabel", "text": "Preset"},
+		{"row": "PresetNameRow", "name": "PresetNameLabel", "text": "Name"}
+	]
+	for row_info in label_rows:
+		var row_path := "%s/%s" % [base_path, String(row_info.get("row", ""))]
+		var row := get_node_or_null(row_path) as HBoxContainer
+		if row == null:
+			continue
+		var label_name := String(row_info.get("name", ""))
+		if label_name.is_empty():
+			continue
+		var label_text := String(row_info.get("text", ""))
+		var label := row.get_node_or_null(label_name) as Label
+		if label == null:
+			label = Label.new()
+			label.name = label_name
+			row.add_child(label)
+			row.move_child(label, 0)
+		label.text = label_text
+		label.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+		label.custom_minimum_size = Vector2(112.0, 0.0)
+		label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 
 
 func _ensure_ui_layout() -> void:
@@ -1198,13 +1849,13 @@ func _repair_scene_tree_if_needed() -> void:
 		"ExposureHeaderRow", "ExposureRow", "EnvRow", "ResRow",
 		"AspectRow",
 		"GuidesHeaderRow", "GuidesRow", "GuidesOpacityRow",
-		"CaptureHeaderRow", "CaptureFormatRow", "CapturePathRow", "ButtonsRow",
+		"CaptureHeaderRow", "CaptureFormatRow", "CapturePathRow", "CaptureTimerRow", "CaptureBurstRow", "CaptureBracketRow", "CaptureBracketStepRow", "CaptureWatermarkRow", "CaptureWatermarkTextRow", "ButtonsRow",
 		"PassesHeaderRow", "PassPreviewRow", "PassesGrid", "LightRigHeaderRow", "LightRigGrid",
-		"EnvironmentHeaderRow", "EnvironmentRow", "AmbientRow", "FogRow",
+		"EnvironmentHeaderRow", "EnvironmentRow", "AmbientRow", "FogRow", "FogDensityRow", "FogBeginRow", "FogEndRow",
 		"ExportHeaderRow", "ExportNote",
 		"ColorHeaderRow", "TempRow", "TintRow", "SaturationRow", "ContrastRow",
 		"EffectsHeaderRow", "VignetteRow", "GrainRow", "BloomRow",
-		"CompositionHeaderRow", "CompositionNote",
+		"CompositionHeaderRow", "CompositionCropRow", "CompositionOffsetXRow", "CompositionOffsetYRow", "CompositionRollRow", "CompositionSnapRow",
 		"PresetsHeaderRow", "PresetsRow", "PresetNameRow", "PresetButtonsRow"
 	]
 	for n in vbox_nodes:
@@ -1228,6 +1879,12 @@ func _repair_scene_tree_if_needed() -> void:
 	_ensure_row("AspectRow", HBoxContainer, vbox, ["AspectLabel", "AspectOptions"])
 	_ensure_row("CaptureFormatRow", HBoxContainer, vbox, ["CaptureFormatLabel", "CaptureFormatOptions"])
 	_ensure_row("CapturePathRow", HBoxContainer, vbox, ["CapturePathLabel", "CapturePathEdit", "CapturePathButton"])
+	_ensure_row("CaptureTimerRow", HBoxContainer, vbox, ["CaptureTimerLabel", "CaptureTimerSlider", "CaptureTimerValue"])
+	_ensure_row("CaptureBurstRow", HBoxContainer, vbox, ["CaptureBurstLabel", "CaptureBurstOptions"])
+	_ensure_row("CaptureBracketRow", HBoxContainer, vbox, ["CaptureBracketLabel", "CaptureBracketOptions"])
+	_ensure_row("CaptureBracketStepRow", HBoxContainer, vbox, ["CaptureBracketStepLabel", "CaptureBracketStepSlider", "CaptureBracketStepValue"])
+	_ensure_row("CaptureWatermarkRow", HBoxContainer, vbox, ["CaptureWatermarkLabel", "CaptureWatermarkToggle"])
+	_ensure_row("CaptureWatermarkTextRow", HBoxContainer, vbox, ["CaptureWatermarkTextLabel", "CaptureWatermarkText"])
 	_ensure_row("ExposureHeaderRow", HBoxContainer, vbox, ["ExposureHeader", "ExposureCollapse"])
 	_ensure_row("GuidesHeaderRow", HBoxContainer, vbox, ["GuidesHeader", "GuidesCollapse"])
 	_ensure_row("CaptureHeaderRow", HBoxContainer, vbox, ["CaptureHeader", "CaptureCollapse"])
@@ -1244,7 +1901,10 @@ func _repair_scene_tree_if_needed() -> void:
 	_ensure_row("GuidesOpacityRow", HBoxContainer, vbox, ["GuidesOpacityLabel", "GuidesOpacitySlider", "GuidesOpacityValue"])
 	_ensure_row("EnvironmentRow", HBoxContainer, vbox, ["SunAngleLabel", "SunAngleSlider", "SunAngleValue"])
 	_ensure_row("AmbientRow", HBoxContainer, vbox, ["AmbientLabel", "AmbientSlider", "AmbientValue"])
-	_ensure_row("FogRow", HBoxContainer, vbox, ["FogLabel", "FogNote"])
+	_ensure_row("FogRow", HBoxContainer, vbox, ["FogLabel", "FogToggle"])
+	_ensure_row("FogDensityRow", HBoxContainer, vbox, ["FogDensityLabel", "FogDensitySlider", "FogDensityValue"])
+	_ensure_row("FogBeginRow", HBoxContainer, vbox, ["FogBeginLabel", "FogBeginSlider", "FogBeginValue"])
+	_ensure_row("FogEndRow", HBoxContainer, vbox, ["FogEndLabel", "FogEndSlider", "FogEndValue"])
 	_ensure_row("TempRow", HBoxContainer, vbox, ["TempLabel", "TempSlider", "TempValue"])
 	_ensure_row("TintRow", HBoxContainer, vbox, ["TintLabel", "TintSlider", "TintValue"])
 	_ensure_row("SaturationRow", HBoxContainer, vbox, ["SaturationLabel", "SaturationSlider", "SaturationValue"])
@@ -1252,6 +1912,11 @@ func _repair_scene_tree_if_needed() -> void:
 	_ensure_row("VignetteRow", HBoxContainer, vbox, ["VignetteLabel", "VignetteSlider", "VignetteValue"])
 	_ensure_row("GrainRow", HBoxContainer, vbox, ["GrainLabel", "GrainSlider", "GrainValue"])
 	_ensure_row("BloomRow", HBoxContainer, vbox, ["BloomLabel", "BloomSlider", "BloomValue"])
+	_ensure_row("CompositionCropRow", HBoxContainer, vbox, ["CompositionCropLabel", "CompositionCropOptions"])
+	_ensure_row("CompositionOffsetXRow", HBoxContainer, vbox, ["CompositionOffsetXLabel", "CompositionOffsetXSlider", "CompositionOffsetXValue"])
+	_ensure_row("CompositionOffsetYRow", HBoxContainer, vbox, ["CompositionOffsetYLabel", "CompositionOffsetYSlider", "CompositionOffsetYValue"])
+	_ensure_row("CompositionRollRow", HBoxContainer, vbox, ["CompositionRollLabel", "CompositionRollSlider", "CompositionRollValue"])
+	_ensure_row("CompositionSnapRow", HBoxContainer, vbox, ["CompositionSnapLabel", "CompositionSnapToggle"])
 	_ensure_row("PresetsRow", HBoxContainer, vbox, ["PresetsLabel", "PresetsOptions"])
 	_ensure_row("PresetNameRow", HBoxContainer, vbox, ["PresetNameLabel", "PresetName"])
 	_ensure_row("PresetButtonsRow", HBoxContainer, vbox, ["PresetSave", "PresetLoad", "PresetDelete"])
@@ -1299,39 +1964,125 @@ func _on_always_show_viewport_toggled(pressed: bool) -> void:
 		_set_viewfinder_visible(true)
 	else:
 		# restore visibility based on current tab
-		_set_viewfinder_visible(_current_tab == "Capture")
+		_set_viewfinder_visible(_active_tab == "capture")
 
-	# Setup contact strip container
-	if _bottom_bar and _contact_strip == null:
-		_contact_strip = _bottom_bar.get_node_or_null("ContactStrip") as HBoxContainer
-		if _contact_strip == null:
-			_contact_strip = HBoxContainer.new()
-			_contact_strip.name = "ContactStrip"
-			_contact_strip.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-			_contact_strip.custom_minimum_size = Vector2(0, 88)
-			_bottom_bar.add_child(_contact_strip)
+func _ensure_contact_strip() -> void:
+	if _bottom_bar == null:
+		return
+	_contact_strip = _bottom_bar.get_node_or_null("ContactStrip") as HBoxContainer
+	if _contact_strip == null:
+		_contact_strip = HBoxContainer.new()
+		_contact_strip.name = "ContactStrip"
+		_contact_strip.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		_contact_strip.custom_minimum_size = Vector2(0, 88)
+		_bottom_bar.add_child(_contact_strip)
 
-	# Create capture preview dialog (lazy)
-	if _capture_preview_panel == null:
-		_capture_preview_panel = Window.new()
-		_capture_preview_panel.name = "CapturePreview"
-		_capture_preview_panel.window_title = "Capture Preview"
-		_capture_preview_panel.resizable = true
-		_capture_preview_panel.rect_min_size = Vector2(400, 300)
-		add_child(_capture_preview_panel)
-		var img = TextureRect.new()
-		img.name = "PreviewImage"
-		img.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-		img.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		img.size_flags_vertical = Control.SIZE_EXPAND_FILL
-		_capture_preview_panel.add_child(img)
+
+func _ensure_capture_preview_panel() -> void:
+	if _capture_preview_panel != null:
+		return
+	_capture_preview_panel = Window.new()
+	_capture_preview_panel.name = "CapturePreview"
+	_capture_preview_panel.title = "Capture Preview"
+	_capture_preview_panel.min_size = Vector2i(680, 460)
+	add_child(_capture_preview_panel)
+	_capture_preview_panel.visible = false
+	if not _capture_preview_panel.is_connected("close_requested", Callable(self, "_on_capture_preview_close_requested")):
+		_capture_preview_panel.close_requested.connect(_on_capture_preview_close_requested)
+
+	var root := VBoxContainer.new()
+	root.name = "PreviewRoot"
+	root.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	root.offset_left = 10.0
+	root.offset_top = 10.0
+	root.offset_right = -10.0
+	root.offset_bottom = -10.0
+	root.add_theme_constant_override("separation", 8)
+	_capture_preview_panel.add_child(root)
+
+	var toolbar := HBoxContainer.new()
+	toolbar.name = "PreviewToolbar"
+	toolbar.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	toolbar.add_theme_constant_override("separation", 6)
+	root.add_child(toolbar)
+
+	var zoom_out := Button.new()
+	zoom_out.name = "PreviewZoomOut"
+	zoom_out.text = "Zoom -"
+	zoom_out.pressed.connect(_on_preview_zoom_out_pressed)
+	toolbar.add_child(zoom_out)
+
+	var zoom_in := Button.new()
+	zoom_in.name = "PreviewZoomIn"
+	zoom_in.text = "Zoom +"
+	zoom_in.pressed.connect(_on_preview_zoom_in_pressed)
+	toolbar.add_child(zoom_in)
+
+	var zoom_fit := Button.new()
+	zoom_fit.name = "PreviewZoomFit"
+	zoom_fit.text = "Fit"
+	zoom_fit.pressed.connect(_on_preview_zoom_fit_pressed)
+	toolbar.add_child(zoom_fit)
+
+	var compare := CheckBox.new()
+	compare.name = "PreviewCompare"
+	compare.text = "Compare"
+	compare.toggled.connect(_on_preview_compare_toggled)
+	toolbar.add_child(compare)
+
+	var spacer := Control.new()
+	spacer.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	toolbar.add_child(spacer)
+
+	var reapply_btn := Button.new()
+	reapply_btn.name = "PreviewReapply"
+	reapply_btn.text = "Reapply"
+	reapply_btn.pressed.connect(_on_preview_reapply_pressed)
+	toolbar.add_child(reapply_btn)
+
+	var restore_btn := Button.new()
+	restore_btn.name = "PreviewRestore"
+	restore_btn.text = "Restore Camera"
+	restore_btn.pressed.connect(_on_preview_restore_pressed)
+	toolbar.add_child(restore_btn)
+
+	var finder_btn := Button.new()
+	finder_btn.name = "PreviewFinder"
+	finder_btn.text = "Show in Finder"
+	finder_btn.pressed.connect(_on_preview_show_in_finder_pressed)
+	toolbar.add_child(finder_btn)
+
+	var delete_btn := Button.new()
+	delete_btn.name = "PreviewDelete"
+	delete_btn.text = "Delete"
+	delete_btn.pressed.connect(_on_preview_delete_pressed)
+	toolbar.add_child(delete_btn)
+
+	_preview_scroll = ScrollContainer.new()
+	_preview_scroll.name = "PreviewScroll"
+	_preview_scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_preview_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	root.add_child(_preview_scroll)
+
+	_preview_image_node = TextureRect.new()
+	_preview_image_node.name = "PreviewImage"
+	_preview_image_node.stretch_mode = TextureRect.STRETCH_SCALE
+	_preview_image_node.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	_preview_image_node.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	_preview_image_node.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_preview_scroll.add_child(_preview_image_node)
+
+
+func _on_capture_preview_close_requested() -> void:
+	if _capture_preview_panel:
+		_capture_preview_panel.hide()
+	_preview_show_compare = false
+	_preview_primary_texture = null
+	_preview_compare_texture = null
 
 func _debug_layout() -> void:
 	await get_tree().process_frame
 	await get_tree().process_frame
-	if _ui_root and _ui_root.get_node_or_null("RootMargin") == null:
-		_ensure_ui_layout()
-		await get_tree().process_frame
 	if _ui_root == null:
 		print("[PhotoMode] _ui_root missing")
 		return
@@ -1446,13 +2197,13 @@ func _deferred_reparent_tab_nodes() -> void:
 			"ExposureHeaderRow", "ExposureRow", "EnvRow", "ResRow",
 			"AspectRow",
 			"GuidesHeaderRow", "GuidesRow", "GuidesOpacityRow",
-			"CaptureHeaderRow", "CaptureFormatRow", "CapturePathRow", "ButtonsRow",
+			"CaptureHeaderRow", "CaptureFormatRow", "CapturePathRow", "CaptureTimerRow", "CaptureBurstRow", "CaptureBracketRow", "CaptureBracketStepRow", "CaptureWatermarkRow", "CaptureWatermarkTextRow", "ButtonsRow",
 			"PassesHeaderRow", "PassPreviewRow", "PassesGrid", "LightRigHeaderRow", "LightRigGrid",
-			"EnvironmentHeaderRow", "EnvironmentRow", "AmbientRow", "FogRow",
+			"EnvironmentHeaderRow", "EnvironmentRow", "AmbientRow", "FogRow", "FogDensityRow", "FogBeginRow", "FogEndRow",
 			"ExportHeaderRow", "ExportNote",
 			"ColorHeaderRow", "TempRow", "TintRow", "SaturationRow", "ContrastRow",
 			"EffectsHeaderRow", "VignetteRow", "GrainRow", "BloomRow",
-			"CompositionHeaderRow", "CompositionNote",
+			"CompositionHeaderRow", "CompositionCropRow", "CompositionOffsetXRow", "CompositionOffsetYRow", "CompositionRollRow", "CompositionSnapRow",
 			"PresetsHeaderRow", "PresetsRow", "PresetNameRow", "PresetButtonsRow"
 		]
 	for name in vbox_nodes:
@@ -1549,10 +2300,9 @@ func _enforce_settings_layout() -> void:
 		vbox.offset_right = 0.0
 		vbox.offset_bottom = 0.0
 		# make sure minimum size won't collapse the layout
-		if vbox.has_method("set_custom_minimum_size"):
-			vbox.set_custom_minimum_size(Vector2.ZERO)
-		else:
-			vbox.rect_min_size = Vector2.ZERO
+		var vbox_control := vbox as Control
+		if vbox_control:
+			vbox_control.custom_minimum_size = Vector2.ZERO
 
 	if enable_layout_debug_print:
 		print("[PhotoMode DEBUG] _enforce_settings_layout: scroll=", scroll, " vbox=", vbox)
@@ -1611,10 +2361,31 @@ func _label_text_for(name_hint: String) -> String:
 		"AspectLabel": "Aspect",
 		"CaptureFormatLabel": "Format",
 		"CapturePathLabel": "Save Path",
+		"CaptureTimerLabel": "Timer",
+		"CaptureBurstLabel": "Burst",
+		"CaptureBracketLabel": "Bracket",
+		"CaptureBracketStepLabel": "Bracket EV",
+		"CaptureWatermarkLabel": "Watermark",
+		"CaptureWatermarkTextLabel": "Watermark Text",
 		"GuidesOpacityLabel": "Opacity",
 		"SunAngleLabel": "Sun",
 		"AmbientLabel": "Ambient",
+		"SunShadowLabel": "Sun Shadows",
+		"SunShadowOpacityLabel": "Shadow Opacity",
+		"SunSoftnessLabel": "Sun Softness",
+		"SunColorLabel": "Sun Color",
+		"AmbientColorLabel": "Ambient Color",
 		"FogLabel": "Fog",
+		"FogColorLabel": "Fog Color",
+		"FogDensityLabel": "Fog Density",
+		"FogBeginLabel": "Fog Near",
+		"FogEndLabel": "Fog Far",
+		"FogHeightLabel": "Height Fog",
+		"FogHeightDensityLabel": "Height Density",
+		"FogHeightFalloffLabel": "Height Falloff",
+		"VolumetricFogLabel": "Volumetric Fog",
+		"VolumetricDensityLabel": "Vol Density",
+		"VolumetricAnisoLabel": "Vol Anisotropy",
 		"TempLabel": "Temperature",
 		"TintLabel": "Tint",
 		"SaturationLabel": "Saturation",
@@ -1622,6 +2393,11 @@ func _label_text_for(name_hint: String) -> String:
 		"VignetteLabel": "Vignette",
 		"GrainLabel": "Grain",
 		"BloomLabel": "Bloom",
+		"CompositionCropLabel": "Crop Box",
+		"CompositionOffsetXLabel": "Crop X",
+		"CompositionOffsetYLabel": "Crop Y",
+		"CompositionRollLabel": "Horizon",
+		"CompositionSnapLabel": "Thirds Snap",
 		"PresetsLabel": "Preset",
 		"PresetNameLabel": "Name",
 		"PassesLabel": "Passes",
@@ -1764,6 +2540,8 @@ func _setup_single_light(light: DirectionalLight3D, enabled: CheckBox, color: Co
 		color.color = light.light_color
 		color.color_changed.connect(func(c: Color):
 			light.light_color = c
+			if light == _key_light and _sun_color_picker and _sun_color_picker.color != c:
+				_sun_color_picker.color = c
 		)
 	if intensity:
 		if intensity.has_method("set_value_no_signal"):
@@ -1857,6 +2635,7 @@ func _position_camera_at_start() -> void:
 		if s is InfoPlayerStart and (s as InfoPlayerStart).active:
 			_camera.global_position = (s as InfoPlayerStart).global_position
 			_camera.rotation_degrees = (s as InfoPlayerStart).angles
+			_sync_camera_angles_from_rotation()
 			return
 	# Fallback: place near first mesh.
 	if _map:
@@ -1865,7 +2644,26 @@ func _position_camera_at_start() -> void:
 			var mesh := meshes[0] as MeshInstance3D
 			if mesh:
 				_camera.global_position = mesh.global_position + Vector3(0, 2.0, 0)
+	_sync_camera_angles_from_rotation()
 
+
+
+func _sync_camera_angles_from_rotation() -> void:
+	if _camera == null:
+		return
+	_yaw = _camera.rotation_degrees.y
+	_pitch = _camera.rotation_degrees.x
+	_composition_horizon_roll = _camera.rotation_degrees.z
+	if _composition_roll_slider:
+		_set_slider_value(_composition_roll_slider, _composition_horizon_roll)
+	if _composition_roll_value:
+		_composition_roll_value.text = "%.1f°" % _composition_horizon_roll
+
+
+func _apply_camera_rotation_from_angles() -> void:
+	if _camera == null:
+		return
+	_camera.rotation_degrees = Vector3(_pitch, _yaw, _composition_horizon_roll)
 
 
 func _input(event: InputEvent) -> void:
@@ -1903,8 +2701,7 @@ func _input(event: InputEvent) -> void:
 				var bm: Dictionary = _bookmarks[idx] as Dictionary
 				_camera.global_position = bm["position"] as Vector3
 				_camera.rotation_degrees = bm["rotation"] as Vector3
-				_yaw = _camera.rotation_degrees.y
-				_pitch = _camera.rotation_degrees.x
+				_sync_camera_angles_from_rotation()
 				if _status:
 					_status.text = "Loaded bookmark %d" % idx
 				return
@@ -1914,16 +2711,12 @@ func _input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion and Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
 		_yaw -= event.relative.x * mouse_sens
 		_pitch = clamp(_pitch - event.relative.y * mouse_sens, -89.0, 89.0)
-		_camera.rotation_degrees = Vector3(_pitch, _yaw, 0.0)
+		_apply_camera_rotation_from_angles()
 
 
 func _process(delta: float) -> void:
 	# accumulate time for debug throttling
 	_debug_accum += delta
-	if enable_runtime_layout_repair and _ui_root and _layout_retry_frames < 20:
-		if _ui_root.get_node_or_null("RootMargin") == null:
-			_layout_retry_frames += 1
-			_ensure_ui_layout()
 	if _auto_focus_enabled:
 		_auto_focus_timer -= delta
 		if _auto_focus_timer <= 0.0:
@@ -1933,6 +2726,7 @@ func _process(delta: float) -> void:
 	if viewport_size != _last_viewport_size:
 		_last_viewport_size = viewport_size
 		_update_viewfinder()
+		_apply_ui_density_tuning()
 	if _camera == null:
 		return
 	var input_vec := Input.get_vector("left", "right", "forward", "back")
@@ -2022,6 +2816,8 @@ func _toggle_guides() -> void:
 		_guides.visible = not _guides.visible
 		if _guides_check:
 			_guides_check.button_pressed = _guides.visible
+		if _guides_toggle:
+			_guides_toggle.button_pressed = _guides.visible
 
 
 func _setup_collapsibles() -> void:
@@ -2060,86 +2856,104 @@ func _set_section_collapsed(section: String, collapsed: bool) -> void:
 
 
 func _setup_tabs() -> void:
-	# Build tab button mapping and content groups
-	var tab_names := ["camera","exposure","guides","capture","passes","light","environment","export","color","effects","composition","presets"]
+	var tab_button_paths := {
+		"camera": "CanvasLayer/PhotoUI/RootMargin/RootHBox/TabsPanel/TabsMargin/TabsVBox/TabCamera",
+		"exposure": "CanvasLayer/PhotoUI/RootMargin/RootHBox/TabsPanel/TabsMargin/TabsVBox/TabExposure",
+		"guides": "CanvasLayer/PhotoUI/RootMargin/RootHBox/TabsPanel/TabsMargin/TabsVBox/TabGuides",
+		"capture": "CanvasLayer/PhotoUI/RootMargin/RootHBox/TabsPanel/TabsMargin/TabsVBox/TabCapture",
+		"passes": "CanvasLayer/PhotoUI/RootMargin/RootHBox/TabsPanel/TabsMargin/TabsVBox/TabPasses",
+		"light": "CanvasLayer/PhotoUI/RootMargin/RootHBox/TabsPanel/TabsMargin/TabsVBox/TabLight",
+		"environment": "CanvasLayer/PhotoUI/RootMargin/RootHBox/TabsPanel/TabsMargin/TabsVBox/TabEnvironment",
+		"color": "CanvasLayer/PhotoUI/RootMargin/RootHBox/TabsPanel/TabsMargin/TabsVBox/TabColor",
+		"effects": "CanvasLayer/PhotoUI/RootMargin/RootHBox/TabsPanel/TabsMargin/TabsVBox/TabEffects",
+		"composition": "CanvasLayer/PhotoUI/RootMargin/RootHBox/TabsPanel/TabsMargin/TabsVBox/TabComposition",
+		"presets": "CanvasLayer/PhotoUI/RootMargin/RootHBox/TabsPanel/TabsMargin/TabsVBox/TabPresets"
+	}
+	var export_tab_btn := get_node_or_null("CanvasLayer/PhotoUI/RootMargin/RootHBox/TabsPanel/TabsMargin/TabsVBox/TabExport") as Button
+	if export_tab_btn:
+		export_tab_btn.visible = false
+		export_tab_btn.disabled = true
+	var capture_tab_btn := get_node_or_null(String(tab_button_paths["capture"])) as Button
+	if capture_tab_btn:
+		capture_tab_btn.text = "Capture + Export"
+
 	_tab_buttons.clear()
-	for tn in tab_names:
-		var node_name: String = "Tab" + String(tn).capitalize()
-		var btn := _find_node(node_name, "Button")
-		if btn is Button:
-			btn.toggle_mode = true
-			var tab_key: String = String(tn)
-			# connect toggled handler; protect against unselecting active tab
-			var bbtn := btn as BaseButton
-			bbtn.toggled.connect(func(on: bool, bk=tab_key, b=bbtn):
-				if on:
-					_set_active_tab(bk)
-				else:
-					if _active_tab == bk:
-						# Prevent unselecting the active tab
-						b.button_pressed = true
-			)
-			_tab_buttons[tn] = btn
+	for tab_key in tab_button_paths.keys():
+		var btn := get_node_or_null(String(tab_button_paths[tab_key])) as Button
+		if btn == null:
+			continue
+		btn.toggle_mode = true
+		var button := btn as BaseButton
+		var key := String(tab_key)
+		button.toggled.connect(func(on: bool, bk=key, b=button):
+			if on:
+				_set_active_tab(bk)
+			elif _active_tab == bk:
+				b.button_pressed = true
+		)
+		_tab_buttons[key] = btn
 
-	# Build content groups (nodes under Panel/Margin/SettingsScroll/VBox)
-	var vbox := _ui_root.get_node_or_null("RootMargin/RootHBox/Panel/Margin/SettingsScroll/VBox") as Node
-	# Fallbacks: try to locate the VBox by other means if the exact path isn't present
+	var vbox := get_node_or_null("CanvasLayer/PhotoUI/RootMargin/RootHBox/Panel/Margin/SettingsScroll/VBox") as Node
+	_tab_contents.clear()
 	if vbox == null:
-		vbox = _find_node("VBox", "VBoxContainer") as Node
-	if vbox == null:
-		var scr := _find_node("SettingsScroll", "ScrollContainer") as Node
-		if scr and scr is Node:
-			vbox = scr.get_node_or_null("VBox") as Node
-	if vbox == null and _ui_root:
-		# try scanning children for a VBoxContainer anywhere under RootMargin
-		var root_margin := _ui_root.get_node_or_null("RootMargin")
-		if root_margin:
-			for n in root_margin.get_children():
-				if n is VBoxContainer:
-					vbox = n
-					break
-	# Defensive fallback: if no dedicated VBox was found, use the PhotoUI root so
-	# _nodes(...) can still locate rows anywhere under PhotoUI. This prevents
-	# _tab_contents from remaining empty when layout repair or reparenting occurs.
-	if vbox == null and _ui_root:
-		vbox = _ui_root
+		push_warning("PhotoMode: missing SettingsScroll/VBox for tab content")
+		return
 
-	if vbox:
-		_tab_contents.clear()
-		_tab_contents["camera"] = _nodes(vbox, ["HistogramCard", "Title", "Status", "FOVRow", "FocalRow", "ISORow", "ApertureRow", "ShutterRow", "FocusRow", "ShootingModeRow", "AutoFocusRow"]) 
-		_tab_contents["exposure"] = _nodes(vbox, ["ExposureHeaderRow", "ExposureRow", "AutoExposureRow", "AutoExposureSpeedRow", "AutoExposureRangeRow"]) 
-		_tab_contents["guides"] = _nodes(vbox, ["GuidesHeaderRow", "GuidesRow", "GuideTypeOptions", "GuidesOpacityRow"]) 
-		_tab_contents["capture"] = _nodes(vbox, ["CaptureHeaderRow", "ButtonsRow", "CaptureButton", "CaptureLayersButton", "BackButton", "CapturePathRow", "CaptureFormatRow"]) 
-		_tab_contents["passes"] = _nodes(vbox, ["PassesHeaderRow", "PassPreviewRow", "PassesGrid", "PassBeauty", "PassAlbedo", "PassNormals", "PassDepth", "PassLighting"]) 
-		_tab_contents["light"] = _nodes(vbox, ["LightRigHeaderRow", "LightRigGrid"]) 
-		_tab_contents["environment"] = _nodes(vbox, ["EnvironmentHeaderRow", "EnvRow", "EnvironmentRow", "AmbientRow", "FogRow"]) 
-		_tab_contents["export"] = _nodes(vbox, ["ExportHeaderRow", "ExportNote", "ResRow", "AspectRow"]) 
-		_tab_contents["color"] = _nodes(vbox, ["ColorHeaderRow", "TempRow", "TintRow", "SaturationRow", "ContrastRow"]) 
-		_tab_contents["effects"] = _nodes(vbox, ["EffectsHeaderRow", "VignetteRow", "GrainRow", "BloomRow"]) 
-		_tab_contents["composition"] = _nodes(vbox, ["CompositionHeaderRow", "CompositionNote"]) 
-		_tab_contents["presets"] = _nodes(vbox, ["PresetsHeaderRow", "PresetsRow", "PresetNameRow", "PresetButtonsRow"]) 
+	_tab_contents["camera"] = _nodes(vbox, ["FOVRow", "FocalRow", "ISORow", "ApertureRow", "ShutterRow", "FocusRow", "ShootingModeRow", "AutoFocusRow"])
+	_tab_contents["exposure"] = _nodes(vbox, ["ExposureHeaderRow", "ExposureRow", "AutoExposureRow", "AutoExposureSpeedRow", "AutoExposureRangeRow"])
+	_tab_contents["guides"] = _nodes(vbox, ["GuidesHeaderRow", "GuidesRow", "GuidesOpacityRow"])
+	_tab_contents["capture"] = _nodes(vbox, [
+		"CaptureHeaderRow",
+		"CaptureFormatRow",
+		"CapturePathRow",
+		"ResRow",
+		"AspectRow",
+		"CaptureTimerRow",
+		"CaptureBurstRow",
+		"CaptureBracketRow",
+		"CaptureBracketStepRow",
+		"CaptureWatermarkRow",
+		"CaptureWatermarkTextRow",
+		"ExportHeaderRow",
+		"ExportNote",
+		"ButtonsRow"
+	])
+	_tab_contents["passes"] = _nodes(vbox, ["PassesHeaderRow", "PassPreviewRow", "PassesGrid"])
+	_tab_contents["light"] = _nodes(vbox, ["LightRigHeaderRow", "LightRigGrid"])
+	_tab_contents["environment"] = _nodes(vbox, [
+		"EnvironmentHeaderRow",
+		"EnvRow",
+		"SunAngleRow",
+		"AmbientRow",
+		"SunShadowRow",
+		"SunShadowOpacityRow",
+		"SunSoftnessRow",
+		"SunColorRow",
+		"AmbientColorRow",
+		"FogRow",
+		"FogColorRow",
+		"FogDensityRow",
+		"FogBeginRow",
+		"FogEndRow",
+		"FogHeightRow",
+		"FogHeightDensityRow",
+		"FogHeightFalloffRow",
+		"VolumetricFogRow",
+		"VolumetricDensityRow",
+		"VolumetricAnisoRow"
+	])
+	_tab_contents["color"] = _nodes(vbox, ["ColorHeaderRow", "TempRow", "TintRow", "SaturationRow", "ContrastRow"])
+	_tab_contents["effects"] = _nodes(vbox, ["EffectsHeaderRow", "VignetteRow", "GrainRow", "BloomRow"])
+	_tab_contents["composition"] = _nodes(vbox, [
+		"CompositionHeaderRow",
+		"CompositionCropRow",
+		"CompositionOffsetXRow",
+		"CompositionOffsetYRow",
+		"CompositionRollRow",
+		"CompositionSnapRow"
+	])
+	_tab_contents["presets"] = _nodes(vbox, ["PresetsHeaderRow", "PresetsRow", "PresetNameRow", "PresetButtonsRow"])
 
-	# Debug: report what we found for tab population (compact summary to avoid excessive output)
-	if enable_layout_debug_print:
-		print("[PhotoMode DEBUG] _setup_tabs: vbox=", vbox, " children=", (vbox.get_child_count() if vbox else -1))
-		for k in _tab_contents.keys():
-			var arr := _tab_contents[k] as Array
-			# collect names (avoid printing full node objects for every item)
-			var found_names := []
-			for n in arr:
-				if n:
-					found_names.append(n.name)
-			print("[PhotoMode DEBUG] tab=%s nodes_found=%d" % [k, found_names.size()])
-			if found_names.size() > 0:
-				if found_names.size() <= 12:
-					print("[PhotoMode DEBUG] tab=%s node_names=%s" % [k, found_names])
-				else:
-					var sample := []
-					for i in range(0, min(found_names.size(), 12)):
-						sample.append(found_names[i])
-					print("[PhotoMode DEBUG] tab=%s node_names_sample=%s (total=%d)" % [k, sample, found_names.size()])
-
-	# Default to camera tab (defer so layout can settle)
 	call_deferred("_set_active_tab", "camera")
 
 
@@ -2224,11 +3038,9 @@ func _nodes(root: Node, names: Array[String]) -> Array[CanvasItem]:
 	if root == null:
 		return out
 	for n in names:
-		# search recursively for the named child
-		var node := root.find_child(n, true, false)
+		var node := root.get_node_or_null(n)
 		if node == null:
-			# fallback to global search by name (helps when layout reparenting moved nodes)
-			node = _find_node(n, "")
+			node = root.find_child(n, true, false)
 		if node != null and node is CanvasItem:
 			out.append(node as CanvasItem)
 	return out
@@ -2238,19 +3050,29 @@ func _set_active_tab(tab: String) -> void:
 	if tab == null:
 		return
 	var key := String(tab).to_lower()
+	if key == "export":
+		key = "capture"
 	_active_tab = key
+	_current_tab = String(key).capitalize()
 	# update buttons
 	for tkey in _tab_buttons.keys():
 		var b := _tab_buttons[tkey] as Button
 		if b:
 			b.button_pressed = (tkey == key)
 
-	# hide all content nodes defined in _tab_contents
-	for k in _tab_contents.keys():
-		var arr := _tab_contents[k] as Array
-		for node in arr:
-			if node and node is CanvasItem:
-				(node as CanvasItem).visible = false
+	var vbox := get_node_or_null("CanvasLayer/PhotoUI/RootMargin/RootHBox/Panel/Margin/SettingsScroll/VBox") as Control
+	if vbox:
+		# Canonical behavior: everything starts hidden, then active-tab + always-visible rows are shown.
+		for child in vbox.get_children():
+			if child is CanvasItem:
+				(child as CanvasItem).visible = false
+
+	var always_nodes: Array = []
+	if vbox:
+		always_nodes = _nodes(vbox, ["HistogramCard", "Title", "Status"])
+	for node in always_nodes:
+		if node and node is CanvasItem:
+			(node as CanvasItem).visible = true
 
 	# show only active
 	var show_arr := _tab_contents.get(key, []) as Array
@@ -2259,66 +3081,14 @@ func _set_active_tab(tab: String) -> void:
 			(node as CanvasItem).visible = true
 
 	# update title
-	var title := _find_node("Title", "Label") as Label
+	var title := get_node_or_null("CanvasLayer/PhotoUI/RootMargin/RootHBox/Panel/Margin/SettingsScroll/VBox/Title") as Label
 	if title:
 		title.text = String(key).capitalize()
 
 	# ensure viewfinder visibility per active tab
 	_set_viewfinder_visible(_always_show_viewport_enabled or key == "capture")
-
-	# Enforce visibility for duplicated/mangled controls by substring matching
-	var allowed_subs: Array = []
-	for n in show_arr:
-		if n:
-			allowed_subs.append(String(n.name))
-	# Always allow these
-	allowed_subs += ["HistogramCard", "Title", "Status"]
-
-	# Build list of all known tab node name substrings
-	var known_subs: Array = []
-	for k in _tab_contents.keys():
-		for x in _tab_contents[k]:
-			if x:
-				known_subs.append(String(x.name))
-
-	# Defensive fallback: if _tab_contents wasn't populated (layout/reparenting
-	# race), derive the known_subs from controls under SettingsScroll/VBox or
-	# fall back to scanning the PhotoUI root. This ensures the enforcement loop
-	# can still hide unrelated controls.
-	if known_subs.is_empty() and _ui_root != null:
-		var ss := _ui_root.get_node_or_null("RootMargin/RootHBox/Panel/Margin/SettingsScroll")
-		var candidate_root: Node = ss if ss else _ui_root
-		for c in candidate_root.find_children("*", "", true, false):
-			if c and c is Control:
-				known_subs.append(String(c.name))
-
-	var toggled := 0
-	# Scan all Controls and hide any that match known tab node names but are not allowed for this tab
-	# Scan the Photo UI (or whole scene if UI isn't available) for Controls to enforce visibility
-	var search_root: Node = _ui_root if _ui_root != null else get_tree().get_root()
-	for c in search_root.find_children("*", "Control", true, false):
-		if c == null:
-			continue
-		var nm := String(c.name)
-		var appears := false
-		for ks in known_subs:
-			if nm.find(ks) != -1:
-				appears = true
-				break
-		if not appears:
-			continue
-		# should be visible if its name contains any allowed substring
-		var should := false
-		for asub in allowed_subs:
-			if nm.find(asub) != -1:
-				should = true
-				break
-		if c is CanvasItem and (c.visible != should):
-			(c as CanvasItem).visible = should
-			toggled += 1
-
-	if enable_layout_debug_print:
-		print("[PhotoMode DEBUG] _set_active_tab: enforced visibility toggles=", toggled)
+	if _viewfinder_toggle:
+		_viewfinder_toggle.button_pressed = (_viewfinder != null and _viewfinder.visible)
 
 
 
@@ -2446,8 +3216,23 @@ func _apply_tab(tab_name: String) -> void:
 func _apply_collapsed() -> void:
 	var map := {
 		"Exposure": ["ExposureRow"],
-		"Guides": ["GuidesRow", "GuidesRow2", "GuidesOpacityRow"],
-		"Capture": ["ResRow", "AspectRow", "CaptureFormatRow", "CapturePathRow", "ButtonsRow"],
+		"Guides": ["GuidesRow", "GuidesOpacityRow"],
+		"Capture": [
+			"CaptureHeaderRow",
+			"ExportHeaderRow",
+			"ExportNote",
+			"ResRow",
+			"AspectRow",
+			"CaptureFormatRow",
+			"CapturePathRow",
+			"CaptureTimerRow",
+			"CaptureBurstRow",
+			"CaptureBracketRow",
+			"CaptureBracketStepRow",
+			"CaptureWatermarkRow",
+			"CaptureWatermarkTextRow",
+			"ButtonsRow"
+		],
 		"Passes": ["PassPreviewRow", "PassesGrid"],
 		"Light": ["LightRigGrid"]
 	}
@@ -2615,6 +3400,15 @@ func _set_slider_value(slider: HSlider, value: float) -> void:
 		slider.set_value_no_signal(value)
 	else:
 		slider.value = value
+
+
+func _set_check_value(check: CheckBox, pressed: bool) -> void:
+	if check == null:
+		return
+	if check.has_method("set_pressed_no_signal"):
+		check.set_pressed_no_signal(pressed)
+	else:
+		check.button_pressed = pressed
 
 
 func _on_exposure_changed(value: float) -> void:
@@ -2832,6 +3626,8 @@ func _apply_environment_preset(name: String) -> void:
 	if _ambient_slider:
 		_ambient_slider.value = 1.0
 		_on_ambient_changed(_ambient_slider.value)
+	_sync_environment_controls_from_scene()
+	_apply_fog_settings()
 
 
 func _get_env_preset_path() -> String:
@@ -2903,6 +3699,310 @@ func _on_ambient_changed(value: float) -> void:
 		_ambient_value.text = "%.2f" % value
 
 
+func _sync_environment_controls_from_scene() -> void:
+	if _key_light:
+		var shadow_enabled := bool(_get_attr_if_exists(_key_light, "shadow_enabled", true))
+		if _sun_shadow_toggle:
+			_set_check_value(_sun_shadow_toggle, shadow_enabled)
+
+		var shadow_opacity := float(_get_attr_if_exists(_key_light, "shadow_opacity", 1.0))
+		if _sun_shadow_opacity_slider:
+			_set_slider_value(_sun_shadow_opacity_slider, clampf(shadow_opacity, _sun_shadow_opacity_slider.min_value, _sun_shadow_opacity_slider.max_value))
+		if _sun_shadow_opacity_value:
+			_sun_shadow_opacity_value.text = "%.2f" % (_sun_shadow_opacity_slider.value if _sun_shadow_opacity_slider else shadow_opacity)
+
+		var softness := float(_get_attr_if_exists(_key_light, "light_angular_distance", 0.0))
+		if _sun_softness_slider:
+			_set_slider_value(_sun_softness_slider, clampf(softness, _sun_softness_slider.min_value, _sun_softness_slider.max_value))
+		if _sun_softness_value:
+			_sun_softness_value.text = "%.2f" % (_sun_softness_slider.value if _sun_softness_slider else softness)
+
+		if _sun_color_picker:
+			_sun_color_picker.color = _key_light.light_color
+
+	if _world_env and _world_env.environment:
+		var env := _world_env.environment
+		if _ambient_color_picker:
+			_ambient_color_picker.color = _to_color(_get_attr_if_exists(env, "ambient_light_color", _ambient_color_picker.color), _ambient_color_picker.color)
+		if _fog_toggle:
+			_set_check_value(_fog_toggle, bool(_get_attr_if_exists(env, "fog_enabled", _fog_toggle.button_pressed)))
+		if _fog_color_picker:
+			_fog_color_picker.color = _to_color(_get_attr_if_exists(env, "fog_light_color", _fog_color_picker.color), _fog_color_picker.color)
+		if _fog_density_slider:
+			_set_slider_value(_fog_density_slider, clampf(float(_get_attr_if_exists(env, "fog_density", _fog_density_slider.value)), _fog_density_slider.min_value, _fog_density_slider.max_value))
+		if _fog_begin_slider:
+			_set_slider_value(_fog_begin_slider, clampf(float(_get_attr_if_exists(env, "fog_depth_begin", _fog_begin_slider.value)), _fog_begin_slider.min_value, _fog_begin_slider.max_value))
+		if _fog_end_slider:
+			_set_slider_value(_fog_end_slider, clampf(float(_get_attr_if_exists(env, "fog_depth_end", _fog_end_slider.value)), _fog_end_slider.min_value, _fog_end_slider.max_value))
+		if _fog_height_toggle:
+			_set_check_value(_fog_height_toggle, bool(_get_attr_if_exists(env, "fog_height_enabled", _fog_height_toggle.button_pressed)))
+		if _fog_height_density_slider:
+			_set_slider_value(_fog_height_density_slider, clampf(float(_get_attr_if_exists(env, "fog_height_density", _fog_height_density_slider.value)), _fog_height_density_slider.min_value, _fog_height_density_slider.max_value))
+		if _fog_height_falloff_slider:
+			_set_slider_value(_fog_height_falloff_slider, clampf(float(_get_attr_if_exists(env, "fog_height_falloff", _fog_height_falloff_slider.value)), _fog_height_falloff_slider.min_value, _fog_height_falloff_slider.max_value))
+		if _volumetric_fog_toggle:
+			_set_check_value(_volumetric_fog_toggle, bool(_get_attr_if_exists(env, "volumetric_fog_enabled", _volumetric_fog_toggle.button_pressed)))
+		if _volumetric_fog_density_slider:
+			_set_slider_value(_volumetric_fog_density_slider, clampf(float(_get_attr_if_exists(env, "volumetric_fog_density", _volumetric_fog_density_slider.value)), _volumetric_fog_density_slider.min_value, _volumetric_fog_density_slider.max_value))
+		if _volumetric_fog_aniso_slider:
+			var aniso: float = float(_get_attr_if_exists(env, "volumetric_fog_anisotropy", _get_attr_if_exists(env, "volumetric_fog_aniso", _volumetric_fog_aniso_slider.value)))
+			_set_slider_value(_volumetric_fog_aniso_slider, clampf(float(aniso), _volumetric_fog_aniso_slider.min_value, _volumetric_fog_aniso_slider.max_value))
+
+	if _fog_density_value:
+		_fog_density_value.text = "%.3f" % (_fog_density_slider.value if _fog_density_slider else 0.0)
+	if _fog_begin_value:
+		_fog_begin_value.text = "%dm" % int(round(_fog_begin_slider.value if _fog_begin_slider else 0.0))
+	if _fog_end_value:
+		_fog_end_value.text = "%dm" % int(round(_fog_end_slider.value if _fog_end_slider else 0.0))
+	if _fog_height_density_value:
+		_fog_height_density_value.text = "%.3f" % (_fog_height_density_slider.value if _fog_height_density_slider else 0.0)
+	if _fog_height_falloff_value:
+		_fog_height_falloff_value.text = "%.2f" % (_fog_height_falloff_slider.value if _fog_height_falloff_slider else 0.0)
+	if _volumetric_fog_density_value:
+		_volumetric_fog_density_value.text = "%.3f" % (_volumetric_fog_density_slider.value if _volumetric_fog_density_slider else 0.0)
+	if _volumetric_fog_aniso_value:
+		_volumetric_fog_aniso_value.text = "%.2f" % (_volumetric_fog_aniso_slider.value if _volumetric_fog_aniso_slider else 0.0)
+
+	_apply_sun_environment_settings()
+
+
+func _apply_sun_environment_settings() -> void:
+	if _key_light:
+		var sun_shadow_enabled := _sun_shadow_toggle.button_pressed if _sun_shadow_toggle else bool(_get_attr_if_exists(_key_light, "shadow_enabled", true))
+		_set_attr_if_exists(_key_light, "shadow_enabled", sun_shadow_enabled)
+		if _sun_shadow_opacity_slider:
+			_set_attr_if_exists(_key_light, "shadow_opacity", _sun_shadow_opacity_slider.value)
+		if _sun_softness_slider:
+			var softness := _sun_softness_slider.value
+			_set_attr_if_exists(_key_light, "light_angular_distance", softness)
+			_set_attr_if_exists(_key_light, "directional_shadow_blend_splits", clampf(softness / 6.0, 0.0, 1.0))
+		if _sun_color_picker:
+			_key_light.light_color = _sun_color_picker.color
+			if _key_color and _key_color.color != _sun_color_picker.color:
+				_key_color.color = _sun_color_picker.color
+
+	if _world_env and _world_env.environment and _ambient_color_picker:
+		_set_attr_if_exists(_world_env.environment, "ambient_light_color", _ambient_color_picker.color)
+
+
+func _on_sun_shadow_toggled(pressed: bool) -> void:
+	if _sun_shadow_toggle:
+		_set_check_value(_sun_shadow_toggle, pressed)
+	_apply_sun_environment_settings()
+
+
+func _on_sun_shadow_opacity_changed(value: float) -> void:
+	if _sun_shadow_opacity_value:
+		_sun_shadow_opacity_value.text = "%.2f" % value
+	_apply_sun_environment_settings()
+
+
+func _on_sun_softness_changed(value: float) -> void:
+	if _sun_softness_value:
+		_sun_softness_value.text = "%.2f" % value
+	_apply_sun_environment_settings()
+
+
+func _on_sun_color_changed(_color: Color) -> void:
+	_apply_sun_environment_settings()
+
+
+func _on_ambient_color_changed(_color: Color) -> void:
+	_apply_sun_environment_settings()
+
+
+func _on_fog_color_changed(_color: Color) -> void:
+	_apply_fog_settings()
+
+
+func _on_fog_height_toggled(pressed: bool) -> void:
+	if _fog_height_toggle:
+		_set_check_value(_fog_height_toggle, pressed)
+	_apply_fog_settings()
+
+
+func _on_fog_height_density_changed(value: float) -> void:
+	if _fog_height_density_value:
+		_fog_height_density_value.text = "%.3f" % value
+	_apply_fog_settings()
+
+
+func _on_fog_height_falloff_changed(value: float) -> void:
+	if _fog_height_falloff_value:
+		_fog_height_falloff_value.text = "%.2f" % value
+	_apply_fog_settings()
+
+
+func _on_volumetric_fog_toggled(pressed: bool) -> void:
+	if _volumetric_fog_toggle:
+		_set_check_value(_volumetric_fog_toggle, pressed)
+	_apply_fog_settings()
+
+
+func _on_volumetric_density_changed(value: float) -> void:
+	if _volumetric_fog_density_value:
+		_volumetric_fog_density_value.text = "%.3f" % value
+	_apply_fog_settings()
+
+
+func _on_volumetric_aniso_changed(value: float) -> void:
+	if _volumetric_fog_aniso_value:
+		_volumetric_fog_aniso_value.text = "%.2f" % value
+	_apply_fog_settings()
+
+
+func _on_capture_timer_changed(value: float) -> void:
+	if _capture_timer_value:
+		_capture_timer_value.text = "%ds" % int(round(value))
+
+
+func _on_capture_bracket_step_changed(value: float) -> void:
+	if _capture_bracket_step_value:
+		_capture_bracket_step_value.text = "%.1f EV" % value
+
+
+func _on_capture_watermark_toggled(pressed: bool) -> void:
+	if _capture_watermark_text:
+		_capture_watermark_text.editable = pressed
+
+
+func _on_capture_watermark_text_submitted(text: String) -> void:
+	if _capture_watermark_text:
+		_capture_watermark_text.text = text.strip_edges()
+
+
+func _on_composition_crop_selected(index: int) -> void:
+	if _composition_crop_options == null:
+		return
+	var meta: Variant = _composition_crop_options.get_item_metadata(index)
+	if meta is Dictionary:
+		_composition_crop_ratio = float((meta as Dictionary).get("ratio", 0.0))
+	else:
+		_composition_crop_ratio = 0.0
+	_update_viewfinder()
+
+
+func _on_composition_offset_x_changed(value: float) -> void:
+	_composition_crop_offset.x = _snap_composition_offset(value) if _composition_thirds_snap_enabled else value
+	if _composition_offset_x_slider and _composition_thirds_snap_enabled:
+		_set_slider_value(_composition_offset_x_slider, _composition_crop_offset.x)
+	if _composition_offset_x_value:
+		_composition_offset_x_value.text = "%.2f" % _composition_crop_offset.x
+	_update_viewfinder()
+
+
+func _on_composition_offset_y_changed(value: float) -> void:
+	_composition_crop_offset.y = _snap_composition_offset(value) if _composition_thirds_snap_enabled else value
+	if _composition_offset_y_slider and _composition_thirds_snap_enabled:
+		_set_slider_value(_composition_offset_y_slider, _composition_crop_offset.y)
+	if _composition_offset_y_value:
+		_composition_offset_y_value.text = "%.2f" % _composition_crop_offset.y
+	_update_viewfinder()
+
+
+func _on_composition_roll_changed(value: float) -> void:
+	_composition_horizon_roll = value
+	if _composition_roll_value:
+		_composition_roll_value.text = "%.1f°" % value
+	_apply_camera_rotation_from_angles()
+
+
+func _on_composition_snap_toggled(pressed: bool) -> void:
+	_composition_thirds_snap_enabled = pressed
+	if pressed:
+		if _composition_offset_x_slider:
+			_on_composition_offset_x_changed(_composition_offset_x_slider.value)
+		if _composition_offset_y_slider:
+			_on_composition_offset_y_changed(_composition_offset_y_slider.value)
+
+
+func _snap_composition_offset(value: float) -> float:
+	var snapped: float = round(value * 3.0) / 3.0
+	return clampf(snapped, -1.0, 1.0)
+
+
+func _on_fog_toggled(pressed: bool) -> void:
+	if _fog_toggle:
+		_set_check_value(_fog_toggle, pressed)
+	_apply_fog_settings()
+
+
+func _on_fog_density_changed(value: float) -> void:
+	if _fog_density_value:
+		_fog_density_value.text = "%.3f" % value
+	_apply_fog_settings()
+
+
+func _on_fog_begin_changed(value: float) -> void:
+	if _fog_end_slider and value >= _fog_end_slider.value - 1.0:
+		value = _fog_end_slider.value - 1.0
+		_set_slider_value(_fog_begin_slider, value)
+	if _fog_begin_value:
+		_fog_begin_value.text = "%dm" % int(round(value))
+	_apply_fog_settings()
+
+
+func _on_fog_end_changed(value: float) -> void:
+	if _fog_begin_slider and value <= _fog_begin_slider.value + 1.0:
+		value = _fog_begin_slider.value + 1.0
+		_set_slider_value(_fog_end_slider, value)
+	if _fog_end_value:
+		_fog_end_value.text = "%dm" % int(round(value))
+	_apply_fog_settings()
+
+
+func _apply_fog_settings() -> void:
+	if _world_env == null:
+		return
+	if _world_env.environment == null:
+		_world_env.environment = Environment.new()
+	var env := _world_env.environment
+	if env == null:
+		return
+	var enabled := _fog_toggle.button_pressed if _fog_toggle else false
+	var fog_color := _fog_color_picker.color if _fog_color_picker else Color(0.72, 0.77, 0.83, 1.0)
+	var density := _fog_density_slider.value if _fog_density_slider else 0.0
+	var begin := _fog_begin_slider.value if _fog_begin_slider else 5.0
+	var ending := _fog_end_slider.value if _fog_end_slider else 200.0
+	var height_enabled := (_fog_height_toggle.button_pressed if _fog_height_toggle else false) and enabled
+	var height_density := _fog_height_density_slider.value if _fog_height_density_slider else 0.05
+	var height_falloff := _fog_height_falloff_slider.value if _fog_height_falloff_slider else 0.5
+	var volumetric_enabled := (_volumetric_fog_toggle.button_pressed if _volumetric_fog_toggle else enabled) and enabled
+	var volumetric_density := _volumetric_fog_density_slider.value if _volumetric_fog_density_slider else density
+	var volumetric_aniso := _volumetric_fog_aniso_slider.value if _volumetric_fog_aniso_slider else 0.0
+	if ending <= begin:
+		ending = begin + 1.0
+		if _fog_end_slider:
+			_set_slider_value(_fog_end_slider, ending)
+		if _fog_end_value:
+			_fog_end_value.text = "%dm" % int(round(ending))
+
+	_set_attr_if_exists(env, "fog_enabled", enabled)
+	_set_attr_if_exists(env, "fog_light_color", fog_color)
+	_set_attr_if_exists(env, "fog_light_energy", 1.0)
+	_set_attr_if_exists(env, "fog_density", density)
+	_set_attr_if_exists(env, "fog_depth_enabled", enabled)
+	_set_attr_if_exists(env, "fog_depth_begin", begin)
+	_set_attr_if_exists(env, "fog_depth_end", ending)
+	_set_attr_if_exists(env, "fog_depth_curve", clampf(1.0 + density * 4.0, 1.0, 4.0))
+
+	_set_attr_if_exists(env, "fog_height_enabled", height_enabled)
+	_set_attr_if_exists(env, "fog_height_density", height_density)
+	_set_attr_if_exists(env, "fog_height_falloff", height_falloff)
+	_set_attr_if_exists(env, "fog_height_curve", clampf(height_falloff, 0.05, 8.0))
+	_set_attr_if_exists(env, "fog_height", height_density * 100.0)
+	_set_attr_if_exists(env, "fog_height_min", -64.0 / maxf(height_falloff, 0.05))
+	_set_attr_if_exists(env, "fog_height_max", 64.0 / maxf(height_falloff, 0.05))
+
+	_set_attr_if_exists(env, "volumetric_fog_enabled", volumetric_enabled)
+	_set_attr_if_exists(env, "volumetric_fog_density", volumetric_density)
+	_set_attr_if_exists(env, "volumetric_fog_albedo", fog_color)
+	_set_attr_if_exists(env, "volumetric_fog_anisotropy", volumetric_aniso)
+	_set_attr_if_exists(env, "volumetric_fog_aniso", volumetric_aniso)
+	_set_attr_if_exists(env, "volumetric_fog_length", ending)
+	_set_attr_if_exists(env, "volumetric_fog_sky_affect", 1.0)
+
+
 func _on_temp_changed(value: float) -> void:
 	if _temp_value:
 		_temp_value.text = "%.2f" % value
@@ -2967,13 +4067,6 @@ func _apply_color_adjustments() -> void:
 	# Fallbacks: some engine versions expose different property names
 	_set_attr_if_exists(env, "adjustment_color_correction", color)
 
-	# Also nudge key light and ambient color so temperature/tint are visible even if env adjustment isn't effective
-	if _key_light:
-		# blend key_light color with computed adjustment
-		_key_light.light_color = _key_light.light_color.lerp(color, 0.25)
-	# Also try nudging ambient_light_color on the environment (if present)
-	_set_attr_if_exists(env, "ambient_light_color", color)
-
 
 func _on_vignette_changed(value: float) -> void:
 	if _vignette_value:
@@ -3017,6 +4110,8 @@ func _on_bloom_changed(value: float) -> void:
 func _on_guides_toggled(pressed: bool) -> void:
 	if _guides and _guides.has_method("set_guides_enabled"):
 		_guides.call("set_guides_enabled", pressed)
+	if _guides_toggle:
+		_guides_toggle.button_pressed = pressed
 
 
 func _populate_guide_types() -> void:
@@ -3181,6 +4276,22 @@ func _collect_preset_state() -> Dictionary:
 		"env_preset": _env_options.get_item_text(_env_options.selected) if _env_options else "",
 		"sun_angle": _sun_angle_slider.value if _sun_angle_slider else -35.0,
 		"ambient": _ambient_slider.value if _ambient_slider else 1.0,
+		"sun_shadows": _sun_shadow_toggle.button_pressed if _sun_shadow_toggle else true,
+		"sun_shadow_opacity": _sun_shadow_opacity_slider.value if _sun_shadow_opacity_slider else 1.0,
+		"sun_softness": _sun_softness_slider.value if _sun_softness_slider else 0.0,
+		"sun_color": _sun_color_picker.color if _sun_color_picker else (_key_light.light_color if _key_light else Color(1.0, 0.98, 0.92)),
+		"ambient_color": _ambient_color_picker.color if _ambient_color_picker else (_world_env.environment.ambient_light_color if _world_env and _world_env.environment else Color(0.6, 0.65, 0.7)),
+		"fog_enabled": _fog_toggle.button_pressed if _fog_toggle else false,
+		"fog_color": _fog_color_picker.color if _fog_color_picker else Color(0.72, 0.77, 0.83),
+		"fog_density": _fog_density_slider.value if _fog_density_slider else 0.0,
+		"fog_begin": _fog_begin_slider.value if _fog_begin_slider else 5.0,
+		"fog_end": _fog_end_slider.value if _fog_end_slider else 200.0,
+		"fog_height_enabled": _fog_height_toggle.button_pressed if _fog_height_toggle else false,
+		"fog_height_density": _fog_height_density_slider.value if _fog_height_density_slider else 0.05,
+		"fog_height_falloff": _fog_height_falloff_slider.value if _fog_height_falloff_slider else 0.5,
+		"volumetric_enabled": _volumetric_fog_toggle.button_pressed if _volumetric_fog_toggle else false,
+		"volumetric_density": _volumetric_fog_density_slider.value if _volumetric_fog_density_slider else 0.03,
+		"volumetric_aniso": _volumetric_fog_aniso_slider.value if _volumetric_fog_aniso_slider else 0.0,
 		"temp": _temp_slider.value if _temp_slider else 0.0,
 		"tint": _tint_slider.value if _tint_slider else 0.0,
 		"saturation": _saturation_slider.value if _saturation_slider else 1.0,
@@ -3236,6 +4347,38 @@ func _apply_preset_state(preset: Dictionary) -> void:
 		_sun_angle_slider.value = float(preset.get("sun_angle", _sun_angle_slider.value))
 	if _ambient_slider:
 		_ambient_slider.value = float(preset.get("ambient", _ambient_slider.value))
+	if _sun_shadow_toggle:
+		_set_check_value(_sun_shadow_toggle, bool(preset.get("sun_shadows", _sun_shadow_toggle.button_pressed)))
+	if _sun_shadow_opacity_slider:
+		_sun_shadow_opacity_slider.value = float(preset.get("sun_shadow_opacity", _sun_shadow_opacity_slider.value))
+	if _sun_softness_slider:
+		_sun_softness_slider.value = float(preset.get("sun_softness", _sun_softness_slider.value))
+	if _sun_color_picker:
+		_sun_color_picker.color = _to_color(preset.get("sun_color", _sun_color_picker.color), _sun_color_picker.color)
+	if _ambient_color_picker:
+		_ambient_color_picker.color = _to_color(preset.get("ambient_color", _ambient_color_picker.color), _ambient_color_picker.color)
+	if _fog_toggle:
+		_set_check_value(_fog_toggle, bool(preset.get("fog_enabled", _fog_toggle.button_pressed)))
+	if _fog_color_picker:
+		_fog_color_picker.color = _to_color(preset.get("fog_color", _fog_color_picker.color), _fog_color_picker.color)
+	if _fog_density_slider:
+		_fog_density_slider.value = float(preset.get("fog_density", _fog_density_slider.value))
+	if _fog_begin_slider:
+		_fog_begin_slider.value = float(preset.get("fog_begin", _fog_begin_slider.value))
+	if _fog_end_slider:
+		_fog_end_slider.value = float(preset.get("fog_end", _fog_end_slider.value))
+	if _fog_height_toggle:
+		_set_check_value(_fog_height_toggle, bool(preset.get("fog_height_enabled", _fog_height_toggle.button_pressed)))
+	if _fog_height_density_slider:
+		_fog_height_density_slider.value = float(preset.get("fog_height_density", _fog_height_density_slider.value))
+	if _fog_height_falloff_slider:
+		_fog_height_falloff_slider.value = float(preset.get("fog_height_falloff", _fog_height_falloff_slider.value))
+	if _volumetric_fog_toggle:
+		_set_check_value(_volumetric_fog_toggle, bool(preset.get("volumetric_enabled", _volumetric_fog_toggle.button_pressed)))
+	if _volumetric_fog_density_slider:
+		_volumetric_fog_density_slider.value = float(preset.get("volumetric_density", _volumetric_fog_density_slider.value))
+	if _volumetric_fog_aniso_slider:
+		_volumetric_fog_aniso_slider.value = float(preset.get("volumetric_aniso", _volumetric_fog_aniso_slider.value))
 	if _temp_slider:
 		_temp_slider.value = float(preset.get("temp", _temp_slider.value))
 	if _tint_slider:
@@ -3297,9 +4440,13 @@ func _apply_preset_state(preset: Dictionary) -> void:
 		_bounce_color.color = bc
 	if _bounce_intensity:
 		_bounce_intensity.value = float(preset.get("bounce_intensity", _bounce_intensity.value))
+	_apply_sun_environment_settings()
+	_apply_fog_settings()
 
 
 func _get_selected_aspect_ratio(base_size: Vector2) -> float:
+	if _composition_crop_ratio > 0.01:
+		return _composition_crop_ratio
 	if _aspect_options:
 		if _aspect_options.get_item_count() == 0 or _aspect_options.selected < 0:
 			return base_size.x / maxf(base_size.y, 1.0)
@@ -3363,12 +4510,13 @@ func _force_reparent_settings() -> void:
 		"ExposureHeaderRow","ExposureRow","AutoExposureRow","AutoExposureSpeedRow","AutoExposureRangeRow",
 		"GuidesHeaderRow","GuidesRow","GuideTypeOptions","GuidesOpacityRow",
 		"CaptureHeaderRow","ButtonsRow","CaptureButton","CaptureLayersButton","BackButton","CapturePathRow","CaptureFormatRow",
+		"CaptureTimerRow","CaptureBurstRow","CaptureBracketRow","CaptureBracketStepRow","CaptureWatermarkRow","CaptureWatermarkTextRow",
 		"PassesHeaderRow","PassPreviewRow","PassesGrid","PassBeauty","PassAlbedo","PassNormals","PassDepth","PassLighting",
-		"LightRigHeaderRow","LightRigGrid","EnvironmentHeaderRow","EnvRow","EnvironmentRow","AmbientRow","FogRow",
+		"LightRigHeaderRow","LightRigGrid","EnvironmentHeaderRow","EnvRow","EnvironmentRow","AmbientRow","FogRow","FogDensityRow","FogBeginRow","FogEndRow",
 		"ExportHeaderRow","ExportNote","ResRow","AspectRow",
 		"ColorHeaderRow","TempRow","TintRow","SaturationRow","ContrastRow",
 		"EffectsHeaderRow","VignetteRow","GrainRow","BloomRow",
-		"CompositionHeaderRow","CompositionNote",
+		"CompositionHeaderRow","CompositionCropRow","CompositionOffsetXRow","CompositionOffsetYRow","CompositionRollRow","CompositionSnapRow",
 		"PresetsHeaderRow","PresetsRow","PresetNameRow","PresetButtonsRow",
 		"HistogramCard","Title","Status"
 	]
@@ -3419,11 +4567,15 @@ func _calculate_crop_rect(base_size: Vector2) -> Rect2:
 		return Rect2(Vector2.ZERO, base_size)
 	if target_ratio > base_ratio:
 		var height := base_size.x / target_ratio
-		var y := (base_size.y - height) * 0.5
+		var max_y := maxf(base_size.y - height, 0.0)
+		var center_y := max_y * 0.5
+		var y := clampf(center_y + (_composition_crop_offset.y * center_y), 0.0, max_y)
 		return Rect2(Vector2(0.0, y), Vector2(base_size.x, height))
 	else:
 		var width := base_size.y * target_ratio
-		var x := (base_size.x - width) * 0.5
+		var max_x := maxf(base_size.x - width, 0.0)
+		var center_x := max_x * 0.5
+		var x := clampf(center_x + (_composition_crop_offset.x * center_x), 0.0, max_x)
 		return Rect2(Vector2(x, 0.0), Vector2(width, base_size.y))
 
 
@@ -3464,7 +4616,7 @@ func _update_viewfinder() -> void:
 		# if the control's size doesn't match the viewport, nudge its minimum size
 		# so Godot's layout will allocate the correct rect and allow _draw to run.
 		if _viewfinder.size.distance_to(base_size) > 1.0:
-			_viewfinder.rect_min_size = base_size
+			_viewfinder.custom_minimum_size = base_size
 
 	var crop_rect := _calculate_crop_rect(base_size)
 	if enable_layout_debug_print:
@@ -3480,6 +4632,8 @@ func _set_viewfinder_visible(visible: bool) -> void:
 		_viewfinder.call("set_enabled", visible)
 	else:
 		_viewfinder.visible = visible
+	if _viewfinder_toggle:
+		_viewfinder_toggle.button_pressed = visible
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -3498,9 +4652,8 @@ func _unhandled_input(event: InputEvent) -> void:
 				get_viewport().set_input_as_handled()
 		elif kc == KEY_G:
 			# Toggle composition guides
-			if _guides != null:
-				_guides.visible = not _guides.visible
-				get_viewport().set_input_as_handled()
+			_toggle_guides()
+			get_viewport().set_input_as_handled()
 
 
 func _on_capture_path_browse() -> void:
@@ -3527,15 +4680,26 @@ func _add_capture_thumbnail(capture: Dictionary) -> void:
 	var target: HBoxContainer = _filmstrip_hbox if _filmstrip_hbox != null else _contact_strip
 	if capture == null or target == null:
 		return
+	target.add_theme_constant_override("separation", 8)
 	# Create thumbnail button
 	var thumb_btn := Button.new()
 	thumb_btn.name = "Thumb_%d" % target.get_child_count()
+	thumb_btn.custom_minimum_size = Vector2(160, 88)
+	thumb_btn.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+	thumb_btn.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	thumb_btn.mouse_filter = Control.MOUSE_FILTER_STOP
+	thumb_btn.focus_mode = Control.FOCUS_NONE
+	thumb_btn.clip_contents = true
 	var tex: Texture = capture.get("thumb", null) as Texture
 	if tex != null and tex is Texture:
 		var tr := TextureRect.new()
 		tr.texture = tex
 		tr.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
-		tr.rect_min_size = Vector2(160, 88)
+		tr.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		tr.offset_left = 0.0
+		tr.offset_top = 0.0
+		tr.offset_right = 0.0
+		tr.offset_bottom = 0.0
 		tr.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		thumb_btn.add_child(tr)
 	else:
@@ -3543,44 +4707,175 @@ func _add_capture_thumbnail(capture: Dictionary) -> void:
 	# store metadata and make toggleable
 	thumb_btn.set_meta("capture", capture)
 	thumb_btn.toggle_mode = true
-	var idx := target.get_child_count()
+	thumb_btn.tooltip_text = "Left click: Preview\nRight click: Options"
+	var idx := _session_captures.size() - 1
 	thumb_btn.set_meta("capture_index", idx)
 	# left-click opens preview
 	thumb_btn.pressed.connect(func():
-		_open_capture_preview(capture)
+		var i := int(thumb_btn.get_meta("capture_index", -1))
+		if i < 0 or i >= _session_captures.size():
+			return
+		_select_capture(i)
+		_open_capture_preview(_session_captures[i] as Dictionary)
 	)
 	# right-click opens popup menu
-	thumb_btn.gui_input.connect(func(ev: InputEvent, b=thumb_btn, cap=capture, i=idx):
-		if ev is InputEventMouseButton and ev.pressed and ev.button_index == 2:
-			_menu_target_capture_index = i
+	thumb_btn.gui_input.connect(func(ev: InputEvent):
+		if ev is InputEventMouseButton and ev.pressed and ev.button_index == MOUSE_BUTTON_RIGHT:
+			_menu_target_capture_index = int(thumb_btn.get_meta("capture_index", -1))
 			if _thumb_menu:
+				var mouse_pos := Vector2i(get_viewport().get_mouse_position())
+				_thumb_menu.position = mouse_pos
+				_thumb_menu.reset_size()
 				_thumb_menu.popup()
-	)
+		)
 	target.add_child(thumb_btn)
 
 
-func _open_capture_preview(capture: Dictionary) -> void:
-	if capture == null or _capture_preview_panel == null:
+func _load_capture_texture(capture: Dictionary) -> Texture2D:
+	if capture == null:
+		return null
+	var capture_path := String(capture.get("path", ""))
+	if capture_path != "" and FileAccess.file_exists(capture_path):
+		var full_img := Image.new()
+		var err := full_img.load(capture_path)
+		if err == OK:
+			return ImageTexture.create_from_image(full_img)
+	var thumb_tex: Variant = capture.get("thumb", null)
+	if thumb_tex is Texture2D:
+		return thumb_tex as Texture2D
+	return null
+
+
+func _update_preview_display() -> void:
+	if _preview_image_node == null:
 		return
-	var img_node := _capture_preview_panel.get_node_or_null("PreviewImage") as TextureRect
-	if img_node and capture.has("thumb") and capture.thumb != null:
-		img_node.texture = capture.thumb
-	_capture_preview_panel.popup_centered_ratio(0.8)
-	# add restore-camera button if not present
-	if _capture_preview_panel.get_node_or_null("RestoreBtn") == null:
-		var btn := Button.new()
-		btn.name = "RestoreBtn"
-		btn.text = "Restore Camera"
-		btn.rect_min_size = Vector2(140, 32)
-		btn.pressed.connect(func():
-			if capture.has("camera") and _camera:
-				_camera.global_position = capture.camera.position
-				_camera.rotation_degrees = capture.camera.rotation
-				_yaw = _camera.rotation_degrees.y
-				_pitch = _camera.rotation_degrees.x
-				_capture_preview_panel.hide()
-		)
-		_capture_preview_panel.add_child(btn)
+	var tex := _preview_compare_texture if _preview_show_compare else _preview_primary_texture
+	_preview_image_node.texture = tex
+	if tex:
+		_preview_image_size = tex.get_size()
+	else:
+		_preview_image_size = Vector2.ZERO
+	_preview_zoom = clampf(_preview_zoom, 0.1, 8.0)
+	var target_size := _preview_image_size * _preview_zoom
+	if target_size.x > 1.0 and target_size.y > 1.0:
+		_preview_image_node.custom_minimum_size = target_size
+	else:
+		_preview_image_node.custom_minimum_size = Vector2.ZERO
+
+
+func _set_preview_zoom(value: float) -> void:
+	_preview_zoom = clampf(value, 0.1, 8.0)
+	_update_preview_display()
+
+
+func _fit_preview_zoom() -> void:
+	if _preview_scroll == null:
+		return
+	var tex := _preview_compare_texture if _preview_show_compare else _preview_primary_texture
+	if tex == null:
+		return
+	var tex_size := tex.get_size()
+	if tex_size.x <= 1.0 or tex_size.y <= 1.0:
+		return
+	var view_size := _preview_scroll.size - Vector2(12.0, 12.0)
+	if view_size.x <= 1.0 or view_size.y <= 1.0:
+		return
+	var fit := minf(view_size.x / tex_size.x, view_size.y / tex_size.y)
+	_set_preview_zoom(maxf(0.1, fit))
+
+
+func _on_preview_zoom_in_pressed() -> void:
+	_set_preview_zoom(_preview_zoom * 1.25)
+
+
+func _on_preview_zoom_out_pressed() -> void:
+	_set_preview_zoom(_preview_zoom / 1.25)
+
+
+func _on_preview_zoom_fit_pressed() -> void:
+	_fit_preview_zoom()
+
+
+func _on_preview_compare_toggled(pressed: bool) -> void:
+	if _preview_compare_texture == null:
+		_preview_show_compare = false
+	else:
+		_preview_show_compare = pressed
+	_update_preview_display()
+
+
+func _on_preview_reapply_pressed() -> void:
+	if _preview_capture_index >= 0:
+		_reapply_capture(_preview_capture_index)
+
+
+func _on_preview_show_in_finder_pressed() -> void:
+	_reveal_in_finder(_preview_capture)
+
+
+func _on_preview_delete_pressed() -> void:
+	if _preview_capture_index < 0:
+		return
+	_delete_capture(_preview_capture_index, true)
+	if _capture_preview_panel:
+		_capture_preview_panel.hide()
+
+
+func _open_capture_preview(capture: Dictionary) -> void:
+	if capture == null:
+		return
+	_ensure_capture_preview_panel()
+	if _capture_preview_panel == null:
+		return
+	_preview_capture = capture
+	_preview_capture_index = _selected_capture_idx
+	if _preview_capture_index < 0:
+		_preview_capture_index = _session_captures.find(capture)
+	_preview_primary_texture = _load_capture_texture(capture)
+	_preview_compare_capture = {}
+	_preview_compare_texture = null
+	if _preview_capture_index > 0 and _preview_capture_index - 1 < _session_captures.size():
+		_preview_compare_capture = _session_captures[_preview_capture_index - 1] as Dictionary
+		_preview_compare_texture = _load_capture_texture(_preview_compare_capture)
+	elif _preview_capture_index == 0 and _session_captures.size() > 1:
+		_preview_compare_capture = _session_captures[1] as Dictionary
+		_preview_compare_texture = _load_capture_texture(_preview_compare_capture)
+	_preview_show_compare = false
+	var compare_toggle := _capture_preview_panel.get_node_or_null("PreviewRoot/PreviewToolbar/PreviewCompare") as CheckBox
+	if compare_toggle:
+		if compare_toggle.has_method("set_pressed_no_signal"):
+			compare_toggle.set_pressed_no_signal(false)
+		else:
+			compare_toggle.button_pressed = false
+		compare_toggle.disabled = (_preview_compare_texture == null)
+	_update_preview_display()
+	var viewport_size := get_viewport().get_visible_rect().size
+	var desired_size := Vector2i(
+		maxi(760, int(viewport_size.x * 0.86)),
+		maxi(520, int(viewport_size.y * 0.84))
+	)
+	_capture_preview_panel.size = desired_size
+	var panel_size := _capture_preview_panel.size
+	if panel_size.x <= 0 or panel_size.y <= 0:
+		panel_size = _capture_preview_panel.min_size
+	_capture_preview_panel.position = Vector2i(
+		maxi(0, int((viewport_size.x - float(panel_size.x)) * 0.5)),
+		maxi(0, int((viewport_size.y - float(panel_size.y)) * 0.5))
+	)
+	_capture_preview_panel.popup()
+	call_deferred("_fit_preview_zoom")
+
+
+func _on_preview_restore_pressed() -> void:
+	if _preview_capture.has("camera") and _camera:
+		var cam := _preview_capture["camera"] as Dictionary
+		if cam.has("position"):
+			_camera.global_position = cam["position"] as Vector3
+		if cam.has("rotation"):
+			_camera.rotation_degrees = cam["rotation"] as Vector3
+		_sync_camera_angles_from_rotation()
+	if _capture_preview_panel:
+		_capture_preview_panel.hide()
 
 
 func _on_thumb_menu_id_pressed(id: int) -> void:
@@ -3589,17 +4884,20 @@ func _on_thumb_menu_id_pressed(id: int) -> void:
 		return
 	var capture: Dictionary = _session_captures[idx] as Dictionary
 	match id:
-		0:
+		THUMB_MENU_PREVIEW:
 			_select_capture(idx)
-		1:
 			_open_capture_preview(capture)
-		2:
+		THUMB_MENU_REAPPLY:
+			_reapply_capture(idx)
+		THUMB_MENU_SHOW_IN_FINDER:
+			_reveal_in_finder(capture)
+		THUMB_MENU_EXPORT:
 			# Export
 			_thumb_export_target_index = idx
 			if _thumb_export_dialog:
 				_thumb_export_dialog.popup_centered_ratio(0.5)
-		3:
-			_reveal_in_finder(capture)
+		THUMB_MENU_DELETE:
+			_delete_capture(idx, true)
 		_:
 			pass
 
@@ -3613,17 +4911,241 @@ func _select_capture(idx: int) -> void:
 		for i in range(target.get_child_count()):
 			var b = target.get_child(i)
 			if b is Button:
-				(b as Button).button_pressed = (i == idx)
+				var capture_idx := int((b as Button).get_meta("capture_index", -1))
+				(b as Button).button_pressed = (capture_idx == idx)
 	# Restore camera if available
 	var cap: Dictionary = _session_captures[idx] as Dictionary
 	if cap and cap.has("camera") and _camera:
 		var cam: Dictionary = cap["camera"] as Dictionary
 		if cam.has("position"):
-			_camera.global_position = cam.position
+			_camera.global_position = cam["position"] as Vector3
 		if cam.has("rotation"):
-			_camera.rotation_degrees = cam.rotation
-		_yaw = _camera.rotation_degrees.y
-		_pitch = _camera.rotation_degrees.x
+			_camera.rotation_degrees = cam["rotation"] as Vector3
+		_sync_camera_angles_from_rotation()
+
+
+func _delete_file_if_exists(path: String) -> void:
+	if path == "":
+		return
+	if FileAccess.file_exists(path):
+		DirAccess.remove_absolute(path)
+
+
+func _delete_capture(idx: int, delete_files: bool) -> void:
+	if idx < 0 or idx >= _session_captures.size():
+		return
+	var deleting_preview := (_preview_capture_index == idx)
+	var cap := _session_captures[idx] as Dictionary
+	if delete_files:
+		_delete_file_if_exists(String(cap.get("path", "")))
+		_delete_file_if_exists(String(cap.get("metadata_path", "")))
+	_session_captures.remove_at(idx)
+	var target: HBoxContainer = _filmstrip_hbox if _filmstrip_hbox != null else _contact_strip
+	if target:
+		for child in target.get_children():
+			if child is Button:
+				var btn := child as Button
+				var child_idx := int(btn.get_meta("capture_index", -1))
+				if child_idx == idx:
+					btn.queue_free()
+				elif child_idx > idx:
+					btn.set_meta("capture_index", child_idx - 1)
+	if _selected_capture_idx == idx:
+		_selected_capture_idx = -1
+	elif _selected_capture_idx > idx:
+		_selected_capture_idx -= 1
+	if _preview_capture_index == idx:
+		_preview_capture_index = -1
+	elif _preview_capture_index > idx:
+		_preview_capture_index -= 1
+	if deleting_preview and _capture_preview_panel and _capture_preview_panel.visible:
+		_capture_preview_panel.hide()
+	if _status:
+		_status.text = "Deleted capture"
+
+
+func _load_capture_metadata(capture: Dictionary) -> Dictionary:
+	if capture == null:
+		return {}
+	if capture.has("metadata") and capture["metadata"] is Dictionary:
+		return capture["metadata"] as Dictionary
+	var metadata_path := String(capture.get("metadata_path", ""))
+	if metadata_path == "" or not FileAccess.file_exists(metadata_path):
+		return {}
+	var file := FileAccess.open(metadata_path, FileAccess.READ)
+	if file == null:
+		return {}
+	var parsed: Variant = JSON.parse_string(file.get_as_text())
+	file.close()
+	if parsed is Dictionary:
+		return parsed as Dictionary
+	return {}
+
+
+func _set_option_by_text(option: OptionButton, text: String) -> bool:
+	if option == null:
+		return false
+	for i in range(option.get_item_count()):
+		if option.get_item_text(i) == text:
+			option.select(i)
+			return true
+	return false
+
+
+func _apply_capture_metadata(meta: Dictionary) -> void:
+	if meta == null or meta.is_empty():
+		return
+	if meta.has("camera") and meta["camera"] is Dictionary:
+		var cam := meta["camera"] as Dictionary
+		if cam.has("position") and _camera:
+			_camera.global_position = _parse_vector3(cam["position"])
+		if cam.has("rotation") and _camera:
+			_camera.rotation_degrees = _parse_vector3(cam["rotation"])
+			_sync_camera_angles_from_rotation()
+		if cam.has("fov") and _fov_slider:
+			_fov_slider.value = float(cam["fov"])
+		if cam.has("iso") and _iso_slider:
+			_iso_slider.value = float(cam["iso"])
+		if cam.has("aperture") and _aperture_slider:
+			_aperture_slider.value = float(cam["aperture"])
+		if cam.has("shutter") and _shutter_slider:
+			_shutter_slider.value = float(cam["shutter"])
+		if cam.has("focus_distance") and _focus_slider:
+			_focus_slider.value = float(cam["focus_distance"])
+	if meta.has("exposure") and meta["exposure"] is Dictionary:
+		var exposure := meta["exposure"] as Dictionary
+		if exposure.has("base") and _exposure_slider:
+			_exposure_slider.value = float(exposure["base"])
+	if meta.has("environment") and meta["environment"] is Dictionary:
+		var env := meta["environment"] as Dictionary
+		if env.has("preset") and _env_options:
+			var label := String(env["preset"])
+			if _set_option_by_text(_env_options, label):
+				_on_environment_selected(_env_options.selected)
+		if env.has("sun_shadows") and _sun_shadow_toggle:
+			_set_check_value(_sun_shadow_toggle, bool(env["sun_shadows"]))
+		if env.has("sun_shadow_opacity") and _sun_shadow_opacity_slider:
+			_sun_shadow_opacity_slider.value = float(env["sun_shadow_opacity"])
+		if env.has("sun_softness") and _sun_softness_slider:
+			_sun_softness_slider.value = float(env["sun_softness"])
+		if env.has("sun_color") and _sun_color_picker:
+			_sun_color_picker.color = _to_color(env["sun_color"], _sun_color_picker.color)
+		if env.has("ambient_color") and _ambient_color_picker:
+			_ambient_color_picker.color = _to_color(env["ambient_color"], _ambient_color_picker.color)
+		if env.has("fog_enabled") and _fog_toggle:
+			_set_check_value(_fog_toggle, bool(env["fog_enabled"]))
+		if env.has("fog_color") and _fog_color_picker:
+			_fog_color_picker.color = _to_color(env["fog_color"], _fog_color_picker.color)
+		if env.has("fog_density") and _fog_density_slider:
+			_fog_density_slider.value = float(env["fog_density"])
+		if env.has("fog_begin") and _fog_begin_slider:
+			_fog_begin_slider.value = float(env["fog_begin"])
+		if env.has("fog_end") and _fog_end_slider:
+			_fog_end_slider.value = float(env["fog_end"])
+		if env.has("fog_height_enabled") and _fog_height_toggle:
+			_set_check_value(_fog_height_toggle, bool(env["fog_height_enabled"]))
+		if env.has("fog_height_density") and _fog_height_density_slider:
+			_fog_height_density_slider.value = float(env["fog_height_density"])
+		if env.has("fog_height_falloff") and _fog_height_falloff_slider:
+			_fog_height_falloff_slider.value = float(env["fog_height_falloff"])
+		if env.has("volumetric_enabled") and _volumetric_fog_toggle:
+			_set_check_value(_volumetric_fog_toggle, bool(env["volumetric_enabled"]))
+		if env.has("volumetric_density") and _volumetric_fog_density_slider:
+			_volumetric_fog_density_slider.value = float(env["volumetric_density"])
+		if env.has("volumetric_aniso") and _volumetric_fog_aniso_slider:
+			_volumetric_fog_aniso_slider.value = float(env["volumetric_aniso"])
+		_apply_sun_environment_settings()
+		_apply_fog_settings()
+	if meta.has("color") and meta["color"] is Dictionary:
+		var color := meta["color"] as Dictionary
+		if color.has("temp") and _temp_slider:
+			_temp_slider.value = float(color["temp"])
+		if color.has("tint") and _tint_slider:
+			_tint_slider.value = float(color["tint"])
+		if color.has("saturation") and _saturation_slider:
+			_saturation_slider.value = float(color["saturation"])
+		if color.has("contrast") and _contrast_slider:
+			_contrast_slider.value = float(color["contrast"])
+	if meta.has("effects") and meta["effects"] is Dictionary:
+		var fx := meta["effects"] as Dictionary
+		if fx.has("vignette") and _vignette_slider:
+			_vignette_slider.value = float(fx["vignette"])
+		if fx.has("grain") and _grain_slider:
+			_grain_slider.value = float(fx["grain"])
+		if fx.has("bloom") and _bloom_slider:
+			_bloom_slider.value = float(fx["bloom"])
+	if meta.has("composition") and meta["composition"] is Dictionary:
+		var comp := meta["composition"] as Dictionary
+		if comp.has("crop_ratio"):
+			var ratio := float(comp["crop_ratio"])
+			_composition_crop_ratio = ratio
+			if _composition_crop_options:
+				var selected_idx := -1
+				for i in range(_composition_crop_options.get_item_count()):
+					var opt_meta: Variant = _composition_crop_options.get_item_metadata(i)
+					if opt_meta is Dictionary:
+						var opt_ratio := float((opt_meta as Dictionary).get("ratio", 0.0))
+						if absf(opt_ratio - ratio) < 0.001:
+							selected_idx = i
+							break
+				if selected_idx >= 0:
+					_composition_crop_options.select(selected_idx)
+		if comp.has("offset") and comp["offset"] is Array and (comp["offset"] as Array).size() >= 2:
+			var arr := comp["offset"] as Array
+			_composition_crop_offset = Vector2(float(arr[0]), float(arr[1]))
+			if _composition_offset_x_slider:
+				_composition_offset_x_slider.value = _composition_crop_offset.x
+			if _composition_offset_y_slider:
+				_composition_offset_y_slider.value = _composition_crop_offset.y
+		if comp.has("roll"):
+			_composition_horizon_roll = float(comp["roll"])
+			if _composition_roll_slider:
+				_composition_roll_slider.value = _composition_horizon_roll
+			_apply_camera_rotation_from_angles()
+		if comp.has("thirds_snap") and _composition_snap_toggle:
+			_composition_snap_toggle.button_pressed = bool(comp["thirds_snap"])
+	if meta.has("capture_workflow") and meta["capture_workflow"] is Dictionary:
+		var workflow := meta["capture_workflow"] as Dictionary
+		if workflow.has("timer_seconds") and _capture_timer_slider:
+			_capture_timer_slider.value = float(workflow["timer_seconds"])
+		if workflow.has("burst_count") and _capture_burst_options:
+			var burst_count := int(workflow["burst_count"])
+			for i in range(_capture_burst_options.get_item_count()):
+				var burst_meta: Variant = _capture_burst_options.get_item_metadata(i)
+				if int(burst_meta) == burst_count:
+					_capture_burst_options.select(i)
+					break
+		if workflow.has("bracket_count") and _capture_bracket_options:
+			var bracket_count := int(workflow["bracket_count"])
+			for i in range(_capture_bracket_options.get_item_count()):
+				var bracket_meta: Variant = _capture_bracket_options.get_item_metadata(i)
+				if int(bracket_meta) == bracket_count:
+					_capture_bracket_options.select(i)
+					break
+		if workflow.has("bracket_step_ev") and _capture_bracket_step_slider:
+			_capture_bracket_step_slider.value = float(workflow["bracket_step_ev"])
+		if workflow.has("watermark_enabled") and _capture_watermark_toggle:
+			_capture_watermark_toggle.button_pressed = bool(workflow["watermark_enabled"])
+		if workflow.has("watermark_text") and _capture_watermark_text:
+			_capture_watermark_text.text = String(workflow["watermark_text"])
+	_update_viewfinder()
+
+
+func _reapply_capture(idx: int) -> void:
+	if idx < 0 or idx >= _session_captures.size():
+		return
+	_select_capture(idx)
+	var cap := _session_captures[idx] as Dictionary
+	_apply_capture_metadata(_load_capture_metadata(cap))
+	if cap.has("camera") and _camera:
+		var cam := cap["camera"] as Dictionary
+		if cam.has("position"):
+			_camera.global_position = cam["position"] as Vector3
+		if cam.has("rotation"):
+			_camera.rotation_degrees = cam["rotation"] as Vector3
+		_sync_camera_angles_from_rotation()
+	if _status:
+		_status.text = "Reapplied capture settings"
 
 
 func _on_thumb_export_selected(path: String) -> void:
@@ -3683,21 +5205,134 @@ func _reveal_in_finder(capture: Dictionary) -> void:
 		OS.execute("xdg-open", [parent])
 
 
-func _on_toolbar_viewfinder_pressed() -> void:
-	# Toggle viewfinder via toolbar
+func _on_toolbar_viewfinder_pressed(pressed: bool) -> void:
 	if _viewfinder != null:
-		_set_viewfinder_visible(not _viewfinder.visible)
+		_set_viewfinder_visible(pressed)
 
 
-func _on_toolbar_guides_pressed() -> void:
-	# Toggle guides visibility via toolbar
+func _on_toolbar_guides_pressed(pressed: bool) -> void:
 	if _guides != null:
-		_guides.visible = not _guides.visible
+		_guides.visible = pressed
+	if _guides_check:
+		_guides_check.button_pressed = pressed
 
 
 func _on_capture_pressed() -> void:
 	var size := _get_capture_size()
 	await _capture_image(size)
+
+
+func _get_capture_timer_seconds() -> int:
+	if _capture_timer_slider == null:
+		return 0
+	return int(round(_capture_timer_slider.value))
+
+
+func _get_capture_burst_count() -> int:
+	if _capture_burst_options == null or _capture_burst_options.selected < 0:
+		return 1
+	var meta: Variant = _capture_burst_options.get_item_metadata(_capture_burst_options.selected)
+	if meta is int:
+		return int(meta)
+	if meta is float:
+		return int(round(float(meta)))
+	return 1
+
+
+func _get_capture_bracket_count() -> int:
+	if _capture_bracket_options == null or _capture_bracket_options.selected < 0:
+		return 1
+	var meta: Variant = _capture_bracket_options.get_item_metadata(_capture_bracket_options.selected)
+	if meta is int:
+		return int(meta)
+	if meta is float:
+		return int(round(float(meta)))
+	return 1
+
+
+func _get_capture_bracket_offsets() -> Array:
+	var count := maxi(1, _get_capture_bracket_count())
+	var step := _capture_bracket_step_slider.value if _capture_bracket_step_slider else 1.0
+	var offsets: Array = []
+	if count == 1:
+		offsets.append(0.0)
+		return offsets
+	var half := int((count - 1) / 2)
+	for i in range(count):
+		offsets.append((float(i - half)) * step)
+	return offsets
+
+
+func _wait_capture_timer() -> void:
+	var total := _get_capture_timer_seconds()
+	if total <= 0:
+		return
+	for t in range(total, 0, -1):
+		if _status:
+			_status.text = "Capturing in %ds…" % t
+		await get_tree().create_timer(1.0).timeout
+
+
+func _apply_capture_watermark(image: Image) -> void:
+	if image == null:
+		return
+	if _capture_watermark_toggle == null or not _capture_watermark_toggle.button_pressed:
+		return
+	var width := image.get_width()
+	var height := image.get_height()
+	if width <= 1 or height <= 1:
+		return
+	var pad := maxi(8, int(round(minf(width, height) * 0.012)))
+	var band_h := maxi(20, int(round(height * 0.05)))
+	var rect := Rect2i(pad, height - band_h - pad, width - (pad * 2), band_h)
+	var overlay := Color(0.02, 0.02, 0.02, 0.55)
+	image.fill_rect(rect, overlay)
+	# Add a bright top stroke and a corner stamp so watermark is visible without a font dependency.
+	image.fill_rect(Rect2i(rect.position.x, rect.position.y, rect.size.x, 2), Color(1, 1, 1, 0.75))
+	var stamp_size := maxi(14, int(round(band_h * 0.65)))
+	var stamp_rect := Rect2i(rect.position.x + rect.size.x - stamp_size - 6, rect.position.y + 4, stamp_size, stamp_size)
+	image.fill_rect(stamp_rect, Color(1, 1, 1, 0.85))
+	var mark_text := _capture_watermark_text.text if _capture_watermark_text else "SF"
+	var bits: int = abs(mark_text.hash())
+	var bit_width := maxi(2, int(round(rect.size.x / 48.0)))
+	var bit_height := maxi(8, band_h - 10)
+	var start_x := rect.position.x + 8
+	var start_y := rect.position.y + 5
+	for i in range(0, 24):
+		if ((bits >> i) & 1) == 1:
+			image.fill_rect(Rect2i(start_x + (i * bit_width), start_y, bit_width - 1, bit_height), Color(1, 1, 1, 0.7))
+
+
+func _run_capture_sequence(size: Vector2i) -> void:
+	await _wait_capture_timer()
+	var base_exposure := _base_exposure
+	var burst_count := maxi(1, _get_capture_burst_count())
+	var bracket_offsets := _get_capture_bracket_offsets()
+	var ts := Time.get_datetime_string_from_system().replace(":", "-")
+	for burst_index in range(burst_count):
+		for offset in bracket_offsets:
+			var exposure := base_exposure + float(offset)
+			_on_exposure_changed(exposure)
+			if _exposure_slider:
+				_set_slider_value(_exposure_slider, exposure)
+			if _status:
+				_status.text = "Capturing burst %d/%d (EV %+0.1f)…" % [burst_index + 1, burst_count, float(offset)]
+			var img := await _render_to_image(size)
+			if img:
+				_apply_capture_watermark(img)
+				_save_image(img, {
+					"sequence": ts,
+					"burst_index": burst_index + 1,
+					"burst_total": burst_count,
+					"bracket_ev": float(offset)
+				})
+		if burst_index < burst_count - 1:
+			await get_tree().create_timer(0.08).timeout
+	_on_exposure_changed(base_exposure)
+	if _exposure_slider:
+		_set_slider_value(_exposure_slider, base_exposure)
+	if _status:
+		_status.text = "Saved capture sequence"
 
 
 func _on_capture_layers_pressed() -> void:
@@ -3747,19 +5382,104 @@ func _capture_png(size: Vector2i) -> void:
 		_status.text = "Saved capture"
 
 
-func _save_image(image: Image) -> void:
+func _format_bracket_suffix(ev: float) -> String:
+	var abs_ev := absf(ev)
+	var hundredths := int(round(abs_ev * 100.0))
+	var major := int(hundredths / 100)
+	var minor := int(hundredths % 100)
+	var sign := "p" if ev >= 0.0 else "m"
+	return "ev%s%d_%02d" % [sign, major, minor]
+
+
+func _build_capture_metadata(full_path: String, size: Vector2i, format: String, context: Dictionary) -> Dictionary:
+	return {
+		"captured_at": Time.get_datetime_string_from_system(),
+		"path": full_path,
+		"size": [size.x, size.y],
+		"format": format,
+		"camera": {
+			"position": [_camera.global_position.x, _camera.global_position.y, _camera.global_position.z] if _camera else [0.0, 0.0, 0.0],
+			"rotation": [_camera.rotation_degrees.x, _camera.rotation_degrees.y, _camera.rotation_degrees.z] if _camera else [0.0, 0.0, 0.0],
+			"fov": _camera.fov if _camera else 60.0,
+			"iso": _iso_current,
+			"aperture": _aperture_current,
+			"shutter": _shutter_current,
+			"focus_distance": _focus_distance
+		},
+		"exposure": {
+			"base": _base_exposure,
+			"auto": _auto_exposure_enabled
+		},
+		"environment": {
+			"preset": _env_options.get_item_text(_env_options.selected) if _env_options else "",
+			"sun_shadows": _sun_shadow_toggle.button_pressed if _sun_shadow_toggle else true,
+			"sun_shadow_opacity": _sun_shadow_opacity_slider.value if _sun_shadow_opacity_slider else 1.0,
+			"sun_softness": _sun_softness_slider.value if _sun_softness_slider else 0.0,
+			"sun_color": _sun_color_picker.color if _sun_color_picker else (_key_light.light_color if _key_light else Color(1.0, 0.98, 0.92)),
+			"ambient_color": _ambient_color_picker.color if _ambient_color_picker else (_world_env.environment.ambient_light_color if _world_env and _world_env.environment else Color(0.6, 0.65, 0.7)),
+			"fog_enabled": _fog_toggle.button_pressed if _fog_toggle else false,
+			"fog_color": _fog_color_picker.color if _fog_color_picker else Color(0.72, 0.77, 0.83),
+			"fog_density": _fog_density_slider.value if _fog_density_slider else 0.0,
+			"fog_begin": _fog_begin_slider.value if _fog_begin_slider else 5.0,
+			"fog_end": _fog_end_slider.value if _fog_end_slider else 200.0,
+			"fog_height_enabled": _fog_height_toggle.button_pressed if _fog_height_toggle else false,
+			"fog_height_density": _fog_height_density_slider.value if _fog_height_density_slider else 0.05,
+			"fog_height_falloff": _fog_height_falloff_slider.value if _fog_height_falloff_slider else 0.5,
+			"volumetric_enabled": _volumetric_fog_toggle.button_pressed if _volumetric_fog_toggle else false,
+			"volumetric_density": _volumetric_fog_density_slider.value if _volumetric_fog_density_slider else 0.03,
+			"volumetric_aniso": _volumetric_fog_aniso_slider.value if _volumetric_fog_aniso_slider else 0.0
+		},
+		"color": {
+			"temp": _temp_slider.value if _temp_slider else 0.0,
+			"tint": _tint_slider.value if _tint_slider else 0.0,
+			"saturation": _saturation_slider.value if _saturation_slider else 1.0,
+			"contrast": _contrast_slider.value if _contrast_slider else 1.0
+		},
+		"effects": {
+			"vignette": _vignette_slider.value if _vignette_slider else 0.0,
+			"grain": _grain_slider.value if _grain_slider else 0.0,
+			"bloom": _bloom_slider.value if _bloom_slider else 0.0
+		},
+		"composition": {
+			"crop_ratio": _composition_crop_ratio,
+			"offset": [_composition_crop_offset.x, _composition_crop_offset.y],
+			"roll": _composition_horizon_roll,
+			"thirds_snap": _composition_thirds_snap_enabled
+		},
+		"capture_workflow": {
+			"timer_seconds": _get_capture_timer_seconds(),
+			"burst_count": _get_capture_burst_count(),
+			"bracket_count": _get_capture_bracket_count(),
+			"bracket_step_ev": _capture_bracket_step_slider.value if _capture_bracket_step_slider else 1.0,
+			"watermark_enabled": _capture_watermark_toggle.button_pressed if _capture_watermark_toggle else false,
+			"watermark_text": _capture_watermark_text.text if _capture_watermark_text else ""
+		},
+		"sequence": context
+	}
+
+
+func _save_image(image: Image, capture_context: Dictionary = {}) -> void:
 	if image == null:
 		return
 	var dir_path := _get_capture_dir()
 	DirAccess.make_dir_recursive_absolute(dir_path)
-	var ts := Time.get_datetime_string_from_system().replace(":", "-")
+	var ts := String(capture_context.get("sequence", Time.get_datetime_string_from_system().replace(":", "-")))
+	_capture_sequence_counter += 1
 	var format := _get_capture_format()
 	var ext := "png"
 	if format == "JPG":
 		ext = "jpg"
 	elif format == "EXR":
 		ext = "exr"
-	var filename := "photo_%s.%s" % [ts, ext]
+	var filename := "photo_%s" % ts
+	var burst_total := int(capture_context.get("burst_total", 1))
+	if burst_total > 1:
+		filename += "_b%02d" % int(capture_context.get("burst_index", 1))
+	if capture_context.has("bracket_ev"):
+		filename += "_" + _format_bracket_suffix(float(capture_context.get("bracket_ev", 0.0)))
+	if _capture_watermark_toggle and _capture_watermark_toggle.button_pressed:
+		filename += "_wm"
+	filename += "_%03d.%s" % [_capture_sequence_counter, ext]
 	var full_path := dir_path.path_join(filename)
 	match format:
 		"JPG":
@@ -3768,6 +5488,13 @@ func _save_image(image: Image) -> void:
 			image.save_exr(full_path)
 		_:
 			image.save_png(full_path)
+	var size := Vector2i(image.get_width(), image.get_height())
+	var metadata := _build_capture_metadata(full_path, size, format, capture_context)
+	var metadata_path := full_path.get_basename() + ".json"
+	var metadata_file := FileAccess.open(metadata_path, FileAccess.WRITE)
+	if metadata_file:
+		metadata_file.store_string(JSON.stringify(metadata))
+		metadata_file.close()
 	if _status:
 		_status.text = "Saved: %s" % full_path
 
@@ -3775,9 +5502,19 @@ func _save_image(image: Image) -> void:
 	var cam_state := {
 		"position": _camera.global_position if _camera else Vector3.ZERO,
 		"rotation": _camera.rotation_degrees if _camera else Vector3.ZERO,
-		"fov": _camera.fov if _camera else 60.0
+		"fov": _camera.fov if _camera else 60.0,
+		"iso": _iso_current,
+		"aperture": _aperture_current,
+		"shutter": _shutter_current,
+		"focus_distance": _focus_distance
 	}
-	var capture: Dictionary = {"path": full_path, "thumb": null, "camera": cam_state}
+	var capture: Dictionary = {
+		"path": full_path,
+		"metadata_path": metadata_path,
+		"metadata": metadata,
+		"thumb": null,
+		"camera": cam_state
+	}
 	# create thumbnail
 	var thumb := image.duplicate()
 	var tw := 160
@@ -3842,11 +5579,7 @@ func _make_capture_folder() -> String:
 func _capture_image(size: Vector2i) -> void:
 	if _status:
 		_status.text = "Capturing…"
-	var img := await _render_to_image(size)
-	if img:
-		_save_image(img)
-	if _status:
-		_status.text = "Saved capture"
+	await _run_capture_sequence(size)
 
 
 func _get_capture_format() -> String:
@@ -4039,6 +5772,11 @@ func _set_attr_if_exists(obj: Object, prop_name: String, value: Variant) -> void
 			obj.set(prop_name, value)
 			return
 
-	# Fallback: attempt to set the property directly (some resources expose properties differently)
-	# This may print an engine warning if the property doesn't exist, but it's harmless.
-	obj.set(prop_name, value)
+
+func _get_attr_if_exists(obj: Object, prop_name: String, fallback: Variant) -> Variant:
+	if obj == null:
+		return fallback
+	for prop in obj.get_property_list():
+		if prop.name == prop_name:
+			return obj.get(prop_name)
+	return fallback
