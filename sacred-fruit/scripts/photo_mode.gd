@@ -66,6 +66,8 @@ var _ui_visible: bool = true
 var _material_state: Dictionary = {}
 var _env_presets: Dictionary = {}
 var _layout_retry_frames: int = 0
+var _debug_accum: float = 0.0
+const DEBUG_PRINT_INTERVAL: float = 2.0
 
 const PASS_BEAUTY := "beauty"
 const PASS_ALBEDO := "albedo"
@@ -90,6 +92,8 @@ var _menu_overlay: Control
 var _tabs_panel: Control
 var _tab_buttons: Dictionary = {} as Dictionary
 var _current_tab: String = "All"
+var _tab_contents: Dictionary = {} as Dictionary
+var _active_tab: String = ""
 var _status: Label
 var _guides: Control
 var _guides_layer: CanvasLayer
@@ -201,89 +205,85 @@ var _main_vbox: VBoxContainer
 var _bottom_bar: Control
 var _always_show_viewport_toggle: CheckBox
 var _contact_strip: HBoxContainer
+var _filmstrip_hbox: HBoxContainer
+var _viewfinder_toggle: Button
+var _guides_toggle: Button
+var _toolbar_capture: Button
+var _toolbar_layers: Button
+var _toolbar_back: Button
 var _session_captures: Array = []
 var _capture_preview_panel: Window
 var _always_show_viewport_enabled: bool = false
+var _thumb_menu: PopupMenu
+var _thumb_export_dialog: FileDialog
+var _selected_capture_idx: int = -1
+var _menu_target_capture_index: int = -1
+var _thumb_export_target_index: int = -1
 
 
 # --- Export / Import helpers (moved below variable declarations) ---
 func export_photo_mode_state(path: String) -> void:
-	var state = {
-		"map_file": _map.local_map_file if _map and "local_map_file" in _map else "",
-		"camera": {
-			"position": _camera.global_position if _camera else Vector3.ZERO,
-			"rotation": _camera.rotation_degrees if _camera else Vector3.ZERO,
-			"fov": _camera.fov if _camera else 70.0,
-			"yaw": _yaw,
-			"pitch": _pitch,
-			"iso": _iso_current,
-			"aperture": _aperture_current,
-			"shutter": _shutter_current,
-			"focus_distance": _focus_distance,
-			"auto_focus": _auto_focus_enabled,
-		},
-		"exposure": {
-			"base": _base_exposure,
-			"auto": _auto_exposure_enabled,
-		},
-		"environment": {
-			"preset": _env_options.get_item_text(_env_options.selected) if _env_options else "",
-		},
-		"resolution": {
-			"preset": _res_options.get_item_text(_res_options.selected) if _res_options else "",
-		},
-		"aspect": {
-			"preset": _aspect_options.get_item_text(_aspect_options.selected) if _aspect_options else "",
-		},
-		"guides": {
-			"enabled": _guides.visible if _guides else false,
-			"type": _guide_type_options.get_item_text(_guide_type_options.selected) if _guide_type_options else "",
-		},
-		"lights": {
-			"key": _serialize_light(_key_light, _key_enabled, _key_color, _key_intensity),
-			"fill": _serialize_light(_fill_light, _fill_enabled, _fill_color, _fill_intensity),
-			"rim": _serialize_light(_rim_light, _rim_enabled, _rim_color, _rim_intensity),
-			"top": _serialize_light(_top_light, _top_enabled, _top_color, _top_intensity),
-			"bounce": _serialize_light(_bounce_light, _bounce_enabled, _bounce_color, _bounce_intensity),
-		},
-		"color": {
-			"temp": _temp_slider.value if _temp_slider else 0.0,
-			"tint": _tint_slider.value if _tint_slider else 0.0,
-			"saturation": _saturation_slider.value if _saturation_slider else 1.0,
-			"contrast": _contrast_slider.value if _contrast_slider else 1.0,
-		},
-		"effects": {
-			"vignette": _vignette_slider.value if _vignette_slider else 0.0,
-			"grain": _grain_slider.value if _grain_slider else 0.0,
-			"bloom": _bloom_slider.value if _bloom_slider else 0.0,
-		},
-		"capture": {
-			"format": _capture_format_options.get_item_text(_capture_format_options.selected) if _capture_format_options else "",
-			"path": _capture_path_edit.text if _capture_path_edit else "",
-		},
-		"passes": {
-			"preview": _pass_preview_options.get_item_text(_pass_preview_options.selected) if _pass_preview_options else "",
-			"beauty": _pass_beauty.button_pressed if _pass_beauty else false,
-			"albedo": _pass_albedo.button_pressed if _pass_albedo else false,
-			"normals": _pass_normals.button_pressed if _pass_normals else false,
-			"depth": _pass_depth.button_pressed if _pass_depth else false,
-			"lighting": _pass_lighting.button_pressed if _pass_lighting else false,
-		},
+	var state: Dictionary = {}
+	state["map_file"] = _map.local_map_file if _map and "local_map_file" in _map else ""
+	state["camera"] = {
+		"position": _camera.global_position if _camera else Vector3.ZERO,
+		"rotation": _camera.rotation_degrees if _camera else Vector3.ZERO,
+		"fov": _camera.fov if _camera else 70.0,
+		"yaw": _yaw,
+		"pitch": _pitch,
+		"iso": _iso_current,
+		"aperture": _aperture_current,
+		"shutter": _shutter_current,
+		"focus_distance": _focus_distance,
+		"auto_focus": _auto_focus_enabled,
 	}
-	var file = FileAccess.open(path, FileAccess.WRITE)
+	state["exposure"] = { "base": _base_exposure, "auto": _auto_exposure_enabled }
+	state["environment"] = { "preset": _env_options.get_item_text(_env_options.selected) if _env_options else "" }
+	state["resolution"] = { "preset": _res_options.get_item_text(_res_options.selected) if _res_options else "" }
+	state["aspect"] = { "preset": _aspect_options.get_item_text(_aspect_options.selected) if _aspect_options else "" }
+	state["guides"] = { "enabled": _guides.visible if _guides else false, "type": _guide_type_options.get_item_text(_guide_type_options.selected) if _guide_type_options else "" }
+	state["lights"] = {
+		"key": _serialize_light(_key_light, _key_enabled, _key_color, _key_intensity),
+		"fill": _serialize_light(_fill_light, _fill_enabled, _fill_color, _fill_intensity),
+		"rim": _serialize_light(_rim_light, _rim_enabled, _rim_color, _rim_intensity),
+		"top": _serialize_light(_top_light, _top_enabled, _top_color, _top_intensity),
+		"bounce": _serialize_light(_bounce_light, _bounce_enabled, _bounce_color, _bounce_intensity)
+	}
+	# Color/effects
+	state["color"] = {
+		"temp": _temp_slider.value if _temp_slider else 0.0,
+		"tint": _tint_slider.value if _tint_slider else 0.0,
+		"saturation": _saturation_slider.value if _saturation_slider else 1.0,
+		"contrast": _contrast_slider.value if _contrast_slider else 1.0
+	}
+	state["effects"] = {
+		"vignette": _vignette_slider.value if _vignette_slider else 0.0,
+		"grain": _grain_slider.value if _grain_slider else 0.0,
+		"bloom": _bloom_slider.value if _bloom_slider else 0.0
+	}
+	# Capture
+	state["capture"] = { "format": _capture_format_options.get_item_text(_capture_format_options.selected) if _capture_format_options else "PNG", "path": _capture_path_edit.text if _capture_path_edit else "" }
+	# Passes
+	state["passes"] = {
+		"beauty": _pass_beauty.button_pressed if _pass_beauty else false,
+		"albedo": _pass_albedo.button_pressed if _pass_albedo else false,
+		"normals": _pass_normals.button_pressed if _pass_normals else false,
+		"depth": _pass_depth.button_pressed if _pass_depth else false,
+		"lighting": _pass_lighting.button_pressed if _pass_lighting else false
+	}
+
+	var file := FileAccess.open(path, FileAccess.WRITE)
 	if file:
-		file.store_string(JSON.stringify(state, "  "))
+		file.store_string(JSON.stringify(state))
 		file.close()
 
-
-# Helper to serialize a light's state
 func _serialize_light(light, enabled, color, intensity) -> Dictionary:
-	return {
-		"enabled": enabled.button_pressed if enabled else false,
-		"color": color.color if color else Color(1,1,1),
-		"intensity": intensity.value if intensity else 1.0,
-		"rotation": light.rotation_degrees if light else Vector3.ZERO,
-	}
+	var out: Dictionary = {}
+	out["enabled"] = enabled.button_pressed if enabled else false
+	out["color"] = color.color if color else Color(1,1,1)
+	out["intensity"] = intensity.value if intensity else 1.0
+	out["rotation"] = light.rotation_degrees if light else Vector3.ZERO
+	return out
 
 
 func _parse_color(value) -> Color:
@@ -312,6 +312,18 @@ func _parse_vector3(value) -> Vector3:
 	if value is Dictionary:
 		return Vector3(float(value.get("x", 0.0)), float(value.get("y", 0.0)), float(value.get("z", 0.0)))
 	return Vector3.ZERO
+
+
+func _to_color(value, fallback: Color) -> Color:
+	# Normalize various color representations into a Color instance.
+	if value == null:
+		return fallback
+	if value is Color:
+		return value
+	if value is Dictionary or value is Array:
+		return _parse_color(value)
+	# Fallback: attempt to parse or return fallback
+	return fallback
 
 func _apply_light_state(light_node, enabled_node, color_node, intensity_node, data: Dictionary) -> void:
 	if data == null:
@@ -392,7 +404,7 @@ func import_photo_mode_state(path: String) -> void:
 	# Environment / presets
 	if state.has("environment") and _env_options:
 		var env = state["environment"].get("preset", "")
-		for i in _env_options.get_item_count():
+		for i in range(_env_options.get_item_count()):
 			if _env_options.get_item_text(i) == env:
 				_env_options.selected = i
 				break
@@ -400,13 +412,13 @@ func import_photo_mode_state(path: String) -> void:
 	# Resolution / aspect
 	if state.has("resolution") and _res_options:
 		var res = state["resolution"].get("preset", "")
-		for i in _res_options.get_item_count():
+		for i in range(_res_options.get_item_count()):
 			if _res_options.get_item_text(i) == res:
 				_res_options.selected = i
 				break
 	if state.has("aspect") and _aspect_options:
 		var asp = state["aspect"].get("preset", "")
-		for i in _aspect_options.get_item_count():
+		for i in range(_aspect_options.get_item_count()):
 			if _aspect_options.get_item_text(i) == asp:
 				_aspect_options.selected = i
 				break
@@ -418,7 +430,7 @@ func import_photo_mode_state(path: String) -> void:
 			_guides.visible = bool(g["enabled"])
 		if g.has("type") and _guide_type_options:
 			var gtype = g["type"]
-			for i in _guide_type_options.get_item_count():
+			for i in range(_guide_type_options.get_item_count()):
 				if _guide_type_options.get_item_text(i) == gtype:
 					_guide_type_options.selected = i
 					break
@@ -457,7 +469,7 @@ func import_photo_mode_state(path: String) -> void:
 		var cap = state["capture"]
 		if cap.has("format") and _capture_format_options:
 			var fmt = cap["format"]
-			for i in _capture_format_options.get_item_count():
+			for i in range(_capture_format_options.get_item_count()):
 				if _capture_format_options.get_item_text(i) == fmt:
 					_capture_format_options.selected = i
 					break
@@ -493,6 +505,8 @@ func _ready() -> void:
 	_setup_camera_attributes()
 	_setup_pass_materials()
 	_setup_ui()
+	# Ensure authored toolbar/filmstrip chrome is applied even when runtime layout repair is disabled
+	_setup_ui_chrome()
 	_setup_environment_presets()
 	if _ui_root:
 		_ui_root.visible = _ui_visible
@@ -500,10 +514,12 @@ func _ready() -> void:
 	if enable_runtime_layout_repair:
 		_ensure_ui_layout()
 		call_deferred("_ensure_ui_layout")
+		# After layout repair runs, force any misplaced authored controls into the
+		# Settings VBox so tabs show content in the lower panel. This is a safe
+		# post-startup sweep that reparents known rows and their children.
+		call_deferred("_force_reparent_settings")
 	if enable_layout_debug_print:
 		call_deferred("_debug_layout")
-	# Always attempt a deferred layout repair once to apply the toolbar/top/bottom changes
-	call_deferred("_ensure_ui_layout")
 	await _build_map_from_debug()
 	_position_camera_at_start()
 	_ensure_camera_active()
@@ -556,6 +572,27 @@ func _resolve_nodes() -> void:
 	_ui_root = get_node_or_null("CanvasLayer/PhotoUI") as Control
 	if _ui_root == null:
 		_ui_root = _find_node("PhotoUI", "Control") as Control
+	# If the authored scene places PhotoUI under a CanvasLayer (common), ensure it
+	# has a Control parent so layout anchors/presets compute correctly. If the
+	# immediate parent is not a Control, create a lightweight wrapper Control and
+	# reparent PhotoUI under it. This fixes cases where parent_is_control is false
+	# and parent_size was reported as (-1,-1) which prevents resizing.
+	if _ui_root and _ui_root.get_parent() and not (_ui_root.get_parent() is Control):
+		var wrapper := Control.new()
+		wrapper.name = "PhotoUIWrapper"
+		# Make wrapper fill available rect so PhotoUI anchors behave as expected
+		wrapper.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		# Add wrapper to the scene root (Viewport) so it acts as a standalone Control
+		# parent. Adding under the SceneTree root ensures the wrapper receives a
+		# proper control-sized rect even when the authored PhotoUI was under a
+		# CanvasLayer.
+		var scene_root := get_tree().get_root()
+		scene_root.add_child(wrapper)
+		# Reparent the authored PhotoUI under the wrapper so its parent is a Control
+		# Use the helper that removes the node from any existing parent first.
+		_reparent(_ui_root, wrapper)
+		if enable_layout_debug_print:
+			print("[PhotoMode DEBUG] Reparented PhotoUI under PhotoUIWrapper to enable Control-based layout")
 	if _ui_root:
 		_ui_root.visible = true
 	_tabs_panel = _ui_root.get_node_or_null("RootMargin/RootHBox/TabsPanel") as Control if _ui_root else _find_node("TabsPanel", "Control") as Control
@@ -581,6 +618,20 @@ func _resolve_nodes() -> void:
 	_auto_exposure_min_value = _find_node("AutoExposureMinValue", "Label") as Label
 	_auto_exposure_max_slider = _find_node("AutoExposureMaxSlider", "HSlider") as HSlider
 	_auto_exposure_max_value = _find_node("AutoExposureMaxValue", "Label") as Label
+
+	# toolbar / filmstrip nodes
+	_viewfinder_toggle = _find_node("ViewfinderToggle", "Button") as Button
+	_guides_toggle = _find_node("GuidesToggle", "Button") as Button
+	_toolbar_capture = _find_node("ToolbarCaptureButton", "Button") as Button
+	_toolbar_layers = _find_node("ToolbarEXRLayers", "Button") as Button
+	_toolbar_back = _find_node("ToolbarBack", "Button") as Button
+	_filmstrip_hbox = _find_node("FilmstripHBox", "HBoxContainer") as HBoxContainer
+
+	# initialize toolbar toggle states
+	if _viewfinder_toggle:
+		_viewfinder_toggle.button_pressed = (_viewfinder != null and _viewfinder.visible)
+	if _guides_toggle:
+		_guides_toggle.button_pressed = (_guides != null and _guides.visible)
 	_exposure_slider = _find_node("ExposureSlider", "HSlider") as HSlider
 	_exposure_value = _find_node("ExposureValue", "Label") as Label
 	_env_options = _find_node("EnvOptions", "OptionButton") as OptionButton
@@ -655,17 +706,46 @@ func _resolve_nodes() -> void:
 
 
 func _find_node(name_hint: String, type_hint: String) -> Node:
+	# 1) Try unique path lookup ("%Name")
 	var by_unique := get_node_or_null("%" + name_hint)
 	if by_unique != null and (type_hint.is_empty() or by_unique.is_class(type_hint)):
 		return by_unique
+
+	# 2) Local subtree lookup (fast/common case)
 	var by_name := find_child(name_hint, true, false)
 	if by_name != null and (type_hint.is_empty() or by_name.is_class(type_hint)):
 		return by_name
-	# Fallback: substring match (helps when node names get mangled like "...#Status")
+
+	# 3) Safe global lookup across the SceneTree root.
+	# Some engine root objects (Window/SceneTree) don't expose convenience
+	# helpers like find_node/find_children — perform a guarded search instead.
+	var scene_root: Node = get_tree().get_root()
+	if scene_root != null:
+		# Prefer built-in find_node when available
+		if scene_root.has_method("find_node"):
+			var root_match: Node = scene_root.find_node(name_hint, true, false)
+			if root_match != null and (type_hint.is_empty() or root_match.is_class(type_hint)):
+				return root_match
+
+		# Fallback: manual DFS over the scene root's children (safe)
+		var stack: Array = [scene_root]
+		while stack.size() > 0:
+			var node: Node = stack.pop_back() as Node
+			if node == null:
+				continue
+			# exact-name or substring match helps find mangled nodes
+			if String(node.name).find(name_hint) != -1 and (type_hint.is_empty() or node.is_class(type_hint)):
+				return node
+			for ch in node.get_children():
+				stack.push_back(ch)
+
+	# 4) Local-subtree substring fallback (handles mangled local names)
 	for n in find_children("*", "", true, false):
 		if String(n.name).find(name_hint) != -1:
 			if type_hint.is_empty() or n.is_class(type_hint):
 				return n
+
+	# Nothing matched
 	return null
 
 
@@ -789,24 +869,48 @@ func _setup_ui() -> void:
 			import_btn.text = "Import State"
 			preset_row2.add_child(import_btn)
 	if export_btn:
-		export_btn.pressed.connect(_on_export_state_pressed)
+		if not export_btn.is_connected("pressed", Callable(self, "_on_export_state_pressed")):
+			export_btn.pressed.connect(_on_export_state_pressed)
 	if import_btn:
-		import_btn.pressed.connect(_on_import_state_pressed)
+		if not import_btn.is_connected("pressed", Callable(self, "_on_import_state_pressed")):
+			import_btn.pressed.connect(_on_import_state_pressed)
 	_load_presets()
 	_setup_collapsibles()
 	_setup_tabs()
 	if _capture_button:
-		_capture_button.pressed.connect(_on_capture_pressed)
+		if not _capture_button.is_connected("pressed", Callable(self, "_on_capture_pressed")):
+			_capture_button.pressed.connect(_on_capture_pressed)
+
+	# Connect toolbar buttons if present
+	if _viewfinder_toggle:
+		if not _viewfinder_toggle.is_connected("toggled", Callable(self, "_on_toolbar_viewfinder_pressed")):
+			_viewfinder_toggle.toggled.connect(_on_toolbar_viewfinder_pressed)
+	if _guides_toggle:
+		if not _guides_toggle.is_connected("toggled", Callable(self, "_on_toolbar_guides_pressed")):
+			_guides_toggle.toggled.connect(_on_toolbar_guides_pressed)
+	if _toolbar_capture:
+		if not _toolbar_capture.is_connected("pressed", Callable(self, "_on_capture_pressed")):
+			_toolbar_capture.pressed.connect(_on_capture_pressed)
+	if _toolbar_layers:
+		if not _toolbar_layers.is_connected("pressed", Callable(self, "_on_capture_layers_pressed")):
+			_toolbar_layers.pressed.connect(_on_capture_layers_pressed)
+	if _toolbar_back:
+		if not _toolbar_back.is_connected("pressed", Callable(self, "_on_back_pressed")):
+			_toolbar_back.pressed.connect(_on_back_pressed)
 	if _capture_format_options:
 		_populate_capture_formats()
 	if _capture_path_button:
-		_capture_path_button.pressed.connect(_on_capture_path_browse)
+		if not _capture_path_button.is_connected("pressed", Callable(self, "_on_capture_path_browse")):
+			_capture_path_button.pressed.connect(_on_capture_path_browse)
 	if _capture_path_dialog:
-		_capture_path_dialog.dir_selected.connect(_on_capture_path_dir_selected)
+		if not _capture_path_dialog.is_connected("dir_selected", Callable(self, "_on_capture_path_dir_selected")):
+			_capture_path_dialog.dir_selected.connect(_on_capture_path_dir_selected)
 	if _capture_layers_button:
-		_capture_layers_button.pressed.connect(_on_capture_layers_pressed)
+		if not _capture_layers_button.is_connected("pressed", Callable(self, "_on_capture_layers_pressed")):
+			_capture_layers_button.pressed.connect(_on_capture_layers_pressed)
 	if _back_button:
-		_back_button.pressed.connect(_on_back_pressed)
+		if not _back_button.is_connected("pressed", Callable(self, "_on_back_pressed")):
+			_back_button.pressed.connect(_on_back_pressed)
 	_setup_light_rig_ui()
 	if _pass_preview_options:
 		_populate_pass_preview()
@@ -814,9 +918,61 @@ func _setup_ui() -> void:
 	if _capture_path_edit and _capture_path_edit.text.strip_edges().is_empty():
 		_capture_path_edit.text = PHOTO_CAPTURE_DIR
 	_update_viewfinder()
+	# Setup thumbnail menu and export dialog
+	if _ui_root:
+		_thumb_menu = _ui_root.get_node_or_null("ThumbnailMenu") as PopupMenu
+		if _thumb_menu == null:
+			_thumb_menu = PopupMenu.new()
+			_thumb_menu.name = "ThumbnailMenu"
+			_ui_root.add_child(_thumb_menu)
+		_thumb_menu.clear()
+		_thumb_menu.add_item("Select", 0)
+		_thumb_menu.add_item("Fullscreen", 1)
+		_thumb_menu.add_item("Export...", 2)
+		_thumb_menu.add_item("Reveal in Finder", 3)
+		if not _thumb_menu.is_connected("id_pressed", Callable(self, "_on_thumb_menu_id_pressed")):
+			_thumb_menu.id_pressed.connect(_on_thumb_menu_id_pressed)
+
+		_thumb_export_dialog = _ui_root.get_node_or_null("ThumbExportDialog") as FileDialog
+		if _thumb_export_dialog == null:
+			_thumb_export_dialog = FileDialog.new()
+			_thumb_export_dialog.name = "ThumbExportDialog"
+			_thumb_export_dialog.access = FileDialog.ACCESS_FILESYSTEM
+			# MODE_SAVE_FILE constant may not be available in all environments; use numeric value for save mode
+			_thumb_export_dialog.mode = 2
+			_thumb_export_dialog.add_filter("*.png ; PNG image")
+			_thumb_export_dialog.add_filter("*.jpg ; JPEG image")
+			_ui_root.add_child(_thumb_export_dialog)
+		if not _thumb_export_dialog.is_connected("file_selected", Callable(self, "_on_thumb_export_selected")):
+			_thumb_export_dialog.file_selected.connect(_on_thumb_export_selected)
+
+
+func _setup_ui_chrome() -> void:
+	if _ui_root == null:
+		return
+
+	var root_margin := _ui_root.get_node_or_null("RootMargin") as Control
+	if root_margin:
+		# Reserve space for Toolbar (top) and Filmstrip (bottom)
+		root_margin.offset_top = 76.0
+		root_margin.offset_bottom = -156.0
+
+	var toolbar := _ui_root.get_node_or_null("Toolbar") as Control
+	if toolbar:
+		toolbar.visible = true
+		toolbar.z_index = 200
+		toolbar.mouse_filter = Control.MOUSE_FILTER_STOP
+
+	var filmstrip := _ui_root.get_node_or_null("Filmstrip") as Control
+	if filmstrip:
+		filmstrip.visible = true
+		filmstrip.z_index = 200
+		filmstrip.mouse_filter = Control.MOUSE_FILTER_STOP
 
 
 func _ensure_ui_layout() -> void:
+	if not enable_runtime_layout_repair:
+		return
 	if _ui_root:
 		_ensure_full_rect(_ui_root)
 	if _guides:
@@ -841,8 +997,10 @@ func _ensure_ui_layout() -> void:
 			# Reparent most canvas-layer Controls into the PhotoUI so layout manages them.
 			# Keep the viewfinder separate for now so it can be positioned as a sibling of the panel.
 			if ch is Control and ch != _ui_root and ch != _guides:
-				# _viewfinder will be reparented later into the RootHBox so it resizes with the panel
+				# Preserve toolbar/filmstrip/top/bottom bars and the viewfinder - don't sweep them here
 				if ch == _viewfinder:
+					continue
+				if ch.name == "Toolbar" or ch.name == "Filmstrip" or ch.name == "TopBar" or ch.name == "BottomBar":
 					continue
 				_reparent(ch, _ui_root)
 	# If PhotoUI is still empty, sweep stray Controls from the scene root.
@@ -1117,14 +1275,23 @@ func _repair_scene_tree_if_needed() -> void:
 	if _ui_root and vbox:
 		var ui_children := _ui_root.get_children().duplicate()
 		for ch in ui_children:
-			if ch is Control and ch != panel and ch != _guides and ch != _tabs_panel and ch != _viewfinder:
+			# Keep toolbar/filmstrip/top/bottom bars and viewfinder where they belong
+			if ch is Control and ch != panel and ch != _guides and ch != _tabs_panel and ch != _viewfinder and ch.name != "Toolbar" and ch.name != "Filmstrip" and ch.name != "TopBar" and ch.name != "BottomBar":
 				_reparent(ch, vbox)
 	# Sweep stray Controls under Margin into VBox
 	if margin and vbox:
 		var margin_children := margin.get_children().duplicate()
 		for ch in margin_children:
-			if ch is Control and ch != vbox:
+			# Avoid moving toolbar/filmstrip/top/bottom bars into the main vbox
+			if ch is Control and ch != vbox and ch.name != "Toolbar" and ch.name != "Filmstrip" and ch.name != "TopBar" and ch.name != "BottomBar":
 				_reparent(ch, vbox)
+
+	# Defer a final reparent pass so any mangled/duplicated nodes get placed under the VBox
+	call_deferred("_deferred_reparent_tab_nodes")
+	# Also run the UI health dump after layout stabilizes (helps identify stray nodes)
+	if enable_layout_debug_print:
+		call_deferred("_debug_layout")
+		call_deferred("_report_misplaced_controls")
 
 func _on_always_show_viewport_toggled(pressed: bool) -> void:
 	_always_show_viewport_enabled = pressed
@@ -1198,6 +1365,9 @@ func _debug_layout() -> void:
 			if String(n.name).find("CanvasLayer_PhotoUI") != -1:
 				mangled.append(String(n.name))
 		print("[PhotoMode] Mangled controls:", mangled)
+
+
+	# Additional layout info (kept in debug layout)
 	if root_margin:
 		print("[PhotoMode] RootMargin size=", root_margin.size, " global=", root_margin.global_position,
 			" anchors=", Vector4(root_margin.anchor_left, root_margin.anchor_top, root_margin.anchor_right, root_margin.anchor_bottom),
@@ -1216,6 +1386,178 @@ func _debug_layout() -> void:
 			" offsets:", tabs.offset_left, tabs.offset_top, tabs.offset_right, tabs.offset_bottom,
 			" size:", tabs.size)
 
+	# New: report any Control nodes that are NOT children of the canonical Settings VBox
+	if _ui_root != null:
+		var canonical_vbox := _ui_root.get_node_or_null("RootMargin/RootHBox/Panel/Margin/SettingsScroll/VBox")
+		var stray := []
+		for ctrl in _ui_root.find_children("*", "Control", true, false):
+			if ctrl == canonical_vbox:
+				continue
+			if ctrl == tabs or ctrl == _ui_root.get_node_or_null("RootMargin"):
+				continue
+			# If control is not a descendant of the SettingsVBox and not one of the top chrome nodes, list it
+			if canonical_vbox != null and canonical_vbox.is_ancestor_of(ctrl) == false:
+				stray.append({"path": String(ctrl.get_path()), "parent": String(ctrl.get_parent().get_path()), "anchors": Vector4(ctrl.anchor_left, ctrl.anchor_top, ctrl.anchor_right, ctrl.anchor_bottom), "offsets": Vector4(ctrl.offset_left, ctrl.offset_top, ctrl.offset_right, ctrl.offset_bottom)})
+		if stray.size() > 0:
+			print("[PhotoMode DEBUG] stray_controls=", stray)
+
+
+func _deferred_reparent_tab_nodes() -> void:
+	# Run after layout to ensure known tab nodes are parented under the canonical VBox so tab visibility works.
+	if _ui_root == null:
+		return
+	# Try multiple candidate locations for the VBox (SettingsScroll/VBox is preferred)
+	var candidates: Array = []
+	var path_pref := "RootMargin/RootHBox/Panel/Margin/SettingsScroll/VBox"
+	var p1 := _ui_root.get_node_or_null(path_pref) as VBoxContainer
+	if p1:
+		candidates.append(p1)
+	var p2 := _ui_root.get_node_or_null("RootMargin/RootHBox/Panel/Margin/VBox") as VBoxContainer
+	if p2 and p2 != p1:
+		candidates.append(p2)
+	# fallback: any VBoxContainer under RootMargin
+	var root_margin := _ui_root.get_node_or_null("RootMargin")
+	if root_margin:
+		for n in root_margin.get_children():
+			if n is VBoxContainer:
+				candidates.append(n)
+	# global fallback
+	var global_vbox := _find_node("VBox", "VBoxContainer") as VBoxContainer
+	if global_vbox and not candidates.has(global_vbox):
+		candidates.append(global_vbox)
+	# pick the candidate with the most children (likely the real container)
+	var vbox: Node = null
+	var best_count := -1
+	for c in candidates:
+		if c and c.get_child_count() > best_count:
+			best_count = c.get_child_count()
+			vbox = c
+	# If no vbox found, retry once more later (layout may not have run)
+	if vbox == null:
+		# schedule another attempt in the next idle frame
+		call_deferred("_deferred_reparent_tab_nodes")
+		return
+	if enable_layout_debug_print:
+		print("[PhotoMode DEBUG] _deferred_reparent_tab_nodes: chosen_vbox=", vbox, " child_count=", vbox.get_child_count())
+	var vbox_nodes := [
+			"HistogramCard", "Title", "Status",
+			"FOVRow", "FocalRow", "ISORow", "ApertureRow", "ShutterRow", "FocusRow",
+			"ShootingModeRow", "AutoFocusRow",
+			"ExposureHeaderRow", "ExposureRow", "EnvRow", "ResRow",
+			"AspectRow",
+			"GuidesHeaderRow", "GuidesRow", "GuidesOpacityRow",
+			"CaptureHeaderRow", "CaptureFormatRow", "CapturePathRow", "ButtonsRow",
+			"PassesHeaderRow", "PassPreviewRow", "PassesGrid", "LightRigHeaderRow", "LightRigGrid",
+			"EnvironmentHeaderRow", "EnvironmentRow", "AmbientRow", "FogRow",
+			"ExportHeaderRow", "ExportNote",
+			"ColorHeaderRow", "TempRow", "TintRow", "SaturationRow", "ContrastRow",
+			"EffectsHeaderRow", "VignetteRow", "GrainRow", "BloomRow",
+			"CompositionHeaderRow", "CompositionNote",
+			"PresetsHeaderRow", "PresetsRow", "PresetNameRow", "PresetButtonsRow"
+		]
+	for name in vbox_nodes:
+		_reparent_by_name(name, vbox)
+	# Debug: compact summary of where expected nodes landed (avoid per-node verbose prints)
+	if enable_layout_debug_print:
+		var found := []
+		var missing := []
+		for name in vbox_nodes:
+			var node := _find_node(name, "")
+			if node:
+				found.append(name)
+			else:
+				missing.append(name)
+		print("[PhotoMode DEBUG] reparented summary: found=%d missing=%d" % [found.size(), missing.size()])
+		if missing.size() > 0:
+			print("[PhotoMode DEBUG] missing_nodes=%s" % missing)
+		if found.size() > 0:
+			if found.size() <= 40:
+				print("[PhotoMode DEBUG] found_nodes=%s" % found)
+			else:
+				var sample := []
+				for i in range(0, min(found.size(), 20)):
+					sample.append(found[i])
+				print("[PhotoMode DEBUG] found_nodes_sample=%s (total=%d)" % [sample, found.size()])
+	# After reparenting, refresh active tab
+	call_deferred("_set_active_tab", _active_tab if _active_tab != "" else "camera")
+	# After tabs have been settled, ensure the settings scroll and its VBox occupy their container
+	call_deferred("_enforce_settings_layout")
+	# Run a health check to list any Controls still misplaced after the reparent sweep
+	if enable_layout_debug_print:
+		call_deferred("_report_misplaced_controls")
+
+
+func _enforce_settings_layout() -> void:
+	# Force anchors/offsets on the SettingsScroll and its VBox so they fill the intended panel region.
+	if _ui_root == null:
+		return
+	# Try canonical path first
+	var scroll := _ui_root.get_node_or_null("RootMargin/RootHBox/Panel/Margin/SettingsScroll")
+	# Fallbacks: named node, substring match, any ScrollContainer under RootMargin
+	if scroll == null:
+		scroll = _find_node("SettingsScroll", "ScrollContainer")
+	if scroll == null:
+		var root_margin = _ui_root.get_node_or_null("RootMargin")
+		if root_margin:
+			for n in root_margin.find_children("*", "ScrollContainer", true, false):
+				scroll = n
+				break
+
+	# Find the VBox: prefer a child named VBox under the scroll, else any VBoxContainer child, else search RootMargin candidates
+	var vbox: VBoxContainer = null
+	if scroll:
+		if scroll.has_node("VBox"):
+			vbox = scroll.get_node("VBox")
+		else:
+			for c in scroll.get_children():
+				if c is VBoxContainer:
+					vbox = c
+					break
+
+	if vbox == null:
+		var root_margin = _ui_root.get_node_or_null("RootMargin")
+		if root_margin:
+			# look for a VBox that contains an expected settings child (good heuristic)
+			var wanted := ["FOVRow", "HistogramCard", "ExposureRow", "GuidesRow"]
+			for cand in root_margin.find_children("*", "VBoxContainer", true, false):
+				for w in wanted:
+					if cand.find_child(w, true, false) != null:
+						vbox = cand
+						break
+				if vbox:
+					break
+
+	# Apply layout fixes if we found controls
+	if scroll and scroll is Control:
+		# make full-rect
+		scroll.anchor_left = 0.0
+		scroll.anchor_top = 0.0
+		scroll.anchor_right = 1.0
+		scroll.anchor_bottom = 1.0
+		scroll.offset_left = 0.0
+		scroll.offset_top = 0.0
+		scroll.offset_right = 0.0
+		scroll.offset_bottom = 0.0
+
+	if vbox and vbox is Control:
+		vbox.anchor_left = 0.0
+		vbox.anchor_top = 0.0
+		vbox.anchor_right = 1.0
+		vbox.anchor_bottom = 1.0
+		vbox.offset_left = 0.0
+		vbox.offset_top = 0.0
+		vbox.offset_right = 0.0
+		vbox.offset_bottom = 0.0
+		# make sure minimum size won't collapse the layout
+		if vbox.has_method("set_custom_minimum_size"):
+			vbox.set_custom_minimum_size(Vector2.ZERO)
+		else:
+			vbox.rect_min_size = Vector2.ZERO
+
+	if enable_layout_debug_print:
+		print("[PhotoMode DEBUG] _enforce_settings_layout: scroll=", scroll, " vbox=", vbox)
+	# done
+
 
 func _ensure_row(row_name: String, type_class: Variant, parent: Node, child_names: Array) -> void:
 	if parent == null:
@@ -1223,6 +1565,11 @@ func _ensure_row(row_name: String, type_class: Variant, parent: Node, child_name
 	var row := _get_or_create_container(row_name, type_class, parent)
 	if row is Control:
 		(row as Control).size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		# Normalize anchors so rows occupy available width
+		(row as Control).anchor_left = 0.0
+		(row as Control).anchor_top = 0.0
+		(row as Control).anchor_right = 1.0
+		(row as Control).anchor_bottom = 0.0
 	for child_name in child_names:
 		_reparent_by_name(child_name, row)
 		var node := row.get_node_or_null(child_name)
@@ -1234,6 +1581,11 @@ func _ensure_row(row_name: String, type_class: Variant, parent: Node, child_name
 			node = label
 		if node is Control:
 			(node as Control).size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			# defensive: ensure child controls have reasonable anchors when moved
+			(node as Control).anchor_left = 0.0
+			(node as Control).anchor_top = 0.0
+			(node as Control).anchor_right = 1.0
+			(node as Control).anchor_bottom = 0.0
 			if node is Label:
 				(node as Label).horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 				(node as Label).size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
@@ -1325,14 +1677,24 @@ func _get_or_create_container(name: String, type_class: Variant, parent: Node) -
 func _reparent_by_name(name: String, new_parent: Node) -> void:
 	if new_parent == null:
 		return
-	var node := find_child(name, true, false)
-	if node == null:
-		for n in find_children("*", "", true, false):
-			if String(n.name).find(name) != -1:
-				node = n
-				break
-	if node != null:
-		_reparent(node, new_parent)
+	# Move *all* nodes whose name equals or contains the hint into new_parent.
+	# This fixes duplicated/mangled copies left around by editor/layout repair.
+	# Prefer searching under _ui_root when available to limit accidental matches.
+	var scope_root: Node = _ui_root if _ui_root != null else get_tree().get_root()
+	if scope_root == null:
+		return
+	# collect candidates (safe DFS via find_children where available)
+	var candidates: Array = []
+	candidates = scope_root.find_children("*", "", true, false)
+	for n in candidates:
+		if n == null:
+			continue
+		var nm := String(n.name)
+		# exact match or substring (handles mangled names like "...#FOVRow")
+		if nm == name or nm.find(name) != -1:
+			# don't reparent if already correct parent
+			if n.get_parent() != new_parent:
+				_reparent(n, new_parent)
 
 
 func _reparent(node: Node, new_parent: Node) -> void:
@@ -1556,6 +1918,8 @@ func _input(event: InputEvent) -> void:
 
 
 func _process(delta: float) -> void:
+	# accumulate time for debug throttling
+	_debug_accum += delta
 	if enable_runtime_layout_repair and _ui_root and _layout_retry_frames < 20:
 		if _ui_root.get_node_or_null("RootMargin") == null:
 			_layout_retry_frames += 1
@@ -1696,31 +2060,87 @@ func _set_section_collapsed(section: String, collapsed: bool) -> void:
 
 
 func _setup_tabs() -> void:
-	var tabs := {
-		"Camera": _find_node("TabCamera", "Button"),
-		"Exposure": _find_node("TabExposure", "Button"),
-		"Guides": _find_node("TabGuides", "Button"),
-		"Capture": _find_node("TabCapture", "Button"),
-		"Passes": _find_node("TabPasses", "Button"),
-		"Light": _find_node("TabLight", "Button"),
-		"Environment": _find_node("TabEnvironment", "Button"),
-		"Export": _find_node("TabExport", "Button"),
-		"Color": _find_node("TabColor", "Button"),
-		"Effects": _find_node("TabEffects", "Button"),
-		"Composition": _find_node("TabComposition", "Button"),
-		"Presets": _find_node("TabPresets", "Button")
-	}
+	# Build tab button mapping and content groups
+	var tab_names := ["camera","exposure","guides","capture","passes","light","environment","export","color","effects","composition","presets"]
 	_tab_buttons.clear()
-	for key in tabs.keys():
-		var btn: Variant = tabs[key]
+	for tn in tab_names:
+		var node_name: String = "Tab" + String(tn).capitalize()
+		var btn := _find_node(node_name, "Button")
 		if btn is Button:
-			var b := btn as Button
-			b.toggle_mode = true
-			b.pressed.connect(func():
-				_apply_tab(key)
+			btn.toggle_mode = true
+			var tab_key: String = String(tn)
+			# connect toggled handler; protect against unselecting active tab
+			var bbtn := btn as BaseButton
+			bbtn.toggled.connect(func(on: bool, bk=tab_key, b=bbtn):
+				if on:
+					_set_active_tab(bk)
+				else:
+					if _active_tab == bk:
+						# Prevent unselecting the active tab
+						b.button_pressed = true
 			)
-			_tab_buttons[key] = b
-	_apply_tab("Camera")
+			_tab_buttons[tn] = btn
+
+	# Build content groups (nodes under Panel/Margin/SettingsScroll/VBox)
+	var vbox := _ui_root.get_node_or_null("RootMargin/RootHBox/Panel/Margin/SettingsScroll/VBox") as Node
+	# Fallbacks: try to locate the VBox by other means if the exact path isn't present
+	if vbox == null:
+		vbox = _find_node("VBox", "VBoxContainer") as Node
+	if vbox == null:
+		var scr := _find_node("SettingsScroll", "ScrollContainer") as Node
+		if scr and scr is Node:
+			vbox = scr.get_node_or_null("VBox") as Node
+	if vbox == null and _ui_root:
+		# try scanning children for a VBoxContainer anywhere under RootMargin
+		var root_margin := _ui_root.get_node_or_null("RootMargin")
+		if root_margin:
+			for n in root_margin.get_children():
+				if n is VBoxContainer:
+					vbox = n
+					break
+	# Defensive fallback: if no dedicated VBox was found, use the PhotoUI root so
+	# _nodes(...) can still locate rows anywhere under PhotoUI. This prevents
+	# _tab_contents from remaining empty when layout repair or reparenting occurs.
+	if vbox == null and _ui_root:
+		vbox = _ui_root
+
+	if vbox:
+		_tab_contents.clear()
+		_tab_contents["camera"] = _nodes(vbox, ["HistogramCard", "Title", "Status", "FOVRow", "FocalRow", "ISORow", "ApertureRow", "ShutterRow", "FocusRow", "ShootingModeRow", "AutoFocusRow"]) 
+		_tab_contents["exposure"] = _nodes(vbox, ["ExposureHeaderRow", "ExposureRow", "AutoExposureRow", "AutoExposureSpeedRow", "AutoExposureRangeRow"]) 
+		_tab_contents["guides"] = _nodes(vbox, ["GuidesHeaderRow", "GuidesRow", "GuideTypeOptions", "GuidesOpacityRow"]) 
+		_tab_contents["capture"] = _nodes(vbox, ["CaptureHeaderRow", "ButtonsRow", "CaptureButton", "CaptureLayersButton", "BackButton", "CapturePathRow", "CaptureFormatRow"]) 
+		_tab_contents["passes"] = _nodes(vbox, ["PassesHeaderRow", "PassPreviewRow", "PassesGrid", "PassBeauty", "PassAlbedo", "PassNormals", "PassDepth", "PassLighting"]) 
+		_tab_contents["light"] = _nodes(vbox, ["LightRigHeaderRow", "LightRigGrid"]) 
+		_tab_contents["environment"] = _nodes(vbox, ["EnvironmentHeaderRow", "EnvRow", "EnvironmentRow", "AmbientRow", "FogRow"]) 
+		_tab_contents["export"] = _nodes(vbox, ["ExportHeaderRow", "ExportNote", "ResRow", "AspectRow"]) 
+		_tab_contents["color"] = _nodes(vbox, ["ColorHeaderRow", "TempRow", "TintRow", "SaturationRow", "ContrastRow"]) 
+		_tab_contents["effects"] = _nodes(vbox, ["EffectsHeaderRow", "VignetteRow", "GrainRow", "BloomRow"]) 
+		_tab_contents["composition"] = _nodes(vbox, ["CompositionHeaderRow", "CompositionNote"]) 
+		_tab_contents["presets"] = _nodes(vbox, ["PresetsHeaderRow", "PresetsRow", "PresetNameRow", "PresetButtonsRow"]) 
+
+	# Debug: report what we found for tab population (compact summary to avoid excessive output)
+	if enable_layout_debug_print:
+		print("[PhotoMode DEBUG] _setup_tabs: vbox=", vbox, " children=", (vbox.get_child_count() if vbox else -1))
+		for k in _tab_contents.keys():
+			var arr := _tab_contents[k] as Array
+			# collect names (avoid printing full node objects for every item)
+			var found_names := []
+			for n in arr:
+				if n:
+					found_names.append(n.name)
+			print("[PhotoMode DEBUG] tab=%s nodes_found=%d" % [k, found_names.size()])
+			if found_names.size() > 0:
+				if found_names.size() <= 12:
+					print("[PhotoMode DEBUG] tab=%s node_names=%s" % [k, found_names])
+				else:
+					var sample := []
+					for i in range(0, min(found_names.size(), 12)):
+						sample.append(found_names[i])
+					print("[PhotoMode DEBUG] tab=%s node_names_sample=%s (total=%d)" % [k, sample, found_names.size()])
+
+	# Default to camera tab (defer so layout can settle)
+	call_deferred("_set_active_tab", "camera")
 
 
 func _populate_focal_options() -> void:
@@ -1799,7 +2219,113 @@ func _populate_aspect_options() -> void:
 	_on_aspect_selected(0)
 
 
+func _nodes(root: Node, names: Array[String]) -> Array[CanvasItem]:
+	var out: Array[CanvasItem] = []
+	if root == null:
+		return out
+	for n in names:
+		# search recursively for the named child
+		var node := root.find_child(n, true, false)
+		if node == null:
+			# fallback to global search by name (helps when layout reparenting moved nodes)
+			node = _find_node(n, "")
+		if node != null and node is CanvasItem:
+			out.append(node as CanvasItem)
+	return out
+
+
+func _set_active_tab(tab: String) -> void:
+	if tab == null:
+		return
+	var key := String(tab).to_lower()
+	_active_tab = key
+	# update buttons
+	for tkey in _tab_buttons.keys():
+		var b := _tab_buttons[tkey] as Button
+		if b:
+			b.button_pressed = (tkey == key)
+
+	# hide all content nodes defined in _tab_contents
+	for k in _tab_contents.keys():
+		var arr := _tab_contents[k] as Array
+		for node in arr:
+			if node and node is CanvasItem:
+				(node as CanvasItem).visible = false
+
+	# show only active
+	var show_arr := _tab_contents.get(key, []) as Array
+	for node in show_arr:
+		if node and node is CanvasItem:
+			(node as CanvasItem).visible = true
+
+	# update title
+	var title := _find_node("Title", "Label") as Label
+	if title:
+		title.text = String(key).capitalize()
+
+	# ensure viewfinder visibility per active tab
+	_set_viewfinder_visible(_always_show_viewport_enabled or key == "capture")
+
+	# Enforce visibility for duplicated/mangled controls by substring matching
+	var allowed_subs: Array = []
+	for n in show_arr:
+		if n:
+			allowed_subs.append(String(n.name))
+	# Always allow these
+	allowed_subs += ["HistogramCard", "Title", "Status"]
+
+	# Build list of all known tab node name substrings
+	var known_subs: Array = []
+	for k in _tab_contents.keys():
+		for x in _tab_contents[k]:
+			if x:
+				known_subs.append(String(x.name))
+
+	# Defensive fallback: if _tab_contents wasn't populated (layout/reparenting
+	# race), derive the known_subs from controls under SettingsScroll/VBox or
+	# fall back to scanning the PhotoUI root. This ensures the enforcement loop
+	# can still hide unrelated controls.
+	if known_subs.is_empty() and _ui_root != null:
+		var ss := _ui_root.get_node_or_null("RootMargin/RootHBox/Panel/Margin/SettingsScroll")
+		var candidate_root: Node = ss if ss else _ui_root
+		for c in candidate_root.find_children("*", "", true, false):
+			if c and c is Control:
+				known_subs.append(String(c.name))
+
+	var toggled := 0
+	# Scan all Controls and hide any that match known tab node names but are not allowed for this tab
+	# Scan the Photo UI (or whole scene if UI isn't available) for Controls to enforce visibility
+	var search_root: Node = _ui_root if _ui_root != null else get_tree().get_root()
+	for c in search_root.find_children("*", "Control", true, false):
+		if c == null:
+			continue
+		var nm := String(c.name)
+		var appears := false
+		for ks in known_subs:
+			if nm.find(ks) != -1:
+				appears = true
+				break
+		if not appears:
+			continue
+		# should be visible if its name contains any allowed substring
+		var should := false
+		for asub in allowed_subs:
+			if nm.find(asub) != -1:
+				should = true
+				break
+		if c is CanvasItem and (c.visible != should):
+			(c as CanvasItem).visible = should
+			toggled += 1
+
+	if enable_layout_debug_print:
+		print("[PhotoMode DEBUG] _set_active_tab: enforced visibility toggles=", toggled)
+
+
+
 func _apply_tab(tab_name: String) -> void:
+	# Delegate to new tab system and prevent legacy code from re-showing everything
+	_set_active_tab(String(tab_name).to_lower())
+	return
 	_current_tab = tab_name
 	for k in _tab_buttons.keys():
 		var b := _tab_buttons[k] as Button
@@ -2215,7 +2741,7 @@ func _setup_environment_presets() -> void:
 			_env_options.add_item(name)
 		var preferred := _load_env_preference()
 		var default_index := 0
-		for i in range(_env_options.item_count):
+		for i in range(_env_options.get_item_count()):
 			var label := _env_options.get_item_text(i)
 			if not preferred.is_empty() and label == preferred:
 				default_index = i
@@ -2405,17 +2931,28 @@ func _apply_color_adjustments() -> void:
 	if _world_env == null or _world_env.environment == null:
 		return
 
+	var env = _world_env.environment
+	# Ensure the environment is really an Environment resource (defensive for engine versions)
+	if not (env is Environment):
+		if enable_layout_debug_print:
+			if _debug_accum >= DEBUG_PRINT_INTERVAL:
+				print("[PhotoMode DEBUG] _apply_color_adjustments: world_env=", _world_env, " env_type=", typeof(env), " env=", env)
+				_debug_accum = 0.0
+		return
+
 	if enable_layout_debug_print:
-		print("[PhotoMode DEBUG] _apply_color_adjustments: world_env=", _world_env, " env=", _world_env.environment)
-		var props := []
-		for p in _world_env.environment.get_property_list():
-			props.append(p.name)
-		print("[PhotoMode DEBUG] environment properties sample=", props.slice(0, 30))
-	_set_attr_if_exists(_world_env.environment, "adjustment_enabled", true)
+		if _debug_accum >= DEBUG_PRINT_INTERVAL:
+			print("[PhotoMode DEBUG] _apply_color_adjustments: world_env=", _world_env, " env=", env)
+			var props := []
+			for p in env.get_property_list():
+				props.append(p.name)
+			print("[PhotoMode DEBUG] environment properties sample=", props.slice(0, 30))
+			_debug_accum = 0.0
+	_set_attr_if_exists(env, "adjustment_enabled", true)
 	if _saturation_slider:
-		_set_attr_if_exists(_world_env.environment, "adjustment_saturation", _saturation_slider.value)
+		_set_attr_if_exists(env, "adjustment_saturation", _saturation_slider.value)
 	if _contrast_slider:
-		_set_attr_if_exists(_world_env.environment, "adjustment_contrast", _contrast_slider.value)
+		_set_attr_if_exists(env, "adjustment_contrast", _contrast_slider.value)
 
 	var temp := _temp_slider.value if _temp_slider else 0.0
 	var tint := _tint_slider.value if _tint_slider else 0.0
@@ -2426,16 +2963,16 @@ func _apply_color_adjustments() -> void:
 	color.g = clampf(color.g, 0.6, 1.4)
 	color.b = clampf(color.b, 0.6, 1.4)
 	# Primary: set environment adjustment color
-	_set_attr_if_exists(_world_env.environment, "adjustment_color", color)
+	_set_attr_if_exists(env, "adjustment_color", color)
 	# Fallbacks: some engine versions expose different property names
-	_set_attr_if_exists(_world_env.environment, "adjustment_color_correction", color)
+	_set_attr_if_exists(env, "adjustment_color_correction", color)
 
 	# Also nudge key light and ambient color so temperature/tint are visible even if env adjustment isn't effective
 	if _key_light:
 		# blend key_light color with computed adjustment
 		_key_light.light_color = _key_light.light_color.lerp(color, 0.25)
 	# Also try nudging ambient_light_color on the environment (if present)
-	_set_attr_if_exists(_world_env.environment, "ambient_light_color", color)
+	_set_attr_if_exists(env, "ambient_light_color", color)
 
 
 func _on_vignette_changed(value: float) -> void:
@@ -2690,7 +3227,7 @@ func _apply_preset_state(preset: Dictionary) -> void:
 		_exposure_slider.value = float(preset.get("exposure", _exposure_slider.value))
 	if _env_options:
 		var name := String(preset.get("env_preset", ""))
-		for i in range(_env_options.item_count):
+		for i in range(_env_options.get_item_count()):
 			if _env_options.get_item_text(i) == name:
 				_env_options.select(i)
 				_on_environment_selected(i)
@@ -2728,31 +3265,36 @@ func _apply_preset_state(preset: Dictionary) -> void:
 	if _key_enabled:
 		_key_enabled.button_pressed = bool(preset.get("key_enabled", true))
 	if _key_color:
-		_key_color.color = preset.get("key_color", _key_color.color)
+		var kc: Color = _to_color(preset.get("key_color", _key_color.color), _key_color.color)
+		_key_color.color = kc
 	if _key_intensity:
 		_key_intensity.value = float(preset.get("key_intensity", _key_intensity.value))
 	if _fill_enabled:
 		_fill_enabled.button_pressed = bool(preset.get("fill_enabled", true))
 	if _fill_color:
-		_fill_color.color = preset.get("fill_color", _fill_color.color)
+		var fc: Color = _to_color(preset.get("fill_color", _fill_color.color), _fill_color.color)
+		_fill_color.color = fc
 	if _fill_intensity:
 		_fill_intensity.value = float(preset.get("fill_intensity", _fill_intensity.value))
 	if _rim_enabled:
 		_rim_enabled.button_pressed = bool(preset.get("rim_enabled", true))
 	if _rim_color:
-		_rim_color.color = preset.get("rim_color", _rim_color.color)
+		var rc: Color = _to_color(preset.get("rim_color", _rim_color.color), _rim_color.color)
+		_rim_color.color = rc
 	if _rim_intensity:
 		_rim_intensity.value = float(preset.get("rim_intensity", _rim_intensity.value))
 	if _top_enabled:
 		_top_enabled.button_pressed = bool(preset.get("top_enabled", true))
 	if _top_color:
-		_top_color.color = preset.get("top_color", _top_color.color)
+		var tc: Color = _to_color(preset.get("top_color", _top_color.color), _top_color.color)
+		_top_color.color = tc
 	if _top_intensity:
 		_top_intensity.value = float(preset.get("top_intensity", _top_intensity.value))
 	if _bounce_enabled:
 		_bounce_enabled.button_pressed = bool(preset.get("bounce_enabled", true))
 	if _bounce_color:
-		_bounce_color.color = preset.get("bounce_color", _bounce_color.color)
+		var bc: Color = _to_color(preset.get("bounce_color", _bounce_color.color), _bounce_color.color)
+		_bounce_color.color = bc
 	if _bounce_intensity:
 		_bounce_intensity.value = float(preset.get("bounce_intensity", _bounce_intensity.value))
 
@@ -2767,6 +3309,105 @@ func _get_selected_aspect_ratio(base_size: Vector2) -> float:
 			if ratio > 0.01:
 				return ratio
 	return base_size.x / maxf(base_size.y, 1.0)
+
+
+func _force_reparent_settings() -> void:
+	if _ui_root == null:
+		return
+
+	# Try to find the settings vbox container where rows should live.
+	var settings_vbox: VBoxContainer = null
+	# 1) Exact path (common case)
+	if _ui_root and _ui_root.has_node("RootMargin/RootHBox/Panel/Margin/SettingsScroll/VBox"):
+		settings_vbox = _ui_root.get_node("RootMargin/RootHBox/Panel/Margin/SettingsScroll/VBox") as VBoxContainer
+	# 2) Common mangled name used by exported scenes
+	if settings_vbox == null and _ui_root and _ui_root.has_node("RootMargin/RootHBox/Panel/Margin"):
+		var margin = _ui_root.get_node("RootMargin/RootHBox/Panel/Margin")
+		for child in margin.get_children():
+			if child is VBoxContainer:
+				# pick the first VBoxContainer (will be refined below)
+				settings_vbox = child
+				break
+	# 3) global search: find any VBoxContainer whose name or descendants match known row names
+	if settings_vbox == null:
+		var best: Node = null
+		var best_score := -1
+		var candidates: Array = []
+		# Prefer searching the Photo UI subtree first (covers runtime-reparented UI)
+		if _ui_root != null:
+			candidates = _ui_root.find_children("*", "VBoxContainer", true, false)
+		else:
+			candidates = get_tree().get_root().find_children("*", "VBoxContainer", true, false)
+		for cand in candidates:
+			var score := 0
+			for rn in ["FOVRow","ExposureRow","ISORow","Title","HistogramCard"]:
+				for gc in cand.get_children():
+					if String(gc.name).find(rn) != -1:
+						score += 1
+			if score > best_score:
+				best_score = score
+				best = cand
+		if best_score > 0:
+			settings_vbox = best as VBoxContainer
+	if settings_vbox == null:
+		if enable_layout_debug_print:
+			print("[PhotoMode DEBUG] _force_reparent_settings: could not find settings vbox")
+		return
+	# Debug: report where we found the settings vbox
+	if enable_layout_debug_print:
+		print("[PhotoMode DEBUG] _force_reparent_settings: settings_vbox=", settings_vbox, " path=", settings_vbox.get_path(), " child_count=", settings_vbox.get_child_count())
+
+	# Known rows to move into settings vbox (matches _setup_tabs/_ensure_row lists)
+	var rows := [
+		"FOVRow","FocalRow","ISORow","ApertureRow","ShutterRow","FocusRow","ShootingModeRow","AutoFocusRow",
+		"ExposureHeaderRow","ExposureRow","AutoExposureRow","AutoExposureSpeedRow","AutoExposureRangeRow",
+		"GuidesHeaderRow","GuidesRow","GuideTypeOptions","GuidesOpacityRow",
+		"CaptureHeaderRow","ButtonsRow","CaptureButton","CaptureLayersButton","BackButton","CapturePathRow","CaptureFormatRow",
+		"PassesHeaderRow","PassPreviewRow","PassesGrid","PassBeauty","PassAlbedo","PassNormals","PassDepth","PassLighting",
+		"LightRigHeaderRow","LightRigGrid","EnvironmentHeaderRow","EnvRow","EnvironmentRow","AmbientRow","FogRow",
+		"ExportHeaderRow","ExportNote","ResRow","AspectRow",
+		"ColorHeaderRow","TempRow","TintRow","SaturationRow","ContrastRow",
+		"EffectsHeaderRow","VignetteRow","GrainRow","BloomRow",
+		"CompositionHeaderRow","CompositionNote",
+		"PresetsHeaderRow","PresetsRow","PresetNameRow","PresetButtonsRow",
+		"HistogramCard","Title","Status"
+	]
+
+	# First, ensure rows are direct children of the settings vbox
+	for rname in rows:
+		_reparent_by_name(rname, settings_vbox)
+
+	# Next, for each row, attempt to move its known children into that row
+	# Simple heuristic: children named like "<RowName>" (e.g. FOVSlider) will be
+	# reparented under the discovered row node.
+	for rname in rows:
+		var row_node := _find_node(rname, "Control")
+		if row_node == null:
+			continue
+		# find likely children by scanning the Photo UI (or full scene) for names containing the row name as a prefix
+		var all_controls := []
+		if _ui_root != null:
+			all_controls = _ui_root.find_children("*", "Control", true, false)
+		else:
+			all_controls = get_tree().get_root().find_children("*", "Control", true, false)
+		for n in all_controls:
+			if n == null:
+				continue
+			var nm := String(n.name)
+			# pattern: contains "<RowName>#" or "_<RowName>#"
+			if nm.find(rname) != -1 and n.get_parent() != row_node:
+				_reparent(n, row_node)
+
+	# Re-apply row/container sizing and layout guarantees for any rows we moved so
+	# anchors/size_flags are consistent after reparenting.
+	for rname in rows:
+		if rname.ends_with("Row") or rname.ends_with("HeaderRow"):
+			_ensure_row(rname, HBoxContainer, settings_vbox, [])
+		elif rname.ends_with("Grid"):
+			_ensure_row(rname, GridContainer, settings_vbox, [])
+
+	if enable_layout_debug_print:
+		print("[PhotoMode DEBUG] _force_reparent_settings: completed reparent sweep")
 
 
 func _calculate_crop_rect(base_size: Vector2) -> Rect2:
@@ -2815,7 +3456,19 @@ func _update_viewfinder() -> void:
 	if _viewfinder == null:
 		return
 	var base_size := get_viewport().get_visible_rect().size
+	# Re-assert anchors/size for the viewfinder Control (defensive - fixes cases
+	# where parent/anchor changes prevent it from resizing with the viewport).
+	if _viewfinder is Control:
+		_viewfinder.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		_viewfinder.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		# if the control's size doesn't match the viewport, nudge its minimum size
+		# so Godot's layout will allocate the correct rect and allow _draw to run.
+		if _viewfinder.size.distance_to(base_size) > 1.0:
+			_viewfinder.rect_min_size = base_size
+
 	var crop_rect := _calculate_crop_rect(base_size)
+	if enable_layout_debug_print:
+		print("[PhotoMode DEBUG] _update_viewfinder: viewport=", base_size, " viewfinder_size=", (_viewfinder.size if _viewfinder is Control else Vector2.ZERO))
 	if _viewfinder.has_method("set_crop_rect"):
 		_viewfinder.call("set_crop_rect", crop_rect)
 
@@ -2827,6 +3480,27 @@ func _set_viewfinder_visible(visible: bool) -> void:
 		_viewfinder.call("set_enabled", visible)
 	else:
 		_viewfinder.visible = visible
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	# Keyboard shortcuts: Space = capture, V = toggle viewfinder, G = toggle guides
+	if event is InputEventKey and event.pressed and not event.echo:
+		var kc: int = int(event.keycode)
+		if kc == KEY_SPACE:
+			# Trigger capture
+			if has_method("_on_capture_pressed"):
+				_on_capture_pressed()
+				get_viewport().set_input_as_handled()
+		elif kc == KEY_V:
+			# Toggle viewfinder visibility
+			if _viewfinder != null:
+				_set_viewfinder_visible(not (_viewfinder.visible))
+				get_viewport().set_input_as_handled()
+		elif kc == KEY_G:
+			# Toggle composition guides
+			if _guides != null:
+				_guides.visible = not _guides.visible
+				get_viewport().set_input_as_handled()
 
 
 func _on_capture_path_browse() -> void:
@@ -2850,11 +3524,12 @@ func _on_capture_path_dir_selected(dir: String) -> void:
 
 
 func _add_capture_thumbnail(capture: Dictionary) -> void:
-	if capture == null or _contact_strip == null:
+	var target: HBoxContainer = _filmstrip_hbox if _filmstrip_hbox != null else _contact_strip
+	if capture == null or target == null:
 		return
 	# Create thumbnail button
 	var thumb_btn := Button.new()
-	thumb_btn.name = "Thumb_%d" % _contact_strip.get_child_count()
+	thumb_btn.name = "Thumb_%d" % target.get_child_count()
 	var tex: Texture = capture.get("thumb", null) as Texture
 	if tex != null and tex is Texture:
 		var tr := TextureRect.new()
@@ -2865,12 +3540,23 @@ func _add_capture_thumbnail(capture: Dictionary) -> void:
 		thumb_btn.add_child(tr)
 	else:
 		thumb_btn.text = "Img"
-	# store metadata
+	# store metadata and make toggleable
 	thumb_btn.set_meta("capture", capture)
+	thumb_btn.toggle_mode = true
+	var idx := target.get_child_count()
+	thumb_btn.set_meta("capture_index", idx)
+	# left-click opens preview
 	thumb_btn.pressed.connect(func():
 		_open_capture_preview(capture)
 	)
-	_contact_strip.add_child(thumb_btn)
+	# right-click opens popup menu
+	thumb_btn.gui_input.connect(func(ev: InputEvent, b=thumb_btn, cap=capture, i=idx):
+		if ev is InputEventMouseButton and ev.pressed and ev.button_index == 2:
+			_menu_target_capture_index = i
+			if _thumb_menu:
+				_thumb_menu.popup()
+	)
+	target.add_child(thumb_btn)
 
 
 func _open_capture_preview(capture: Dictionary) -> void:
@@ -2895,6 +3581,118 @@ func _open_capture_preview(capture: Dictionary) -> void:
 				_capture_preview_panel.hide()
 		)
 		_capture_preview_panel.add_child(btn)
+
+
+func _on_thumb_menu_id_pressed(id: int) -> void:
+	var idx := _menu_target_capture_index
+	if idx < 0 or idx >= _session_captures.size():
+		return
+	var capture: Dictionary = _session_captures[idx] as Dictionary
+	match id:
+		0:
+			_select_capture(idx)
+		1:
+			_open_capture_preview(capture)
+		2:
+			# Export
+			_thumb_export_target_index = idx
+			if _thumb_export_dialog:
+				_thumb_export_dialog.popup_centered_ratio(0.5)
+		3:
+			_reveal_in_finder(capture)
+		_:
+			pass
+
+
+func _select_capture(idx: int) -> void:
+	if idx < 0 or idx >= _session_captures.size():
+		return
+	_selected_capture_idx = idx
+	var target: HBoxContainer = _filmstrip_hbox if _filmstrip_hbox != null else _contact_strip
+	if target:
+		for i in range(target.get_child_count()):
+			var b = target.get_child(i)
+			if b is Button:
+				(b as Button).button_pressed = (i == idx)
+	# Restore camera if available
+	var cap: Dictionary = _session_captures[idx] as Dictionary
+	if cap and cap.has("camera") and _camera:
+		var cam: Dictionary = cap["camera"] as Dictionary
+		if cam.has("position"):
+			_camera.global_position = cam.position
+		if cam.has("rotation"):
+			_camera.rotation_degrees = cam.rotation
+		_yaw = _camera.rotation_degrees.y
+		_pitch = _camera.rotation_degrees.x
+
+
+func _on_thumb_export_selected(path: String) -> void:
+	var idx := _thumb_export_target_index
+	if idx < 0 or idx >= _session_captures.size():
+		return
+	var cap: Dictionary = _session_captures[idx] as Dictionary
+	var src := String(cap.get("path", ""))
+	if src != "":
+		# Try to copy original file manually (FileAccess.copy may not be available everywhere)
+		if FileAccess.file_exists(src):
+			var r = FileAccess.open(src, FileAccess.ModeFlags.READ)
+			if r:
+				var size := r.get_length()
+				var buf := r.get_buffer(size)
+				r.close()
+				var w = FileAccess.open(path, FileAccess.ModeFlags.WRITE)
+				if w:
+					w.store_buffer(buf)
+					w.close()
+					if _status:
+						_status.text = "Exported: %s" % path
+					return
+				#else fall through to thumbnail fallback
+				
+	# Fallback: save thumbnail image if source missing
+	var tex = cap.get("thumb", null)
+	if tex and tex is ImageTexture:
+		var img = (tex as ImageTexture).get_image()
+		var ext := path.get_extension().to_lower()
+		match ext:
+			"jpg", "jpeg":
+				img.save_jpg(path)
+			"exr":
+				img.save_exr(path)
+			_:
+				img.save_png(path)
+		if _status:
+			_status.text = "Exported thumbnail: %s" % path
+
+
+func _reveal_in_finder(capture: Dictionary) -> void:
+	if capture == null:
+		return
+	var p := String(capture.get("path", ""))
+	if p == "":
+		return
+	var os_name := OS.get_name().to_lower()
+	if os_name.find("mac") != -1 or os_name.find("osx") != -1:
+		# 'open -R <path>' reveals file in Finder; omit explicit blocking arg for broader compatibility
+		OS.execute("open", ["-R", p])
+	elif os_name.find("windows") != -1:
+		OS.execute("explorer", ["/select,", p])
+	else:
+		# Linux: open parent folder
+		var parent := p.get_base_dir()
+		OS.execute("xdg-open", [parent])
+
+
+func _on_toolbar_viewfinder_pressed() -> void:
+	# Toggle viewfinder via toolbar
+	if _viewfinder != null:
+		_set_viewfinder_visible(not _viewfinder.visible)
+
+
+func _on_toolbar_guides_pressed() -> void:
+	# Toggle guides visibility via toolbar
+	if _guides != null:
+		_guides.visible = not _guides.visible
 
 
 func _on_capture_pressed() -> void:

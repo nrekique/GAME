@@ -1,8 +1,9 @@
 extends Control
 
-@export var sample_interval: float = 0.25
+@export var sample_interval: float = 1.0 # increased interval to reduce CPU/GPU reads
 @export var bins: int = 256
-@export var downsample_size: Vector2i = Vector2i(192, 108)
+@export var downsample_size: Vector2i = Vector2i(96, 54) # smaller default downsample for cheaper reads
+@export var use_subviewport: bool = true # render histogram from a dedicated small SubViewport when available
 @export var show_luma: bool = true
 @export var show_rgb: bool = true
 @export var background_color: Color = Color(0, 0, 0, 0.55)
@@ -18,6 +19,7 @@ var _hist_g: PackedFloat32Array = PackedFloat32Array()
 var _hist_b: PackedFloat32Array = PackedFloat32Array()
 var _hist_l: PackedFloat32Array = PackedFloat32Array()
 var _max_val: float = 1.0
+var _subviewport: SubViewport = null
 
 
 func _ready() -> void:
@@ -26,6 +28,36 @@ func _ready() -> void:
 	size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	custom_minimum_size = Vector2(0, 64)
 	_set_hist_size(bins)
+	# Disable in headless/server runs to avoid dummy-texture backend errors
+	if OS.has_feature("headless") or OS.has_feature("server"):
+		visible = false
+		return
+
+	# Create a small SubViewport to render a low-res copy of the scene for histogram sampling.
+	if use_subviewport:
+		# Defensive: avoid creating multiple SubViewports if script reloaded
+		var existing: SubViewport = null
+		# check local first
+		existing = get_node_or_null("HistogramSubViewport") as SubViewport
+		# then check current scene root
+		var scene_root := get_tree().get_current_scene()
+		if existing == null and scene_root:
+			existing = scene_root.get_node_or_null("HistogramSubViewport") as SubViewport
+		if existing == null:
+			_subviewport = SubViewport.new()
+			_subviewport.name = "HistogramSubViewport"
+			_subviewport.size = downsample_size
+			_subviewport.render_target_update_mode = SubViewport.UPDATE_ONCE
+			_subviewport.render_target_clear_mode = SubViewport.CLEAR_MODE_NEVER
+			# Share the same 3D world so the subviewport mirrors the main scene
+			if get_viewport():
+				_subviewport.world_3d = get_viewport().world_3d
+			# Add SubViewport under the current scene root (safer for embedded window handling)
+			var parent_node := scene_root if scene_root != null else get_tree().get_root()
+			# parent may be busy during scene setup; defer adding to avoid "Parent node is busy" errors
+			parent_node.call_deferred("add_child", _subviewport)
+		else:
+			_subviewport = existing
 
 
 func _process(delta: float) -> void:
@@ -38,10 +70,24 @@ func _process(delta: float) -> void:
 
 
 func _update_histogram() -> void:
-	var tex: Texture2D = get_viewport().get_texture()
+	# Avoid running in headless/server environments where viewport textures may be invalid.
+	if OS.has_feature("headless"):
+		return
+
+	# Prefer SubViewport texture when available (cheaper and isolated)
+	var tex: Texture2D = null
+	if _subviewport != null:
+		# Request a one-shot render and wait a couple frames so the subviewport updates its render target
+		_subviewport.render_target_update_mode = SubViewport.UPDATE_ONCE
+		await get_tree().process_frame
+		await get_tree().process_frame
+		tex = _subviewport.get_texture()
+	if tex == null:
+		tex = get_viewport().get_texture()
 	if tex == null:
 		return
 	var img: Image = tex.get_image()
+	# Guard: some backends (headless/dummy) can cause get_image() to fail internally; bail if result is invalid.
 	if img == null:
 		return
 	if downsample_size.x > 0 and downsample_size.y > 0:
@@ -50,9 +96,11 @@ func _update_histogram() -> void:
 
 	var w: int = img.get_width()
 	var h: int = img.get_height()
-	var step: int = max(1, int(h / 72))
-	for y in range(0, h, step):
-		for x in range(0, w, step):
+	# Use separate, larger sampling steps to dramatically reduce pixel reads
+	var y_step: int = max(1, int(h / 144))
+	var x_step: int = max(1, int(w / 96))
+	for y in range(0, h, y_step):
+		for x in range(0, w, x_step):
 			var c: Color = img.get_pixel(x, y)
 			var r: float = c.r
 			var g: float = c.g
