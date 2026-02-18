@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="FuncGodotFGDSolidClass" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://addons/func_godot/src/fgd/func_godot_fgd_solid_class.gd" id="1_solid"]
+[ext_resource type="Script" path="res://entities/worldspawn.gd" id="2_script"]
+
+[resource]
+script = ExtResource("1_solid")
+spawn_type = 0
+origin_type = 4
+build_visuals = true
+use_in_baked_light = true
+shadow_casting_setting = 1
+build_occlusion = true
+render_layers = 1
+collision_shape_type = 1
+collision_layer = 1
+collision_mask = 0
+collision_priority = 1.0
+collision_shape_margin = 0.04
+script_class = ExtResource("2_script")
+classname = "worldspawn"
+description = "Default static world geometry plus global map keys for gameplay and visual settings."
+func_godot_internal = false
+base_classes = Array[Resource]([])
+class_properties = {
+"sf_fog_color": Color(0, 0, 0, 1),
+"sf_fog_density": -1.0,
+"sf_fog_enabled": false,
+"sf_objective_text": "",
+"sf_ps1_dither_strength": -1.0,
+"sf_ps1_shader": true,
+"sf_required_collectibles": -1,
+"sf_sun_energy": -1.0
+}
+class_property_descriptions = {
+"sf_fog_color": "Fog color override (if sf_fog_enabled is set).",
+"sf_fog_density": "Fog density override. Negative keeps scene default.",
+"sf_fog_enabled": "Enable or disable fog from worldspawn.",
+"sf_objective_text": "Optional starting objective text.",
+"sf_ps1_dither_strength": "Override GAME.ps1_dither_strength. Negative keeps current value.",
+"sf_ps1_shader": "Enable or disable PS1 shader globally for this map.",
+"sf_required_collectibles": "Override collectibles required to unlock exit. Negative keeps current value.",
+"sf_sun_energy": "Directional light energy override. Negative keeps current value."
+}
+auto_apply_to_matching_node_properties = false
+meta_properties = {
+"color": Color(0.8, 0.8, 0.8, 1)
+}
+node_class = "StaticBody3D"
+name_property = ""

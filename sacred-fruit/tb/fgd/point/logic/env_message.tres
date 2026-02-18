@@ -1,0 +1,33 @@
+[gd_resource type="Resource" script_class="FuncGodotFGDPointClass" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://addons/func_godot/src/fgd/func_godot_fgd_point_class.gd" id="1_point"]
+[ext_resource type="Resource" path="res://tb/fgd/base/targetname_base.tres" id="2_targetname"]
+[ext_resource type="Resource" path="res://tb/fgd/base/target_base.tres" id="3_target_base"]
+[ext_resource type="Script" path="res://entities/logic/env_message.gd" id="4_script"]
+
+[resource]
+script = ExtResource("1_point")
+script_class = ExtResource("4_script")
+apply_rotation_on_map_build = false
+apply_scale_on_map_build = false
+classname = "env_message"
+description = "Shows HUD objective text and optionally triggers targets."
+base_classes = Array[Resource]([ExtResource("2_targetname"), ExtResource("3_target_base")])
+class_properties = {
+"enabled": true,
+"hold_time": 2.0,
+"message": "",
+"restore_default_text": true
+}
+class_property_descriptions = {
+"enabled": "If false, ignores use.",
+"hold_time": "Seconds before restoring default objective text.",
+"message": "Text shown through GAME objective signal.",
+"restore_default_text": "Restore default objective text after hold_time."
+}
+meta_properties = {
+"color": Color(0.95, 0.95, 0.35, 1),
+"size": AABB(-8, -8, -8, 8, 8, 8)
+}
+node_class = "Node3D"
+name_property = ""

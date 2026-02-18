@@ -1,0 +1,43 @@
+[gd_resource type="Resource" script_class="FuncGodotFGDPointClass" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://addons/func_godot/src/fgd/func_godot_fgd_point_class.gd" id="1_point"]
+[ext_resource type="Resource" path="res://tb/fgd/base/targetname_base.tres" id="2_targetname"]
+[ext_resource type="Resource" path="res://tb/fgd/base/target_base.tres" id="3_target_base"]
+[ext_resource type="Script" path="res://entities/logic/logic_random.gd" id="4_script"]
+
+[resource]
+script = ExtResource("1_point")
+script_class = ExtResource("4_script")
+apply_rotation_on_map_build = false
+apply_scale_on_map_build = false
+classname = "logic_random"
+description = "Picks one target from list and fires it."
+base_classes = Array[Resource]([ExtResource("2_targetname"), ExtResource("3_target_base")])
+class_properties = {
+"enabled": true,
+"target1": "",
+"target2": "",
+"target3": "",
+"target4": "",
+"target5": "",
+"target6": "",
+"target7": "",
+"target8": ""
+}
+class_property_descriptions = {
+"enabled": "If false, does nothing.",
+"target1": "Candidate target group 1.",
+"target2": "Candidate target group 2.",
+"target3": "Candidate target group 3.",
+"target4": "Candidate target group 4.",
+"target5": "Candidate target group 5.",
+"target6": "Candidate target group 6.",
+"target7": "Candidate target group 7.",
+"target8": "Candidate target group 8."
+}
+meta_properties = {
+"color": Color(0.9, 0.7, 0.2, 1),
+"size": AABB(-8, -8, -8, 8, 8, 8)
+}
+node_class = "Node3D"
+name_property = ""

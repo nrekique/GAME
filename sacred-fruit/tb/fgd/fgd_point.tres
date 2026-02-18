@@ -12,8 +12,15 @@
 [ext_resource type="Resource" uid="uid://bym32txt4ikin" path="res://tb/fgd/point/info_intermission.tres" id="9_info_intermission"]
 [ext_resource type="Resource" uid="uid://8yvlbibxyoop" path="res://tb/fgd/point/path_corner.tres" id="10_path_corner"]
 [ext_resource type="Resource" uid="uid://dq0v3apk0gnsu" path="res://tb/fgd/point/items/item_ammo.tres" id="11_item_ammo"]
+[ext_resource type="Resource" path="res://tb/fgd/point/logic/logic_relay.tres" id="12_logic_relay"]
+[ext_resource type="Resource" path="res://tb/fgd/point/logic/logic_timer.tres" id="13_logic_timer"]
+[ext_resource type="Resource" path="res://tb/fgd/point/logic/logic_random.tres" id="14_logic_random"]
+[ext_resource type="Resource" path="res://tb/fgd/point/logic/math_counter.tres" id="15_math_counter"]
+[ext_resource type="Resource" path="res://tb/fgd/point/logic/multi_manager.tres" id="16_multi_manager"]
+[ext_resource type="Resource" path="res://tb/fgd/point/logic/env_message.tres" id="17_env_message"]
+[ext_resource type="Resource" path="res://tb/fgd/point/logic/logic_auto.tres" id="18_logic_auto"]
 
 [resource]
 script = ExtResource("1_3atn5")
 fgd_name = "PointFGD"
-entity_definitions = Array[Resource]([ExtResource("1_7urq8"), ExtResource("2_vstcb"), ExtResource("3_nmgj0"), ExtResource("4_wjef5"), ExtResource("5_item_collectible"), ExtResource("6_info_player_start"), ExtResource("7_light"), ExtResource("8_item_health"), ExtResource("9_info_intermission"), ExtResource("10_path_corner"), ExtResource("11_item_ammo")])
+entity_definitions = Array[Resource]([ExtResource("1_7urq8"), ExtResource("2_vstcb"), ExtResource("3_nmgj0"), ExtResource("4_wjef5"), ExtResource("5_item_collectible"), ExtResource("6_info_player_start"), ExtResource("7_light"), ExtResource("8_item_health"), ExtResource("9_info_intermission"), ExtResource("10_path_corner"), ExtResource("11_item_ammo"), ExtResource("12_logic_relay"), ExtResource("18_logic_auto"), ExtResource("13_logic_timer"), ExtResource("14_logic_random"), ExtResource("15_math_counter"), ExtResource("16_multi_manager"), ExtResource("17_env_message")])

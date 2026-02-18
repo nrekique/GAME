@@ -1,0 +1,31 @@
+[gd_resource type="Resource" script_class="FuncGodotFGDPointClass" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://addons/func_godot/src/fgd/func_godot_fgd_point_class.gd" id="1_point"]
+[ext_resource type="Resource" path="res://tb/fgd/base/targetname_base.tres" id="2_targetname"]
+[ext_resource type="Resource" path="res://tb/fgd/base/target_base.tres" id="3_target_base"]
+[ext_resource type="Script" path="res://entities/logic/logic_relay.gd" id="4_script"]
+
+[resource]
+script = ExtResource("1_point")
+script_class = ExtResource("4_script")
+apply_rotation_on_map_build = false
+apply_scale_on_map_build = false
+classname = "logic_relay"
+description = "Half-Life style relay entity."
+base_classes = Array[Resource]([ExtResource("2_targetname"), ExtResource("3_target_base")])
+class_properties = {
+"delay": 0.0,
+"enabled": true,
+"trigger_once": false
+}
+class_property_descriptions = {
+"delay": "Delay before firing target(s).",
+"enabled": "If false, relay ignores use.",
+"trigger_once": "If true, relay disables after first use."
+}
+meta_properties = {
+"color": Color(0.2, 0.8, 1, 1),
+"size": AABB(-8, -8, -8, 8, 8, 8)
+}
+node_class = "Node3D"
+name_property = ""

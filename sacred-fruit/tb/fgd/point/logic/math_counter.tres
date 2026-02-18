@@ -1,0 +1,37 @@
+[gd_resource type="Resource" script_class="FuncGodotFGDPointClass" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://addons/func_godot/src/fgd/func_godot_fgd_point_class.gd" id="1_point"]
+[ext_resource type="Resource" path="res://tb/fgd/base/targetname_base.tres" id="2_targetname"]
+[ext_resource type="Resource" path="res://tb/fgd/base/target_base.tres" id="3_target_base"]
+[ext_resource type="Script" path="res://entities/logic/math_counter.gd" id="4_script"]
+
+[resource]
+script = ExtResource("1_point")
+script_class = ExtResource("4_script")
+apply_rotation_on_map_build = false
+apply_scale_on_map_build = false
+classname = "math_counter"
+description = "Counter with min/max and output on thresholds."
+base_classes = Array[Resource]([ExtResource("2_targetname"), ExtResource("3_target_base")])
+class_properties = {
+"enabled": true,
+"fire_on_limit_only": true,
+"max_value": 10.0,
+"min_value": 0.0,
+"step": 1.0,
+"value": 0.0
+}
+class_property_descriptions = {
+"enabled": "If false, ignores inputs.",
+"fire_on_limit_only": "If true, only fires on min/max reach.",
+"max_value": "Upper clamp for value.",
+"min_value": "Lower clamp for value.",
+"step": "Amount added by use().",
+"value": "Starting value."
+}
+meta_properties = {
+"color": Color(0.75, 0.45, 1.0, 1),
+"size": AABB(-8, -8, -8, 8, 8, 8)
+}
+node_class = "Node3D"
+name_property = ""

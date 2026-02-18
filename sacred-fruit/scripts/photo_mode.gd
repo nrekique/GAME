@@ -4,6 +4,7 @@ extends Node3D
 const PHOTO_CAPTURE_DIR := "user://photos"
 const MAIN_MENU_SCENE: PackedScene = preload("res://scenes/ui/main_menu.tscn")
 const HOME_SETUP_SCRIPT := preload("res://scripts/home_setup.gd")
+const POSTFX_SHADER_PATH := "res://shaders/photo_mode_postfx.gdshader"
 
 
 
@@ -154,6 +155,26 @@ var _grain_slider: HSlider
 var _grain_value: Label
 var _bloom_slider: HSlider
 var _bloom_value: Label
+var _ps1_shader_toggle: CheckBox
+var _postfx_toggle: CheckBox
+var _postfx_fog_toggle: CheckBox
+var _postfx_fog_distance_slider: HSlider
+var _postfx_fog_distance_value: Label
+var _postfx_fog_fade_slider: HSlider
+var _postfx_fog_fade_value: Label
+var _postfx_noise_toggle: CheckBox
+var _postfx_noise_time_slider: HSlider
+var _postfx_noise_time_value: Label
+var _postfx_color_limit_toggle: CheckBox
+var _postfx_color_levels_slider: HSlider
+var _postfx_color_levels_value: Label
+var _postfx_dither_toggle: CheckBox
+var _postfx_dither_strength_slider: HSlider
+var _postfx_dither_strength_value: Label
+var _postfx_opacity_slider: HSlider
+var _postfx_opacity_value: Label
+var _postfx_overlay: MeshInstance3D
+var _postfx_material: ShaderMaterial
 var _presets_options: OptionButton
 var _preset_name: LineEdit
 var _preset_save: Button
@@ -284,6 +305,7 @@ var _composition_crop_ratio: float = 0.0
 var _composition_crop_offset: Vector2 = Vector2.ZERO
 var _composition_horizon_roll: float = 0.0
 var _composition_thirds_snap_enabled: bool = false
+var _postfx_enabled: bool = false
 
 
 # --- Export / Import helpers (moved below variable declarations) ---
@@ -333,7 +355,19 @@ func export_photo_mode_state(path: String) -> void:
 	state["effects"] = {
 		"vignette": _vignette_slider.value if _vignette_slider else 0.0,
 		"grain": _grain_slider.value if _grain_slider else 0.0,
-		"bloom": _bloom_slider.value if _bloom_slider else 0.0
+		"bloom": _bloom_slider.value if _bloom_slider else 0.0,
+		"ps1_enabled": _ps1_shader_toggle.button_pressed if _ps1_shader_toggle else _is_ps1_shader_enabled(),
+		"postfx_enabled": _postfx_toggle.button_pressed if _postfx_toggle else _postfx_enabled,
+		"postfx_fog": _postfx_fog_toggle.button_pressed if _postfx_fog_toggle else false,
+		"postfx_fog_distance": _postfx_fog_distance_slider.value if _postfx_fog_distance_slider else 120.0,
+		"postfx_fog_fade": _postfx_fog_fade_slider.value if _postfx_fog_fade_slider else 60.0,
+		"postfx_noise": _postfx_noise_toggle.button_pressed if _postfx_noise_toggle else false,
+		"postfx_noise_time": _postfx_noise_time_slider.value if _postfx_noise_time_slider else 4.0,
+		"postfx_color_limit": _postfx_color_limit_toggle.button_pressed if _postfx_color_limit_toggle else true,
+		"postfx_color_levels": _postfx_color_levels_slider.value if _postfx_color_levels_slider else 32.0,
+		"postfx_dither": _postfx_dither_toggle.button_pressed if _postfx_dither_toggle else true,
+		"postfx_dither_strength": _postfx_dither_strength_slider.value if _postfx_dither_strength_slider else 0.35,
+		"postfx_opacity": _postfx_opacity_slider.value if _postfx_opacity_slider else 1.0
 	}
 	# Capture
 	state["capture"] = {
@@ -583,6 +617,34 @@ func import_photo_mode_state(path: String) -> void:
 			_grain_slider.value = float(e["grain"])
 		if e.has("bloom") and _bloom_slider:
 			_bloom_slider.value = float(e["bloom"])
+		if e.has("ps1_enabled"):
+			var ps1_enabled := bool(e["ps1_enabled"])
+			if _ps1_shader_toggle:
+				_set_check_value(_ps1_shader_toggle, ps1_enabled)
+			_set_ps1_shader_enabled(ps1_enabled)
+		if e.has("postfx_enabled") and _postfx_toggle:
+			_set_check_value(_postfx_toggle, bool(e["postfx_enabled"]))
+		if e.has("postfx_fog") and _postfx_fog_toggle:
+			_set_check_value(_postfx_fog_toggle, bool(e["postfx_fog"]))
+		if e.has("postfx_fog_distance") and _postfx_fog_distance_slider:
+			_postfx_fog_distance_slider.value = float(e["postfx_fog_distance"])
+		if e.has("postfx_fog_fade") and _postfx_fog_fade_slider:
+			_postfx_fog_fade_slider.value = float(e["postfx_fog_fade"])
+		if e.has("postfx_noise") and _postfx_noise_toggle:
+			_set_check_value(_postfx_noise_toggle, bool(e["postfx_noise"]))
+		if e.has("postfx_noise_time") and _postfx_noise_time_slider:
+			_postfx_noise_time_slider.value = float(e["postfx_noise_time"])
+		if e.has("postfx_color_limit") and _postfx_color_limit_toggle:
+			_set_check_value(_postfx_color_limit_toggle, bool(e["postfx_color_limit"]))
+		if e.has("postfx_color_levels") and _postfx_color_levels_slider:
+			_postfx_color_levels_slider.value = float(e["postfx_color_levels"])
+		if e.has("postfx_dither") and _postfx_dither_toggle:
+			_set_check_value(_postfx_dither_toggle, bool(e["postfx_dither"]))
+		if e.has("postfx_dither_strength") and _postfx_dither_strength_slider:
+			_postfx_dither_strength_slider.value = float(e["postfx_dither_strength"])
+		if e.has("postfx_opacity") and _postfx_opacity_slider:
+			_postfx_opacity_slider.value = float(e["postfx_opacity"])
+		_apply_postfx_settings()
 
 	# Capture
 	if state.has("capture"):
@@ -689,6 +751,7 @@ func _ready() -> void:
 	_setup_camera_attributes()
 	_setup_pass_materials()
 	_setup_ui()
+	_setup_postfx_overlay()
 	# Ensure authored toolbar/filmstrip chrome is applied even when runtime layout repair is disabled
 	_setup_ui_chrome()
 	_setup_environment_presets()
@@ -698,6 +761,7 @@ func _ready() -> void:
 	if enable_layout_debug_print:
 		call_deferred("_debug_layout")
 	await _build_map_from_debug()
+	_setup_postfx_overlay()
 	_position_camera_at_start()
 	_ensure_camera_active()
 
@@ -819,6 +883,23 @@ func _resolve_nodes() -> void:
 	_grain_value = _find_node("GrainValue", "Label") as Label
 	_bloom_slider = _find_node("BloomSlider", "HSlider") as HSlider
 	_bloom_value = _find_node("BloomValue", "Label") as Label
+	_postfx_toggle = _find_node("PostFXToggle", "CheckBox") as CheckBox
+	_postfx_fog_toggle = _find_node("PostFXFogToggle", "CheckBox") as CheckBox
+	_postfx_fog_distance_slider = _find_node("PostFXFogDistanceSlider", "HSlider") as HSlider
+	_postfx_fog_distance_value = _find_node("PostFXFogDistanceValue", "Label") as Label
+	_postfx_fog_fade_slider = _find_node("PostFXFogFadeSlider", "HSlider") as HSlider
+	_postfx_fog_fade_value = _find_node("PostFXFogFadeValue", "Label") as Label
+	_postfx_noise_toggle = _find_node("PostFXNoiseToggle", "CheckBox") as CheckBox
+	_postfx_noise_time_slider = _find_node("PostFXNoiseTimeSlider", "HSlider") as HSlider
+	_postfx_noise_time_value = _find_node("PostFXNoiseTimeValue", "Label") as Label
+	_postfx_color_limit_toggle = _find_node("PostFXColorLimitToggle", "CheckBox") as CheckBox
+	_postfx_color_levels_slider = _find_node("PostFXColorLevelsSlider", "HSlider") as HSlider
+	_postfx_color_levels_value = _find_node("PostFXColorLevelsValue", "Label") as Label
+	_postfx_dither_toggle = _find_node("PostFXDitherToggle", "CheckBox") as CheckBox
+	_postfx_dither_strength_slider = _find_node("PostFXDitherStrengthSlider", "HSlider") as HSlider
+	_postfx_dither_strength_value = _find_node("PostFXDitherStrengthValue", "Label") as Label
+	_postfx_opacity_slider = _find_node("PostFXOpacitySlider", "HSlider") as HSlider
+	_postfx_opacity_value = _find_node("PostFXOpacityValue", "Label") as Label
 	_presets_options = _find_node("PresetsOptions", "OptionButton") as OptionButton
 	_preset_name = _find_node("PresetName", "LineEdit") as LineEdit
 	_preset_save = _find_node("PresetSave", "Button") as Button
@@ -1119,6 +1200,64 @@ func _ensure_advanced_feature_rows() -> void:
 	if fog_note:
 		fog_note.visible = false
 
+	var row_ps1 := _ensure_row_at(vbox, "PS1ShaderRow", "CompositionHeaderRow")
+	_ensure_label(row_ps1, "PS1ShaderLabel", "PS1 Shader")
+	_ps1_shader_toggle = _ensure_checkbox(row_ps1, "PS1ShaderToggle", "On")
+
+	var row_postfx := _ensure_row_at(vbox, "PostFXRow", "CompositionHeaderRow")
+	_ensure_label(row_postfx, "PostFXLabel", "Post FX")
+	_postfx_toggle = _ensure_checkbox(row_postfx, "PostFXToggle", "On")
+
+	var row_postfx_fog := _ensure_row_at(vbox, "PostFXFogRow", "CompositionHeaderRow")
+	_ensure_label(row_postfx_fog, "PostFXFogLabel", "Post Fog")
+	_postfx_fog_toggle = _ensure_checkbox(row_postfx_fog, "PostFXFogToggle", "On")
+
+	var row_postfx_fog_dist := _ensure_row_at(vbox, "PostFXFogDistanceRow", "CompositionHeaderRow")
+	_ensure_label(row_postfx_fog_dist, "PostFXFogDistanceLabel", "Post Fog Dist")
+	_postfx_fog_distance_slider = _ensure_slider(row_postfx_fog_dist, "PostFXFogDistanceSlider", 1.0, 6000.0, 1.0, 120.0)
+	_postfx_fog_distance_value = _ensure_value_label(row_postfx_fog_dist, "PostFXFogDistanceValue", "120m")
+
+	var row_postfx_fog_fade := _ensure_row_at(vbox, "PostFXFogFadeRow", "CompositionHeaderRow")
+	_ensure_label(row_postfx_fog_fade, "PostFXFogFadeLabel", "Post Fog Fade")
+	_postfx_fog_fade_slider = _ensure_slider(row_postfx_fog_fade, "PostFXFogFadeSlider", 1.0, 6000.0, 1.0, 60.0)
+	_postfx_fog_fade_value = _ensure_value_label(row_postfx_fog_fade, "PostFXFogFadeValue", "60m")
+
+	var row_postfx_noise := _ensure_row_at(vbox, "PostFXNoiseRow", "CompositionHeaderRow")
+	_ensure_label(row_postfx_noise, "PostFXNoiseLabel", "Post Noise")
+	_postfx_noise_toggle = _ensure_checkbox(row_postfx_noise, "PostFXNoiseToggle", "On")
+
+	var row_postfx_noise_time := _ensure_row_at(vbox, "PostFXNoiseTimeRow", "CompositionHeaderRow")
+	_ensure_label(row_postfx_noise_time, "PostFXNoiseTimeLabel", "Noise Speed")
+	_postfx_noise_time_slider = _ensure_slider(row_postfx_noise_time, "PostFXNoiseTimeSlider", 0.1, 10.0, 0.1, 4.0)
+	_postfx_noise_time_value = _ensure_value_label(row_postfx_noise_time, "PostFXNoiseTimeValue", "4.0")
+
+	var row_postfx_color_limit := _ensure_row_at(vbox, "PostFXColorLimitRow", "CompositionHeaderRow")
+	_ensure_label(row_postfx_color_limit, "PostFXColorLimitLabel", "Color Limit")
+	_postfx_color_limit_toggle = _ensure_checkbox(row_postfx_color_limit, "PostFXColorLimitToggle", "On")
+	if _postfx_color_limit_toggle and not _postfx_color_limit_toggle.button_pressed:
+		_set_check_value(_postfx_color_limit_toggle, true)
+
+	var row_postfx_levels := _ensure_row_at(vbox, "PostFXColorLevelsRow", "CompositionHeaderRow")
+	_ensure_label(row_postfx_levels, "PostFXColorLevelsLabel", "Color Levels")
+	_postfx_color_levels_slider = _ensure_slider(row_postfx_levels, "PostFXColorLevelsSlider", 2.0, 256.0, 1.0, 32.0)
+	_postfx_color_levels_value = _ensure_value_label(row_postfx_levels, "PostFXColorLevelsValue", "32")
+
+	var row_postfx_dither := _ensure_row_at(vbox, "PostFXDitherRow", "CompositionHeaderRow")
+	_ensure_label(row_postfx_dither, "PostFXDitherLabel", "Post Dither")
+	_postfx_dither_toggle = _ensure_checkbox(row_postfx_dither, "PostFXDitherToggle", "On")
+	if _postfx_dither_toggle and not _postfx_dither_toggle.button_pressed:
+		_set_check_value(_postfx_dither_toggle, true)
+
+	var row_postfx_dither_strength := _ensure_row_at(vbox, "PostFXDitherStrengthRow", "CompositionHeaderRow")
+	_ensure_label(row_postfx_dither_strength, "PostFXDitherStrengthLabel", "Dither Amt")
+	_postfx_dither_strength_slider = _ensure_slider(row_postfx_dither_strength, "PostFXDitherStrengthSlider", 0.0, 1.0, 0.01, 0.35)
+	_postfx_dither_strength_value = _ensure_value_label(row_postfx_dither_strength, "PostFXDitherStrengthValue", "0.35")
+
+	var row_postfx_opacity := _ensure_row_at(vbox, "PostFXOpacityRow", "CompositionHeaderRow")
+	_ensure_label(row_postfx_opacity, "PostFXOpacityLabel", "Post Mix")
+	_postfx_opacity_slider = _ensure_slider(row_postfx_opacity, "PostFXOpacitySlider", 0.0, 1.0, 0.01, 1.0)
+	_postfx_opacity_value = _ensure_value_label(row_postfx_opacity, "PostFXOpacityValue", "1.00")
+
 	# Composition tools replace the old note-only section.
 	var row_crop := _ensure_row_at(vbox, "CompositionCropRow", "CompositionNote")
 	_ensure_label(row_crop, "CompositionCropLabel", "Crop Box")
@@ -1320,6 +1459,41 @@ func _setup_ui() -> void:
 	if _bloom_slider:
 		_bloom_slider.value_changed.connect(_on_bloom_changed)
 		_on_bloom_changed(_bloom_slider.value)
+	if _ps1_shader_toggle:
+		_ps1_shader_toggle.toggled.connect(_on_ps1_shader_toggled)
+		_set_check_value(_ps1_shader_toggle, _is_ps1_shader_enabled())
+		# Force a refresh so newly built photo-mode meshes get the current PS1 state.
+		_set_ps1_shader_enabled(_is_ps1_shader_enabled())
+	if _postfx_toggle:
+		_postfx_toggle.toggled.connect(_on_postfx_toggled)
+		_set_check_value(_postfx_toggle, _postfx_enabled)
+	if _postfx_fog_toggle:
+		_postfx_fog_toggle.toggled.connect(_on_postfx_fog_toggled)
+	if _postfx_fog_distance_slider:
+		_postfx_fog_distance_slider.value_changed.connect(_on_postfx_fog_distance_changed)
+		_on_postfx_fog_distance_changed(_postfx_fog_distance_slider.value)
+	if _postfx_fog_fade_slider:
+		_postfx_fog_fade_slider.value_changed.connect(_on_postfx_fog_fade_changed)
+		_on_postfx_fog_fade_changed(_postfx_fog_fade_slider.value)
+	if _postfx_noise_toggle:
+		_postfx_noise_toggle.toggled.connect(_on_postfx_noise_toggled)
+	if _postfx_noise_time_slider:
+		_postfx_noise_time_slider.value_changed.connect(_on_postfx_noise_time_changed)
+		_on_postfx_noise_time_changed(_postfx_noise_time_slider.value)
+	if _postfx_color_limit_toggle:
+		_postfx_color_limit_toggle.toggled.connect(_on_postfx_color_limit_toggled)
+	if _postfx_color_levels_slider:
+		_postfx_color_levels_slider.value_changed.connect(_on_postfx_color_levels_changed)
+		_on_postfx_color_levels_changed(_postfx_color_levels_slider.value)
+	if _postfx_dither_toggle:
+		_postfx_dither_toggle.toggled.connect(_on_postfx_dither_toggled)
+	if _postfx_dither_strength_slider:
+		_postfx_dither_strength_slider.value_changed.connect(_on_postfx_dither_strength_changed)
+		_on_postfx_dither_strength_changed(_postfx_dither_strength_slider.value)
+	if _postfx_opacity_slider:
+		_postfx_opacity_slider.value_changed.connect(_on_postfx_opacity_changed)
+		_on_postfx_opacity_changed(_postfx_opacity_slider.value)
+	_apply_postfx_settings()
 	if _preset_save:
 		_preset_save.pressed.connect(_on_preset_save)
 	if _preset_load:
@@ -1592,6 +1766,18 @@ func _ensure_settings_labels() -> void:
 		{"row": "VignetteRow", "name": "VignetteLabel", "text": "Vignette"},
 		{"row": "GrainRow", "name": "GrainLabel", "text": "Grain"},
 		{"row": "BloomRow", "name": "BloomLabel", "text": "Bloom"},
+		{"row": "PS1ShaderRow", "name": "PS1ShaderLabel", "text": "PS1 Shader"},
+		{"row": "PostFXRow", "name": "PostFXLabel", "text": "Post FX"},
+		{"row": "PostFXFogRow", "name": "PostFXFogLabel", "text": "Post Fog"},
+		{"row": "PostFXFogDistanceRow", "name": "PostFXFogDistanceLabel", "text": "Post Fog Dist"},
+		{"row": "PostFXFogFadeRow", "name": "PostFXFogFadeLabel", "text": "Post Fog Fade"},
+		{"row": "PostFXNoiseRow", "name": "PostFXNoiseLabel", "text": "Post Noise"},
+		{"row": "PostFXNoiseTimeRow", "name": "PostFXNoiseTimeLabel", "text": "Noise Speed"},
+		{"row": "PostFXColorLimitRow", "name": "PostFXColorLimitLabel", "text": "Color Limit"},
+		{"row": "PostFXColorLevelsRow", "name": "PostFXColorLevelsLabel", "text": "Color Levels"},
+		{"row": "PostFXDitherRow", "name": "PostFXDitherLabel", "text": "Post Dither"},
+		{"row": "PostFXDitherStrengthRow", "name": "PostFXDitherStrengthLabel", "text": "Dither Amt"},
+		{"row": "PostFXOpacityRow", "name": "PostFXOpacityLabel", "text": "Post Mix"},
 		{"row": "CompositionCropRow", "name": "CompositionCropLabel", "text": "Crop Box"},
 		{"row": "CompositionOffsetXRow", "name": "CompositionOffsetXLabel", "text": "Crop X"},
 		{"row": "CompositionOffsetYRow", "name": "CompositionOffsetYLabel", "text": "Crop Y"},
@@ -1854,7 +2040,7 @@ func _repair_scene_tree_if_needed() -> void:
 		"EnvironmentHeaderRow", "EnvironmentRow", "AmbientRow", "FogRow", "FogDensityRow", "FogBeginRow", "FogEndRow",
 		"ExportHeaderRow", "ExportNote",
 		"ColorHeaderRow", "TempRow", "TintRow", "SaturationRow", "ContrastRow",
-		"EffectsHeaderRow", "VignetteRow", "GrainRow", "BloomRow",
+		"EffectsHeaderRow", "VignetteRow", "GrainRow", "BloomRow", "PS1ShaderRow", "PostFXRow", "PostFXFogRow", "PostFXFogDistanceRow", "PostFXFogFadeRow", "PostFXNoiseRow", "PostFXNoiseTimeRow", "PostFXColorLimitRow", "PostFXColorLevelsRow", "PostFXDitherRow", "PostFXDitherStrengthRow", "PostFXOpacityRow",
 		"CompositionHeaderRow", "CompositionCropRow", "CompositionOffsetXRow", "CompositionOffsetYRow", "CompositionRollRow", "CompositionSnapRow",
 		"PresetsHeaderRow", "PresetsRow", "PresetNameRow", "PresetButtonsRow"
 	]
@@ -1912,6 +2098,18 @@ func _repair_scene_tree_if_needed() -> void:
 	_ensure_row("VignetteRow", HBoxContainer, vbox, ["VignetteLabel", "VignetteSlider", "VignetteValue"])
 	_ensure_row("GrainRow", HBoxContainer, vbox, ["GrainLabel", "GrainSlider", "GrainValue"])
 	_ensure_row("BloomRow", HBoxContainer, vbox, ["BloomLabel", "BloomSlider", "BloomValue"])
+	_ensure_row("PS1ShaderRow", HBoxContainer, vbox, ["PS1ShaderLabel", "PS1ShaderToggle"])
+	_ensure_row("PostFXRow", HBoxContainer, vbox, ["PostFXLabel", "PostFXToggle"])
+	_ensure_row("PostFXFogRow", HBoxContainer, vbox, ["PostFXFogLabel", "PostFXFogToggle"])
+	_ensure_row("PostFXFogDistanceRow", HBoxContainer, vbox, ["PostFXFogDistanceLabel", "PostFXFogDistanceSlider", "PostFXFogDistanceValue"])
+	_ensure_row("PostFXFogFadeRow", HBoxContainer, vbox, ["PostFXFogFadeLabel", "PostFXFogFadeSlider", "PostFXFogFadeValue"])
+	_ensure_row("PostFXNoiseRow", HBoxContainer, vbox, ["PostFXNoiseLabel", "PostFXNoiseToggle"])
+	_ensure_row("PostFXNoiseTimeRow", HBoxContainer, vbox, ["PostFXNoiseTimeLabel", "PostFXNoiseTimeSlider", "PostFXNoiseTimeValue"])
+	_ensure_row("PostFXColorLimitRow", HBoxContainer, vbox, ["PostFXColorLimitLabel", "PostFXColorLimitToggle"])
+	_ensure_row("PostFXColorLevelsRow", HBoxContainer, vbox, ["PostFXColorLevelsLabel", "PostFXColorLevelsSlider", "PostFXColorLevelsValue"])
+	_ensure_row("PostFXDitherRow", HBoxContainer, vbox, ["PostFXDitherLabel", "PostFXDitherToggle"])
+	_ensure_row("PostFXDitherStrengthRow", HBoxContainer, vbox, ["PostFXDitherStrengthLabel", "PostFXDitherStrengthSlider", "PostFXDitherStrengthValue"])
+	_ensure_row("PostFXOpacityRow", HBoxContainer, vbox, ["PostFXOpacityLabel", "PostFXOpacitySlider", "PostFXOpacityValue"])
 	_ensure_row("CompositionCropRow", HBoxContainer, vbox, ["CompositionCropLabel", "CompositionCropOptions"])
 	_ensure_row("CompositionOffsetXRow", HBoxContainer, vbox, ["CompositionOffsetXLabel", "CompositionOffsetXSlider", "CompositionOffsetXValue"])
 	_ensure_row("CompositionOffsetYRow", HBoxContainer, vbox, ["CompositionOffsetYLabel", "CompositionOffsetYSlider", "CompositionOffsetYValue"])
@@ -2202,7 +2400,7 @@ func _deferred_reparent_tab_nodes() -> void:
 			"EnvironmentHeaderRow", "EnvironmentRow", "AmbientRow", "FogRow", "FogDensityRow", "FogBeginRow", "FogEndRow",
 			"ExportHeaderRow", "ExportNote",
 			"ColorHeaderRow", "TempRow", "TintRow", "SaturationRow", "ContrastRow",
-			"EffectsHeaderRow", "VignetteRow", "GrainRow", "BloomRow",
+			"EffectsHeaderRow", "VignetteRow", "GrainRow", "BloomRow", "PS1ShaderRow", "PostFXRow", "PostFXFogRow", "PostFXFogDistanceRow", "PostFXFogFadeRow", "PostFXNoiseRow", "PostFXNoiseTimeRow", "PostFXColorLimitRow", "PostFXColorLevelsRow", "PostFXDitherRow", "PostFXDitherStrengthRow", "PostFXOpacityRow",
 			"CompositionHeaderRow", "CompositionCropRow", "CompositionOffsetXRow", "CompositionOffsetYRow", "CompositionRollRow", "CompositionSnapRow",
 			"PresetsHeaderRow", "PresetsRow", "PresetNameRow", "PresetButtonsRow"
 		]
@@ -2436,6 +2634,8 @@ func _ensure_camera_active() -> void:
 	if _camera == null:
 		return
 	_camera.current = true
+	_setup_postfx_overlay()
+	_apply_postfx_settings()
 
 
 func _get_or_create_container(name: String, type_class: Variant, parent: Node) -> Node:
@@ -2515,6 +2715,143 @@ void fragment() {
 	ALBEDO = vec3(v_depth);
 }
 """
+
+
+func _setup_postfx_overlay() -> void:
+	if _camera == null:
+		return
+
+	if _postfx_overlay == null or not is_instance_valid(_postfx_overlay):
+		_postfx_overlay = MeshInstance3D.new()
+		_postfx_overlay.name = "PostFXOverlay"
+		var quad := QuadMesh.new()
+		quad.size = Vector2(2.0, 2.0)
+		_postfx_overlay.mesh = quad
+		_postfx_overlay.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		_postfx_overlay.extra_cull_margin = 16384.0
+		_camera.add_child(_postfx_overlay)
+	elif _postfx_overlay.get_parent() != _camera:
+		_reparent(_postfx_overlay, _camera)
+
+	if _postfx_material == null or not is_instance_valid(_postfx_material):
+		var shader := load(POSTFX_SHADER_PATH) as Shader
+		if shader == null:
+			push_warning("PostFX shader missing at %s" % POSTFX_SHADER_PATH)
+			return
+		_postfx_material = ShaderMaterial.new()
+		_postfx_material.shader = shader
+		_postfx_material.resource_local_to_scene = true
+
+	_postfx_overlay.material_override = _postfx_material
+	_apply_postfx_settings()
+
+
+func _apply_postfx_settings() -> void:
+	if _postfx_toggle:
+		_postfx_enabled = _postfx_toggle.button_pressed
+	if _postfx_overlay:
+		_postfx_overlay.visible = _postfx_enabled
+	if _postfx_material == null:
+		return
+
+	var fog_enabled := _postfx_fog_toggle.button_pressed if _postfx_fog_toggle else false
+	var fog_distance := _postfx_fog_distance_slider.value if _postfx_fog_distance_slider else 120.0
+	var fog_fade := _postfx_fog_fade_slider.value if _postfx_fog_fade_slider else 60.0
+	fog_distance = maxf(fog_distance, 1.0)
+	fog_fade = clampf(fog_fade, 1.0, fog_distance)
+	var noise_enabled := _postfx_noise_toggle.button_pressed if _postfx_noise_toggle else false
+	var noise_time := _postfx_noise_time_slider.value if _postfx_noise_time_slider else 4.0
+	var color_limit_enabled := _postfx_color_limit_toggle.button_pressed if _postfx_color_limit_toggle else true
+	var color_levels := int(round(_postfx_color_levels_slider.value if _postfx_color_levels_slider else 32.0))
+	var dither_enabled := _postfx_dither_toggle.button_pressed if _postfx_dither_toggle else true
+	var dither_strength := _postfx_dither_strength_slider.value if _postfx_dither_strength_slider else 0.35
+	var opacity := _postfx_opacity_slider.value if _postfx_opacity_slider else 1.0
+	var fog_color := _fog_color_picker.color if _fog_color_picker else Color(0.72, 0.77, 0.83, 1.0)
+	var noise_color := Color(
+		clampf(fog_color.r * 0.9, 0.0, 1.0),
+		clampf(fog_color.g * 0.92, 0.0, 1.0),
+		clampf(fog_color.b * 0.95, 0.0, 1.0),
+		1.0
+	)
+
+	_postfx_material.set_shader_parameter("enable_fog", fog_enabled)
+	_postfx_material.set_shader_parameter("fog_color", fog_color)
+	_postfx_material.set_shader_parameter("noise_color", noise_color)
+	_postfx_material.set_shader_parameter("fog_distance", fog_distance)
+	_postfx_material.set_shader_parameter("fog_fade_range", fog_fade)
+	_postfx_material.set_shader_parameter("enable_noise", noise_enabled)
+	_postfx_material.set_shader_parameter("noise_time_fac", maxf(noise_time, 0.1))
+	_postfx_material.set_shader_parameter("enable_color_limitation", color_limit_enabled)
+	_postfx_material.set_shader_parameter("color_levels", maxi(color_levels, 2))
+	_postfx_material.set_shader_parameter("enable_dithering", dither_enabled)
+	_postfx_material.set_shader_parameter("dither_strength", clampf(dither_strength, 0.0, 1.0))
+	_postfx_material.set_shader_parameter("effect_opacity", clampf(opacity, 0.0, 1.0))
+
+
+func _on_postfx_toggled(pressed: bool) -> void:
+	_postfx_enabled = pressed
+	_apply_postfx_settings()
+
+
+func _on_postfx_fog_toggled(_pressed: bool) -> void:
+	_apply_postfx_settings()
+
+
+func _on_postfx_fog_distance_changed(value: float) -> void:
+	if _postfx_fog_fade_slider:
+		_postfx_fog_fade_slider.max_value = maxf(value, 1.0)
+		if _postfx_fog_fade_slider.value > _postfx_fog_fade_slider.max_value:
+			if _postfx_fog_fade_slider.has_method("set_value_no_signal"):
+				_postfx_fog_fade_slider.set_value_no_signal(_postfx_fog_fade_slider.max_value)
+			else:
+				_postfx_fog_fade_slider.value = _postfx_fog_fade_slider.max_value
+	if _postfx_fog_distance_value:
+		_postfx_fog_distance_value.text = "%dm" % int(round(value))
+	if _postfx_fog_fade_value and _postfx_fog_fade_slider:
+		_postfx_fog_fade_value.text = "%dm" % int(round(_postfx_fog_fade_slider.value))
+	_apply_postfx_settings()
+
+
+func _on_postfx_fog_fade_changed(value: float) -> void:
+	if _postfx_fog_fade_value:
+		_postfx_fog_fade_value.text = "%dm" % int(round(value))
+	_apply_postfx_settings()
+
+
+func _on_postfx_noise_toggled(_pressed: bool) -> void:
+	_apply_postfx_settings()
+
+
+func _on_postfx_noise_time_changed(value: float) -> void:
+	if _postfx_noise_time_value:
+		_postfx_noise_time_value.text = "%.1f" % value
+	_apply_postfx_settings()
+
+
+func _on_postfx_color_limit_toggled(_pressed: bool) -> void:
+	_apply_postfx_settings()
+
+
+func _on_postfx_color_levels_changed(value: float) -> void:
+	if _postfx_color_levels_value:
+		_postfx_color_levels_value.text = "%d" % int(round(value))
+	_apply_postfx_settings()
+
+
+func _on_postfx_dither_toggled(_pressed: bool) -> void:
+	_apply_postfx_settings()
+
+
+func _on_postfx_dither_strength_changed(value: float) -> void:
+	if _postfx_dither_strength_value:
+		_postfx_dither_strength_value.text = "%.2f" % value
+	_apply_postfx_settings()
+
+
+func _on_postfx_opacity_changed(value: float) -> void:
+	if _postfx_opacity_value:
+		_postfx_opacity_value.text = "%.2f" % value
+	_apply_postfx_settings()
 
 
 func _setup_light_rig_ui() -> void:
@@ -2597,6 +2934,11 @@ func _build_map_from_debug() -> void:
 		setup.auto_run = false
 	if setup.has_method("run_setup"):
 		await setup.call("run_setup")
+
+	# Re-assert PS1 state after map build/setup so the effect shows in Photo Mode.
+	_set_ps1_shader_enabled(_is_ps1_shader_enabled())
+	_setup_postfx_overlay()
+	_apply_postfx_settings()
 
 	if _status:
 		_status.text = ""
@@ -2943,7 +3285,7 @@ func _setup_tabs() -> void:
 		"VolumetricAnisoRow"
 	])
 	_tab_contents["color"] = _nodes(vbox, ["ColorHeaderRow", "TempRow", "TintRow", "SaturationRow", "ContrastRow"])
-	_tab_contents["effects"] = _nodes(vbox, ["EffectsHeaderRow", "VignetteRow", "GrainRow", "BloomRow"])
+	_tab_contents["effects"] = _nodes(vbox, ["EffectsHeaderRow", "VignetteRow", "GrainRow", "BloomRow", "PS1ShaderRow", "PostFXRow", "PostFXFogRow", "PostFXFogDistanceRow", "PostFXFogFadeRow", "PostFXNoiseRow", "PostFXNoiseTimeRow", "PostFXColorLimitRow", "PostFXColorLevelsRow", "PostFXDitherRow", "PostFXDitherStrengthRow", "PostFXOpacityRow"])
 	_tab_contents["composition"] = _nodes(vbox, [
 		"CompositionHeaderRow",
 		"CompositionCropRow",
@@ -3131,7 +3473,7 @@ func _apply_tab(tab_name: String) -> void:
 	var environment := ["EnvironmentHeaderRow", "EnvRow", "EnvironmentRow", "AmbientRow", "FogRow"]
 	var export := ["ExportHeaderRow", "ExportNote", "CaptureHeaderRow", "ButtonsRow", "PassesHeaderRow", "PassesGrid"]
 	var color := ["ColorHeaderRow", "TempRow", "TintRow", "SaturationRow", "ContrastRow"]
-	var effects := ["EffectsHeaderRow", "VignetteRow", "GrainRow", "BloomRow"]
+	var effects := ["EffectsHeaderRow", "VignetteRow", "GrainRow", "BloomRow", "PS1ShaderRow", "PostFXRow", "PostFXFogRow", "PostFXFogDistanceRow", "PostFXFogFadeRow", "PostFXNoiseRow", "PostFXNoiseTimeRow", "PostFXColorLimitRow", "PostFXColorLevelsRow", "PostFXDitherRow", "PostFXDitherStrengthRow", "PostFXOpacityRow"]
 	var composition := ["CompositionHeaderRow", "CompositionNote"]
 	var presets := ["PresetsHeaderRow", "PresetsRow", "PresetNameRow", "PresetButtonsRow"]
 	var pass_leaves := ["PassBeauty", "PassNormals", "PassAlbedo", "PassDepth", "PassLighting"]
@@ -4107,6 +4449,37 @@ func _on_bloom_changed(value: float) -> void:
 		_set_attr_if_exists(_world_env.environment, "glow_bloom", value)
 
 
+func _get_game_singleton() -> Node:
+	return get_node_or_null("/root/GAME")
+
+
+func _is_ps1_shader_enabled() -> bool:
+	var game := _get_game_singleton()
+	if game == null:
+		return false
+	if game.has_method("is_ps1_shader_enabled"):
+		return bool(game.call("is_ps1_shader_enabled"))
+	if "enable_ps1_geometry_shader" in game:
+		return bool(game.enable_ps1_geometry_shader)
+	return false
+
+
+func _set_ps1_shader_enabled(enabled: bool) -> void:
+	var game := _get_game_singleton()
+	if game == null:
+		return
+	if game.has_method("set_ps1_shader_enabled"):
+		game.call("set_ps1_shader_enabled", enabled)
+	elif "enable_ps1_geometry_shader" in game:
+		game.enable_ps1_geometry_shader = enabled
+
+
+func _on_ps1_shader_toggled(pressed: bool) -> void:
+	_set_ps1_shader_enabled(pressed)
+	if _status:
+		_status.text = "PS1 Shader %s" % ("On" if pressed else "Off")
+
+
 func _on_guides_toggled(pressed: bool) -> void:
 	if _guides and _guides.has_method("set_guides_enabled"):
 		_guides.call("set_guides_enabled", pressed)
@@ -4299,6 +4672,18 @@ func _collect_preset_state() -> Dictionary:
 		"vignette": _vignette_slider.value if _vignette_slider else 0.0,
 		"grain": _grain_slider.value if _grain_slider else 0.0,
 		"bloom": _bloom_slider.value if _bloom_slider else 0.0,
+		"ps1_shader": _ps1_shader_toggle.button_pressed if _ps1_shader_toggle else _is_ps1_shader_enabled(),
+		"postfx_enabled": _postfx_toggle.button_pressed if _postfx_toggle else _postfx_enabled,
+		"postfx_fog": _postfx_fog_toggle.button_pressed if _postfx_fog_toggle else false,
+		"postfx_fog_distance": _postfx_fog_distance_slider.value if _postfx_fog_distance_slider else 120.0,
+		"postfx_fog_fade": _postfx_fog_fade_slider.value if _postfx_fog_fade_slider else 60.0,
+		"postfx_noise": _postfx_noise_toggle.button_pressed if _postfx_noise_toggle else false,
+		"postfx_noise_time": _postfx_noise_time_slider.value if _postfx_noise_time_slider else 4.0,
+		"postfx_color_limit": _postfx_color_limit_toggle.button_pressed if _postfx_color_limit_toggle else true,
+		"postfx_color_levels": _postfx_color_levels_slider.value if _postfx_color_levels_slider else 32.0,
+		"postfx_dither": _postfx_dither_toggle.button_pressed if _postfx_dither_toggle else true,
+		"postfx_dither_strength": _postfx_dither_strength_slider.value if _postfx_dither_strength_slider else 0.35,
+		"postfx_opacity": _postfx_opacity_slider.value if _postfx_opacity_slider else 1.0,
 		"guides": _guides_check.button_pressed if _guides_check else true,
 		"golden": _golden_check.button_pressed if _golden_check else false,
 		"diagonal": _diagonal_check.button_pressed if _diagonal_check else false,
@@ -4393,6 +4778,34 @@ func _apply_preset_state(preset: Dictionary) -> void:
 		_grain_slider.value = float(preset.get("grain", _grain_slider.value))
 	if _bloom_slider:
 		_bloom_slider.value = float(preset.get("bloom", _bloom_slider.value))
+	if preset.has("ps1_shader"):
+		var ps1_enabled := bool(preset.get("ps1_shader", _is_ps1_shader_enabled()))
+		if _ps1_shader_toggle:
+			_set_check_value(_ps1_shader_toggle, ps1_enabled)
+		_set_ps1_shader_enabled(ps1_enabled)
+	if _postfx_toggle:
+		_set_check_value(_postfx_toggle, bool(preset.get("postfx_enabled", _postfx_toggle.button_pressed)))
+	if _postfx_fog_toggle:
+		_set_check_value(_postfx_fog_toggle, bool(preset.get("postfx_fog", _postfx_fog_toggle.button_pressed)))
+	if _postfx_fog_distance_slider:
+		_postfx_fog_distance_slider.value = float(preset.get("postfx_fog_distance", _postfx_fog_distance_slider.value))
+	if _postfx_fog_fade_slider:
+		_postfx_fog_fade_slider.value = float(preset.get("postfx_fog_fade", _postfx_fog_fade_slider.value))
+	if _postfx_noise_toggle:
+		_set_check_value(_postfx_noise_toggle, bool(preset.get("postfx_noise", _postfx_noise_toggle.button_pressed)))
+	if _postfx_noise_time_slider:
+		_postfx_noise_time_slider.value = float(preset.get("postfx_noise_time", _postfx_noise_time_slider.value))
+	if _postfx_color_limit_toggle:
+		_set_check_value(_postfx_color_limit_toggle, bool(preset.get("postfx_color_limit", _postfx_color_limit_toggle.button_pressed)))
+	if _postfx_color_levels_slider:
+		_postfx_color_levels_slider.value = float(preset.get("postfx_color_levels", _postfx_color_levels_slider.value))
+	if _postfx_dither_toggle:
+		_set_check_value(_postfx_dither_toggle, bool(preset.get("postfx_dither", _postfx_dither_toggle.button_pressed)))
+	if _postfx_dither_strength_slider:
+		_postfx_dither_strength_slider.value = float(preset.get("postfx_dither_strength", _postfx_dither_strength_slider.value))
+	if _postfx_opacity_slider:
+		_postfx_opacity_slider.value = float(preset.get("postfx_opacity", _postfx_opacity_slider.value))
+	_apply_postfx_settings()
 	if _guides_check:
 		_guides_check.button_pressed = bool(preset.get("guides", true))
 	if _golden_check:
@@ -4515,7 +4928,7 @@ func _force_reparent_settings() -> void:
 		"LightRigHeaderRow","LightRigGrid","EnvironmentHeaderRow","EnvRow","EnvironmentRow","AmbientRow","FogRow","FogDensityRow","FogBeginRow","FogEndRow",
 		"ExportHeaderRow","ExportNote","ResRow","AspectRow",
 		"ColorHeaderRow","TempRow","TintRow","SaturationRow","ContrastRow",
-		"EffectsHeaderRow","VignetteRow","GrainRow","BloomRow",
+		"EffectsHeaderRow","VignetteRow","GrainRow","BloomRow","PS1ShaderRow","PostFXRow","PostFXFogRow","PostFXFogDistanceRow","PostFXFogFadeRow","PostFXNoiseRow","PostFXNoiseTimeRow","PostFXColorLimitRow","PostFXColorLevelsRow","PostFXDitherRow","PostFXDitherStrengthRow","PostFXOpacityRow",
 		"CompositionHeaderRow","CompositionCropRow","CompositionOffsetXRow","CompositionOffsetYRow","CompositionRollRow","CompositionSnapRow",
 		"PresetsHeaderRow","PresetsRow","PresetNameRow","PresetButtonsRow",
 		"HistogramCard","Title","Status"
@@ -5074,6 +5487,34 @@ func _apply_capture_metadata(meta: Dictionary) -> void:
 			_grain_slider.value = float(fx["grain"])
 		if fx.has("bloom") and _bloom_slider:
 			_bloom_slider.value = float(fx["bloom"])
+		if fx.has("ps1_enabled"):
+			var ps1_enabled := bool(fx["ps1_enabled"])
+			if _ps1_shader_toggle:
+				_set_check_value(_ps1_shader_toggle, ps1_enabled)
+			_set_ps1_shader_enabled(ps1_enabled)
+		if fx.has("postfx_enabled") and _postfx_toggle:
+			_set_check_value(_postfx_toggle, bool(fx["postfx_enabled"]))
+		if fx.has("postfx_fog") and _postfx_fog_toggle:
+			_set_check_value(_postfx_fog_toggle, bool(fx["postfx_fog"]))
+		if fx.has("postfx_fog_distance") and _postfx_fog_distance_slider:
+			_postfx_fog_distance_slider.value = float(fx["postfx_fog_distance"])
+		if fx.has("postfx_fog_fade") and _postfx_fog_fade_slider:
+			_postfx_fog_fade_slider.value = float(fx["postfx_fog_fade"])
+		if fx.has("postfx_noise") and _postfx_noise_toggle:
+			_set_check_value(_postfx_noise_toggle, bool(fx["postfx_noise"]))
+		if fx.has("postfx_noise_time") and _postfx_noise_time_slider:
+			_postfx_noise_time_slider.value = float(fx["postfx_noise_time"])
+		if fx.has("postfx_color_limit") and _postfx_color_limit_toggle:
+			_set_check_value(_postfx_color_limit_toggle, bool(fx["postfx_color_limit"]))
+		if fx.has("postfx_color_levels") and _postfx_color_levels_slider:
+			_postfx_color_levels_slider.value = float(fx["postfx_color_levels"])
+		if fx.has("postfx_dither") and _postfx_dither_toggle:
+			_set_check_value(_postfx_dither_toggle, bool(fx["postfx_dither"]))
+		if fx.has("postfx_dither_strength") and _postfx_dither_strength_slider:
+			_postfx_dither_strength_slider.value = float(fx["postfx_dither_strength"])
+		if fx.has("postfx_opacity") and _postfx_opacity_slider:
+			_postfx_opacity_slider.value = float(fx["postfx_opacity"])
+		_apply_postfx_settings()
 	if meta.has("composition") and meta["composition"] is Dictionary:
 		var comp := meta["composition"] as Dictionary
 		if comp.has("crop_ratio"):
@@ -5438,7 +5879,19 @@ func _build_capture_metadata(full_path: String, size: Vector2i, format: String, 
 		"effects": {
 			"vignette": _vignette_slider.value if _vignette_slider else 0.0,
 			"grain": _grain_slider.value if _grain_slider else 0.0,
-			"bloom": _bloom_slider.value if _bloom_slider else 0.0
+			"bloom": _bloom_slider.value if _bloom_slider else 0.0,
+			"ps1_enabled": _ps1_shader_toggle.button_pressed if _ps1_shader_toggle else _is_ps1_shader_enabled(),
+			"postfx_enabled": _postfx_toggle.button_pressed if _postfx_toggle else _postfx_enabled,
+			"postfx_fog": _postfx_fog_toggle.button_pressed if _postfx_fog_toggle else false,
+			"postfx_fog_distance": _postfx_fog_distance_slider.value if _postfx_fog_distance_slider else 120.0,
+			"postfx_fog_fade": _postfx_fog_fade_slider.value if _postfx_fog_fade_slider else 60.0,
+			"postfx_noise": _postfx_noise_toggle.button_pressed if _postfx_noise_toggle else false,
+			"postfx_noise_time": _postfx_noise_time_slider.value if _postfx_noise_time_slider else 4.0,
+			"postfx_color_limit": _postfx_color_limit_toggle.button_pressed if _postfx_color_limit_toggle else true,
+			"postfx_color_levels": _postfx_color_levels_slider.value if _postfx_color_levels_slider else 32.0,
+			"postfx_dither": _postfx_dither_toggle.button_pressed if _postfx_dither_toggle else true,
+			"postfx_dither_strength": _postfx_dither_strength_slider.value if _postfx_dither_strength_slider else 0.35,
+			"postfx_opacity": _postfx_opacity_slider.value if _postfx_opacity_slider else 1.0
 		},
 		"composition": {
 			"crop_ratio": _composition_crop_ratio,
@@ -5672,6 +6125,8 @@ doc.activeLayer = doc.layers[0];
 
 func _apply_pass(pass_name: String) -> void:
 	_restore_pass_state()
+	if _postfx_overlay:
+		_postfx_overlay.visible = _postfx_enabled and pass_name == PASS_BEAUTY
 	if pass_name == PASS_BEAUTY:
 		return
 	var meshes := _collect_meshes()
@@ -5688,6 +6143,7 @@ func _apply_pass(pass_name: String) -> void:
 
 func _restore_pass_state() -> void:
 	if _material_state.is_empty():
+		_apply_postfx_settings()
 		return
 	for mesh in _material_state.keys():
 		if mesh and is_instance_valid(mesh):
@@ -5697,6 +6153,7 @@ func _restore_pass_state() -> void:
 			for i in range(surface_overrides.size()):
 				(mesh as MeshInstance3D).set_surface_override_material(i, surface_overrides[i])
 	_material_state.clear()
+	_apply_postfx_settings()
 
 
 func _collect_meshes() -> Array:

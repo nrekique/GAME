@@ -1,0 +1,61 @@
+[gd_resource type="Resource" script_class="FuncGodotFGDPointClass" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://addons/func_godot/src/fgd/func_godot_fgd_point_class.gd" id="1_point"]
+[ext_resource type="Resource" path="res://tb/fgd/base/targetname_base.tres" id="2_targetname"]
+[ext_resource type="Resource" path="res://tb/fgd/base/target_base.tres" id="3_target_base"]
+[ext_resource type="Script" path="res://entities/logic/multi_manager.gd" id="4_script"]
+
+[resource]
+script = ExtResource("1_point")
+script_class = ExtResource("4_script")
+apply_rotation_on_map_build = false
+apply_scale_on_map_build = false
+classname = "multi_manager"
+description = "Queues multiple outputs with independent delays."
+base_classes = Array[Resource]([ExtResource("2_targetname"), ExtResource("3_target_base")])
+class_properties = {
+"delay1": 0.0,
+"delay2": 0.0,
+"delay3": 0.0,
+"delay4": 0.0,
+"delay5": 0.0,
+"delay6": 0.0,
+"delay7": 0.0,
+"delay8": 0.0,
+"enabled": true,
+"target1": "",
+"target2": "",
+"target3": "",
+"target4": "",
+"target5": "",
+"target6": "",
+"target7": "",
+"target8": "",
+"trigger_once": false
+}
+class_property_descriptions = {
+"delay1": "Delay for target1.",
+"delay2": "Delay for target2.",
+"delay3": "Delay for target3.",
+"delay4": "Delay for target4.",
+"delay5": "Delay for target5.",
+"delay6": "Delay for target6.",
+"delay7": "Delay for target7.",
+"delay8": "Delay for target8.",
+"enabled": "If false, ignores use.",
+"target1": "Output target group 1.",
+"target2": "Output target group 2.",
+"target3": "Output target group 3.",
+"target4": "Output target group 4.",
+"target5": "Output target group 5.",
+"target6": "Output target group 6.",
+"target7": "Output target group 7.",
+"target8": "Output target group 8.",
+"trigger_once": "Disable after first use."
+}
+meta_properties = {
+"color": Color(1, 0.55, 0.25, 1),
+"size": AABB(-8, -8, -8, 8, 8, 8)
+}
+node_class = "Node3D"
+name_property = ""

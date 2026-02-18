@@ -1012,6 +1012,7 @@ func apply_properties_and_finish() -> void:
 		
 		var entity_dict: Dictionary = entity_dicts[entity_idx] as Dictionary
 		var properties: Dictionary = entity_dict['properties'] as Dictionary
+		var source_properties: Dictionary = properties.duplicate(true)
 		
 		if 'classname' in properties:
 			var classname: String = properties['classname']
@@ -1099,7 +1100,7 @@ func apply_properties_and_finish() -> void:
 								properties[property] = prop_string
 							TYPE_OBJECT:
 								properties[property] = prop_string
-				
+
 				# Assign properties not defined with defaults from the entity definition
 				for property in entity_definitions[classname].class_properties:
 					if not property in properties:
@@ -1134,6 +1135,9 @@ func apply_properties_and_finish() -> void:
 								entity_node.set(property, properties[property])
 							else:
 								push_error("Entity %s property \'%s\' type mismatch with matching generated node property." % [entity_node.name, property])
+
+		entity_node.set_meta("func_godot_properties", properties.duplicate(true))
+		entity_node.set_meta("func_godot_source_properties", source_properties.duplicate(true))
 		
 		if 'func_godot_properties' in entity_node:
 			entity_node.func_godot_properties = properties

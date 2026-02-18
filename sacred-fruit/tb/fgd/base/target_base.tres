@@ -9,10 +9,14 @@ description = ""
 func_godot_internal = false
 base_classes = Array[Resource]([])
 class_properties = {
+"killtarget": "",
+"master": "",
 "target": NodePath(""),
 "targetfunc": ""
 }
 class_property_descriptions = {
+"killtarget": "Comma-separated targetname groups to remove after this output fires.",
+"master": "Optional master targetname gate. If locked, outputs are blocked.",
 "target": "Entity group to call the use function on when this entity is triggered.",
 "targetfunc": "Function to call on target entities. As is, the target function cannot accept arguments, so make sure it doesn't require specifying arguments."
 }

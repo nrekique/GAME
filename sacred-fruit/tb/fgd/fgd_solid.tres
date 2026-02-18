@@ -2,10 +2,12 @@
 
 [ext_resource type="Resource" uid="uid://bv37jafqtfyuw" path="res://tb/fgd/solid/funcs/func_detail.tres" id="1_clqpq"]
 [ext_resource type="Script" uid="uid://oqca3vmn1ssq" path="res://addons/func_godot/src/fgd/func_godot_fgd_file.gd" id="1_n87v7"]
+[ext_resource type="Resource" path="res://tb/fgd/solid/worldspawn.tres" id="1_worldspawn"]
 [ext_resource type="Resource" uid="uid://4h23glniadlk" path="res://tb/fgd/solid/funcs/func_detail_illusionary.tres" id="2_g488m"]
 [ext_resource type="Resource" uid="uid://dbc8wa7c1nbgx" path="res://tb/fgd/solid/funcs/func_geo.tres" id="3_mqtmv"]
 [ext_resource type="Resource" uid="uid://ckh3askbgkynt" path="res://tb/fgd/solid/funcs/func_illusionary.tres" id="4_2y1us"]
 [ext_resource type="Resource" uid="uid://b3t000ocefkge" path="res://tb/fgd/solid/funcs/func_move.tres" id="5_tk340"]
+[ext_resource type="Resource" path="res://tb/fgd/solid/funcs/func_portal.tres" id="5_func_portal"]
 [ext_resource type="Resource" uid="uid://ptvum0fd8lvk" path="res://tb/fgd/solid/triggers/trigger_area.tres" id="6_2qosd"]
 [ext_resource type="Resource" uid="uid://c8k57o1sbxrpc" path="res://tb/fgd/solid/triggers/trigger_exit.tres" id="7_trigger_exit"]
 [ext_resource type="Resource" uid="uid://dbyk1dqm3ug8y" path="res://tb/fgd/solid/triggers/trigger_changelevel.tres" id="8_trigger_changelevel"]
@@ -19,4 +21,4 @@
 [resource]
 script = ExtResource("1_n87v7")
 fgd_name = "SolidFGD"
-entity_definitions = Array[Resource]([ExtResource("1_clqpq"), ExtResource("2_g488m"), ExtResource("3_mqtmv"), ExtResource("4_2y1us"), ExtResource("5_tk340"), ExtResource("6_2qosd"), ExtResource("7_trigger_exit"), ExtResource("8_trigger_changelevel"), ExtResource("14_trigger_hurt"), ExtResource("9_func_door"), ExtResource("10_func_button"), ExtResource("11_trigger_once"), ExtResource("12_trigger_multiple"), ExtResource("13_func_train")])
+entity_definitions = Array[Resource]([ExtResource("1_worldspawn"), ExtResource("1_clqpq"), ExtResource("2_g488m"), ExtResource("3_mqtmv"), ExtResource("4_2y1us"), ExtResource("5_tk340"), ExtResource("5_func_portal"), ExtResource("6_2qosd"), ExtResource("7_trigger_exit"), ExtResource("8_trigger_changelevel"), ExtResource("14_trigger_hurt"), ExtResource("9_func_door"), ExtResource("10_func_button"), ExtResource("11_trigger_once"), ExtResource("12_trigger_multiple"), ExtResource("13_func_train")])
