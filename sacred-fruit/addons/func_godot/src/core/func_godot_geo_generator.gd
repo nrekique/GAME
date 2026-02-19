@@ -140,14 +140,15 @@ func get_valve_tangent(face: FuncGodotMapData.FuncGodotFace) -> Vector4:
 
 func generate_brush_vertices(entity_idx: int, brush_idx: int) -> void:
 	var entity: FuncGodotMapData.FuncGodotEntity = map_data.entities[entity_idx]
+	var entity_properties: Dictionary = entity.properties if typeof(entity.properties) == TYPE_DICTIONARY else {}
 	var brush: FuncGodotMapData.FuncGodotBrush = entity.brushes[brush_idx]
 	var face_count: int = brush.faces.size()
 	
 	var entity_geo: FuncGodotMapData.FuncGodotEntityGeometry = map_data.entity_geo[entity_idx]
 	var brush_geo: FuncGodotMapData.FuncGodotBrushGeometry = entity_geo.brushes[brush_idx]
 	
-	var phong: bool = entity.properties.get("_phong", "0") == "1"
-	var phong_angle_str: String = entity.properties.get("_phong_angle", "89")
+	var phong: bool = entity_properties.get("_phong", "0") == "1"
+	var phong_angle_str: String = str(entity_properties.get("_phong_angle", "89"))
 	var phong_angle: float = float(phong_angle_str) if phong_angle_str.is_valid_float() else 89.0
 	
 	for f0 in range(face_count):
@@ -236,6 +237,7 @@ func run() -> void:
 	
 	var generate_vertices_task = func(e):
 		var entity: FuncGodotMapData.FuncGodotEntity = map_data.entities[e]
+		var entity_properties: Dictionary = entity.properties if typeof(entity.properties) == TYPE_DICTIONARY else {}
 		var entity_geo: FuncGodotMapData.FuncGodotEntityGeometry = map_data.entity_geo[e]
 		var entity_mins: Vector3 = Vector3.INF
 		var entity_maxs: Vector3 = Vector3.INF
@@ -297,8 +299,8 @@ func run() -> void:
 		if entity.origin_type != FuncGodotMapData.FuncGodotEntityOriginType.BOUNDS_CENTER and entity.brushes.size() > 0:
 			match entity.origin_type:
 				FuncGodotMapData.FuncGodotEntityOriginType.ABSOLUTE, FuncGodotMapData.FuncGodotEntityOriginType.RELATIVE:
-					if 'origin' in entity.properties:
-						var origin_comps: PackedFloat64Array = entity.properties['origin'].split_floats(' ')
+					if entity_properties.has("origin"):
+						var origin_comps: PackedFloat64Array = str(entity_properties["origin"]).split_floats(' ')
 						if origin_comps.size() > 2:
 							if entity.origin_type == FuncGodotMapData.FuncGodotEntityOriginType.ABSOLUTE:
 								entity.center = Vector3(origin_comps[0], origin_comps[1], origin_comps[2])

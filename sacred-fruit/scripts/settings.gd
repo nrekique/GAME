@@ -16,6 +16,8 @@ var music_volume: float = 0.8
 var sfx_volume: float = 0.9
 
 var mouse_sens: float = 0.25
+var mouse_smoothing: float = 0.0
+var gameplay_fov: float = 90.0
 
 
 func _ready() -> void:
@@ -42,6 +44,8 @@ func load_settings() -> void:
 	sfx_volume = clampf(float(cfg.get_value("audio", "sfx", sfx_volume)), 0.0, 1.0)
 
 	mouse_sens = clampf(float(cfg.get_value("controls", "mouse_sens", mouse_sens)), 0.05, 2.0)
+	mouse_smoothing = clampf(float(cfg.get_value("controls", "mouse_smoothing", mouse_smoothing)), 0.0, 0.25)
+	gameplay_fov = clampf(float(cfg.get_value("controls", "gameplay_fov", gameplay_fov)), 75.0, 110.0)
 
 
 func save_settings() -> void:
@@ -56,6 +60,8 @@ func save_settings() -> void:
 	cfg.set_value("audio", "sfx", sfx_volume)
 
 	cfg.set_value("controls", "mouse_sens", mouse_sens)
+	cfg.set_value("controls", "mouse_smoothing", mouse_smoothing)
+	cfg.set_value("controls", "gameplay_fov", gameplay_fov)
 	cfg.save(CONFIG_PATH)
 
 

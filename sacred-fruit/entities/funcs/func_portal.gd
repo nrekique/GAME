@@ -5,15 +5,32 @@ extends StaticBody3D
 @export var target: String = ""
 @export var targetname: String = ""
 @export var enabled: bool = true
+@export var use_portals_plugin: bool = true
+@export_flags_3d_physics var plugin_teleport_collision_mask: int = 0xFFFFF
+@export var plugin_use_opposite_face: bool = false
+@export var plugin_face_from_portal_texture: bool = true
+@export var portal_axis: String = "auto"
+@export var portal_debug: bool = false
 @export_range(0.25, 1.0, 0.05) var render_scale: float = 0.75
+@export var render_use_window_projection: bool = true
+@export var render_use_oblique_clip: bool = false
+@export_range(-0.05, 0.05, 0.001) var render_camera_offset: float = 0.0
+@export_range(0.0, 0.5, 0.005) var render_min_link_distance: float = 0.03
 @export_range(0.01, 1.0, 0.01) var teleport_cooldown: float = 0.20
 @export_range(0.01, 0.5, 0.01) var exit_offset: float = 0.12
 @export var reverse_normal: bool = false
 
 const LINK_RETRY_SECONDS := 0.5
 const PLANE_EPSILON := 0.01
+const DEBUG_PRINT_INTERVAL := 0.6
+const PORTAL_SURFACE_RENDER_LAYER := 20
+const PORTAL_SURFACE_LAYER_MASK := 1 << (PORTAL_SURFACE_RENDER_LAYER - 1)
+const ENABLE_EXPERIMENTAL_OBLIQUE := false
+const PORTAL3D_ADAPTER_SCRIPT := preload("res://entities/funcs/portal3d_adapter.gd")
 
 var _linked_portal: FuncPortal = null
+var _plugin_adapter: RefCounted = PORTAL3D_ADAPTER_SCRIPT.new()
+var _plugin_portal: Node3D = null
 var _viewport: SubViewport
 var _portal_camera: Camera3D
 var _surface: MeshInstance3D
@@ -26,6 +43,18 @@ var _portal_depth: float = 0.1
 var _prev_local_pos_by_entity: Dictionary = {}
 var _teleport_until_msec: Dictionary = {}
 var _link_retry_accum: float = 0.0
+var _debug_accum: float = 0.0
+var _last_linked_portal_id: int = -1
+var _render_ok: bool = false
+var _has_stable_window_projection: bool = false
+var _stable_frustum_size: float = 1.0
+var _stable_frustum_offset: Vector2 = Vector2.ZERO
+var _oblique_api_checked: bool = false
+var _oblique_api_available: bool = false
+var _oblique_unavailable_logged: bool = false
+var _custom_proj_api_checked: bool = false
+var _custom_proj_api_available: bool = false
+var _auto_use_opposite_face: bool = false
 
 
 static func _to_bool(value: Variant, default_value: bool) -> bool:
@@ -52,14 +81,36 @@ func _func_godot_apply_properties(props: Dictionary) -> void:
 		targetname = String(props["targetname"])
 	if props.has("enabled"):
 		enabled = _to_bool(props["enabled"], enabled)
+	if props.has("use_portals_plugin"):
+		use_portals_plugin = _to_bool(props["use_portals_plugin"], use_portals_plugin)
+	if props.has("plugin_teleport_collision_mask"):
+		plugin_teleport_collision_mask = int(props["plugin_teleport_collision_mask"])
+	if props.has("plugin_use_opposite_face"):
+		plugin_use_opposite_face = _to_bool(props["plugin_use_opposite_face"], plugin_use_opposite_face)
+	if props.has("plugin_face_from_portal_texture"):
+		plugin_face_from_portal_texture = _to_bool(props["plugin_face_from_portal_texture"], plugin_face_from_portal_texture)
+	if props.has("portal_axis"):
+		portal_axis = String(props["portal_axis"]).strip_edges().to_lower()
+	if props.has("portal_debug"):
+		portal_debug = _to_bool(props["portal_debug"], portal_debug)
 	if props.has("render_scale"):
 		render_scale = clampf(float(props["render_scale"]), 0.25, 1.0)
+	if props.has("render_use_window_projection"):
+		render_use_window_projection = _to_bool(props["render_use_window_projection"], render_use_window_projection)
+	if props.has("render_use_oblique_clip"):
+		render_use_oblique_clip = _to_bool(props["render_use_oblique_clip"], render_use_oblique_clip)
+	if props.has("render_camera_offset"):
+		render_camera_offset = clampf(float(props["render_camera_offset"]), -0.05, 0.05)
+	if props.has("render_min_link_distance"):
+		render_min_link_distance = clampf(float(props["render_min_link_distance"]), 0.0, 0.5)
 	if props.has("teleport_cooldown"):
 		teleport_cooldown = clampf(float(props["teleport_cooldown"]), 0.01, 1.0)
 	if props.has("exit_offset"):
 		exit_offset = clampf(float(props["exit_offset"]), 0.01, 0.5)
 	if props.has("reverse_normal"):
 		reverse_normal = _to_bool(props["reverse_normal"], reverse_normal)
+
+	_on_properties_applied()
 
 
 func _ready() -> void:
@@ -68,9 +119,16 @@ func _ready() -> void:
 
 	add_to_group("func_portal")
 	if targetname != "":
-		GAME.set_targetname(self, targetname)
+		var game: Node = _get_game_manager()
+		if game != null and game.has_method("set_targetname"):
+			game.call("set_targetname", self, targetname)
 
 	_disable_collision_shapes()
+	_hide_source_mesh_children()
+	if use_portals_plugin:
+		_resolve_linked_portal(true)
+		return
+
 	_build_portal_surface()
 	_setup_portal_viewport()
 	_resolve_linked_portal(true)
@@ -78,6 +136,10 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	if Engine.is_editor_hint():
+		return
+
+	if use_portals_plugin:
+		_process_plugin_portal(delta)
 		return
 
 	if not enabled:
@@ -90,14 +152,17 @@ func _process(delta: float) -> void:
 		_link_retry_accum = 0.0
 		_resolve_linked_portal(false)
 
+	_sync_viewport_world()
 	_update_viewport_size()
 	_update_portal_camera()
-	if _surface:
-		_surface.visible = (_linked_portal != null)
+	_update_surface_state()
+	_debug_tick(delta)
 
 
 func _physics_process(_delta: float) -> void:
 	if Engine.is_editor_hint() or not enabled or _linked_portal == null:
+		return
+	if use_portals_plugin:
 		return
 
 	for n in get_tree().get_nodes_in_group("PLAYER"):
@@ -106,30 +171,58 @@ func _physics_process(_delta: float) -> void:
 
 
 func _resolve_linked_portal(force: bool) -> void:
-	if target.strip_edges().is_empty():
+	var prev_linked_id: int = -1 if _linked_portal == null else _linked_portal.get_instance_id()
+	var wanted_target: String = target.strip_edges()
+	if wanted_target.is_empty():
 		if force:
 			_linked_portal = null
+			_has_stable_window_projection = false
 		return
-	var candidates := get_tree().get_nodes_in_group(target.strip_edges())
+
+	# Primary path: direct portal-to-portal property linking.
+	# This avoids depending on targetname->group registration timing.
+	var candidates: Array[Node] = get_tree().get_nodes_in_group("func_portal")
 	var found: FuncPortal = null
 	for n in candidates:
 		if n == self:
 			continue
-		if n is FuncPortal:
+		if n is FuncPortal and _portal_matches_targetname(n as FuncPortal, wanted_target):
 			found = n as FuncPortal
 			break
+
+	# Fallback path: legacy group-based linking.
+	if found == null:
+		var grouped: Array[Node] = get_tree().get_nodes_in_group(wanted_target)
+		for n in grouped:
+			if n == self:
+				continue
+			if n is FuncPortal:
+				found = n as FuncPortal
+				break
+
 	_linked_portal = found
+	var linked_id: int = -1 if _linked_portal == null else _linked_portal.get_instance_id()
+	if linked_id != prev_linked_id:
+		_has_stable_window_projection = false
+		if use_portals_plugin:
+			_sync_plugin_link()
+	if portal_debug:
+		if linked_id != _last_linked_portal_id:
+			_last_linked_portal_id = linked_id
+			print("[Portal DEBUG] %s link target=%s resolved=%s" % [name, target, (str(linked_id) if linked_id != -1 else "none")])
 
 
 func _build_portal_surface() -> void:
-	var bounds := _compute_local_bounds()
-	_configure_portal_plane_from_bounds(bounds)
+	_configure_portal_plane()
+	if portal_debug:
+		print("[Portal DEBUG] %s half_extents=%s depth=%.3f axis=%s reverse=%s" % [name, str(_portal_half_extents), _portal_depth, portal_axis, str(reverse_normal)])
 
 	if _surface == null:
 		_surface = MeshInstance3D.new()
 		_surface.name = "PortalSurface"
 		_surface.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		add_child(_surface)
+	_surface.layers = PORTAL_SURFACE_LAYER_MASK
 
 	var quad := QuadMesh.new()
 	quad.size = _portal_half_extents * 2.0
@@ -140,6 +233,8 @@ func _build_portal_surface() -> void:
 		_surface_material = StandardMaterial3D.new()
 		_surface_material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 		_surface_material.cull_mode = BaseMaterial3D.CULL_DISABLED
+		_surface_material.albedo_color = Color(0.0, 0.0, 0.0, 1.0)
+		_surface_material.texture_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR
 	_surface.material_override = _surface_material
 
 
@@ -147,29 +242,51 @@ func _setup_portal_viewport() -> void:
 	if _viewport == null:
 		_viewport = SubViewport.new()
 		_viewport.name = "PortalViewport"
-		_viewport.usage = SubViewport.USAGE_3D
+		_viewport.disable_3d = false
 		_viewport.transparent_bg = false
 		_viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
 		add_child(_viewport)
 
+	_sync_viewport_world()
+
 	if _portal_camera == null:
 		_portal_camera = Camera3D.new()
 		_portal_camera.name = "PortalCamera"
-		_portal_camera.current = false
 		_viewport.add_child(_portal_camera)
+	_portal_camera.current = true
 
 	_update_viewport_size()
 	if _surface_material:
 		_surface_material.albedo_texture = _viewport.get_texture()
 
 
+func _sync_viewport_world() -> void:
+	if _viewport == null:
+		return
+	var main_world: World3D = get_world_3d()
+	if main_world == null:
+		var main_vp: Viewport = get_viewport()
+		if main_vp != null:
+			main_world = main_vp.world_3d
+	if main_world != null and _viewport.world_3d != main_world:
+		_viewport.world_3d = main_world
+
+
 func _update_viewport_size() -> void:
 	if _viewport == null:
 		return
-	var root_vp_size := get_viewport().get_visible_rect().size
-	var w := maxi(64, int(round(root_vp_size.x * render_scale)))
-	var h := maxi(64, int(round(root_vp_size.y * render_scale)))
-	var wanted := Vector2i(w, h)
+	var root_vp_size: Vector2 = get_viewport().get_visible_rect().size
+	var max_w: float = maxf(64.0, root_vp_size.x * render_scale)
+	var max_h: float = maxf(64.0, root_vp_size.y * render_scale)
+	var portal_aspect: float = maxf(_portal_half_extents.x / maxf(_portal_half_extents.y, 0.001), 0.05)
+	var w: int = int(round(max_w))
+	var h: int = int(round(float(w) / portal_aspect))
+	if h > int(round(max_h)):
+		h = int(round(max_h))
+		w = int(round(float(h) * portal_aspect))
+	w = maxi(64, w)
+	h = maxi(64, h)
+	var wanted: Vector2i = Vector2i(w, h)
 	if _viewport.size != wanted:
 		_viewport.size = wanted
 
@@ -183,16 +300,92 @@ func _update_portal_camera() -> void:
 		return
 
 	_portal_camera.fov = src_cam.fov
-	_portal_camera.near = maxf(src_cam.near, 0.01)
+	# Portal render camera should sit exactly on the mapped viewpoint for seam continuity.
+	# Keep near very small so close geometry through the destination portal is not clipped.
+	var render_near: float = 0.001
+	_portal_camera.near = render_near
 	_portal_camera.far = src_cam.far
-	_portal_camera.keep_aspect = src_cam.keep_aspect
-	_portal_camera.cull_mask = src_cam.cull_mask
+	_portal_camera.keep_aspect = Camera3D.KEEP_HEIGHT
+	var src_mask: int = src_cam.cull_mask
+	var filtered_mask: int = src_mask & ~PORTAL_SURFACE_LAYER_MASK
+	_portal_camera.cull_mask = filtered_mask if filtered_mask != 0 else src_mask
 	_portal_camera.environment = src_cam.environment
 	_portal_camera.attributes = src_cam.attributes
 
 	var mapped := _map_transform_to_link(src_cam.global_transform)
-	mapped.origin += _linked_portal._get_world_normal() * maxf(exit_offset, 0.01)
+	mapped = _enforce_min_link_distance(mapped)
+	mapped.origin += _linked_portal._get_world_normal() * render_camera_offset
 	_portal_camera.global_transform = mapped
+	_reset_custom_projection()
+	if render_use_window_projection:
+		if not _apply_window_projection(render_near):
+			if _has_stable_window_projection:
+				_portal_camera.set_frustum(_stable_frustum_size, _stable_frustum_offset, render_near, _portal_camera.far)
+				_portal_camera.keep_aspect = Camera3D.KEEP_HEIGHT
+			else:
+				_portal_camera.set_perspective(src_cam.fov, render_near, src_cam.far)
+	else:
+		_portal_camera.set_perspective(src_cam.fov, render_near, src_cam.far)
+
+
+func _update_surface_state() -> void:
+	_render_ok = _is_render_ready()
+	if _surface == null:
+		return
+
+	if _linked_portal == null:
+		_surface.visible = false
+		return
+
+	_surface.visible = true
+	if _surface_material == null:
+		return
+
+	if _render_ok:
+		_surface_material.albedo_texture = _viewport.get_texture()
+		_surface_material.albedo_color = Color(1.0, 1.0, 1.0, 1.0)
+	else:
+		# Linked portal but no valid render path yet: show a visible debug fallback.
+		_surface_material.albedo_texture = null
+		_surface_material.albedo_color = Color(1.0, 0.0, 1.0, 1.0)
+
+
+func _is_render_ready() -> bool:
+	if _linked_portal == null:
+		return false
+	if _viewport == null or _portal_camera == null:
+		return false
+	if _viewport.world_3d == null:
+		return false
+	if _viewport.size.x < 8 or _viewport.size.y < 8:
+		return false
+	var tex: Texture2D = _viewport.get_texture()
+	if tex == null:
+		return false
+	var tex_size: Vector2 = tex.get_size()
+	return tex_size.x > 0 and tex_size.y > 0
+
+
+func _debug_tick(delta: float) -> void:
+	if not portal_debug:
+		return
+	_debug_accum += delta
+	if _debug_accum < DEBUG_PRINT_INTERVAL:
+		return
+	_debug_accum = 0.0
+	var linked_id: int = -1 if _linked_portal == null else _linked_portal.get_instance_id()
+	var linked_name: String = "none" if _linked_portal == null else String(_linked_portal.name)
+	var vp_size: Vector2i = Vector2i.ZERO if _viewport == null else _viewport.size
+	var has_world: bool = (_viewport != null and _viewport.world_3d != null)
+	var has_cam: bool = (_portal_camera != null and _portal_camera.is_inside_tree())
+	var has_tex: bool = (_viewport != null and _viewport.get_texture() != null)
+	var surf_vis: bool = (_surface != null and _surface.visible)
+	var p_xform: Transform3D = _get_portal_global_transform()
+	var portal_aspect: float = _portal_half_extents.x / maxf(_portal_half_extents.y, 0.001)
+	print("[Portal DEBUG] %s linked_id=%d linked_name=%s render_ok=%s visible=%s vp=%s world=%s cam=%s tex=%s axis=%s portal_aspect=%.3f normal=%s origin=%s" % [
+		name, linked_id, linked_name, str(_render_ok), str(surf_vis), str(vp_size), str(has_world), str(has_cam), str(has_tex), portal_axis,
+		portal_aspect, str(p_xform.basis.z.normalized()), str(p_xform.origin)
+	])
 
 
 func _check_crossing(ent: Node3D) -> void:
@@ -283,6 +476,18 @@ func _map_direction_to_link(dir: Vector3) -> Vector3:
 	return exit_basis * (flip_basis * (entry_basis.inverse() * dir))
 
 
+func _enforce_min_link_distance(xf: Transform3D) -> Transform3D:
+	if _linked_portal == null or render_min_link_distance <= 0.0:
+		return xf
+	var out: Transform3D = xf
+	var target_xf: Transform3D = _linked_portal._get_portal_global_transform()
+	var n: Vector3 = target_xf.basis.z.normalized()
+	var dist: float = n.dot(out.origin - target_xf.origin)
+	if dist < render_min_link_distance:
+		out.origin += n * (render_min_link_distance - dist)
+	return out
+
+
 func _world_to_portal_local(world_pos: Vector3) -> Vector3:
 	return _get_portal_global_transform().affine_inverse() * world_pos
 
@@ -308,6 +513,411 @@ func _disable_collision_shapes() -> void:
 			(child as CollisionShape3D).disabled = true
 
 
+func _hide_source_mesh_children() -> void:
+	for n in find_children("*", "MeshInstance3D", true, false):
+		var mi := n as MeshInstance3D
+		if mi == null:
+			continue
+		if _plugin_portal != null and _is_descendant_of(mi, _plugin_portal):
+			continue
+		mi.visible = false
+
+
+func _is_descendant_of(node: Node, ancestor: Node) -> bool:
+	if node == null or ancestor == null:
+		return false
+	var cur: Node = node.get_parent()
+	while cur != null:
+		if cur == ancestor:
+			return true
+		cur = cur.get_parent()
+	return false
+
+
+func _get_game_manager() -> Node:
+	return get_node_or_null("/root/GAME")
+
+
+func _portal_matches_targetname(portal: FuncPortal, wanted_target: String) -> bool:
+	if portal == null:
+		return false
+	for token in portal.targetname.split(","):
+		if String(token).strip_edges() == wanted_target:
+			return true
+	return false
+
+
+func _on_properties_applied() -> void:
+	if Engine.is_editor_hint() or not is_inside_tree():
+		return
+	if not is_in_group("func_portal"):
+		add_to_group("func_portal")
+	if targetname != "":
+		var game: Node = _get_game_manager()
+		if game != null and game.has_method("set_targetname"):
+			game.call("set_targetname", self, targetname)
+	if use_portals_plugin:
+		_setup_plugin_portal()
+		_resolve_linked_portal(true)
+		_sync_plugin_link()
+		return
+	_has_stable_window_projection = false
+	_hide_source_mesh_children()
+	_build_portal_surface()
+	_setup_portal_viewport()
+	_resolve_linked_portal(true)
+	_update_surface_state()
+
+
+func _process_plugin_portal(delta: float) -> void:
+	var src_cam: Camera3D = get_viewport().get_camera_3d()
+	if src_cam == null:
+		return
+
+	if _plugin_portal == null:
+		_setup_plugin_portal_with_camera(src_cam)
+		if _plugin_portal == null:
+			return
+	_resolve_linked_portal(false)
+	_link_retry_accum += delta
+	if _linked_portal == null and _link_retry_accum >= LINK_RETRY_SECONDS:
+		_link_retry_accum = 0.0
+		_resolve_linked_portal(false)
+
+	var pxf: Transform3D = _get_portal_global_transform()
+	if _should_use_opposite_face():
+		pxf = _to_opposite_portal_face(pxf)
+	_plugin_portal.global_transform = pxf
+	_plugin_adapter.configure_runtime_portal(_plugin_portal, src_cam, enabled, plugin_teleport_collision_mask)
+
+	if _linked_portal != null:
+		_sync_plugin_link()
+
+	_debug_tick(delta)
+
+
+func _setup_plugin_portal() -> void:
+	var src_cam: Camera3D = get_viewport().get_camera_3d()
+	if src_cam == null:
+		return
+	_setup_plugin_portal_with_camera(src_cam)
+
+
+func _setup_plugin_portal_with_camera(src_cam: Camera3D) -> void:
+	if _plugin_portal != null:
+		return
+	_configure_portal_plane()
+	var p: Node3D = _plugin_adapter.create_runtime_portal(
+		self,
+		"Portal3D_Runtime",
+		_portal_half_extents * 2.0,
+		src_cam,
+		enabled,
+		plugin_teleport_collision_mask,
+		PORTAL_SURFACE_LAYER_MASK
+	)
+	if p == null:
+		push_error("%s: Failed to create Portal3D runtime wrapper (plugin missing/version mismatch)." % name)
+		return
+	_plugin_portal = p
+	var pxf: Transform3D = _get_portal_global_transform()
+	if _should_use_opposite_face():
+		pxf = _to_opposite_portal_face(pxf)
+	_plugin_portal.global_transform = pxf
+	_hide_source_mesh_children()
+
+
+func _sync_plugin_link() -> void:
+	if not use_portals_plugin:
+		return
+	if _plugin_portal == null:
+		return
+	if _linked_portal == null or _linked_portal._plugin_portal == null:
+		_plugin_adapter.deactivate_portal(_plugin_portal)
+		return
+	var src_cam: Camera3D = get_viewport().get_camera_3d()
+	if src_cam == null:
+		return
+	_ensure_camera_environment(src_cam)
+	if not _plugin_adapter.link_portals(_plugin_portal, _linked_portal._plugin_portal, src_cam):
+		push_error("%s: Failed to link runtime portal pair." % name)
+
+
+func _to_opposite_portal_face(xf: Transform3D) -> Transform3D:
+	var out: Transform3D = xf
+	var z: Vector3 = out.basis.z.normalized()
+	var face_offset: float = maxf((_portal_depth * 0.5) - 0.005, 0.0)
+	out.origin -= z * (face_offset * 2.0)
+	return out
+
+
+func _should_use_opposite_face() -> bool:
+	if plugin_face_from_portal_texture:
+		return _auto_use_opposite_face
+	return plugin_use_opposite_face
+
+
+func _update_portal_face_from_texture_metadata() -> void:
+	_auto_use_opposite_face = plugin_use_opposite_face
+	if not has_meta("func_godot_mesh_data"):
+		return
+	var md_v: Variant = get_meta("func_godot_mesh_data")
+	if not (md_v is Dictionary):
+		return
+	var md: Dictionary = md_v as Dictionary
+	if not (md.has("normals") and md.has("textures") and md.has("texture_names")):
+		return
+	var normals_v: Variant = md["normals"]
+	var textures_v: Variant = md["textures"]
+	var texture_names_v: Variant = md["texture_names"]
+	if not (normals_v is PackedVector3Array and textures_v is PackedInt32Array and texture_names_v is Array):
+		return
+	var normals: PackedVector3Array = normals_v as PackedVector3Array
+	var textures: PackedInt32Array = textures_v as PackedInt32Array
+	var texture_names: Array = texture_names_v as Array
+	var count: int = mini(normals.size(), textures.size())
+	if count <= 0:
+		return
+	var portal_z: Vector3 = _portal_local_xform.basis.z.normalized()
+	var best_score: float = -1.0
+	var best_dot: float = 1.0
+	var found: bool = false
+	for i in range(count):
+		var ti: int = textures[i]
+		if ti < 0 or ti >= texture_names.size():
+			continue
+		var tex_name: String = String(texture_names[ti]).to_lower()
+		if tex_name.find("portal") == -1:
+			continue
+		var n: Vector3 = normals[i].normalized()
+		if n.length_squared() < 0.000001:
+			continue
+		var d: float = n.dot(portal_z)
+		var score: float = absf(d)
+		if score > best_score:
+			best_score = score
+			best_dot = d
+			found = true
+	if found:
+		_auto_use_opposite_face = best_dot < 0.0
+
+
+func _ensure_camera_environment(src_cam: Camera3D) -> void:
+	if src_cam == null:
+		return
+	if src_cam.environment != null:
+		return
+	var world: World3D = src_cam.get_world_3d()
+	if world != null and world.environment != null:
+		return
+	# Plugin _setup_cameras() duplicates camera/world environment; guarantee one exists.
+	src_cam.environment = Environment.new()
+
+
+func _configure_portal_plane() -> void:
+	if _try_configure_portal_plane_from_metadata():
+		return
+	var bounds: AABB = _compute_local_bounds()
+	_configure_portal_plane_from_bounds(bounds)
+	if plugin_face_from_portal_texture:
+		push_warning("%s: missing exact portal face metadata, using bounds-derived portal plane fallback." % name)
+
+
+func _try_configure_portal_plane_from_metadata() -> bool:
+	if not plugin_face_from_portal_texture:
+		return false
+	if not has_meta("func_godot_mesh_data"):
+		return false
+	var md_v: Variant = get_meta("func_godot_mesh_data")
+	if not (md_v is Dictionary):
+		return false
+	var md: Dictionary = md_v as Dictionary
+	if not (md.has("normals") and md.has("positions") and md.has("textures") and md.has("texture_names")):
+		return false
+	var normals_v: Variant = md["normals"]
+	var positions_v: Variant = md["positions"]
+	var textures_v: Variant = md["textures"]
+	var texture_names_v: Variant = md["texture_names"]
+	if not (normals_v is PackedVector3Array and positions_v is PackedVector3Array and textures_v is PackedInt32Array and texture_names_v is Array):
+		return false
+	var normals: PackedVector3Array = normals_v as PackedVector3Array
+	var positions: PackedVector3Array = positions_v as PackedVector3Array
+	var textures: PackedInt32Array = textures_v as PackedInt32Array
+	var texture_names: Array = texture_names_v as Array
+	var vertices: PackedVector3Array = PackedVector3Array()
+	if md.has("vertices"):
+		var vertices_v: Variant = md["vertices"]
+		if vertices_v is PackedVector3Array:
+			vertices = vertices_v as PackedVector3Array
+	var count: int = mini(mini(normals.size(), positions.size()), textures.size())
+	if count <= 0:
+		return false
+
+	var best_idx: int = -1
+	var best_score: float = -1.0
+	for i in range(count):
+		var ti: int = textures[i]
+		if ti < 0 or ti >= texture_names.size():
+			continue
+		var tex_name: String = String(texture_names[ti]).to_lower()
+		if tex_name.find("portal") == -1:
+			continue
+		var n: Vector3 = normals[i].normalized()
+		if n.length_squared() < 0.000001:
+			continue
+		var score: float = absf(n.dot(_portal_local_xform.basis.z.normalized()))
+		if score > best_score:
+			best_score = score
+			best_idx = i
+	if best_idx < 0:
+		return false
+
+	var world_normal: Vector3 = normals[best_idx].normalized()
+	var world_center: Vector3 = positions[best_idx]
+	if world_normal.length_squared() < 0.000001:
+		return false
+
+	var bounds: AABB = _compute_local_bounds()
+	var local_center_world: Vector3 = global_transform.affine_inverse() * world_center
+	var local_center_direct: Vector3 = world_center
+	# FuncGodot face metadata is local to the generated node. Prefer direct-local,
+	# only fallback to world->local if direct point is clearly out of bounds.
+	var local_center: Vector3 = local_center_direct
+	var direct_score: float = _point_in_bounds_score(bounds, local_center_direct)
+	var world_score: float = _point_in_bounds_score(bounds, local_center_world)
+	if direct_score < -0.25 and world_score > direct_score + 0.25:
+		local_center = local_center_world
+
+	var local_normal: Vector3 = world_normal.normalized()
+	if local_normal.length_squared() < 0.000001:
+		local_normal = (global_transform.basis.inverse() * world_normal).normalized()
+	if reverse_normal:
+		local_normal = -local_normal
+
+	var up_ref: Vector3 = Vector3.UP
+	if absf(up_ref.dot(local_normal)) > 0.98:
+		up_ref = Vector3.FORWARD
+	var y_axis: Vector3 = (up_ref - local_normal * up_ref.dot(local_normal)).normalized()
+	if y_axis.length_squared() < 0.0001:
+		y_axis = Vector3.UP
+	var x_axis: Vector3 = y_axis.cross(local_normal).normalized()
+
+	var half_size: Vector3 = bounds.size.abs() * 0.5
+	var face_fit: Dictionary = _fit_portal_rect_from_face_triangles(
+		textures, normals, positions, vertices, best_idx, local_normal, x_axis, y_axis
+	)
+	var fit_ok: bool = bool(face_fit.get("ok", false))
+	if fit_ok:
+		local_center = face_fit.get("center", local_center) as Vector3
+		var fit_half: Vector2 = face_fit.get("half_extents", Vector2.ONE * 0.05) as Vector2
+		_portal_half_extents = Vector2(maxf(fit_half.x, 0.05), maxf(fit_half.y, 0.05))
+	else:
+		_portal_half_extents = Vector2(
+			maxf(_support_extent(half_size, x_axis), 0.05),
+			maxf(_support_extent(half_size, y_axis), 0.05)
+		)
+	_portal_depth = maxf(_support_extent(half_size, local_normal) * 2.0, 0.01)
+	_portal_local_xform = Transform3D(Basis(x_axis, y_axis, local_normal), local_center)
+	_auto_use_opposite_face = false
+	if portal_debug:
+		print("[Portal DEBUG] %s metadata space select local_center=%s world_as_local=%s direct_local=%s local_normal=%s fit_ok=%s half=%s" % [
+			name, str(local_center), str(local_center_world), str(local_center_direct), str(local_normal), str(fit_ok), str(_portal_half_extents)
+		])
+	return true
+
+
+func _point_in_bounds_score(bounds: AABB, p: Vector3) -> float:
+	var size: Vector3 = bounds.size.abs()
+	var expand: Vector3 = Vector3(maxf(size.x * 0.25, 0.2), maxf(size.y * 0.25, 0.2), maxf(size.z * 0.25, 0.05))
+	var minp: Vector3 = bounds.position - expand
+	var maxp: Vector3 = bounds.position + size + expand
+	var clamped := Vector3(
+		clampf(p.x, minp.x, maxp.x),
+		clampf(p.y, minp.y, maxp.y),
+		clampf(p.z, minp.z, maxp.z)
+	)
+	var dist: float = p.distance_to(clamped)
+	# Higher is better; in-bounds gets 1.0, then drops with distance.
+	return 1.0 - dist
+
+
+func _fit_portal_rect_from_face_triangles(
+	textures: PackedInt32Array,
+	normals: PackedVector3Array,
+	positions: PackedVector3Array,
+	vertices: PackedVector3Array,
+	best_idx: int,
+	local_normal: Vector3,
+	x_axis: Vector3,
+	y_axis: Vector3
+) -> Dictionary:
+	if best_idx < 0 or best_idx >= textures.size() or best_idx >= positions.size():
+		return {"ok": false}
+	var target_texture: int = textures[best_idx]
+	var plane_center: Vector3 = positions[best_idx]
+	var plane_d: float = local_normal.dot(plane_center)
+	var tri_count: int = mini(mini(textures.size(), normals.size()), positions.size())
+	if tri_count <= 0:
+		return {"ok": false}
+	var has_vertices: bool = vertices.size() >= tri_count * 3
+	var min_x: float = 1e20
+	var max_x: float = -1e20
+	var min_y: float = 1e20
+	var max_y: float = -1e20
+	var sum_w: float = 0.0
+	var w_count: int = 0
+	var accepted: int = 0
+	var normal_dot_min: float = 0.995
+	var plane_epsilon: float = 0.06
+	for i in range(tri_count):
+		if textures[i] != target_texture:
+			continue
+		var n: Vector3 = normals[i].normalized()
+		if n.length_squared() < 0.000001:
+			continue
+		if absf(n.dot(local_normal)) < normal_dot_min:
+			continue
+		if absf(local_normal.dot(positions[i]) - plane_d) > plane_epsilon:
+			continue
+		if has_vertices:
+			for k in range(3):
+				var p: Vector3 = vertices[i * 3 + k]
+				var px: float = x_axis.dot(p)
+				var py: float = y_axis.dot(p)
+				min_x = minf(min_x, px)
+				max_x = maxf(max_x, px)
+				min_y = minf(min_y, py)
+				max_y = maxf(max_y, py)
+				sum_w += local_normal.dot(p)
+				w_count += 1
+		else:
+			var p2: Vector3 = positions[i]
+			var px2: float = x_axis.dot(p2)
+			var py2: float = y_axis.dot(p2)
+			min_x = minf(min_x, px2)
+			max_x = maxf(max_x, px2)
+			min_y = minf(min_y, py2)
+			max_y = maxf(max_y, py2)
+			sum_w += local_normal.dot(p2)
+			w_count += 1
+		accepted += 1
+	if accepted <= 0 or w_count <= 0:
+		return {"ok": false}
+	var half_x: float = (max_x - min_x) * 0.5
+	var half_y: float = (max_y - min_y) * 0.5
+	if half_x <= 0.001 or half_y <= 0.001:
+		return {"ok": false}
+	var mid_x: float = (min_x + max_x) * 0.5
+	var mid_y: float = (min_y + max_y) * 0.5
+	var mid_w: float = sum_w / float(w_count)
+	var center: Vector3 = x_axis * mid_x + y_axis * mid_y + local_normal * mid_w
+	return {
+		"ok": true,
+		"center": center,
+		"half_extents": Vector2(half_x, half_y)
+	}
+
+
 func _compute_local_bounds() -> AABB:
 	var has_any := false
 	var bounds := AABB()
@@ -324,13 +934,29 @@ func _compute_local_bounds() -> AABB:
 			bounds = bounds.merge(aabb)
 
 	if has_any:
-		return bounds
+		return _sanitize_portal_bounds(bounds)
 
 	for n in find_children("*", "CollisionShape3D", true, false):
 		var cs := n as CollisionShape3D
 		if cs == null or cs.shape == null:
 			continue
-		var aabb := _transform_aabb(cs.shape.get_aabb(), cs.transform)
+		var aabb := AABB()
+		var have_shape_bounds := false
+		if cs.shape.has_method("get_aabb"):
+			var shape_aabb_v: Variant = cs.shape.call("get_aabb")
+			if shape_aabb_v is AABB:
+				aabb = _transform_aabb(shape_aabb_v as AABB, cs.transform)
+				have_shape_bounds = true
+		# ConcavePolygonShape3D has no get_aabb(); derive bounds from face points.
+		if not have_shape_bounds and cs.shape.has_method("get_faces"):
+			var faces_v: Variant = cs.shape.call("get_faces")
+			if faces_v is PackedVector3Array:
+				var faces: PackedVector3Array = faces_v as PackedVector3Array
+				if faces.size() > 0:
+					aabb = _aabb_from_points(faces, cs.transform)
+					have_shape_bounds = true
+		if not have_shape_bounds:
+			continue
 		if not has_any:
 			bounds = aabb
 			has_any = true
@@ -338,9 +964,30 @@ func _compute_local_bounds() -> AABB:
 			bounds = bounds.merge(aabb)
 
 	if has_any:
-		return bounds
+		return _sanitize_portal_bounds(bounds)
 
-	return AABB(Vector3(-0.5, -0.5, -0.05), Vector3(1.0, 1.0, 0.1))
+	return AABB(Vector3(-0.5, -1.0, -0.05), Vector3(1.0, 2.0, 0.1))
+
+
+func _sanitize_portal_bounds(bounds: AABB) -> AABB:
+	var b := bounds
+	# Keep a minimum usable portal size so tiny/degenerate bounds don't create a sliver.
+	var min_extent := Vector3(0.5, 0.5, 0.02)
+	var size := b.size.abs()
+	if size.x < min_extent.x:
+		var c := b.position.x + size.x * 0.5
+		b.position.x = c - min_extent.x * 0.5
+		size.x = min_extent.x
+	if size.y < min_extent.y:
+		var c := b.position.y + size.y * 0.5
+		b.position.y = c - min_extent.y * 0.5
+		size.y = min_extent.y
+	if size.z < min_extent.z:
+		var c := b.position.z + size.z * 0.5
+		b.position.z = c - min_extent.z * 0.5
+		size.z = min_extent.z
+	b.size = size
+	return b
 
 
 func _transform_aabb(aabb: AABB, xform: Transform3D) -> AABB:
@@ -358,7 +1005,20 @@ func _transform_aabb(aabb: AABB, xform: Transform3D) -> AABB:
 	var out := AABB()
 	var has_any := false
 	for p in corners:
-		var wp := xform * p
+		var wp: Vector3 = xform * p
+		if not has_any:
+			out = AABB(wp, Vector3.ZERO)
+			has_any = true
+		else:
+			out = out.expand(wp)
+	return out
+
+
+func _aabb_from_points(points: PackedVector3Array, xform: Transform3D) -> AABB:
+	var out := AABB()
+	var has_any := false
+	for p in points:
+		var wp: Vector3 = xform * p
 		if not has_any:
 			out = AABB(wp, Vector3.ZERO)
 			has_any = true
@@ -368,41 +1028,240 @@ func _transform_aabb(aabb: AABB, xform: Transform3D) -> AABB:
 
 
 func _configure_portal_plane_from_bounds(bounds: AABB) -> void:
-	var size := bounds.size.abs()
-	var center := bounds.position + size * 0.5
+	var size: Vector3 = bounds.size.abs()
+	var center: Vector3 = bounds.position + size * 0.5
+	var half_size: Vector3 = size * 0.5
 
-	var axis := 0
-	if size.y <= size.x and size.y <= size.z:
-		axis = 1
-	elif size.z <= size.x and size.z <= size.y:
-		axis = 2
+	var axis: int = _resolve_axis_override()
+	if axis == -1:
+		axis = 0
+		if size.y <= size.x and size.y <= size.z:
+			axis = 1
+		elif size.z <= size.x and size.z <= size.y:
+			axis = 2
 
-	var x_axis := Vector3(1.0, 0.0, 0.0)
-	var y_axis := Vector3(0.0, 1.0, 0.0)
-	var z_axis := Vector3(0.0, 0.0, 1.0)
-	var half_x := maxf(size.x * 0.5, 0.05)
-	var half_y := maxf(size.y * 0.5, 0.05)
-
-	if axis == 0:
-		x_axis = Vector3(0.0, 1.0, 0.0)
-		y_axis = Vector3(0.0, 0.0, 1.0)
-		z_axis = Vector3(1.0, 0.0, 0.0)
-		half_x = maxf(size.y * 0.5, 0.05)
-		half_y = maxf(size.z * 0.5, 0.05)
-	elif axis == 1:
-		x_axis = Vector3(0.0, 0.0, 1.0)
-		y_axis = Vector3(1.0, 0.0, 0.0)
-		z_axis = Vector3(0.0, 1.0, 0.0)
-		half_x = maxf(size.z * 0.5, 0.05)
-		half_y = maxf(size.x * 0.5, 0.05)
-
+	var axis_sign: float = _resolve_axis_sign()
 	if reverse_normal:
-		x_axis = -x_axis
-		z_axis = -z_axis
+		axis_sign *= -1.0
+
+	var z_axis: Vector3 = Vector3.ZERO
+	match axis:
+		0:
+			z_axis = Vector3(axis_sign, 0.0, 0.0)
+		1:
+			z_axis = Vector3(0.0, axis_sign, 0.0)
+		_:
+			z_axis = Vector3(0.0, 0.0, axis_sign)
+
+	# Build a stable in-plane frame: keep portal "up" close to world up.
+	var up_ref: Vector3 = Vector3.UP
+	if absf(up_ref.dot(z_axis)) > 0.98:
+		up_ref = Vector3.FORWARD
+	var y_axis: Vector3 = (up_ref - z_axis * up_ref.dot(z_axis)).normalized()
+	if y_axis.length_squared() < 0.0001:
+		y_axis = Vector3.UP
+	var x_axis: Vector3 = y_axis.cross(z_axis).normalized()
+
+	var half_x: float = maxf(_support_extent(half_size, x_axis), 0.05)
+	var half_y: float = maxf(_support_extent(half_size, y_axis), 0.05)
+	var half_depth: float = maxf(_support_extent(half_size, z_axis), 0.005)
 
 	_portal_half_extents = Vector2(half_x, half_y)
-	_portal_depth = maxf(size[axis], 0.01)
-	var face_offset := maxf(_portal_depth * 0.5 - 0.005, 0.0)
-	var origin := center + z_axis * face_offset
-	var basis := Basis(x_axis.normalized(), y_axis.normalized(), z_axis.normalized())
+	_portal_depth = maxf(half_depth * 2.0, 0.01)
+	var face_offset: float = maxf(half_depth - 0.005, 0.0)
+	var origin: Vector3 = center + z_axis * face_offset
+	var basis: Basis = Basis(x_axis, y_axis, z_axis)
 	_portal_local_xform = Transform3D(basis, origin)
+
+
+func _resolve_axis_override() -> int:
+	match portal_axis:
+		"x", "-x":
+			return 0
+		"y", "-y":
+			return 1
+		"z", "-z":
+			return 2
+		_:
+			return -1
+
+
+func _resolve_axis_sign() -> float:
+	if portal_axis.begins_with("-"):
+		return -1.0
+	return 1.0
+
+
+func _support_extent(half_size: Vector3, dir: Vector3) -> float:
+	var ad: Vector3 = Vector3(absf(dir.x), absf(dir.y), absf(dir.z))
+	return half_size.x * ad.x + half_size.y * ad.y + half_size.z * ad.z
+
+
+func _apply_window_projection(z_near: float) -> bool:
+	if _portal_camera == null or _linked_portal == null or _viewport == null:
+		return false
+	var corners: Array[Vector3] = _linked_portal._get_portal_corners_world()
+	if corners.is_empty():
+		return false
+	var cam_inv: Transform3D = _portal_camera.global_transform.affine_inverse()
+	var min_u: float = 1e20
+	var max_u: float = -1e20
+	var min_v: float = 1e20
+	var max_v: float = -1e20
+	var z_gate: float = maxf(z_near * 0.25, 0.002)
+	for i in corners.size():
+		var cw: Vector3 = corners[i]
+		var c: Vector3 = cam_inv * cw
+		# If a projected corner is at/behind camera, avoid clamp-based projection because
+		# it causes severe close-angle warping. Keep prior stable frustum instead.
+		if c.z > -z_gate:
+			return false
+		var iz: float = z_near / -c.z
+		var u: float = c.x * iz
+		var v: float = c.y * iz
+		min_u = minf(min_u, u)
+		max_u = maxf(max_u, u)
+		min_v = minf(min_v, v)
+		max_v = maxf(max_v, v)
+	var full_w: float = max_u - min_u
+	var full_h: float = max_v - min_v
+	if full_w <= 0.00001 or full_h <= 0.00001:
+		return false
+	var aspect: float = float(_viewport.size.x) / maxf(float(_viewport.size.y), 1.0)
+	var need_h: float = maxf(full_h, full_w / maxf(aspect, 0.001))
+	var offset: Vector2 = Vector2((min_u + max_u) * 0.5, (min_v + max_v) * 0.5)
+	var left: float = min_u
+	var right: float = max_u
+	var bottom: float = min_v
+	var top: float = max_v
+	if _apply_offaxis_projection(left, right, bottom, top, z_near, _portal_camera.far):
+		_stable_frustum_size = need_h
+		_stable_frustum_offset = offset
+		_has_stable_window_projection = true
+		return true
+	if ENABLE_EXPERIMENTAL_OBLIQUE and render_use_oblique_clip and _apply_oblique_clip_projection(left, right, bottom, top, z_near, _portal_camera.far):
+		_stable_frustum_size = need_h
+		_stable_frustum_offset = offset
+		_has_stable_window_projection = true
+		return true
+	_portal_camera.set_frustum(need_h, offset, z_near, _portal_camera.far)
+	_portal_camera.keep_aspect = Camera3D.KEEP_HEIGHT
+	_stable_frustum_size = need_h
+	_stable_frustum_offset = offset
+	_has_stable_window_projection = true
+	return true
+
+
+func _apply_offaxis_projection(left: float, right: float, bottom: float, top: float, z_near: float, z_far: float) -> bool:
+	if _portal_camera == null:
+		return false
+	if not _is_custom_projection_api_available():
+		return false
+	var proj: Projection = Projection.create_frustum(left, right, bottom, top, z_near, z_far)
+	_portal_camera.call("set_custom_projection", proj)
+	_portal_camera.keep_aspect = Camera3D.KEEP_HEIGHT
+	return true
+
+
+func _apply_oblique_clip_projection(left: float, right: float, bottom: float, top: float, z_near: float, z_far: float) -> bool:
+	if _portal_camera == null or _linked_portal == null:
+		return false
+	if not _is_oblique_projection_api_available():
+		return false
+	var clip_plane_cam: Vector4 = _compute_link_clip_plane_camera_space()
+	if clip_plane_cam == Vector4.ZERO:
+		return false
+	var base_proj: Projection = Projection.create_frustum(left, right, bottom, top, z_near, z_far)
+	var inv_proj: Projection = base_proj.inverse()
+	var q: Vector4 = inv_proj * Vector4(_sign_nonzero(clip_plane_cam.x), _sign_nonzero(clip_plane_cam.y), 1.0, 1.0)
+	var denom: float = clip_plane_cam.dot(q)
+	if absf(denom) < 0.000001:
+		return false
+	var c: Vector4 = clip_plane_cam * (2.0 / denom)
+	var out_proj: Projection = base_proj
+	var x_col: Vector4 = out_proj.x
+	var y_col: Vector4 = out_proj.y
+	var z_col: Vector4 = out_proj.z
+	var w_col: Vector4 = out_proj.w
+	x_col.z = c.x - x_col.w
+	y_col.z = c.y - y_col.w
+	z_col.z = c.z - z_col.w
+	w_col.z = c.w - w_col.w
+	out_proj.x = x_col
+	out_proj.y = y_col
+	out_proj.z = z_col
+	out_proj.w = w_col
+	var applied: bool = false
+	if _portal_camera.has_method("set_custom_projection"):
+		_portal_camera.call("set_custom_projection", out_proj)
+		applied = true
+	if applied:
+		_portal_camera.keep_aspect = Camera3D.KEEP_HEIGHT
+	return applied
+
+
+func _compute_link_clip_plane_camera_space() -> Vector4:
+	if _portal_camera == null or _linked_portal == null:
+		return Vector4.ZERO
+	var dst_xf: Transform3D = _linked_portal._get_portal_global_transform()
+	var n_world: Vector3 = dst_xf.basis.z.normalized()
+	var p_world: Vector3 = dst_xf.origin
+	var cam_inv: Transform3D = _portal_camera.global_transform.affine_inverse()
+	var n_cam: Vector3 = (cam_inv.basis * n_world).normalized()
+	var p_cam: Vector3 = cam_inv * p_world
+	var d: float = -n_cam.dot(p_cam)
+	var keep_world: Vector3 = p_world - n_world * 0.05
+	var keep_cam: Vector3 = cam_inv * keep_world
+	var keep_side: float = n_cam.dot(keep_cam) + d
+	if keep_side < 0.0:
+		n_cam = -n_cam
+		d = -d
+	return Vector4(n_cam.x, n_cam.y, n_cam.z, d)
+
+
+func _sign_nonzero(v: float) -> float:
+	return -1.0 if v < 0.0 else 1.0
+
+
+func _is_oblique_projection_api_available() -> bool:
+	if _oblique_api_checked:
+		if render_use_oblique_clip and portal_debug and not _oblique_api_available and not _oblique_unavailable_logged:
+			_oblique_unavailable_logged = true
+			print("[Portal DEBUG] %s oblique clip API unavailable; using frustum fallback." % [name])
+		return _oblique_api_available
+	_oblique_api_checked = true
+	_oblique_api_available = _portal_camera != null and _portal_camera.has_method("set_custom_projection")
+	if render_use_oblique_clip and portal_debug and not _oblique_api_available and not _oblique_unavailable_logged:
+		_oblique_unavailable_logged = true
+		print("[Portal DEBUG] %s oblique clip API unavailable; using frustum fallback." % [name])
+	return _oblique_api_available
+
+
+func _reset_custom_projection() -> void:
+	if _portal_camera == null:
+		return
+	if _portal_camera.has_method("clear_custom_projection"):
+		_portal_camera.call("clear_custom_projection")
+
+
+func _is_custom_projection_api_available() -> bool:
+	if _custom_proj_api_checked:
+		return _custom_proj_api_available
+	_custom_proj_api_checked = true
+	_custom_proj_api_available = _portal_camera != null and _portal_camera.has_method("set_custom_projection")
+	return _custom_proj_api_available
+
+
+func _get_portal_corners_world() -> Array[Vector3]:
+	var xf: Transform3D = _get_portal_global_transform()
+	var hx: float = _portal_half_extents.x
+	var hy: float = _portal_half_extents.y
+	var right: Vector3 = xf.basis.x
+	var up: Vector3 = xf.basis.y
+	var c: Vector3 = xf.origin
+	return [
+		c + right * -hx + up * -hy,
+		c + right * hx + up * -hy,
+		c + right * hx + up * hy,
+		c + right * -hx + up * hy
+	]

@@ -117,7 +117,7 @@ func _is_master_unlocked(master_node: Node) -> bool:
 		if master_node.has_method(method_name):
 			return _to_bool(master_node.call(method_name), false)
 	for property_name in ["unlocked", "active", "enabled", "open", "on", "button_pressed"]:
-		var value := _get_node_prop(master_node, property_name, null)
+		var value: Variant = _get_node_prop(master_node, property_name, null)
 		if value != null:
 			return _to_bool(value, false)
 	# If no explicit lock state exists, treat this master as unlocked.

@@ -20,7 +20,6 @@
 
 [node name="PhotoMode" type="Node3D" unique_id=33282436]
 script = ExtResource("1_photo_mode")
-enable_runtime_layout_repair = false
 
 [node name="PhotoCamera" type="Camera3D" parent="." unique_id=642954770]
 current = true

@@ -1,52 +1,64 @@
-[gd_resource type="Resource" script_class="FuncGodotFGDSolidClass" load_steps=6 format=3]
+[gd_resource type="Resource" script_class="FuncGodotFGDSolidClass" format=3 uid="uid://sp6y4qyhm8xc"]
 
-[ext_resource type="Script" path="res://addons/func_godot/src/fgd/func_godot_fgd_solid_class.gd" id="1_solid"]
-[ext_resource type="Resource" path="res://tb/fgd/base/func_base.tres" id="2_func_base"]
-[ext_resource type="Resource" path="res://tb/fgd/base/target_base.tres" id="3_target_base"]
-[ext_resource type="Resource" path="res://tb/fgd/base/targetname_base.tres" id="4_targetname_base"]
-[ext_resource type="Script" path="res://entities/funcs/func_portal.gd" id="5_script"]
+[ext_resource type="Script" uid="uid://dhw5od2dxhpfo" path="res://addons/func_godot/src/fgd/func_godot_fgd_solid_class.gd" id="1_solid"]
+[ext_resource type="Resource" uid="uid://d4buv26pirxbl" path="res://tb/fgd/base/func_base.tres" id="2_func_base"]
+[ext_resource type="Resource" uid="uid://kerywjgft7vh" path="res://tb/fgd/base/target_base.tres" id="3_target_base"]
+[ext_resource type="Resource" uid="uid://cwbnifad3sdgw" path="res://tb/fgd/base/targetname_base.tres" id="4_targetname_base"]
+[ext_resource type="Script" uid="uid://dd3bdm2xeoa4s" path="res://entities/funcs/func_portal.gd" id="5_script"]
 
 [resource]
 script = ExtResource("1_solid")
-spawn_type = 2
-origin_type = 4
-build_visuals = true
-use_in_baked_light = true
-shadow_casting_setting = 1
-build_occlusion = false
-render_layers = 1
+build_visuals = false
 collision_shape_type = 2
 collision_layer = 0
 collision_mask = 0
-collision_priority = 1.0
-collision_shape_margin = 0.04
-add_textures_metadata = false
-add_vertex_metadata = false
-add_face_position_metadata = false
-add_face_normal_metadata = false
-add_collision_shape_face_range_metadata = false
+add_textures_metadata = true
+add_vertex_metadata = true
+add_face_normal_metadata = true
+add_face_position_metadata = true
 script_class = ExtResource("5_script")
 classname = "func_portal"
 description = "Linked portal surface. Link two portals with matching target/targetname."
-func_godot_internal = false
 base_classes = Array[Resource]([ExtResource("2_func_base"), ExtResource("3_target_base"), ExtResource("4_targetname_base")])
 class_properties = {
 "enabled": true,
 "exit_offset": 0.12,
+"plugin_face_from_portal_texture": true,
+"plugin_teleport_collision_mask": 1048575,
+"plugin_use_opposite_face": false,
+"portal_axis": "auto",
+"portal_debug": false,
+"render_camera_offset": 0.0,
+"render_min_link_distance": 0.03,
 "render_scale": 0.75,
+"render_use_oblique_clip": false,
+"render_use_window_projection": true,
 "reverse_normal": false,
-"teleport_cooldown": 0.2
+"target": "",
+"targetname": "",
+"teleport_cooldown": 0.2,
+"use_portals_plugin": true
 }
 class_property_descriptions = {
 "enabled": "Enable/disable this portal at runtime.",
 "exit_offset": "How far from the destination portal plane to place teleported entities.",
+"plugin_face_from_portal_texture": "If true, detect the portal-textured brush face and place runtime portal on that exact side.",
+"plugin_teleport_collision_mask": "Physics mask used by plugin portal teleport area to detect teleportable bodies.",
+"plugin_use_opposite_face": "If true, place plugin Portal3D on the opposite brush face (fixes face-side convention mismatch).",
+"portal_axis": "Portal facing axis override: auto, x, -x, y, -y, z, -z.",
+"portal_debug": "Print runtime portal diagnostics and show magenta fallback if render path is invalid.",
+"render_camera_offset": "Small view-only offset along destination portal normal (0 for best seam alignment).",
+"render_min_link_distance": "Keeps the portal render camera at least this far from the linked portal plane to reduce close-angle warping.",
 "render_scale": "Portal render resolution scale. Lower = faster.",
+"render_use_oblique_clip": "Enable oblique near-plane clipping aligned to destination portal plane when engine projection API supports it.",
+"render_use_window_projection": "Use off-axis portal window projection for seam-accurate alignment.",
 "reverse_normal": "Flip portal facing direction if teleporting from wrong side.",
-"teleport_cooldown": "Seconds of re-teleport protection after crossing."
+"target": "Link to the destination portal targetname. TrenchBroom should show a link arrow when selected.",
+"targetname": "Name used by other portals' target key for linking. TrenchBroom should show a link arrow when selected.",
+"teleport_cooldown": "Seconds of re-teleport protection after crossing.",
+"use_portals_plugin": "If true, spawn and use addon Portal3D for rendering/teleport instead of custom FuncPortal camera path."
 }
-auto_apply_to_matching_node_properties = false
 meta_properties = {
 "color": Color(0.2, 0.6, 1, 1)
 }
 node_class = "StaticBody3D"
-name_property = ""

@@ -123,6 +123,14 @@ class FuncGodotEntity:
 	var spawn_type: FuncGodotEntitySpawnType
 	var origin_type: FuncGodotEntityOriginType
 	var metadata_inclusion_flags: FuncGodotEntityMetadataInclusionFlags
+
+	func _init() -> void:
+		properties = {}
+		brushes = []
+		center = Vector3.ZERO
+		spawn_type = FuncGodotEntitySpawnType.ENTITY
+		origin_type = FuncGodotEntityOriginType.BOUNDS_CENTER
+		metadata_inclusion_flags = FuncGodotEntityMetadataInclusionFlags.NONE
 	
 class FuncGodotFaceVertex:
 	var vertex: Vector3

@@ -10,6 +10,8 @@ var master_slider: HSlider
 var music_slider: HSlider
 var sfx_slider: HSlider
 var sens_slider: HSlider
+var smooth_slider: HSlider
+var fov_slider: HSlider
 
 var apply_button: Button
 var back_button: Button
@@ -122,6 +124,10 @@ func _ensure_layout() -> void:
 	if controls_grid:
 		_reparent_by_name("SensLabel", controls_grid)
 		_reparent_by_name("SensSlider", controls_grid)
+		_reparent_by_name("SmoothLabel", controls_grid)
+		_reparent_by_name("SmoothSlider", controls_grid)
+		_reparent_by_name("FovLabel", controls_grid)
+		_reparent_by_name("FovSlider", controls_grid)
 
 	# Buttons row
 	if buttons:
@@ -186,6 +192,8 @@ func _resolve_nodes() -> void:
 	music_slider = _find_node("MusicSlider", "HSlider") as HSlider
 	sfx_slider = _find_node("SfxSlider", "HSlider") as HSlider
 	sens_slider = _find_node("SensSlider", "HSlider") as HSlider
+	smooth_slider = _find_node("SmoothSlider", "HSlider") as HSlider
+	fov_slider = _find_node("FovSlider", "HSlider") as HSlider
 
 	apply_button = _find_node("ApplyButton", "Button") as Button
 	back_button = _find_node("BackButton", "Button") as Button
@@ -241,6 +249,10 @@ func _load_from_settings() -> void:
 		sfx_slider.value = float(s.sfx_volume)
 	if sens_slider:
 		sens_slider.value = float(s.mouse_sens)
+	if smooth_slider:
+		smooth_slider.value = float(s.mouse_smoothing)
+	if fov_slider:
+		fov_slider.value = float(s.gameplay_fov)
 
 	_select_resolution(s.window_size)
 
@@ -278,6 +290,10 @@ func _on_apply_pressed() -> void:
 		s.sfx_volume = float(sfx_slider.value)
 	if sens_slider:
 		s.mouse_sens = float(sens_slider.value)
+	if smooth_slider:
+		s.mouse_smoothing = float(smooth_slider.value)
+	if fov_slider:
+		s.gameplay_fov = float(fov_slider.value)
 
 	if s.has_method("apply_and_save"):
 		s.call("apply_and_save")

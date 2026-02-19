@@ -11,247 +11,183 @@ signal died
 @export var respawn_on_death: bool = true
 @export var respawn_delay: float = 1.0
 
-@export var JUMP_VELOCITY = 4.5
-@export var WALKING_SPEED = 5.0
-@export var SPRINTING_SPEED = 8.0
-@export var CROUCHING_SPEED = 3.0
-@export var CROUCHING_DEPTH = -0.9
-@export var MOUSE_SENS = 0.25
-@export var LERP_SPEED = 10.0
-@export var AIR_LERP_SPEED = 6.0
-@export var FREE_LOOK_TILT_AMOUNT = 5.0
-@export var SLIDING_SPEED = 5.0
-@export var WIGGLE_ON_WALKING_SPEED = 14.0
-@export var WIGGLE_ON_SPRINTING_SPEED = 22.0
-@export var WIGGLE_ON_CROUCHING_SPEED = 10.0
-@export var WIGGLE_ON_WALKING_INTENSITY = 0.1
-@export var WIGGLE_ON_SPRINTING_INTENSITY = 0.2
-@export var WIGGLE_ON_CROUCHING_INTENSITY = 0.05
-@export var BUNNY_HOP_ACCELERATION = 0.1
+# Movement (HL2-grounded style)
+@export var JUMP_HEIGHT: float = 1.0
+@export var WALKING_SPEED: float = 4.5
+@export var SPRINTING_SPEED: float = 7.5
+@export var CROUCHING_SPEED: float = 2.2
+@export var CROUCHING_DEPTH: float = -0.6
+@export var GROUND_ACCELERATION: float = 22.0
+@export var AIR_ACCELERATION: float = 6.0
+@export var GROUND_FRICTION: float = 8.0
+@export var STOP_SPEED: float = 1.8
+@export var AIR_CONTROL: float = 0.22
+@export var BUNNY_HOP_ACCELERATION: float = 0.12
+@export var BUNNY_HOP_MAX_SPEED: float = 9.0
+
+# Look/feel
+@export var MOUSE_SENS: float = 0.25
+@export var MOUSE_SMOOTHING: float = 0.0
+@export var GAMEPLAY_FOV: float = 90.0
+@export var FOV_MIN: float = 75.0
+@export var FOV_MAX: float = 110.0
+@export var LERP_SPEED: float = 10.0
+@export var AIR_LERP_SPEED: float = 6.0
+
+# Camera grounding
+@export var BOB_WALK_FREQ: float = 10.0
+@export var BOB_SPRINT_FREQ: float = 14.0
+@export var BOB_CROUCH_FREQ: float = 7.0
+@export var BOB_WALK_INTENSITY: float = 0.025
+@export var BOB_SPRINT_INTENSITY: float = 0.038
+@export var BOB_CROUCH_INTENSITY: float = 0.014
+@export var LANDING_DIP_SCALE: float = 0.012
+@export var LANDING_DIP_MAX: float = 0.08
+@export var LANDING_DIP_RECOVER: float = 9.0
+@export var SWAY_ROLL_MAX_DEG: float = 1.6
+@export var SWAY_ROLL_SPEED: float = 8.0
+@export var SWAY_STRAFE_SCALE: float = 0.015
 
 # Feel helpers
-@export var COYOTE_TIME = 0.12
-@export var JUMP_BUFFER = 0.12
-@export var SLIDE_RESTART_COOLDOWN = 0.2
+@export var COYOTE_TIME: float = 0.12
+@export var JUMP_BUFFER: float = 0.12
 
-var current_speed = 5.0
-var gravity = ProjectSettings.get_setting("physics/3d/default_gravity")
-var direction = Vector3.ZERO
-var is_walking = false
-var is_sprinting = false
-var is_crouching = false
-var is_free_looking = false
-var slide_vector = Vector2.ZERO
-var wiggle_vector = Vector2.ZERO
-var wiggle_index = 0.0
-var wiggle_current_intensity = 0.0
-var bunny_hop_speed = SPRINTING_SPEED
-var last_velocity = Vector3.ZERO
-var stand_after_roll = false
+var gravity: float = float(ProjectSettings.get_setting("physics/3d/default_gravity"))
+var direction: Vector3 = Vector3.ZERO
+var current_speed: float = WALKING_SPEED
+var bunny_hop_speed: float = SPRINTING_SPEED
+
+var is_walking: bool = false
+var is_sprinting: bool = false
+var is_crouching: bool = false
 
 var _coyote_left: float = 0.0
 var _jump_buffer_left: float = 0.0
-var _slide_cooldown_left: float = 0.0
 var _was_on_floor: bool = false
 
+var _mouse_delta_accum: Vector2 = Vector2.ZERO
+var _mouse_delta_filtered: Vector2 = Vector2.ZERO
+var _last_frame_mouse_delta: Vector2 = Vector2.ZERO
 
-func _ready():
+var _bob_phase: float = 0.0
+var _landing_dip: float = 0.0
+var _camera_roll: float = 0.0
+
+@onready var _neck: Node3D = $Neck
+@onready var _head: Node3D = $Neck/Head
+@onready var _eyes: Node3D = $Neck/Head/Eyes
+@onready var _camera: Camera3D = $Neck/Head/Eyes/Camera
+@onready var _standing_collision: CollisionShape3D = $StandingCollisionShape
+@onready var _crouching_collision: CollisionShape3D = $CrouchingCollisionShape
+@onready var _headroom_raycast: RayCast3D = $RayCast
+@onready var _anim_player: AnimationPlayer = $Neck/Head/Eyes/AnimationPlayer
+
+
+func _ready() -> void:
 	add_to_group("PLAYER")
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
-	# Pull mouse sensitivity from SETTINGS if present.
+
 	var settings := get_node_or_null("/root/SETTINGS")
-	if settings != null and "mouse_sens" in settings:
-		MOUSE_SENS = float(settings.mouse_sens)
+	if settings != null:
+		_apply_settings_from_singleton(settings)
 		if settings.has_signal("settings_applied"):
 			settings.settings_applied.connect(_on_settings_applied)
-	# Register with GAME so HUD and items can route health changes.
+
 	var game := get_node_or_null("/root/GAME")
 	if game != null and game.has_method("register_player"):
 		game.call("register_player", self)
+
 	_emit_health_changed()
 
 
 func _on_settings_applied() -> void:
 	var settings := get_node_or_null("/root/SETTINGS")
-	if settings != null and "mouse_sens" in settings:
+	if settings != null:
+		_apply_settings_from_singleton(settings)
+
+
+func _apply_settings_from_singleton(settings: Node) -> void:
+	if "mouse_sens" in settings:
 		MOUSE_SENS = float(settings.mouse_sens)
+	if "mouse_smoothing" in settings:
+		MOUSE_SMOOTHING = clampf(float(settings.mouse_smoothing), 0.0, 0.25)
+	if "gameplay_fov" in settings:
+		GAMEPLAY_FOV = clampf(float(settings.gameplay_fov), FOV_MIN, FOV_MAX)
+	if _camera != null:
+		_camera.fov = GAMEPLAY_FOV
 
 
-func _input(event):
+func _input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion:
-		if is_free_looking:
-			$Neck.rotate_y(deg_to_rad(-event.relative.x * MOUSE_SENS))
-			$Neck.rotation.y = clamp($Neck.rotation.y, deg_to_rad(-120), deg_to_rad(120))
-		else:
-			rotate_y(deg_to_rad(-event.relative.x * MOUSE_SENS))
-		$Neck/Head.rotate_x(deg_to_rad(-event.relative.y * MOUSE_SENS))
-		$Neck/Head.rotation.x = clamp($Neck/Head.rotation.x, deg_to_rad(-90), deg_to_rad(90))
+		_mouse_delta_accum += event.relative
 
 
-func _physics_process(delta):
-	_slide_cooldown_left = maxf(0.0, _slide_cooldown_left - delta)
+func _physics_process(delta: float) -> void:
+	var was_on_floor: bool = _was_on_floor
+	var on_floor: bool = is_on_floor()
 
-	# Jump buffering ("I pressed jump slightly early")
 	if Input.is_action_just_pressed("jump"):
 		_jump_buffer_left = JUMP_BUFFER
 	else:
 		_jump_buffer_left = maxf(0.0, _jump_buffer_left - delta)
 
-	var input_dir = Input.get_vector("left", "right", "forward", "back")
-	
-	if stand_after_roll:
-		# Roll finished: try to stand if there is headroom and player isn't holding crouch.
-		var wants_crouch: bool = Input.is_action_pressed("crouch") or $RayCast.is_colliding()
-		if not wants_crouch:
-			$Neck/Head.position.y = lerp($Neck/Head.position.y, 0.0, delta * LERP_SPEED)
-			$StandingCollisionShape.disabled = false
-			$CrouchingCollisionShape.disabled = true
-			is_crouching = false
-		stand_after_roll = false
-	
-	if Input.is_action_pressed("crouch") or $RayCast.is_colliding():
-		if is_on_floor():
-			current_speed = lerp(current_speed, CROUCHING_SPEED, delta * LERP_SPEED)
-		$Neck/Head.position.y = lerp($Neck/Head.position.y, CROUCHING_DEPTH, delta * LERP_SPEED)
-		$StandingCollisionShape.disabled = true
-		$CrouchingCollisionShape.disabled = false
-		wiggle_current_intensity = WIGGLE_ON_CROUCHING_INTENSITY
-		wiggle_index += WIGGLE_ON_CROUCHING_SPEED * delta
-		if is_sprinting and input_dir != Vector2.ZERO and is_on_floor() and $SlidingTimer.is_stopped() and _slide_cooldown_left <= 0.0:
-			$SlidingTimer.start()
-			slide_vector = input_dir
-			_slide_cooldown_left = SLIDE_RESTART_COOLDOWN
-		elif not Input.is_action_pressed("sprint"):
-			$SlidingTimer.stop()
-		is_walking = false
-		is_sprinting = false
-		is_crouching = true
-	else:
-		$Neck/Head.position.y = lerp($Neck/Head.position.y, 0.0, delta * LERP_SPEED)
-		$StandingCollisionShape.disabled = false
-		$CrouchingCollisionShape.disabled = true
-		$SlidingTimer.stop()
-		if Input.is_action_pressed("sprint"):
-			if not Input.is_action_pressed("jump"):
-				bunny_hop_speed = SPRINTING_SPEED
-			current_speed = lerp(current_speed, bunny_hop_speed, delta * LERP_SPEED)
-			wiggle_current_intensity = WIGGLE_ON_SPRINTING_INTENSITY
-			wiggle_index += WIGGLE_ON_SPRINTING_SPEED * delta
-			is_walking = false
-			is_sprinting = true
-			is_crouching = false
-		else:
-			current_speed = lerp(current_speed, WALKING_SPEED, delta * LERP_SPEED)
-			wiggle_current_intensity = WIGGLE_ON_WALKING_INTENSITY
-			wiggle_index += WIGGLE_ON_WALKING_SPEED * delta
-			is_walking = true
-			is_sprinting = false
-			is_crouching = false
-	
-	if Input.is_action_pressed("free_look") or (not $SlidingTimer.is_stopped()):
-		is_free_looking = true
-		if $SlidingTimer.is_stopped():
-			$Neck/Head/Eyes.rotation.z = -deg_to_rad(
-				$Neck.rotation.y * FREE_LOOK_TILT_AMOUNT
-			)
-		else:
-			$Neck/Head/Eyes.rotation.z = lerp(
-				$Neck/Head/Eyes.rotation.z,
-				deg_to_rad(4.0), 
-				delta * LERP_SPEED
-			)
-	else:
-		is_free_looking = false
-		rotation.y += $Neck.rotation.y
-		$Neck.rotation.y = 0
-		$Neck/Head/Eyes.rotation.z = lerp(
-			$Neck/Head/Eyes.rotation.z,
-			0.0,
-			delta*LERP_SPEED
-		)
-	
-	if not is_on_floor():
-		velocity.y -= gravity * delta
-		_coyote_left = maxf(0.0, _coyote_left - delta)
-	else:
+	if on_floor:
 		_coyote_left = COYOTE_TIME
-
-	if is_on_floor() and $SlidingTimer.is_stopped() and input_dir != Vector2.ZERO:
-		wiggle_vector.y = sin(wiggle_index)
-		wiggle_vector.x = sin(wiggle_index / 2) + 0.5
-		$Neck/Head/Eyes.position.y = lerp(
-			$Neck/Head/Eyes.position.y,
-			wiggle_vector.y * (wiggle_current_intensity / 2.0), 
-			delta * LERP_SPEED
-		)
-		$Neck/Head/Eyes.position.x = lerp(
-			$Neck/Head/Eyes.position.x,
-			wiggle_vector.x * wiggle_current_intensity, 
-			delta * LERP_SPEED
-		)
 	else:
-		$Neck/Head/Eyes.position.y = lerp($Neck/Head/Eyes.position.y, 0.0, delta * LERP_SPEED)
-		$Neck/Head/Eyes.position.x = lerp($Neck/Head/Eyes.position.x, 0.0, delta * LERP_SPEED)
+		_coyote_left = maxf(0.0, _coyote_left - delta)
 
-	# Jump handling (buffer + coyote)
+	_update_crouch_state(delta)
+	_apply_look(delta)
+
+	var input_dir: Vector2 = Input.get_vector("left", "right", "forward", "back")
+	var wish_dir: Vector3 = (transform.basis * Vector3(input_dir.x, 0.0, input_dir.y)).normalized()
+	var horizontal_vel := Vector3(velocity.x, 0.0, velocity.z)
+
+	_update_move_state(input_dir)
+	var target_speed: float = _target_speed()
+	current_speed = lerpf(current_speed, target_speed, clampf(delta * 8.0, 0.0, 1.0))
+
+	if on_floor:
+		horizontal_vel = _apply_friction(horizontal_vel, delta)
+		horizontal_vel = _accelerate(horizontal_vel, wish_dir, current_speed, GROUND_ACCELERATION, delta)
+	else:
+		horizontal_vel = _accelerate(horizontal_vel, wish_dir, current_speed, AIR_ACCELERATION, delta)
+		horizontal_vel = _air_control(horizontal_vel, wish_dir, input_dir.y, current_speed, delta)
+
+	if not on_floor:
+		velocity.y -= gravity * delta
+	elif velocity.y < 0.0:
+		velocity.y = -0.01
+
 	if _jump_buffer_left > 0.0 and _coyote_left > 0.0:
-		$Neck/Head/Eyes/AnimationPlayer.play("jump")
+		velocity.y = sqrt(2.0 * gravity * maxf(JUMP_HEIGHT, 0.01))
 		_jump_buffer_left = 0.0
 		_coyote_left = 0.0
-		if not $SlidingTimer.is_stopped():
-			velocity.y = JUMP_VELOCITY * 1.5
-			$SlidingTimer.stop()
-		else:
-			velocity.y = JUMP_VELOCITY
-		if is_sprinting:
-			bunny_hop_speed += BUNNY_HOP_ACCELERATION
+		if is_sprinting and input_dir.length() > 0.0:
+			bunny_hop_speed = minf(maxf(bunny_hop_speed, SPRINTING_SPEED) + BUNNY_HOP_ACCELERATION, BUNNY_HOP_MAX_SPEED)
 		else:
 			bunny_hop_speed = SPRINTING_SPEED
-	
-	if $SlidingTimer.is_stopped():
-		if is_on_floor():
-			direction = lerp(
-				direction,
-				(transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized(),
-				delta * LERP_SPEED
-			)
-		elif input_dir != Vector2.ZERO:
-			direction = lerp(
-				direction,
-				(transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized(),
-				delta * AIR_LERP_SPEED
-			)
-	else:
-		direction = (transform.basis * Vector3(slide_vector.x, 0.0, slide_vector.y)).normalized()
-		current_speed = ($SlidingTimer.time_left / $SlidingTimer.wait_time + 0.5) * SLIDING_SPEED
-	
-	current_speed = clamp(current_speed, 3.0, 12.0)
-	
-	if direction:
-		velocity.x = direction.x * current_speed
-		velocity.z = direction.z * current_speed
-	else:
-		velocity.x = move_toward(velocity.x, 0, current_speed)
-		velocity.z = move_toward(velocity.z, 0, current_speed)
-	
-	last_velocity = velocity
-	var pre_move_velocity_y := velocity.y
-	var was_on_floor := _was_on_floor
+		if _anim_player != null:
+			_anim_player.play("jump")
+	elif on_floor and not is_sprinting:
+		bunny_hop_speed = SPRINTING_SPEED
+
+	velocity.x = horizontal_vel.x
+	velocity.z = horizontal_vel.z
+
+	var pre_move_velocity_y: float = velocity.y
 	move_and_slide()
 	_was_on_floor = is_on_floor()
 
-	# Landing/roll triggers (only on the landing frame)
 	if _was_on_floor and not was_on_floor:
-		var impact_speed := -pre_move_velocity_y
-		if impact_speed >= 7.5:
-			$Neck/Head.position.y = lerp($Neck/Head.position.y, CROUCHING_DEPTH, delta * LERP_SPEED)
-			$StandingCollisionShape.disabled = true
-			$CrouchingCollisionShape.disabled = false
-			$Neck/Head/Eyes/AnimationPlayer.play("roll")
-		elif impact_speed >= 5.0:
-			$Neck/Head/Eyes/AnimationPlayer.play("landing")
+		var impact_speed: float = -pre_move_velocity_y
+		if impact_speed > 0.0:
+			_landing_dip = minf(LANDING_DIP_MAX, impact_speed * LANDING_DIP_SCALE)
+		if impact_speed >= 5.0 and _anim_player != null:
+			_anim_player.play("landing")
 
-	# Quake-ish overhealth decay.
+	_apply_camera_grounding(delta, was_on_floor)
+
 	if health > max_health and overheal_decay_per_sec > 0.0:
 		var new_health := maxf(float(max_health), float(health) - overheal_decay_per_sec * delta)
 		var rounded := int(floor(new_health + 0.5))
@@ -260,12 +196,142 @@ func _physics_process(delta):
 			_emit_health_changed()
 
 
-func _on_sliding_timer_timeout():
-	is_free_looking = false
+func _update_crouch_state(delta: float) -> void:
+	var wants_crouch: bool = Input.is_action_pressed("crouch")
+	if not wants_crouch and _headroom_raycast.is_colliding():
+		wants_crouch = true
+
+	is_crouching = wants_crouch
+	_standing_collision.disabled = wants_crouch
+	_crouching_collision.disabled = not wants_crouch
+
+	var target_head_y: float = CROUCHING_DEPTH if wants_crouch else 0.0
+	_head.position.y = lerpf(_head.position.y, target_head_y, clampf(delta * LERP_SPEED, 0.0, 1.0))
 
 
-func _on_animation_player_animation_finished(anim_name):
-	stand_after_roll = anim_name == "roll"
+func _apply_look(delta: float) -> void:
+	var raw: Vector2 = _mouse_delta_accum
+	_mouse_delta_accum = Vector2.ZERO
+
+	if MOUSE_SMOOTHING <= 0.001:
+		_mouse_delta_filtered = raw
+	else:
+		# Convert 0.00-0.25 slider to a stable smoothing rate.
+		var smooth_t: float = clampf(delta / MOUSE_SMOOTHING, 0.0, 1.0)
+		_mouse_delta_filtered = _mouse_delta_filtered.lerp(raw, smooth_t)
+
+	_last_frame_mouse_delta = _mouse_delta_filtered
+
+	rotate_y(deg_to_rad(-_mouse_delta_filtered.x * MOUSE_SENS))
+	_head.rotate_x(deg_to_rad(-_mouse_delta_filtered.y * MOUSE_SENS))
+	_head.rotation.x = clamp(_head.rotation.x, deg_to_rad(-89.0), deg_to_rad(89.0))
+
+
+func _update_move_state(input_dir: Vector2) -> void:
+	is_sprinting = Input.is_action_pressed("sprint") and (not is_crouching)
+	is_walking = (not is_sprinting) and (not is_crouching)
+	if input_dir.length() <= 0.001:
+		is_sprinting = false
+
+
+func _target_speed() -> float:
+	if is_crouching:
+		return CROUCHING_SPEED
+	if is_sprinting:
+		return maxf(SPRINTING_SPEED, bunny_hop_speed)
+	return WALKING_SPEED
+
+
+func _apply_friction(horizontal_vel: Vector3, delta: float) -> Vector3:
+	var speed: float = horizontal_vel.length()
+	if speed <= 0.0001:
+		return Vector3.ZERO
+	var control: float = maxf(speed, STOP_SPEED)
+	var drop: float = control * GROUND_FRICTION * delta
+	var new_speed: float = maxf(speed - drop, 0.0)
+	if new_speed == speed:
+		return horizontal_vel
+	return horizontal_vel * (new_speed / speed)
+
+
+func _accelerate(horizontal_vel: Vector3, wish_dir: Vector3, wish_speed: float, accel: float, delta: float) -> Vector3:
+	if wish_dir.length_squared() <= 0.000001:
+		return horizontal_vel
+	var current_speed_along_wish: float = horizontal_vel.dot(wish_dir)
+	var add_speed: float = wish_speed - current_speed_along_wish
+	if add_speed <= 0.0:
+		return horizontal_vel
+	var accel_speed: float = accel * delta * wish_speed
+	if accel_speed > add_speed:
+		accel_speed = add_speed
+	return horizontal_vel + wish_dir * accel_speed
+
+
+func _air_control(horizontal_vel: Vector3, wish_dir: Vector3, forward_move: float, wish_speed: float, delta: float) -> Vector3:
+	if absf(forward_move) < 0.001 or wish_speed <= 0.0:
+		return horizontal_vel
+	var z_speed: float = horizontal_vel.y
+	horizontal_vel.y = 0.0
+	var speed: float = horizontal_vel.length()
+	if speed <= 0.0001:
+		horizontal_vel.y = z_speed
+		return horizontal_vel
+	horizontal_vel = horizontal_vel.normalized()
+	var dot_val: float = horizontal_vel.dot(wish_dir)
+	var k: float = 32.0 * AIR_CONTROL * dot_val * dot_val * delta
+	if dot_val > 0.0:
+		horizontal_vel = (horizontal_vel * speed + wish_dir * k).normalized()
+		horizontal_vel *= speed
+	horizontal_vel.y = z_speed
+	return horizontal_vel
+
+
+func _apply_camera_grounding(delta: float, was_on_floor: bool) -> void:
+	var horizontal_speed: float = Vector2(velocity.x, velocity.z).length()
+	var speed_ratio: float = clampf(horizontal_speed / maxf(SPRINTING_SPEED, 0.001), 0.0, 1.0)
+
+	_landing_dip = lerpf(_landing_dip, 0.0, clampf(delta * LANDING_DIP_RECOVER, 0.0, 1.0))
+
+	var bob_freq: float = BOB_WALK_FREQ
+	var bob_intensity: float = BOB_WALK_INTENSITY
+	if is_crouching:
+		bob_freq = BOB_CROUCH_FREQ
+		bob_intensity = BOB_CROUCH_INTENSITY
+	elif is_sprinting:
+		bob_freq = BOB_SPRINT_FREQ
+		bob_intensity = BOB_SPRINT_INTENSITY
+
+	if _was_on_floor and horizontal_speed > 0.1:
+		_bob_phase += delta * bob_freq * (0.6 + speed_ratio)
+
+	var bob_x: float = sin(_bob_phase * 0.5) * bob_intensity
+	var bob_y: float = absf(sin(_bob_phase)) * bob_intensity * 0.6
+	if not _was_on_floor:
+		bob_x = 0.0
+		bob_y = 0.0
+
+	var target_eye_pos := Vector3(bob_x, bob_y - _landing_dip, 0.0)
+	_eyes.position = _eyes.position.lerp(target_eye_pos, clampf(delta * (LERP_SPEED + 2.0), 0.0, 1.0))
+
+	var local_vel: Vector3 = global_basis.inverse() * Vector3(velocity.x, 0.0, velocity.z)
+	var strafe_roll: float = clampf(-local_vel.x * SWAY_STRAFE_SCALE, deg_to_rad(-SWAY_ROLL_MAX_DEG), deg_to_rad(SWAY_ROLL_MAX_DEG))
+	var mouse_roll: float = clampf(-_last_frame_mouse_delta.x * 0.0006, deg_to_rad(-SWAY_ROLL_MAX_DEG), deg_to_rad(SWAY_ROLL_MAX_DEG))
+	var target_roll: float = strafe_roll + mouse_roll
+	_camera_roll = lerpf(_camera_roll, target_roll, clampf(delta * SWAY_ROLL_SPEED, 0.0, 1.0))
+	_camera.rotation.z = _camera_roll
+
+	if _camera != null:
+		_camera.fov = GAMEPLAY_FOV
+
+
+func _on_sliding_timer_timeout() -> void:
+	# Legacy signal kept for scene compatibility.
+	pass
+
+
+func _on_animation_player_animation_finished(_anim_name: StringName) -> void:
+	# Legacy signal kept for scene compatibility.
+	pass
 
 
 func add_health(amount: int, allow_overheal: bool = false, overheal_cap: int = 0) -> void:

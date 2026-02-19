@@ -56,7 +56,6 @@ func _deferred_build_map(map: FuncGodotMap) -> void:
 @export var move_speed: float = 12.0
 @export var fast_multiplier: float = 3.0
 @export var mouse_sens: float = 0.25
-@export var enable_runtime_layout_repair: bool = false
 @export var enable_layout_debug_print: bool = false
 
 var _map: FuncGodotMap
@@ -763,6 +762,7 @@ func _ready() -> void:
 	await _build_map_from_debug()
 	_setup_postfx_overlay()
 	_position_camera_at_start()
+	_apply_pending_debug_camera_override()
 	_ensure_camera_active()
 
 
@@ -941,30 +941,33 @@ func _resolve_nodes() -> void:
 
 
 func _find_node(name_hint: String, type_hint: String) -> Node:
-	# 1) Try unique path lookup ("%Name")
-	var by_unique := get_node_or_null("%" + name_hint)
+	var by_unique: Node = get_node_or_null("%" + name_hint)
 	if by_unique != null and (type_hint.is_empty() or by_unique.is_class(type_hint)):
 		return by_unique
-
-	# 2) Local subtree lookup (fast/common case)
-	var by_name := find_child(name_hint, true, false)
-	if by_name != null and (type_hint.is_empty() or by_name.is_class(type_hint)):
-		return by_name
-
-	# 3) Exact-name global lookup across scene root.
-	var scene_root: Node = get_tree().get_root()
-	if scene_root != null:
-		var stack: Array = [scene_root]
-		while stack.size() > 0:
-			var node: Node = stack.pop_back() as Node
-			if node == null:
-				continue
-			if String(node.name) == name_hint and (type_hint.is_empty() or node.is_class(type_hint)):
-				return node
-			for ch in node.get_children():
-				stack.push_back(ch)
-
-	# Nothing matched
+	var candidate_paths: PackedStringArray = [
+		"CanvasLayer/PhotoUI/RootMargin/RootHBox/Panel/Margin/SettingsScroll/VBox/" + name_hint,
+		"CanvasLayer/PhotoUI/RootMargin/RootHBox/TabsPanel/TabsMargin/TabsVBox/" + name_hint,
+		"CanvasLayer/PhotoUI/Toolbar/ToolbarHBox/" + name_hint,
+		"CanvasLayer/PhotoUI/Filmstrip/FilmstripScroll/FilmstripHBox/" + name_hint,
+		"CanvasLayer/PhotoUI/" + name_hint,
+		"CanvasLayer/" + name_hint,
+		name_hint,
+	]
+	for p in candidate_paths:
+		var n: Node = get_node_or_null(p)
+		if n != null and (type_hint.is_empty() or n.is_class(type_hint)):
+			return n
+	var search_roots: PackedStringArray = [
+		"CanvasLayer/PhotoUI/RootMargin/RootHBox/Panel/Margin/SettingsScroll/VBox",
+		"CanvasLayer/PhotoUI/RootMargin/RootHBox/TabsPanel/TabsMargin/TabsVBox",
+		"CanvasLayer/PhotoUI/Toolbar/ToolbarHBox",
+		"CanvasLayer/PhotoUI/Filmstrip/FilmstripScroll/FilmstripHBox",
+	]
+	for root_path in search_roots:
+		var root_node: Node = get_node_or_null(root_path)
+		var found: Node = _find_exact_descendant(root_node, name_hint, type_hint)
+		if found != null:
+			return found
 	return null
 
 
@@ -1807,355 +1810,6 @@ func _ensure_settings_labels() -> void:
 		label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 
 
-func _ensure_ui_layout() -> void:
-	if not enable_runtime_layout_repair:
-		return
-	if _ui_root:
-		_ensure_full_rect(_ui_root)
-	if _guides:
-		_ensure_full_rect(_guides)
-		_guides.z_index = -1
-		_guides.z_as_relative = false
-	# If PhotoUI has no children, sweep UI controls from the CanvasLayer into it.
-	var canvas_layer := get_node_or_null("CanvasLayer")
-	if _guides:
-		if _guides_layer == null:
-			_guides_layer = get_node_or_null("PhotoGuidesLayer") as CanvasLayer
-		if _guides_layer == null:
-			_guides_layer = CanvasLayer.new()
-			_guides_layer.name = "PhotoGuidesLayer"
-			_guides_layer.layer = 50
-			add_child(_guides_layer)
-		if _guides.get_parent() != _guides_layer:
-			_reparent(_guides, _guides_layer)
-	if _ui_root and canvas_layer:
-		var layer_children := canvas_layer.get_children().duplicate()
-		for ch in layer_children:
-			# Reparent most canvas-layer Controls into the PhotoUI so layout manages them.
-			# Keep the viewfinder separate for now so it can be positioned as a sibling of the panel.
-			if ch is Control and ch != _ui_root and ch != _guides:
-				# Preserve toolbar/filmstrip/top/bottom bars and the viewfinder - don't sweep them here
-				if ch == _viewfinder:
-					continue
-				if ch.name == "Toolbar" or ch.name == "Filmstrip" or ch.name == "TopBar" or ch.name == "BottomBar":
-					continue
-				_reparent(ch, _ui_root)
-	# If PhotoUI is still empty, sweep stray Controls from the scene root.
-	if _ui_root and _ui_root.get_child_count() == 0:
-		var root_children := get_children().duplicate()
-		for ch in root_children:
-			if ch is Control and ch != _ui_root:
-				_reparent(ch, _ui_root)
-	_repair_scene_tree_if_needed()
-
-
-func _ensure_full_rect(control: Control) -> void:
-	if control == null:
-		return
-	var anchors := Vector4(control.anchor_left, control.anchor_top, control.anchor_right, control.anchor_bottom)
-	if anchors != Vector4(0.0, 0.0, 1.0, 1.0):
-		control.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-		control.offset_left = 0
-		control.offset_top = 0
-		control.offset_right = 0
-		control.offset_bottom = 0
-
-
-func _repair_scene_tree_if_needed() -> void:
-	var root_margin := _get_or_create_container("RootMargin", MarginContainer, _ui_root)
-	if root_margin is Control:
-		if root_margin.get_parent() != _ui_root:
-			_reparent(root_margin, _ui_root)
-		var rm := root_margin as Control
-		rm.anchor_left = 0.0
-		rm.anchor_top = 0.0
-		rm.anchor_right = 1.0
-		rm.anchor_bottom = 1.0
-		rm.offset_left = 24
-		rm.offset_top = 24
-		rm.offset_right = -24
-		rm.offset_bottom = -24
-		rm.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		rm.size_flags_vertical = Control.SIZE_EXPAND_FILL
-		# Force a non-zero size if layout hasn't run yet.
-		if _ui_root and rm.size == Vector2.ZERO:
-			rm.size = _ui_root.size - Vector2(32, 32)
-			rm.custom_minimum_size = rm.size
-	var root_hbox := _get_or_create_container("RootHBox", HBoxContainer, root_margin)
-	if root_hbox is HBoxContainer:
-		(root_hbox as HBoxContainer).add_theme_constant_override("separation", 8)
-		(root_hbox as HBoxContainer).size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		(root_hbox as HBoxContainer).size_flags_vertical = Control.SIZE_EXPAND_FILL
-
-	# Wrap the existing RootHBox in a MainVBox so we can place a TopBar above and BottomBar below
-	var main_vbox := _get_or_create_container("MainVBox", VBoxContainer, root_margin)
-	if root_hbox.get_parent() != main_vbox:
-		_reparent(root_hbox, main_vbox)
-	# Ensure the MainVBox expands
-	if main_vbox is VBoxContainer:
-		(main_vbox as VBoxContainer).size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		(main_vbox as VBoxContainer).size_flags_vertical = Control.SIZE_EXPAND_FILL
-
-	# Top bar (slim toolbar) — create under _ui_root so it sits at the absolute top
-	var top_bar := _get_or_create_container("TopBar", HBoxContainer, main_vbox)
-	if top_bar is HBoxContainer:
-		(top_bar as HBoxContainer).add_theme_constant_override("separation", 8)
-		(top_bar as Control).custom_minimum_size = Vector2(0, 28)
-		(top_bar as Control).size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		# Let the top bar shrink vertically so it doesn't become a large box
-		(top_bar as Control).size_flags_vertical = Control.SIZE_SHRINK_BEGIN
-		# remove any themed panel background so it appears as a slim bar
-		var empty_sb := StyleBoxEmpty.new()
-		(top_bar as Control).add_theme_stylebox_override("panel", empty_sb)
-		# Ensure the top bar is placed in a high-priority CanvasLayer so it sits above viewports
-		var top_layer := get_node_or_null("PhotoTopBarLayer") as CanvasLayer
-		if top_layer == null:
-			top_layer = CanvasLayer.new()
-			top_layer.name = "PhotoTopBarLayer"
-			top_layer.layer = 100
-			add_child(top_layer)
-		if top_bar.get_parent() != top_layer:
-			_reparent(top_bar, top_layer)
-		# Anchor to top full-width and give a fixed minimal height
-		if top_bar is Control:
-			(top_bar as Control).anchor_left = 0.0
-			(top_bar as Control).anchor_top = 0.0
-			(top_bar as Control).anchor_right = 1.0
-			(top_bar as Control).anchor_bottom = 0.0
-			# padding from edges so toolbar isn't flush to screen
-			(top_bar as Control).offset_left = 12
-			(top_bar as Control).offset_top = 6
-			(top_bar as Control).offset_right = -12
-			# toolbar height: small (20px) -> offset_bottom should be offset_top + height
-			(top_bar as Control).offset_bottom = 26
-			(top_bar as Control).custom_minimum_size = Vector2(0, 20)
-			(top_bar as Control).z_index = 200
-			# ensure mouse events reach the toolbar (don't let viewfinder ignore them)
-			(top_bar as Control).mouse_filter = Control.MOUSE_FILTER_STOP
-			(top_bar as Control).visible = true
-		# Ensure _top_bar references the node now that it may have been reparented
-		_top_bar = _ui_root.get_node_or_null("TopBar") as Control if _ui_root else null
-		# If the AlwaysShow toggle is missing, add it into the top bar here so it appears
-		if _top_bar and _always_show_viewport_toggle == null:
-			var cb := _top_bar.get_node_or_null("AlwaysShowViewport") as CheckBox
-			if cb == null:
-				cb = CheckBox.new()
-				cb.name = "AlwaysShowViewport"
-				cb.text = "Always show viewport"
-				cb.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
-				cb.add_theme_constant_override("margin_right", 8)
-				_top_bar.add_child(cb)
-				cb.toggled.connect(_on_always_show_viewport_toggled)
-			_always_show_viewport_toggle = cb
-
-	# Bottom bar (contact strip) below tabs/panel
-	var bottom_bar := _get_or_create_container("BottomBar", HBoxContainer, main_vbox)
-	if bottom_bar is Control:
-		(bottom_bar as Control).custom_minimum_size = Vector2(0, 96)
-		(bottom_bar as Control).size_flags_horizontal = Control.SIZE_EXPAND_FILL
-
-	var tabs_panel := _get_or_create_container("TabsPanel", PanelContainer, root_hbox)
-	if tabs_panel is Control:
-		(tabs_panel as Control).size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
-		(tabs_panel as Control).custom_minimum_size = Vector2(128, 0)
-	var tabs_margin := _get_or_create_container("TabsMargin", MarginContainer, tabs_panel)
-	if tabs_margin is MarginContainer:
-		(tabs_margin as MarginContainer).add_theme_constant_override("margin_left", 12)
-		(tabs_margin as MarginContainer).add_theme_constant_override("margin_right", 12)
-		(tabs_margin as MarginContainer).add_theme_constant_override("margin_top", 12)
-		(tabs_margin as MarginContainer).add_theme_constant_override("margin_bottom", 12)
-	var tabs_vbox := _get_or_create_container("TabsVBox", VBoxContainer, tabs_margin)
-	if tabs_vbox is VBoxContainer:
-		(tabs_vbox as VBoxContainer).add_theme_constant_override("separation", 6)
-	# Reparent tab buttons into the tabs vbox.
-	var tab_nodes := [
-		"TabCamera", "TabExposure", "TabGuides", "TabCapture",
-		"TabPasses", "TabLight", "TabEnvironment", "TabExport", "TabColor",
-		"TabEffects", "TabComposition", "TabPresets"
-	]
-	for t in tab_nodes:
-		_reparent_by_name(t, tabs_vbox)
-	if _tabs_panel == null:
-		_tabs_panel = tabs_panel
-	elif _tabs_panel != tabs_panel:
-		_reparent(_tabs_panel, root_hbox)
-
-	# Keep the PhotoViewfinder under the CanvasLayer so it overlays the 3D viewport
-	# (the user expects the scene to render to the main viewport, not be confined
-	# inside the Photo UI). Ensure it fills the full rect and ignores mouse input.
-	if _viewfinder != null:
-		var canvas_layer_node := get_node_or_null("CanvasLayer")
-		if canvas_layer_node != null and _viewfinder.get_parent() != canvas_layer_node:
-			_reparent(_viewfinder, canvas_layer_node)
-		if _viewfinder is Control:
-			# Make it cover the full canvas so the viewport content is visible behind UI
-			_viewfinder.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-			_viewfinder.mouse_filter = Control.MOUSE_FILTER_IGNORE
-			_viewfinder.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-			_viewfinder.size_flags_vertical = Control.SIZE_EXPAND_FILL
-
-	var panel := _get_or_create_container("Panel", PanelContainer, root_hbox)
-	if panel is Control:
-		(panel as Control).size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
-		if _ui_root:
-			var desired_width := maxf(360.0, _ui_root.size.x * 0.34)
-			(panel as Control).custom_minimum_size = Vector2(desired_width, 0)
-	var margin := _get_or_create_container("Margin", MarginContainer, panel)
-	if margin is MarginContainer:
-		(margin as MarginContainer).add_theme_constant_override("margin_left", 24)
-		(margin as MarginContainer).add_theme_constant_override("margin_right", 24)
-		(margin as MarginContainer).add_theme_constant_override("margin_top", 24)
-		(margin as MarginContainer).add_theme_constant_override("margin_bottom", 24)
-	var vbox := _get_or_create_container("VBox", VBoxContainer, margin)
-
-	# Ensure TopBar/BottomBar references and create basic controls if missing
-	_top_bar = main_vbox.get_node_or_null("TopBar") as Control if main_vbox else null
-	_bottom_bar = main_vbox.get_node_or_null("BottomBar") as Control if main_vbox else null
-	if _top_bar and _always_show_viewport_toggle == null:
-		# Create an Always Show Viewport toggle in the top bar
-		_always_show_viewport_toggle = _top_bar.get_node_or_null("AlwaysShowViewport") as CheckBox
-		if _always_show_viewport_toggle == null:
-			var cb := CheckBox.new()
-			cb.name = "AlwaysShowViewport"
-			cb.text = "Always show viewport"
-			# keep toggle compact
-			cb.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
-			# add a small right spacing via theme constant (avoid assigning non-existent margin_* props)
-			cb.add_theme_constant_override("margin_right", 8)
-			_top_bar.add_child(cb)
-			cb.toggled.connect(_on_always_show_viewport_toggled)
-			_always_show_viewport_toggle = cb
-
-
-	# Reparent known nodes back into VBox (in case they were dragged out)
-	var vbox_nodes := [
-		"HistogramCard", "Title", "Status",
-		"FOVRow", "FocalRow", "ISORow", "ApertureRow", "ShutterRow", "FocusRow",
-		"ShootingModeRow", "AutoFocusRow",
-		"ExposureHeaderRow", "ExposureRow", "EnvRow", "ResRow",
-		"AspectRow",
-		"GuidesHeaderRow", "GuidesRow", "GuidesOpacityRow",
-		"CaptureHeaderRow", "CaptureFormatRow", "CapturePathRow", "CaptureTimerRow", "CaptureBurstRow", "CaptureBracketRow", "CaptureBracketStepRow", "CaptureWatermarkRow", "CaptureWatermarkTextRow", "ButtonsRow",
-		"PassesHeaderRow", "PassPreviewRow", "PassesGrid", "LightRigHeaderRow", "LightRigGrid",
-		"EnvironmentHeaderRow", "EnvironmentRow", "AmbientRow", "FogRow", "FogDensityRow", "FogBeginRow", "FogEndRow",
-		"ExportHeaderRow", "ExportNote",
-		"ColorHeaderRow", "TempRow", "TintRow", "SaturationRow", "ContrastRow",
-		"EffectsHeaderRow", "VignetteRow", "GrainRow", "BloomRow", "PS1ShaderRow", "PostFXRow", "PostFXFogRow", "PostFXFogDistanceRow", "PostFXFogFadeRow", "PostFXNoiseRow", "PostFXNoiseTimeRow", "PostFXColorLimitRow", "PostFXColorLevelsRow", "PostFXDitherRow", "PostFXDitherStrengthRow", "PostFXOpacityRow",
-		"CompositionHeaderRow", "CompositionCropRow", "CompositionOffsetXRow", "CompositionOffsetYRow", "CompositionRollRow", "CompositionSnapRow",
-		"PresetsHeaderRow", "PresetsRow", "PresetNameRow", "PresetButtonsRow"
-	]
-	for n in vbox_nodes:
-		_reparent_by_name(n, vbox)
-
-	# Ensure rows/grids exist and their child controls are under the right parent.
-	_ensure_row("FOVRow", HBoxContainer, vbox, ["FOVLabel", "FOVSlider", "FOVValue"])
-	_ensure_row("FocalRow", HBoxContainer, vbox, ["FocalLabel", "FocalOptions"])
-	_ensure_row("ISORow", HBoxContainer, vbox, ["ISOLabel", "ISOSlider", "ISOValue"])
-	_ensure_row("ApertureRow", HBoxContainer, vbox, ["ApertureLabel", "ApertureSlider", "ApertureValue"])
-	_ensure_row("ShutterRow", HBoxContainer, vbox, ["ShutterLabel", "ShutterSlider", "ShutterValue"])
-	_ensure_row("FocusRow", HBoxContainer, vbox, ["FocusLabel", "FocusSlider", "FocusValue"])
-	_ensure_row("ShootingModeRow", HBoxContainer, vbox, ["ShootingModeLabel", "ShootingModeOptions"])
-	_ensure_row("AutoFocusRow", HBoxContainer, vbox, ["AutoFocusLabel", "AutoFocusToggle"])
-	_ensure_row("AutoExposureRow", HBoxContainer, vbox, ["AutoExposureLabel", "AutoExposureToggle"])
-	_ensure_row("AutoExposureSpeedRow", HBoxContainer, vbox, ["AutoExposureSpeedLabel", "AutoExposureSpeedSlider", "AutoExposureSpeedValue"])
-	_ensure_row("AutoExposureRangeRow", HBoxContainer, vbox, ["AutoExposureRangeLabel", "AutoExposureMinSlider", "AutoExposureMinValue", "AutoExposureMaxSlider", "AutoExposureMaxValue"])
-	_ensure_row("ExposureRow", HBoxContainer, vbox, ["ExposureSlider", "ExposureValue"])
-	_ensure_row("EnvRow", HBoxContainer, vbox, ["EnvLabel", "EnvOptions"])
-	_ensure_row("ResRow", HBoxContainer, vbox, ["ResLabel", "ResOptions"])
-	_ensure_row("AspectRow", HBoxContainer, vbox, ["AspectLabel", "AspectOptions"])
-	_ensure_row("CaptureFormatRow", HBoxContainer, vbox, ["CaptureFormatLabel", "CaptureFormatOptions"])
-	_ensure_row("CapturePathRow", HBoxContainer, vbox, ["CapturePathLabel", "CapturePathEdit", "CapturePathButton"])
-	_ensure_row("CaptureTimerRow", HBoxContainer, vbox, ["CaptureTimerLabel", "CaptureTimerSlider", "CaptureTimerValue"])
-	_ensure_row("CaptureBurstRow", HBoxContainer, vbox, ["CaptureBurstLabel", "CaptureBurstOptions"])
-	_ensure_row("CaptureBracketRow", HBoxContainer, vbox, ["CaptureBracketLabel", "CaptureBracketOptions"])
-	_ensure_row("CaptureBracketStepRow", HBoxContainer, vbox, ["CaptureBracketStepLabel", "CaptureBracketStepSlider", "CaptureBracketStepValue"])
-	_ensure_row("CaptureWatermarkRow", HBoxContainer, vbox, ["CaptureWatermarkLabel", "CaptureWatermarkToggle"])
-	_ensure_row("CaptureWatermarkTextRow", HBoxContainer, vbox, ["CaptureWatermarkTextLabel", "CaptureWatermarkText"])
-	_ensure_row("ExposureHeaderRow", HBoxContainer, vbox, ["ExposureHeader", "ExposureCollapse"])
-	_ensure_row("GuidesHeaderRow", HBoxContainer, vbox, ["GuidesHeader", "GuidesCollapse"])
-	_ensure_row("CaptureHeaderRow", HBoxContainer, vbox, ["CaptureHeader", "CaptureCollapse"])
-	_ensure_row("PassesHeaderRow", HBoxContainer, vbox, ["PassesLabel", "PassesCollapse"])
-	_ensure_row("PassPreviewRow", HBoxContainer, vbox, ["PassPreviewLabel", "PassPreviewOptions"])
-	_ensure_row("LightRigHeaderRow", HBoxContainer, vbox, ["LightRigLabel", "LightRigCollapse"])
-	_ensure_row("EnvironmentHeaderRow", HBoxContainer, vbox, ["EnvironmentHeader"])
-	_ensure_row("ExportHeaderRow", HBoxContainer, vbox, ["ExportHeader"])
-	_ensure_row("ColorHeaderRow", HBoxContainer, vbox, ["ColorHeader"])
-	_ensure_row("EffectsHeaderRow", HBoxContainer, vbox, ["EffectsHeader"])
-	_ensure_row("CompositionHeaderRow", HBoxContainer, vbox, ["CompositionHeader"])
-	_ensure_row("PresetsHeaderRow", HBoxContainer, vbox, ["PresetsHeader"])
-	_ensure_row("GuidesRow", HBoxContainer, vbox, ["GuidesCheck", "GuideTypeOptions"])
-	_ensure_row("GuidesOpacityRow", HBoxContainer, vbox, ["GuidesOpacityLabel", "GuidesOpacitySlider", "GuidesOpacityValue"])
-	_ensure_row("EnvironmentRow", HBoxContainer, vbox, ["SunAngleLabel", "SunAngleSlider", "SunAngleValue"])
-	_ensure_row("AmbientRow", HBoxContainer, vbox, ["AmbientLabel", "AmbientSlider", "AmbientValue"])
-	_ensure_row("FogRow", HBoxContainer, vbox, ["FogLabel", "FogToggle"])
-	_ensure_row("FogDensityRow", HBoxContainer, vbox, ["FogDensityLabel", "FogDensitySlider", "FogDensityValue"])
-	_ensure_row("FogBeginRow", HBoxContainer, vbox, ["FogBeginLabel", "FogBeginSlider", "FogBeginValue"])
-	_ensure_row("FogEndRow", HBoxContainer, vbox, ["FogEndLabel", "FogEndSlider", "FogEndValue"])
-	_ensure_row("TempRow", HBoxContainer, vbox, ["TempLabel", "TempSlider", "TempValue"])
-	_ensure_row("TintRow", HBoxContainer, vbox, ["TintLabel", "TintSlider", "TintValue"])
-	_ensure_row("SaturationRow", HBoxContainer, vbox, ["SaturationLabel", "SaturationSlider", "SaturationValue"])
-	_ensure_row("ContrastRow", HBoxContainer, vbox, ["ContrastLabel", "ContrastSlider", "ContrastValue"])
-	_ensure_row("VignetteRow", HBoxContainer, vbox, ["VignetteLabel", "VignetteSlider", "VignetteValue"])
-	_ensure_row("GrainRow", HBoxContainer, vbox, ["GrainLabel", "GrainSlider", "GrainValue"])
-	_ensure_row("BloomRow", HBoxContainer, vbox, ["BloomLabel", "BloomSlider", "BloomValue"])
-	_ensure_row("PS1ShaderRow", HBoxContainer, vbox, ["PS1ShaderLabel", "PS1ShaderToggle"])
-	_ensure_row("PostFXRow", HBoxContainer, vbox, ["PostFXLabel", "PostFXToggle"])
-	_ensure_row("PostFXFogRow", HBoxContainer, vbox, ["PostFXFogLabel", "PostFXFogToggle"])
-	_ensure_row("PostFXFogDistanceRow", HBoxContainer, vbox, ["PostFXFogDistanceLabel", "PostFXFogDistanceSlider", "PostFXFogDistanceValue"])
-	_ensure_row("PostFXFogFadeRow", HBoxContainer, vbox, ["PostFXFogFadeLabel", "PostFXFogFadeSlider", "PostFXFogFadeValue"])
-	_ensure_row("PostFXNoiseRow", HBoxContainer, vbox, ["PostFXNoiseLabel", "PostFXNoiseToggle"])
-	_ensure_row("PostFXNoiseTimeRow", HBoxContainer, vbox, ["PostFXNoiseTimeLabel", "PostFXNoiseTimeSlider", "PostFXNoiseTimeValue"])
-	_ensure_row("PostFXColorLimitRow", HBoxContainer, vbox, ["PostFXColorLimitLabel", "PostFXColorLimitToggle"])
-	_ensure_row("PostFXColorLevelsRow", HBoxContainer, vbox, ["PostFXColorLevelsLabel", "PostFXColorLevelsSlider", "PostFXColorLevelsValue"])
-	_ensure_row("PostFXDitherRow", HBoxContainer, vbox, ["PostFXDitherLabel", "PostFXDitherToggle"])
-	_ensure_row("PostFXDitherStrengthRow", HBoxContainer, vbox, ["PostFXDitherStrengthLabel", "PostFXDitherStrengthSlider", "PostFXDitherStrengthValue"])
-	_ensure_row("PostFXOpacityRow", HBoxContainer, vbox, ["PostFXOpacityLabel", "PostFXOpacitySlider", "PostFXOpacityValue"])
-	_ensure_row("CompositionCropRow", HBoxContainer, vbox, ["CompositionCropLabel", "CompositionCropOptions"])
-	_ensure_row("CompositionOffsetXRow", HBoxContainer, vbox, ["CompositionOffsetXLabel", "CompositionOffsetXSlider", "CompositionOffsetXValue"])
-	_ensure_row("CompositionOffsetYRow", HBoxContainer, vbox, ["CompositionOffsetYLabel", "CompositionOffsetYSlider", "CompositionOffsetYValue"])
-	_ensure_row("CompositionRollRow", HBoxContainer, vbox, ["CompositionRollLabel", "CompositionRollSlider", "CompositionRollValue"])
-	_ensure_row("CompositionSnapRow", HBoxContainer, vbox, ["CompositionSnapLabel", "CompositionSnapToggle"])
-	_ensure_row("PresetsRow", HBoxContainer, vbox, ["PresetsLabel", "PresetsOptions"])
-	_ensure_row("PresetNameRow", HBoxContainer, vbox, ["PresetNameLabel", "PresetName"])
-	_ensure_row("PresetButtonsRow", HBoxContainer, vbox, ["PresetSave", "PresetLoad", "PresetDelete"])
-	_ensure_row("ButtonsRow", HBoxContainer, vbox, ["CaptureButton", "CaptureLayersButton", "BackButton"])
-	_ensure_row("PassesGrid", GridContainer, vbox, ["PassBeauty", "PassAlbedo", "PassNormals", "PassDepth", "PassLighting"])
-	_ensure_row("LightRigGrid", GridContainer, vbox, [
-		"LightColEnable", "LightColColor", "LightColIntensity", "LightColSpacer",
-		"LightSectionKey", "LightSectionKeySep1", "LightSectionKeySep2", "LightSectionKeySep3",
-		"KeyEnabled", "KeyColor", "KeyIntensity", "KeySpacer",
-		"LightSectionFill", "LightSectionFillSep1", "LightSectionFillSep2", "LightSectionFillSep3",
-		"FillEnabled", "FillColor", "FillIntensity", "FillSpacer",
-		"LightSectionRim", "LightSectionRimSep1", "LightSectionRimSep2", "LightSectionRimSep3",
-		"RimEnabled", "RimColor", "RimIntensity", "RimSpacer",
-		"LightSectionTop", "LightSectionTopSep1", "LightSectionTopSep2", "LightSectionTopSep3",
-		"TopEnabled", "TopColor", "TopIntensity", "TopSpacer",
-		"LightSectionBounce", "LightSectionBounceSep1", "LightSectionBounceSep2", "LightSectionBounceSep3",
-		"BounceEnabled", "BounceColor", "BounceIntensity", "BounceSpacer"
-	])
-
-	# Sweep stray Controls under PhotoUI into VBox
-	if _ui_root and vbox:
-		var ui_children := _ui_root.get_children().duplicate()
-		for ch in ui_children:
-			# Keep toolbar/filmstrip/top/bottom bars and viewfinder where they belong
-			if ch is Control and ch != panel and ch != _guides and ch != _tabs_panel and ch != _viewfinder and ch.name != "Toolbar" and ch.name != "Filmstrip" and ch.name != "TopBar" and ch.name != "BottomBar":
-				_reparent(ch, vbox)
-	# Sweep stray Controls under Margin into VBox
-	if margin and vbox:
-		var margin_children := margin.get_children().duplicate()
-		for ch in margin_children:
-			# Avoid moving toolbar/filmstrip/top/bottom bars into the main vbox
-			if ch is Control and ch != vbox and ch.name != "Toolbar" and ch.name != "Filmstrip" and ch.name != "TopBar" and ch.name != "BottomBar":
-				_reparent(ch, vbox)
-
-	# Defer a final reparent pass so any mangled/duplicated nodes get placed under the VBox
-	call_deferred("_deferred_reparent_tab_nodes")
-	# Also run the UI health dump after layout stabilizes (helps identify stray nodes)
-	if enable_layout_debug_print:
-		call_deferred("_debug_layout")
-		call_deferred("_report_misplaced_controls")
-
 func _on_always_show_viewport_toggled(pressed: bool) -> void:
 	_always_show_viewport_enabled = pressed
 	if pressed:
@@ -2351,162 +2005,6 @@ func _debug_layout() -> void:
 			print("[PhotoMode DEBUG] stray_controls=", stray)
 
 
-func _deferred_reparent_tab_nodes() -> void:
-	# Run after layout to ensure known tab nodes are parented under the canonical VBox so tab visibility works.
-	if _ui_root == null:
-		return
-	# Try multiple candidate locations for the VBox (SettingsScroll/VBox is preferred)
-	var candidates: Array = []
-	var path_pref := "RootMargin/RootHBox/Panel/Margin/SettingsScroll/VBox"
-	var p1 := _ui_root.get_node_or_null(path_pref) as VBoxContainer
-	if p1:
-		candidates.append(p1)
-	var p2 := _ui_root.get_node_or_null("RootMargin/RootHBox/Panel/Margin/VBox") as VBoxContainer
-	if p2 and p2 != p1:
-		candidates.append(p2)
-	# fallback: any VBoxContainer under RootMargin
-	var root_margin := _ui_root.get_node_or_null("RootMargin")
-	if root_margin:
-		for n in root_margin.get_children():
-			if n is VBoxContainer:
-				candidates.append(n)
-	# global fallback
-	var global_vbox := _find_node("VBox", "VBoxContainer") as VBoxContainer
-	if global_vbox and not candidates.has(global_vbox):
-		candidates.append(global_vbox)
-	# pick the candidate with the most children (likely the real container)
-	var vbox: Node = null
-	var best_count := -1
-	for c in candidates:
-		if c and c.get_child_count() > best_count:
-			best_count = c.get_child_count()
-			vbox = c
-	# If no vbox found, retry once more later (layout may not have run)
-	if vbox == null:
-		# schedule another attempt in the next idle frame
-		call_deferred("_deferred_reparent_tab_nodes")
-		return
-	if enable_layout_debug_print:
-		print("[PhotoMode DEBUG] _deferred_reparent_tab_nodes: chosen_vbox=", vbox, " child_count=", vbox.get_child_count())
-	var vbox_nodes := [
-			"HistogramCard", "Title", "Status",
-			"FOVRow", "FocalRow", "ISORow", "ApertureRow", "ShutterRow", "FocusRow",
-			"ShootingModeRow", "AutoFocusRow",
-			"ExposureHeaderRow", "ExposureRow", "EnvRow", "ResRow",
-			"AspectRow",
-			"GuidesHeaderRow", "GuidesRow", "GuidesOpacityRow",
-			"CaptureHeaderRow", "CaptureFormatRow", "CapturePathRow", "CaptureTimerRow", "CaptureBurstRow", "CaptureBracketRow", "CaptureBracketStepRow", "CaptureWatermarkRow", "CaptureWatermarkTextRow", "ButtonsRow",
-			"PassesHeaderRow", "PassPreviewRow", "PassesGrid", "LightRigHeaderRow", "LightRigGrid",
-			"EnvironmentHeaderRow", "EnvironmentRow", "AmbientRow", "FogRow", "FogDensityRow", "FogBeginRow", "FogEndRow",
-			"ExportHeaderRow", "ExportNote",
-			"ColorHeaderRow", "TempRow", "TintRow", "SaturationRow", "ContrastRow",
-			"EffectsHeaderRow", "VignetteRow", "GrainRow", "BloomRow", "PS1ShaderRow", "PostFXRow", "PostFXFogRow", "PostFXFogDistanceRow", "PostFXFogFadeRow", "PostFXNoiseRow", "PostFXNoiseTimeRow", "PostFXColorLimitRow", "PostFXColorLevelsRow", "PostFXDitherRow", "PostFXDitherStrengthRow", "PostFXOpacityRow",
-			"CompositionHeaderRow", "CompositionCropRow", "CompositionOffsetXRow", "CompositionOffsetYRow", "CompositionRollRow", "CompositionSnapRow",
-			"PresetsHeaderRow", "PresetsRow", "PresetNameRow", "PresetButtonsRow"
-		]
-	for name in vbox_nodes:
-		_reparent_by_name(name, vbox)
-	# Debug: compact summary of where expected nodes landed (avoid per-node verbose prints)
-	if enable_layout_debug_print:
-		var found := []
-		var missing := []
-		for name in vbox_nodes:
-			var node := _find_node(name, "")
-			if node:
-				found.append(name)
-			else:
-				missing.append(name)
-		print("[PhotoMode DEBUG] reparented summary: found=%d missing=%d" % [found.size(), missing.size()])
-		if missing.size() > 0:
-			print("[PhotoMode DEBUG] missing_nodes=%s" % missing)
-		if found.size() > 0:
-			if found.size() <= 40:
-				print("[PhotoMode DEBUG] found_nodes=%s" % found)
-			else:
-				var sample := []
-				for i in range(0, min(found.size(), 20)):
-					sample.append(found[i])
-				print("[PhotoMode DEBUG] found_nodes_sample=%s (total=%d)" % [sample, found.size()])
-	# After reparenting, refresh active tab
-	call_deferred("_set_active_tab", _active_tab if _active_tab != "" else "camera")
-	# After tabs have been settled, ensure the settings scroll and its VBox occupy their container
-	call_deferred("_enforce_settings_layout")
-	# Run a health check to list any Controls still misplaced after the reparent sweep
-	if enable_layout_debug_print:
-		call_deferred("_report_misplaced_controls")
-
-
-func _enforce_settings_layout() -> void:
-	# Force anchors/offsets on the SettingsScroll and its VBox so they fill the intended panel region.
-	if _ui_root == null:
-		return
-	# Try canonical path first
-	var scroll := _ui_root.get_node_or_null("RootMargin/RootHBox/Panel/Margin/SettingsScroll")
-	# Fallbacks: named node, substring match, any ScrollContainer under RootMargin
-	if scroll == null:
-		scroll = _find_node("SettingsScroll", "ScrollContainer")
-	if scroll == null:
-		var root_margin = _ui_root.get_node_or_null("RootMargin")
-		if root_margin:
-			for n in root_margin.find_children("*", "ScrollContainer", true, false):
-				scroll = n
-				break
-
-	# Find the VBox: prefer a child named VBox under the scroll, else any VBoxContainer child, else search RootMargin candidates
-	var vbox: VBoxContainer = null
-	if scroll:
-		if scroll.has_node("VBox"):
-			vbox = scroll.get_node("VBox")
-		else:
-			for c in scroll.get_children():
-				if c is VBoxContainer:
-					vbox = c
-					break
-
-	if vbox == null:
-		var root_margin = _ui_root.get_node_or_null("RootMargin")
-		if root_margin:
-			# look for a VBox that contains an expected settings child (good heuristic)
-			var wanted := ["FOVRow", "HistogramCard", "ExposureRow", "GuidesRow"]
-			for cand in root_margin.find_children("*", "VBoxContainer", true, false):
-				for w in wanted:
-					if cand.find_child(w, true, false) != null:
-						vbox = cand
-						break
-				if vbox:
-					break
-
-	# Apply layout fixes if we found controls
-	if scroll and scroll is Control:
-		# make full-rect
-		scroll.anchor_left = 0.0
-		scroll.anchor_top = 0.0
-		scroll.anchor_right = 1.0
-		scroll.anchor_bottom = 1.0
-		scroll.offset_left = 0.0
-		scroll.offset_top = 0.0
-		scroll.offset_right = 0.0
-		scroll.offset_bottom = 0.0
-
-	if vbox and vbox is Control:
-		vbox.anchor_left = 0.0
-		vbox.anchor_top = 0.0
-		vbox.anchor_right = 1.0
-		vbox.anchor_bottom = 1.0
-		vbox.offset_left = 0.0
-		vbox.offset_top = 0.0
-		vbox.offset_right = 0.0
-		vbox.offset_bottom = 0.0
-		# make sure minimum size won't collapse the layout
-		var vbox_control := vbox as Control
-		if vbox_control:
-			vbox_control.custom_minimum_size = Vector2.ZERO
-
-	if enable_layout_debug_print:
-		print("[PhotoMode DEBUG] _enforce_settings_layout: scroll=", scroll, " vbox=", vbox)
-	# done
-
-
 func _ensure_row(row_name: String, type_class: Variant, parent: Node, child_names: Array) -> void:
 	if parent == null:
 		return
@@ -2653,24 +2151,32 @@ func _get_or_create_container(name: String, type_class: Variant, parent: Node) -
 func _reparent_by_name(name: String, new_parent: Node) -> void:
 	if new_parent == null:
 		return
-	# Move *all* nodes whose name equals or contains the hint into new_parent.
-	# This fixes duplicated/mangled copies left around by editor/layout repair.
-	# Prefer searching under _ui_root when available to limit accidental matches.
-	var scope_root: Node = _ui_root if _ui_root != null else get_tree().get_root()
-	if scope_root == null:
-		return
-	# collect candidates (safe DFS via find_children where available)
-	var candidates: Array = []
-	candidates = scope_root.find_children("*", "", true, false)
-	for n in candidates:
-		if n == null:
-			continue
-		var nm := String(n.name)
-		# exact match or substring (handles mangled names like "...#FOVRow")
-		if nm == name or nm.find(name) != -1:
-			# don't reparent if already correct parent
-			if n.get_parent() != new_parent:
-				_reparent(n, new_parent)
+	var roots: PackedStringArray = [
+		"CanvasLayer/PhotoUI/RootMargin/RootHBox/Panel/Margin/SettingsScroll/VBox",
+		"CanvasLayer/PhotoUI/RootMargin/RootHBox/TabsPanel/TabsMargin/TabsVBox",
+		"CanvasLayer/PhotoUI/Toolbar/ToolbarHBox",
+		"CanvasLayer/PhotoUI/Filmstrip/FilmstripScroll/FilmstripHBox",
+		"CanvasLayer/PhotoUI",
+	]
+	for root_path in roots:
+		var root_node: Node = get_node_or_null(root_path)
+		var n: Node = _find_exact_descendant(root_node, name, "")
+		if n != null and n.get_parent() != new_parent:
+			_reparent(n, new_parent)
+
+
+func _find_exact_descendant(root: Node, node_name: String, type_hint: String) -> Node:
+	if root == null:
+		return null
+	var stack: Array[Node] = [root]
+	while not stack.is_empty():
+		var node: Node = stack.pop_back()
+		if String(node.name) == node_name and (type_hint.is_empty() or node.is_class(type_hint)):
+			return node
+		for child in node.get_children():
+			if child is Node:
+				stack.push_back(child as Node)
+	return null
 
 
 func _reparent(node: Node, new_parent: Node) -> void:
@@ -2987,6 +2493,29 @@ func _position_camera_at_start() -> void:
 			if mesh:
 				_camera.global_position = mesh.global_position + Vector3(0, 2.0, 0)
 	_sync_camera_angles_from_rotation()
+
+
+func _apply_pending_debug_camera_override() -> void:
+	if _camera == null:
+		return
+	var dbg := get_node_or_null("/root/DEBUG")
+	if dbg == null:
+		return
+	if not ("pending_photo_camera_valid" in dbg):
+		return
+	if not bool(dbg.pending_photo_camera_valid):
+		return
+
+	if "pending_photo_camera_position" in dbg:
+		_camera.global_position = dbg.pending_photo_camera_position as Vector3
+	if "pending_photo_camera_rotation" in dbg:
+		_camera.rotation_degrees = dbg.pending_photo_camera_rotation as Vector3
+	if "pending_photo_camera_fov" in dbg:
+		_camera.fov = float(dbg.pending_photo_camera_fov)
+		if _fov_slider:
+			_fov_slider.value = _camera.fov
+	_sync_camera_angles_from_rotation()
+	dbg.pending_photo_camera_valid = false
 
 
 
@@ -4869,106 +4398,6 @@ func _get_selected_aspect_ratio(base_size: Vector2) -> float:
 			if ratio > 0.01:
 				return ratio
 	return base_size.x / maxf(base_size.y, 1.0)
-
-
-func _force_reparent_settings() -> void:
-	if _ui_root == null:
-		return
-
-	# Try to find the settings vbox container where rows should live.
-	var settings_vbox: VBoxContainer = null
-	# 1) Exact path (common case)
-	if _ui_root and _ui_root.has_node("RootMargin/RootHBox/Panel/Margin/SettingsScroll/VBox"):
-		settings_vbox = _ui_root.get_node("RootMargin/RootHBox/Panel/Margin/SettingsScroll/VBox") as VBoxContainer
-	# 2) Common mangled name used by exported scenes
-	if settings_vbox == null and _ui_root and _ui_root.has_node("RootMargin/RootHBox/Panel/Margin"):
-		var margin = _ui_root.get_node("RootMargin/RootHBox/Panel/Margin")
-		for child in margin.get_children():
-			if child is VBoxContainer:
-				# pick the first VBoxContainer (will be refined below)
-				settings_vbox = child
-				break
-	# 3) global search: find any VBoxContainer whose name or descendants match known row names
-	if settings_vbox == null:
-		var best: Node = null
-		var best_score := -1
-		var candidates: Array = []
-		# Prefer searching the Photo UI subtree first (covers runtime-reparented UI)
-		if _ui_root != null:
-			candidates = _ui_root.find_children("*", "VBoxContainer", true, false)
-		else:
-			candidates = get_tree().get_root().find_children("*", "VBoxContainer", true, false)
-		for cand in candidates:
-			var score := 0
-			for rn in ["FOVRow","ExposureRow","ISORow","Title","HistogramCard"]:
-				for gc in cand.get_children():
-					if String(gc.name).find(rn) != -1:
-						score += 1
-			if score > best_score:
-				best_score = score
-				best = cand
-		if best_score > 0:
-			settings_vbox = best as VBoxContainer
-	if settings_vbox == null:
-		if enable_layout_debug_print:
-			print("[PhotoMode DEBUG] _force_reparent_settings: could not find settings vbox")
-		return
-	# Debug: report where we found the settings vbox
-	if enable_layout_debug_print:
-		print("[PhotoMode DEBUG] _force_reparent_settings: settings_vbox=", settings_vbox, " path=", settings_vbox.get_path(), " child_count=", settings_vbox.get_child_count())
-
-	# Known rows to move into settings vbox (matches _setup_tabs/_ensure_row lists)
-	var rows := [
-		"FOVRow","FocalRow","ISORow","ApertureRow","ShutterRow","FocusRow","ShootingModeRow","AutoFocusRow",
-		"ExposureHeaderRow","ExposureRow","AutoExposureRow","AutoExposureSpeedRow","AutoExposureRangeRow",
-		"GuidesHeaderRow","GuidesRow","GuideTypeOptions","GuidesOpacityRow",
-		"CaptureHeaderRow","ButtonsRow","CaptureButton","CaptureLayersButton","BackButton","CapturePathRow","CaptureFormatRow",
-		"CaptureTimerRow","CaptureBurstRow","CaptureBracketRow","CaptureBracketStepRow","CaptureWatermarkRow","CaptureWatermarkTextRow",
-		"PassesHeaderRow","PassPreviewRow","PassesGrid","PassBeauty","PassAlbedo","PassNormals","PassDepth","PassLighting",
-		"LightRigHeaderRow","LightRigGrid","EnvironmentHeaderRow","EnvRow","EnvironmentRow","AmbientRow","FogRow","FogDensityRow","FogBeginRow","FogEndRow",
-		"ExportHeaderRow","ExportNote","ResRow","AspectRow",
-		"ColorHeaderRow","TempRow","TintRow","SaturationRow","ContrastRow",
-		"EffectsHeaderRow","VignetteRow","GrainRow","BloomRow","PS1ShaderRow","PostFXRow","PostFXFogRow","PostFXFogDistanceRow","PostFXFogFadeRow","PostFXNoiseRow","PostFXNoiseTimeRow","PostFXColorLimitRow","PostFXColorLevelsRow","PostFXDitherRow","PostFXDitherStrengthRow","PostFXOpacityRow",
-		"CompositionHeaderRow","CompositionCropRow","CompositionOffsetXRow","CompositionOffsetYRow","CompositionRollRow","CompositionSnapRow",
-		"PresetsHeaderRow","PresetsRow","PresetNameRow","PresetButtonsRow",
-		"HistogramCard","Title","Status"
-	]
-
-	# First, ensure rows are direct children of the settings vbox
-	for rname in rows:
-		_reparent_by_name(rname, settings_vbox)
-
-	# Next, for each row, attempt to move its known children into that row
-	# Simple heuristic: children named like "<RowName>" (e.g. FOVSlider) will be
-	# reparented under the discovered row node.
-	for rname in rows:
-		var row_node := _find_node(rname, "Control")
-		if row_node == null:
-			continue
-		# find likely children by scanning the Photo UI (or full scene) for names containing the row name as a prefix
-		var all_controls := []
-		if _ui_root != null:
-			all_controls = _ui_root.find_children("*", "Control", true, false)
-		else:
-			all_controls = get_tree().get_root().find_children("*", "Control", true, false)
-		for n in all_controls:
-			if n == null:
-				continue
-			var nm := String(n.name)
-			# pattern: contains "<RowName>#" or "_<RowName>#"
-			if nm.find(rname) != -1 and n.get_parent() != row_node:
-				_reparent(n, row_node)
-
-	# Re-apply row/container sizing and layout guarantees for any rows we moved so
-	# anchors/size_flags are consistent after reparenting.
-	for rname in rows:
-		if rname.ends_with("Row") or rname.ends_with("HeaderRow"):
-			_ensure_row(rname, HBoxContainer, settings_vbox, [])
-		elif rname.ends_with("Grid"):
-			_ensure_row(rname, GridContainer, settings_vbox, [])
-
-	if enable_layout_debug_print:
-		print("[PhotoMode DEBUG] _force_reparent_settings: completed reparent sweep")
 
 
 func _calculate_crop_rect(base_size: Vector2) -> Rect2:

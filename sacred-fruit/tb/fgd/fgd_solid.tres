@@ -6,8 +6,8 @@
 [ext_resource type="Resource" uid="uid://4h23glniadlk" path="res://tb/fgd/solid/funcs/func_detail_illusionary.tres" id="2_g488m"]
 [ext_resource type="Resource" uid="uid://dbc8wa7c1nbgx" path="res://tb/fgd/solid/funcs/func_geo.tres" id="3_mqtmv"]
 [ext_resource type="Resource" uid="uid://ckh3askbgkynt" path="res://tb/fgd/solid/funcs/func_illusionary.tres" id="4_2y1us"]
-[ext_resource type="Resource" uid="uid://b3t000ocefkge" path="res://tb/fgd/solid/funcs/func_move.tres" id="5_tk340"]
 [ext_resource type="Resource" path="res://tb/fgd/solid/funcs/func_portal.tres" id="5_func_portal"]
+[ext_resource type="Resource" uid="uid://b3t000ocefkge" path="res://tb/fgd/solid/funcs/func_move.tres" id="5_tk340"]
 [ext_resource type="Resource" uid="uid://ptvum0fd8lvk" path="res://tb/fgd/solid/triggers/trigger_area.tres" id="6_2qosd"]
 [ext_resource type="Resource" uid="uid://c8k57o1sbxrpc" path="res://tb/fgd/solid/triggers/trigger_exit.tres" id="7_trigger_exit"]
 [ext_resource type="Resource" uid="uid://dbyk1dqm3ug8y" path="res://tb/fgd/solid/triggers/trigger_changelevel.tres" id="8_trigger_changelevel"]
@@ -16,7 +16,7 @@
 [ext_resource type="Resource" uid="uid://djymy7p0gauj0" path="res://tb/fgd/solid/triggers/trigger_once.tres" id="11_trigger_once"]
 [ext_resource type="Resource" uid="uid://d2xdjehagnqpo" path="res://tb/fgd/solid/triggers/trigger_multiple.tres" id="12_trigger_multiple"]
 [ext_resource type="Resource" uid="uid://bl38glrkpibuy" path="res://tb/fgd/solid/funcs/func_train.tres" id="13_func_train"]
-[ext_resource type="Resource" path="res://tb/fgd/solid/triggers/trigger_hurt.tres" id="14_trigger_hurt"]
+[ext_resource type="Resource" uid="uid://dr2pyo8p05aji" path="res://tb/fgd/solid/triggers/trigger_hurt.tres" id="14_trigger_hurt"]
 
 [resource]
 script = ExtResource("1_n87v7")
