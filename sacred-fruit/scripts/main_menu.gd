@@ -116,6 +116,10 @@ func _reparent(node: Node, new_parent: Node) -> void:
 	if node.get_parent() == new_parent:
 		return
 	var old_parent := node.get_parent()
+	# Avoid owner consistency warnings when rebuilding UI hierarchy at runtime.
+	# Owner is editor-scene bookkeeping and can be safely cleared for dynamic reparenting.
+	if node.owner != null:
+		node.owner = null
 	if old_parent != null:
 		old_parent.remove_child(node)
 	new_parent.add_child(node)

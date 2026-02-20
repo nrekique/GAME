@@ -24,7 +24,7 @@ class_properties = {
 "mirror_flip_u": false,
 "render_camera_offset": 0.0,
 "render_scale": 0.75,
-"render_use_oblique_clip": false,
+"render_use_oblique_clip": true,
 "render_use_window_projection": true,
 "reverse_normal": false
 }
@@ -36,7 +36,7 @@ class_property_descriptions = {
 "mirror_flip_u": "Flip mirror texture horizontally. Leave off for matrix-driven reflection; enable only if your mirror appears reversed.",
 "render_camera_offset": "Small offset along mirror normal to stabilize close views.",
 "render_scale": "Mirror render resolution scale. Lower = faster.",
-"render_use_oblique_clip": "Clip reflection render against mirror plane. Disabled by default for runtime stability.",
+"render_use_oblique_clip": "Apply oblique near-plane clipping aligned to the mirror plane for close-up geometric correctness.",
 "render_use_window_projection": "Use off-axis projection so mirror view aligns to mirror quad.",
 "reverse_normal": "Flip mirror facing direction if the reflection appears on the wrong side."
 }

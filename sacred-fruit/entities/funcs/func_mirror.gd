@@ -12,6 +12,7 @@ extends StaticBody3D
 @export var render_use_oblique_clip: bool = false
 @export_range(-0.05, 0.05, 0.001) var render_camera_offset: float = 0.0
 @export var reverse_normal: bool = false
+@export var mirror_allow_legacy_face_fit: bool = false
 
 const DEBUG_PRINT_INTERVAL := 5.0
 const MIRROR_SURFACE_RENDER_LAYER := 19
@@ -231,17 +232,42 @@ func _update_viewport_size() -> void:
 func _update_mirror_camera() -> void:
 	if _mirror_camera == null:
 		return
+	if mirror_face_from_texture and not _used_metadata_plane:
+		return
 	var src_cam: Camera3D = get_viewport().get_camera_3d()
 	if src_cam == null:
 		return
 	var mirror_xf: Transform3D = _get_mirror_global_transform()
-	var local_src: Transform3D = mirror_xf.affine_inverse() * src_cam.global_transform
-	# Deterministic right-handed mirror transform: local 180 around Y (diag[-1, 1, -1]).
-	# This avoids left-handed camera bases while preserving physically-correct mirror parallax.
-	var mirror_flip: Transform3D = Transform3D(Basis(Vector3.UP, PI), Vector3.ZERO)
-	var mapped: Transform3D = mirror_xf * mirror_flip * local_src
-	mapped.origin += mirror_xf.basis.z.normalized() * render_camera_offset
-	_mirror_camera.global_transform = mapped
+	var normal: Vector3 = mirror_xf.basis.z.normalized()
+	var plane_point: Vector3 = mirror_xf.origin
+	var src_xf: Transform3D = src_cam.global_transform
+	# Strict plane reflection transform.
+	var reflected_origin: Vector3 = _reflect_point(src_xf.origin, plane_point, normal)
+	var reflected_x: Vector3 = _reflect_direction(src_xf.basis.x.normalized(), normal).normalized()
+	var reflected_y: Vector3 = _reflect_direction(src_xf.basis.y.normalized(), normal).normalized()
+	var reflected_z: Vector3 = _reflect_direction(src_xf.basis.z.normalized(), normal).normalized()
+	# Reflection produces a left-handed frame. Flip one axis to restore right-handed basis
+	# while preserving mirrored forward direction.
+	var x_axis: Vector3 = -reflected_x
+	var y_axis: Vector3 = reflected_y
+	var z_axis: Vector3 = reflected_z
+	# Re-orthonormalize to remove numeric drift.
+	z_axis = z_axis.normalized()
+	y_axis = (y_axis - z_axis * y_axis.dot(z_axis)).normalized()
+	if y_axis.length_squared() < 0.000001:
+		y_axis = Vector3.UP
+		if absf(y_axis.dot(z_axis)) > 0.98:
+			y_axis = Vector3.FORWARD
+		y_axis = (y_axis - z_axis * y_axis.dot(z_axis)).normalized()
+	x_axis = y_axis.cross(z_axis).normalized()
+	if x_axis.length_squared() < 0.000001:
+		var fallback_up: Vector3 = Vector3.UP
+		if absf(fallback_up.dot(z_axis)) > 0.98:
+			fallback_up = Vector3.FORWARD
+		x_axis = fallback_up.cross(z_axis).normalized()
+		y_axis = z_axis.cross(x_axis).normalized()
+	reflected_origin += normal * render_camera_offset
+	_mirror_camera.global_transform = Transform3D(Basis(x_axis, y_axis, z_axis), reflected_origin)
 	_mirror_camera.fov = src_cam.fov
 	_mirror_camera.near = maxf(0.005, src_cam.near)
 	_mirror_camera.far = src_cam.far
@@ -254,11 +280,8 @@ func _update_mirror_camera() -> void:
 	_reset_custom_projection()
 	if render_use_window_projection:
 		if not _apply_window_projection(_mirror_camera.near):
-			if _has_stable_window_projection:
-				_mirror_camera.set_frustum(_stable_frustum_size, _stable_frustum_offset, _mirror_camera.near, _mirror_camera.far)
-				_mirror_camera.keep_aspect = Camera3D.KEEP_HEIGHT
-			else:
-				_mirror_camera.set_perspective(src_cam.fov, _mirror_camera.near, src_cam.far)
+			# Mirror path must never reuse stale cached frustum state from prior frames.
+			_mirror_camera.set_perspective(src_cam.fov, _mirror_camera.near, src_cam.far)
 	else:
 		_mirror_camera.set_perspective(src_cam.fov, _mirror_camera.near, src_cam.far)
 
@@ -267,7 +290,10 @@ func _update_surface_state() -> void:
 	_render_ok = _is_render_ready()
 	if _surface == null:
 		return
-	_surface.visible = enabled
+	if mirror_face_from_texture and not _used_metadata_plane:
+		_surface.visible = false
+	else:
+		_surface.visible = enabled
 	if _surface_material == null:
 		return
 	if _render_ok:
@@ -280,6 +306,8 @@ func _update_surface_state() -> void:
 
 func _is_render_ready() -> bool:
 	if _viewport == null or _mirror_camera == null:
+		return false
+	if mirror_face_from_texture and not _used_metadata_plane:
 		return false
 	if _viewport.world_3d == null:
 		return false
@@ -347,7 +375,7 @@ func _apply_window_projection(z_near: float) -> bool:
 	for i in corners.size():
 		var c: Vector3 = cam_inv * corners[i]
 		if c.z > -z_gate:
-			# If any corner is too close/behind the reflected camera, keep prior stable frustum.
+			# Strict path: reject frame instead of reusing stale window frustum.
 			return false
 		var iz: float = z_near / -c.z
 		var u: float = c.x * iz
@@ -367,35 +395,34 @@ func _apply_window_projection(z_near: float) -> bool:
 	var right: float = max_u
 	var bottom: float = min_v
 	var top: float = max_v
-	if _apply_offaxis_projection(left, right, bottom, top, z_near, _mirror_camera.far):
-		_stable_frustum_size = need_h
-		_stable_frustum_offset = offset
-		_has_stable_window_projection = true
-		return true
-	if render_use_oblique_clip and _apply_oblique_clip_projection(left, right, bottom, top, z_near, _mirror_camera.far):
-		_stable_frustum_size = need_h
-		_stable_frustum_offset = offset
-		_has_stable_window_projection = true
-		return true
-	_mirror_camera.set_frustum(need_h, offset, z_near, _mirror_camera.far)
-	_mirror_camera.keep_aspect = Camera3D.KEEP_HEIGHT
-	_stable_frustum_size = need_h
-	_stable_frustum_offset = offset
-	_has_stable_window_projection = true
-	return true
+	var base_proj: Projection = Projection.create_frustum(left, right, bottom, top, z_near, _mirror_camera.far)
+	if render_use_oblique_clip:
+		var clipped: Projection = _build_oblique_clip_projection(base_proj)
+		if clipped == Projection():
+			return false
+		return _set_projection(clipped)
+	return _set_projection(base_proj)
 
 
-func _apply_offaxis_projection(left: float, right: float, bottom: float, top: float, z_near: float, z_far: float) -> bool:
+func _set_projection(proj: Projection) -> bool:
 	if _mirror_camera == null:
 		return false
-	if not _is_custom_projection_api_available():
-		_stable_custom_projection_valid = false
-		return false
-	var proj: Projection = Projection.create_frustum(left, right, bottom, top, z_near, z_far)
-	_mirror_camera.call("set_custom_projection", proj)
+	if _is_custom_projection_api_available():
+		_mirror_camera.call("set_custom_projection", proj)
+		_mirror_camera.keep_aspect = Camera3D.KEEP_HEIGHT
+		_stable_custom_projection = proj
+		_stable_custom_projection_valid = true
+		return true
+	# Fallback without custom projection API: this is still computed per-frame and never cached.
+	var x_col: Vector4 = proj.x
+	var y_col: Vector4 = proj.y
+	var z_col: Vector4 = proj.z
+	var inv_x_scale: float = 1.0 / maxf(absf(x_col.x), 0.000001)
+	var inv_y_scale: float = 1.0 / maxf(absf(y_col.y), 0.000001)
+	var frustum_size: float = 2.0 * _mirror_camera.near * inv_y_scale
+	var frustum_offset: Vector2 = Vector2(x_col.z * _mirror_camera.near * inv_x_scale, y_col.z * _mirror_camera.near * inv_y_scale)
+	_mirror_camera.set_frustum(frustum_size, frustum_offset, _mirror_camera.near, _mirror_camera.far)
 	_mirror_camera.keep_aspect = Camera3D.KEEP_HEIGHT
-	_stable_custom_projection = proj
-	_stable_custom_projection_valid = true
 	return true
 
 
@@ -414,20 +441,17 @@ func _reset_custom_projection() -> void:
 		_mirror_camera.call("clear_custom_projection")
 
 
-func _apply_oblique_clip_projection(left: float, right: float, bottom: float, top: float, z_near: float, z_far: float) -> bool:
+func _build_oblique_clip_projection(base_proj: Projection) -> Projection:
 	if _mirror_camera == null:
-		return false
-	if not _is_custom_projection_api_available():
-		return false
+		return Projection()
 	var clip_plane_cam: Vector4 = _compute_mirror_clip_plane_camera_space()
 	if clip_plane_cam == Vector4.ZERO:
-		return false
-	var base_proj: Projection = Projection.create_frustum(left, right, bottom, top, z_near, z_far)
+		return Projection()
 	var inv_proj: Projection = base_proj.inverse()
 	var q: Vector4 = inv_proj * Vector4(_sign_nonzero(clip_plane_cam.x), _sign_nonzero(clip_plane_cam.y), 1.0, 1.0)
 	var denom: float = clip_plane_cam.dot(q)
 	if absf(denom) < 0.000001:
-		return false
+		return Projection()
 	var c: Vector4 = clip_plane_cam * (2.0 / denom)
 	var out_proj: Projection = base_proj
 	var x_col: Vector4 = out_proj.x
@@ -442,9 +466,7 @@ func _apply_oblique_clip_projection(left: float, right: float, bottom: float, to
 	out_proj.y = y_col
 	out_proj.z = z_col
 	out_proj.w = w_col
-	_mirror_camera.call("set_custom_projection", out_proj)
-	_mirror_camera.keep_aspect = Camera3D.KEEP_HEIGHT
-	return true
+	return out_proj
 
 
 func _compute_mirror_clip_plane_camera_space() -> Vector4:
@@ -497,9 +519,11 @@ func _hide_source_mesh_children() -> void:
 func _configure_mirror_plane() -> void:
 	if _try_configure_mirror_plane_from_metadata():
 		return
-	if mirror_face_from_texture and not _metadata_retry_pending:
-		_metadata_retry_pending = true
-		call_deferred("_retry_configure_mirror_plane_from_metadata")
+	if mirror_face_from_texture:
+		if not _metadata_retry_pending:
+			_metadata_retry_pending = true
+			call_deferred("_retry_configure_mirror_plane_from_metadata")
+		return
 	var bounds: AABB = _compute_local_bounds()
 	_configure_mirror_plane_from_bounds(bounds)
 
@@ -538,6 +562,8 @@ func _try_configure_mirror_plane_from_metadata() -> bool:
 	var md: Dictionary = md_v as Dictionary
 	if _try_configure_mirror_plane_from_exact_metadata(md):
 		return true
+	if not mirror_allow_legacy_face_fit:
+		return false
 	if not (md.has("normals") and md.has("positions") and md.has("textures") and md.has("texture_names")):
 		return false
 	var normals_v: Variant = md["normals"]

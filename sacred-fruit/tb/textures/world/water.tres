@@ -1,21 +1,30 @@
-[gd_resource type="ShaderMaterial" load_steps=4 format=3 uid="uid://duvtrsmqwsll"]
+[gd_resource type="ShaderMaterial" load_steps=6 format=3 uid="uid://duvtrsmqwsll"]
 
-[ext_resource type="Shader" path="res://shaders/water.gdshader" id="1_wpcbb"]
-[ext_resource type="Texture2D" uid="uid://do37bxcf1mu1i" path="res://textures/foam.jpg" id="2_6siip"]
-[ext_resource type="Texture2D" uid="uid://dbiucbq07v8bs" path="res://textures/water_normal2.jpeg" id="3_ho3cr"]
+[ext_resource type="Shader" path="res://tb/textures/shaders/WATER.gdshader" id="1_itwj8"]
+[ext_resource type="Texture2D" path="res://tb/textures/special/water.png" id="2_dxl4b"]
+[ext_resource type="Texture2D" path="res://tb/textures/world/water_normal.jpg" id="3_y3w17"]
+[ext_resource type="Texture2D" path="res://tb/textures/world/water_normal.jpg" id="4_05v3b"]
+[ext_resource type="Texture2D" path="res://tb/textures/world/water_normal2.jpeg" id="5_0buof"]
 
 [resource]
-render_priority = 0
-shader = ExtResource("1_wpcbb")
-shader_parameter/surface_color = Color(0.160784, 0.286275, 0.392157, 1)
-shader_parameter/depth_color = Color(0, 0.317647, 0.101961, 1)
-shader_parameter/opacity = 0.803
-shader_parameter/normal_scale = -0.0729992
-shader_parameter/beer_factor = 0.0
-shader_parameter/_roughness = 0.097
-shader_parameter/_refraction = 0.0
-shader_parameter/_uv_scale = 0.071
-shader_parameter/_foam_strength = 0.411
-shader_parameter/_foam_size = 0.2
-shader_parameter/_foam = ExtResource("2_6siip")
-shader_parameter/normal_map = ExtResource("3_ho3cr")
+shader = ExtResource("1_itwj8")
+shader_parameter/transparency = 0.72
+shader_parameter/roughness = 0.32
+shader_parameter/wave_noise_scale_a = 48.0
+shader_parameter/wave_noise_scale_b = 56.0
+shader_parameter/wave_time_scale_a = 0.035
+shader_parameter/wave_time_scale_b = 0.03
+shader_parameter/wave_height_scale = 0.035
+shader_parameter/wave_normal_flatness = 95.0
+shader_parameter/surface_texture_roughness = 0.12
+shader_parameter/surface_texture_scale = 0.07
+shader_parameter/surface_texture_time_scale = 0.03
+shader_parameter/ssr_resolution = 2.0
+shader_parameter/ssr_max_travel = 8.0
+shader_parameter/ssr_max_diff = 2.0
+shader_parameter/ssr_mix_strength = 0.28
+shader_parameter/refraction_intensity = 0.08
+shader_parameter/wave_a = ExtResource("2_dxl4b")
+shader_parameter/wave_b = ExtResource("3_y3w17")
+shader_parameter/surface_normals_a = ExtResource("4_05v3b")
+shader_parameter/surface_normals_b = ExtResource("5_0buof")

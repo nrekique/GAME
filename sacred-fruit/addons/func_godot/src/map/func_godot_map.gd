@@ -894,13 +894,20 @@ func _inject_special_face_metadata(metadata: Dictionary) -> Dictionary:
 	return out
 
 
+func _dict_get_string_key(dict: Dictionary, key: String, default_value: Variant = null) -> Variant:
+	if dict.has(key):
+		return dict[key]
+	var key_name: StringName = StringName(key)
+	if dict.has(key_name):
+		return dict[key_name]
+	return default_value
+
+
 func _compute_special_face_metadata(metadata: Dictionary, texture_token: String) -> Dictionary:
-	if not (metadata.has("normals") and metadata.has("positions") and metadata.has("textures") and metadata.has("texture_names")):
-		return {}
-	var normals_v: Variant = metadata["normals"]
-	var positions_v: Variant = metadata["positions"]
-	var textures_v: Variant = metadata["textures"]
-	var texture_names_v: Variant = metadata["texture_names"]
+	var normals_v: Variant = _dict_get_string_key(metadata, "normals", null)
+	var positions_v: Variant = _dict_get_string_key(metadata, "positions", null)
+	var textures_v: Variant = _dict_get_string_key(metadata, "textures", null)
+	var texture_names_v: Variant = _dict_get_string_key(metadata, "texture_names", null)
 	if not (normals_v is PackedVector3Array and positions_v is PackedVector3Array and textures_v is PackedInt32Array and texture_names_v is Array):
 		return {}
 	var normals: PackedVector3Array = normals_v as PackedVector3Array
@@ -908,8 +915,8 @@ func _compute_special_face_metadata(metadata: Dictionary, texture_token: String)
 	var textures: PackedInt32Array = textures_v as PackedInt32Array
 	var texture_names: Array = texture_names_v as Array
 	var vertices: PackedVector3Array = PackedVector3Array()
-	if metadata.has("vertices"):
-		var vertices_v: Variant = metadata["vertices"]
+	var vertices_v: Variant = _dict_get_string_key(metadata, "vertices", null)
+	if vertices_v != null:
 		if vertices_v is PackedVector3Array:
 			vertices = vertices_v as PackedVector3Array
 

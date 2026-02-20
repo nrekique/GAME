@@ -1,0 +1,37 @@
+[gd_resource type="Resource" script_class="FuncGodotFGDSolidClass" format=3]
+
+[ext_resource type="Script" path="res://addons/func_godot/src/fgd/func_godot_fgd_solid_class.gd" id="1_solid"]
+[ext_resource type="Resource" path="res://tb/fgd/base/func_base.tres" id="2_func_base"]
+[ext_resource type="Script" path="res://entities/funcs/func_texture_tile.gd" id="3_script"]
+
+[resource]
+script = ExtResource("1_solid")
+build_visuals = true
+collision_shape_type = 2
+add_textures_metadata = true
+script_class = ExtResource("3_script")
+classname = "func_texture_tile"
+description = "Applies a screen-space tiled texture shader to this brush entity."
+base_classes = Array[Resource]([ExtResource("2_func_base")])
+class_properties = {
+"alpha_cutoff": 0.5,
+"metallic": 0.0,
+"roughness": 0.9,
+"tiling_scale": 1.0,
+"tiling_texture": "",
+"use_alpha_cutout": false,
+"use_texture_alpha": false
+}
+class_property_descriptions = {
+"alpha_cutoff": "Alpha scissor threshold when use_alpha_cutout is enabled.",
+"metallic": "PBR metallic value for tiled surface.",
+"roughness": "PBR roughness value for tiled surface.",
+"tiling_scale": "Screen-space tile scale multiplier (default 1).",
+"tiling_texture": "Optional texture path (res://...). If empty, uses the brush material texture as fallback.",
+"use_alpha_cutout": "Enable alpha scissor for masked textures (keeps better shadow behavior than transparency).",
+"use_texture_alpha": "Use texture alpha for transparency."
+}
+meta_properties = {
+"color": Color(0.2, 0.85, 0.35, 1)
+}
+node_class = "StaticBody3D"
