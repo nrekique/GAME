@@ -8,6 +8,7 @@ const DEBUG_MENU_SCENE: PackedScene = preload("res://scenes/ui/debug_menu.tscn")
 const RUNTIME_PLAY_SCENE_PATH := "res://scenes/runtime_map_play.tscn"
 const PHOTO_MODE_SCENE_PATH := "res://scenes/photo_mode.tscn"
 const SMOKE_RUNNER_SCRIPT := preload("res://tools/smoke_runner.gd")
+const RUNTIME_DEBUG_SETTING := "sacred_fruit/debug/runtime_verbose"
 
 var pending_runtime_map_path: String = ""
 var pending_photo_map_path: String = ""
@@ -24,12 +25,15 @@ var _smoke_checked: bool = false
 
 
 func _ready() -> void:
+	if not ProjectSettings.has_setting(RUNTIME_DEBUG_SETTING):
+		ProjectSettings.set_setting(RUNTIME_DEBUG_SETTING, false)
 	# Create once and keep hidden.
 	if DEBUG_MENU_SCENE:
 		_menu = DEBUG_MENU_SCENE.instantiate() as Control
 		if _menu:
 			_menu.visible = false
 			get_tree().root.call_deferred("add_child", _menu)
+	call_deferred("_handle_startup_run_args")
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -120,6 +124,8 @@ func _open_photo_mode_from_scene(use_current_view: bool) -> void:
 
 
 func _run_prelaunch_smoke_tests() -> bool:
+	if not (OS.has_feature("headless") or OS.has_feature("server")):
+		return true
 	if _smoke_checked:
 		return true
 	if _smoke_in_progress:
@@ -129,9 +135,6 @@ func _run_prelaunch_smoke_tests() -> bool:
 		return false
 	_smoke_in_progress = true
 	var smoke_method := "run_all"
-	if not (OS.has_feature("headless") or OS.has_feature("server")):
-		# In interactive runtime, avoid portal plugin state pollution; keep portal smoke for headless runs.
-		smoke_method = "run_photo_mode_layout"
 	var result_v: Variant = await _smoke_runner.call(smoke_method, self)
 	_smoke_in_progress = false
 	if not (result_v is Dictionary):
@@ -146,3 +149,91 @@ func _run_prelaunch_smoke_tests() -> bool:
 		return false
 	_smoke_checked = true
 	return true
+
+
+func is_runtime_debug_enabled() -> bool:
+	return bool(ProjectSettings.get_setting(RUNTIME_DEBUG_SETTING, false))
+
+
+func _handle_startup_run_args() -> void:
+	if Engine.is_editor_hint():
+		return
+	var args: PackedStringArray = OS.get_cmdline_user_args()
+	if args.is_empty():
+		return
+
+	var map_arg: String = ""
+	var launch_photo_mode: bool = false
+	var force_spectator: bool = false
+
+	var i: int = 0
+	while i < args.size():
+		var arg: String = String(args[i])
+		if arg == "--tb-run-map":
+			if i + 1 < args.size():
+				map_arg = String(args[i + 1])
+				i += 1
+		elif arg.begins_with("--tb-run-map="):
+			map_arg = arg.substr(String("--tb-run-map=").length())
+		elif arg == "--tb-photo":
+			launch_photo_mode = true
+		elif arg == "--tb-spectator":
+			force_spectator = true
+		i += 1
+
+	if map_arg.is_empty():
+		return
+
+	var map_path: String = _resolve_runtime_map_arg(map_arg)
+	if map_path.is_empty():
+		push_error("TrenchBroom run arg could not resolve map path: %s" % map_arg)
+		return
+
+	if launch_photo_mode:
+		await request_photo_mode(map_path)
+		return
+
+	pending_force_spectator = force_spectator
+	await request_play_runtime_map(map_path)
+
+
+func _resolve_runtime_map_arg(raw_path: String) -> String:
+	var p: String = raw_path.strip_edges()
+	if p.begins_with("\"") and p.ends_with("\"") and p.length() >= 2:
+		p = p.substr(1, p.length() - 2)
+	p = p.replace("\\", "/")
+	if p.is_empty():
+		return ""
+	if p.begins_with("res://"):
+		return p
+	if p.begins_with("tb/"):
+		return "res://" + p
+	if p.begins_with("/tb/"):
+		return "res://" + p.substr(1)
+	if p.begins_with("./tb/"):
+		return "res://" + p.substr(2)
+	if not p.is_absolute_path():
+		var rel_candidate: String = "res://" + p
+		if FileAccess.file_exists(rel_candidate):
+			return rel_candidate
+		var tb_candidate: String = "res://tb/" + p.get_file()
+		if FileAccess.file_exists(tb_candidate):
+			return tb_candidate
+		return ""
+
+	var abs_path: String = p.simplify_path()
+	var project_root: String = ProjectSettings.globalize_path("res://").replace("\\", "/").simplify_path()
+	if abs_path.begins_with(project_root):
+		var rel: String = abs_path.substr(project_root.length())
+		if rel.begins_with("/"):
+			rel = rel.substr(1)
+		var res_path: String = "res://" + rel
+		if FileAccess.file_exists(res_path):
+			return res_path
+	var tb_idx: int = abs_path.find("/tb/")
+	if tb_idx >= 0:
+		var rel_tb: String = abs_path.substr(tb_idx + 1)
+		var tb_res_path: String = "res://" + rel_tb
+		if FileAccess.file_exists(tb_res_path):
+			return tb_res_path
+	return ""

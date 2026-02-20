@@ -757,7 +757,7 @@ func _ready() -> void:
 	if _ui_root:
 		_ui_root.visible = _ui_visible
 	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE if _ui_visible else Input.MOUSE_MODE_CAPTURED)
-	if enable_layout_debug_print:
+	if _is_layout_debug_enabled():
 		call_deferred("_debug_layout")
 	await _build_map_from_debug()
 	_setup_postfx_overlay()
@@ -1933,6 +1933,8 @@ func _on_capture_preview_close_requested() -> void:
 	_preview_compare_texture = null
 
 func _debug_layout() -> void:
+	if not _is_layout_debug_enabled():
+		return
 	await get_tree().process_frame
 	await get_tree().process_frame
 	if _ui_root == null:
@@ -3905,13 +3907,13 @@ func _apply_color_adjustments() -> void:
 	var env = _world_env.environment
 	# Ensure the environment is really an Environment resource (defensive for engine versions)
 	if not (env is Environment):
-		if enable_layout_debug_print:
+		if _is_layout_debug_enabled():
 			if _debug_accum >= DEBUG_PRINT_INTERVAL:
 				print("[PhotoMode DEBUG] _apply_color_adjustments: world_env=", _world_env, " env_type=", typeof(env), " env=", env)
 				_debug_accum = 0.0
 		return
 
-	if enable_layout_debug_print:
+	if _is_layout_debug_enabled():
 		if _debug_accum >= DEBUG_PRINT_INTERVAL:
 			print("[PhotoMode DEBUG] _apply_color_adjustments: world_env=", _world_env, " env=", env)
 			var props := []
@@ -3943,7 +3945,7 @@ func _on_vignette_changed(value: float) -> void:
 	if _vignette_value:
 		_vignette_value.text = "%.2f" % value
 	if _world_env and _world_env.environment:
-		if enable_layout_debug_print:
+		if _is_layout_debug_enabled():
 			print("[PhotoMode DEBUG] setting vignette to", value)
 		_set_attr_if_exists(_world_env.environment, "vignette_enabled", value > 0.001)
 		_set_attr_if_exists(_world_env.environment, "vignette_intensity", value)
@@ -3958,7 +3960,7 @@ func _on_grain_changed(value: float) -> void:
 	if _grain_value:
 		_grain_value.text = "%.2f" % value
 	if _world_env and _world_env.environment:
-		if enable_layout_debug_print:
+		if _is_layout_debug_enabled():
 			print("[PhotoMode DEBUG] setting grain to", value)
 		_set_attr_if_exists(_world_env.environment, "film_grain", value)
 		_set_attr_if_exists(_world_env.environment, "film_grain_enabled", value > 0.001)
@@ -4461,7 +4463,7 @@ func _update_viewfinder() -> void:
 			_viewfinder.custom_minimum_size = base_size
 
 	var crop_rect := _calculate_crop_rect(base_size)
-	if enable_layout_debug_print:
+	if _is_layout_debug_enabled():
 		print("[PhotoMode DEBUG] _update_viewfinder: viewport=", base_size, " viewfinder_size=", (_viewfinder.size if _viewfinder is Control else Vector2.ZERO))
 	if _viewfinder.has_method("set_crop_rect"):
 		_viewfinder.call("set_crop_rect", crop_rect)
@@ -4476,6 +4478,15 @@ func _set_viewfinder_visible(visible: bool) -> void:
 		_viewfinder.visible = visible
 	if _viewfinder_toggle:
 		_viewfinder_toggle.button_pressed = visible
+
+
+func _is_layout_debug_enabled() -> bool:
+	if not enable_layout_debug_print:
+		return false
+	var dbg := get_node_or_null("/root/DEBUG")
+	if dbg != null and dbg.has_method("is_runtime_debug_enabled"):
+		return bool(dbg.call("is_runtime_debug_enabled"))
+	return false
 
 
 func _unhandled_input(event: InputEvent) -> void:

@@ -1,8 +1,8 @@
 [gd_resource type="Resource" script_class="FuncGodotFGDFile" format=3 uid="uid://co6efvk3v34c8"]
 
-[ext_resource type="Resource" uid="uid://crgpdahjaj" path="res://addons/func_godot/fgd/func_godot_fgd.tres" id="1_0aajc"]
-[ext_resource type="Script" uid="uid://oqca3vmn1ssq" path="res://addons/func_godot/src/fgd/func_godot_fgd_file.gd" id="1_sgb8f"]
-[ext_resource type="Resource" uid="uid://tt4mj8flifi0" path="res://tb/fgd/fgd_main.tres" id="2_fgd_main"]
+[ext_resource type="Resource" path="res://addons/func_godot/fgd/func_godot_fgd.tres" id="1_0aajc"]
+[ext_resource type="Script" path="res://addons/func_godot/src/fgd/func_godot_fgd_file.gd" id="1_sgb8f"]
+[ext_resource type="Resource" path="res://tb/fgd/fgd_main.tres" id="2_fgd_main"]
 
 [resource]
 script = ExtResource("1_sgb8f")

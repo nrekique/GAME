@@ -2,9 +2,9 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://xltkv5orb0lu"
-path.s3tc="res://.godot/imported/cyanS.png-43db9b035db2cd7316835e68fa5fde31.s3tc.ctex"
-path.etc2="res://.godot/imported/cyanS.png-43db9b035db2cd7316835e68fa5fde31.etc2.ctex"
+uid="uid://caf7ejdrmrlxn"
+path.s3tc="res://.godot/imported/mirror.png-e01338c5aa82d83f719994ab6b756bab.s3tc.ctex"
+path.etc2="res://.godot/imported/mirror.png-e01338c5aa82d83f719994ab6b756bab.etc2.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
@@ -12,8 +12,8 @@ metadata={
 
 [deps]
 
-source_file="res://tb/textures/color/cyanS.png"
-dest_files=["res://.godot/imported/cyanS.png-43db9b035db2cd7316835e68fa5fde31.s3tc.ctex", "res://.godot/imported/cyanS.png-43db9b035db2cd7316835e68fa5fde31.etc2.ctex"]
+source_file="res://tb/textures/special/mirror.png"
+dest_files=["res://.godot/imported/mirror.png-e01338c5aa82d83f719994ab6b756bab.s3tc.ctex", "res://.godot/imported/mirror.png-e01338c5aa82d83f719994ab6b756bab.etc2.ctex"]
 
 [params]
 

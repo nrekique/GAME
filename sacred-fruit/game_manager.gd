@@ -611,6 +611,8 @@ func _sync_all_ps1_material_params() -> void:
 
 
 func _sync_ps1_global_shader_params() -> void:
+	if not _has_ps1_global_shader_globals():
+		return
 	var dither_texture := ps1_light_dither_texture
 	if dither_texture == null:
 		dither_texture = _get_default_ps1_light_dither_texture()
@@ -621,6 +623,31 @@ func _sync_ps1_global_shader_params() -> void:
 	RenderingServer.global_shader_parameter_set("dither_scale", maxf(ps1_light_dither_scale, 0.001))
 	RenderingServer.global_shader_parameter_set("dither_strength", clampf(light_strength, 0.0, 1.0))
 	RenderingServer.global_shader_parameter_set("dither_levels", maxf(ps1_light_dither_levels, 1.0))
+
+
+var _ps1_globals_checked: bool = false
+var _ps1_globals_available: bool = false
+var _ps1_globals_warned: bool = false
+
+
+func _has_ps1_global_shader_globals() -> bool:
+	if _ps1_globals_checked:
+		return _ps1_globals_available
+	_ps1_globals_checked = true
+	var keys := [
+		"rendering/global_shader_parameters/dither_texture",
+		"rendering/global_shader_parameters/dither_scale",
+		"rendering/global_shader_parameters/dither_strength",
+		"rendering/global_shader_parameters/dither_levels"
+	]
+	for key in keys:
+		if not ProjectSettings.has_setting(key):
+			_ps1_globals_available = false
+			if not _ps1_globals_warned:
+				_ps1_globals_warned = true
+			return false
+	_ps1_globals_available = true
+	return true
 
 
 func _get_default_ps1_light_dither_texture() -> Texture2D:

@@ -138,6 +138,7 @@ From base FGD resources (`sacred-fruit/tb/fgd/base/*`):
 | `func_button` | `target`, `targetfunc`, `wait`, `once`, `targetname` | Touch-triggered output source with cooldown or one-shot. |
 | `func_train` | `target`, `speed`, `targetname` | Moves along `path_corner` chain. |
 | `func_portal` | `target`, `targetname`, `enabled`, `render_scale`, `teleport_cooldown`, `exit_offset`, `reverse_normal` | Linked render+teleport portal between portal pairs. |
+| `func_mirror` | `enabled`, `mirror_axis`, `mirror_face_from_texture`, `render_scale`, `reverse_normal` | Solid reflective mirror (no teleport); place on a face textured with a mirror material. |
 | `trigger_area` | trigger base keys | Single-use trigger; disables collision after first fire. |
 | `trigger_once` | trigger base keys | Fires once on player enter. |
 | `trigger_multiple` | `wait` + trigger base keys | Repeatable trigger with cooldown. |

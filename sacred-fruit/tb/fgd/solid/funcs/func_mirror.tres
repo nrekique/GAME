@@ -1,0 +1,46 @@
+[gd_resource type="Resource" script_class="FuncGodotFGDSolidClass" format=3 uid="uid://dkcen5acj3e61"]
+
+[ext_resource type="Script" path="res://addons/func_godot/src/fgd/func_godot_fgd_solid_class.gd" id="1_solid"]
+[ext_resource type="Resource" path="res://tb/fgd/base/func_base.tres" id="2_func_base"]
+[ext_resource type="Script" path="res://entities/funcs/func_mirror.gd" id="3_script"]
+
+[resource]
+script = ExtResource("1_solid")
+build_visuals = false
+collision_shape_type = 2
+add_textures_metadata = true
+add_vertex_metadata = true
+add_face_position_metadata = true
+add_face_normal_metadata = true
+script_class = ExtResource("3_script")
+classname = "func_mirror"
+description = "Solid mirror brush. Reflects scene view but blocks player movement."
+base_classes = Array[Resource]([ExtResource("2_func_base")])
+class_properties = {
+"enabled": true,
+"mirror_axis": "auto",
+"mirror_debug": false,
+"mirror_face_from_texture": true,
+"mirror_flip_u": false,
+"render_camera_offset": 0.0,
+"render_scale": 0.75,
+"render_use_oblique_clip": false,
+"render_use_window_projection": true,
+"reverse_normal": false
+}
+class_property_descriptions = {
+"enabled": "Enable/disable this mirror at runtime.",
+"mirror_axis": "Mirror facing axis override: auto, x, -x, y, -y, z, -z.",
+"mirror_debug": "Print runtime mirror diagnostics.",
+"mirror_face_from_texture": "If true, detect the mirror-textured brush face and place runtime mirror on that side.",
+"mirror_flip_u": "Flip mirror texture horizontally. Leave off for matrix-driven reflection; enable only if your mirror appears reversed.",
+"render_camera_offset": "Small offset along mirror normal to stabilize close views.",
+"render_scale": "Mirror render resolution scale. Lower = faster.",
+"render_use_oblique_clip": "Clip reflection render against mirror plane. Disabled by default for runtime stability.",
+"render_use_window_projection": "Use off-axis projection so mirror view aligns to mirror quad.",
+"reverse_normal": "Flip mirror facing direction if the reflection appears on the wrong side."
+}
+meta_properties = {
+"color": Color(0.6, 0.8, 1, 1)
+}
+node_class = "StaticBody3D"

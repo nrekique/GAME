@@ -35,11 +35,14 @@ func validate_or_error() -> bool:
 	for required_property in REQUIRED_PROPERTIES:
 		if not property_set.has(required_property):
 			push_error("Portal3DAdapter: Plugin API mismatch, missing property '%s'." % required_property)
+			probe.free()
 			return false
 	for required_method in REQUIRED_METHODS:
 		if not probe.has_method(required_method):
 			push_error("Portal3DAdapter: Plugin API mismatch, missing method '%s'." % required_method)
+			probe.free()
 			return false
+	probe.free()
 	return true
 
 
@@ -94,10 +97,36 @@ func link_portals(portal: Node, exit_portal: Node, src_cam: Camera3D) -> bool:
 	return true
 
 
-func deactivate_portal(portal: Node) -> void:
+func deactivate_portal(portal: Node, destroy_viewports: bool = false) -> void:
 	if portal == null:
 		return
-	portal.call("deactivate")
+	# Ensure plugin-owned render resources are torn down, not only hidden.
+	if portal.has_method("deactivate"):
+		portal.call("deactivate", destroy_viewports)
+	# Break common render references eagerly to avoid exit-time resource leaks.
+	if portal.has_method("set"):
+		portal.set("exit_portal", null)
+		portal.set("player_camera", null)
+	if not destroy_viewports:
+		return
+	var portal_viewport_v: Variant = portal.get("portal_viewport")
+	if portal_viewport_v is SubViewport:
+		var pv := portal_viewport_v as SubViewport
+		pv.render_target_update_mode = SubViewport.UPDATE_DISABLED
+		pv.world_3d = null
+		if is_instance_valid(pv):
+			pv.free()
+	var portal_camera_v: Variant = portal.get("portal_camera")
+	if portal_camera_v is Camera3D:
+		var pc := portal_camera_v as Camera3D
+		pc.environment = null
+		pc.attributes = null
+	var portal_mesh_v: Variant = portal.get("portal_mesh")
+	if portal_mesh_v is MeshInstance3D:
+		var pm := portal_mesh_v as MeshInstance3D
+		if pm.material_override is ShaderMaterial:
+			(pm.material_override as ShaderMaterial).set_shader_parameter("albedo", null)
+		pm.material_override = null
 
 
 func _instantiate_portal() -> Node3D:

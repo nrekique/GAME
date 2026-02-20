@@ -679,7 +679,7 @@ func build_entity_collision_shapes() -> void:
 				metadata["collision_shape_to_face_range_map"] = collision_shape_to_face_range_map
 
 			if not metadata.is_empty():
-				entity_nodes[entity_idx].set_meta("func_godot_mesh_data", metadata)
+				entity_nodes[entity_idx].set_meta("func_godot_mesh_data", _inject_special_face_metadata(metadata))
 
 ## Build Dictionary from entity indices to [ArrayMesh] instances
 func build_entity_mesh_dict() -> Dictionary:
@@ -840,14 +840,18 @@ func apply_entity_meshes() -> void:
 		var mesh: Mesh = entity_mesh_dict[entity_idx] as Mesh
 		var mesh_instance: MeshInstance3D = entity_mesh_instances[entity_idx] as MeshInstance3D
 		if not mesh or not mesh_instance:
-			if mesh.has_meta("func_godot_mesh_data"):
+			if mesh != null and mesh.has_meta("func_godot_mesh_data"):
 				mesh.remove_meta("func_godot_mesh_data")
 			continue
 		
 		mesh_instance.set_mesh(mesh)
 		queue_add_child(entity_nodes[entity_idx], mesh_instance)
 		if mesh.has_meta("func_godot_mesh_data"):
-			entity_nodes[entity_idx].set_meta("func_godot_mesh_data", mesh.get_meta("func_godot_mesh_data"))
+			var md_v: Variant = mesh.get_meta("func_godot_mesh_data")
+			if md_v is Dictionary:
+				entity_nodes[entity_idx].set_meta("func_godot_mesh_data", _inject_special_face_metadata(md_v as Dictionary))
+			else:
+				entity_nodes[entity_idx].set_meta("func_godot_mesh_data", md_v)
 			mesh.remove_meta("func_godot_mesh_data")
 
 func apply_entity_occluders() -> void:
@@ -877,6 +881,187 @@ func apply_entity_occluders() -> void:
 		occluder.set_arrays(verts, indices)
 		
 		occluder_instance.occluder = occluder
+
+
+func _inject_special_face_metadata(metadata: Dictionary) -> Dictionary:
+	var out: Dictionary = metadata.duplicate(true)
+	var portal_face: Dictionary = _compute_special_face_metadata(out, "portal")
+	if not portal_face.is_empty():
+		out["portal_face"] = portal_face
+	var mirror_face: Dictionary = _compute_special_face_metadata(out, "mirror")
+	if not mirror_face.is_empty():
+		out["mirror_face"] = mirror_face
+	return out
+
+
+func _compute_special_face_metadata(metadata: Dictionary, texture_token: String) -> Dictionary:
+	if not (metadata.has("normals") and metadata.has("positions") and metadata.has("textures") and metadata.has("texture_names")):
+		return {}
+	var normals_v: Variant = metadata["normals"]
+	var positions_v: Variant = metadata["positions"]
+	var textures_v: Variant = metadata["textures"]
+	var texture_names_v: Variant = metadata["texture_names"]
+	if not (normals_v is PackedVector3Array and positions_v is PackedVector3Array and textures_v is PackedInt32Array and texture_names_v is Array):
+		return {}
+	var normals: PackedVector3Array = normals_v as PackedVector3Array
+	var positions: PackedVector3Array = positions_v as PackedVector3Array
+	var textures: PackedInt32Array = textures_v as PackedInt32Array
+	var texture_names: Array = texture_names_v as Array
+	var vertices: PackedVector3Array = PackedVector3Array()
+	if metadata.has("vertices"):
+		var vertices_v: Variant = metadata["vertices"]
+		if vertices_v is PackedVector3Array:
+			vertices = vertices_v as PackedVector3Array
+
+	var tri_count: int = mini(mini(normals.size(), positions.size()), textures.size())
+	if tri_count <= 0:
+		return {}
+
+	var token: String = texture_token.to_lower()
+	var candidate_texture_indices: Dictionary = {}
+	for i in range(texture_names.size()):
+		var tex_name: String = String(texture_names[i]).to_lower()
+		if tex_name.find(token) != -1:
+			candidate_texture_indices[i] = true
+	if candidate_texture_indices.is_empty():
+		return {}
+
+	var groups: Array[Dictionary] = []
+	for tri_idx in range(tri_count):
+		var texture_idx: int = textures[tri_idx]
+		if not candidate_texture_indices.has(texture_idx):
+			continue
+		var n: Vector3 = normals[tri_idx].normalized()
+		if n.length_squared() < 0.000001:
+			continue
+		var d: float = n.dot(positions[tri_idx])
+		var matched_group: int = -1
+		var aligned_n: Vector3 = n
+		var aligned_d: float = d
+		for gi in range(groups.size()):
+			var g: Dictionary = groups[gi]
+			var gn_v: Variant = g.get("normal", Vector3.ZERO)
+			if not (gn_v is Vector3):
+				continue
+			var gn: Vector3 = gn_v as Vector3
+			var gd: float = float(g.get("plane_d", 0.0))
+			var dot_n: float = aligned_n.dot(gn)
+			var test_n: Vector3 = aligned_n
+			var test_d: float = aligned_d
+			if dot_n < 0.0:
+				test_n = -test_n
+				test_d = -test_d
+				dot_n = -dot_n
+			if dot_n < 0.995:
+				continue
+			if absf(test_d - gd) > 0.08:
+				continue
+			matched_group = gi
+			aligned_n = test_n
+			aligned_d = test_d
+			break
+		if matched_group < 0:
+			groups.append({
+				"normal": aligned_n,
+				"plane_d": aligned_d,
+				"triangles": PackedInt32Array([tri_idx])
+			})
+		else:
+			var group: Dictionary = groups[matched_group]
+			var tris_v: Variant = group.get("triangles", PackedInt32Array())
+			var tris: PackedInt32Array = tris_v as PackedInt32Array
+			tris.append(tri_idx)
+			group["triangles"] = tris
+			group["normal"] = aligned_n
+			group["plane_d"] = aligned_d
+			groups[matched_group] = group
+
+	var has_vertices: bool = vertices.size() >= tri_count * 3
+	var best_face: Dictionary = {}
+	var best_area: float = -1.0
+	for group in groups:
+		var normal_v: Variant = group.get("normal", Vector3.ZERO)
+		if not (normal_v is Vector3):
+			continue
+		var normal: Vector3 = (normal_v as Vector3).normalized()
+		if normal.length_squared() < 0.000001:
+			continue
+		var up_ref: Vector3 = Vector3.UP
+		if absf(up_ref.dot(normal)) > 0.98:
+			up_ref = Vector3.FORWARD
+		var y_axis: Vector3 = (up_ref - normal * up_ref.dot(normal)).normalized()
+		if y_axis.length_squared() < 0.000001:
+			y_axis = Vector3.UP
+			if absf(y_axis.dot(normal)) > 0.98:
+				y_axis = Vector3.FORWARD
+			y_axis = (y_axis - normal * y_axis.dot(normal)).normalized()
+		var x_axis: Vector3 = y_axis.cross(normal).normalized()
+		if x_axis.length_squared() < 0.000001:
+			continue
+		y_axis = normal.cross(x_axis).normalized()
+
+		var min_x: float = 1e20
+		var max_x: float = -1e20
+		var min_y: float = 1e20
+		var max_y: float = -1e20
+		var sum_w: float = 0.0
+		var sample_count: int = 0
+
+		var tris_any: Variant = group.get("triangles", PackedInt32Array())
+		if not (tris_any is PackedInt32Array):
+			continue
+		var triangles: PackedInt32Array = tris_any as PackedInt32Array
+		for tri in triangles:
+			var tri_i: int = int(tri)
+			if tri_i < 0 or tri_i >= tri_count:
+				continue
+			if has_vertices:
+				var base_idx: int = tri_i * 3
+				if base_idx + 2 >= vertices.size():
+					continue
+				for k in range(3):
+					var p: Vector3 = vertices[base_idx + k]
+					var px: float = x_axis.dot(p)
+					var py: float = y_axis.dot(p)
+					min_x = minf(min_x, px)
+					max_x = maxf(max_x, px)
+					min_y = minf(min_y, py)
+					max_y = maxf(max_y, py)
+					sum_w += normal.dot(p)
+					sample_count += 1
+			else:
+				var p_center: Vector3 = positions[tri_i]
+				var px_center: float = x_axis.dot(p_center)
+				var py_center: float = y_axis.dot(p_center)
+				min_x = minf(min_x, px_center)
+				max_x = maxf(max_x, px_center)
+				min_y = minf(min_y, py_center)
+				max_y = maxf(max_y, py_center)
+				sum_w += normal.dot(p_center)
+				sample_count += 1
+
+		if sample_count <= 0:
+			continue
+		var half_x: float = (max_x - min_x) * 0.5
+		var half_y: float = (max_y - min_y) * 0.5
+		if half_x <= 0.001 or half_y <= 0.001:
+			continue
+		var mid_x: float = (min_x + max_x) * 0.5
+		var mid_y: float = (min_y + max_y) * 0.5
+		var mid_w: float = sum_w / float(sample_count)
+		var center: Vector3 = x_axis * mid_x + y_axis * mid_y + normal * mid_w
+		var area: float = (half_x * 2.0) * (half_y * 2.0)
+		if area > best_area:
+			best_area = area
+			best_face = {
+				"center": center,
+				"normal": normal,
+				"x_axis": x_axis,
+				"y_axis": y_axis,
+				"half_extents": Vector2(half_x, half_y)
+			}
+
+	return best_face
 
 ## Resolve entity group hierarchy, turning Trenchbroom groups into nodes and queueing their contents to be added to said nodes as children
 func resolve_trenchbroom_group_hierarchy() -> void:

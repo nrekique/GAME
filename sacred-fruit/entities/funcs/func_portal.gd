@@ -25,7 +25,6 @@ const PLANE_EPSILON := 0.01
 const DEBUG_PRINT_INTERVAL := 0.6
 const PORTAL_SURFACE_RENDER_LAYER := 20
 const PORTAL_SURFACE_LAYER_MASK := 1 << (PORTAL_SURFACE_RENDER_LAYER - 1)
-const ENABLE_EXPERIMENTAL_OBLIQUE := false
 const PORTAL3D_ADAPTER_SCRIPT := preload("res://entities/funcs/portal3d_adapter.gd")
 
 var _linked_portal: FuncPortal = null
@@ -134,6 +133,32 @@ func _ready() -> void:
 	_resolve_linked_portal(true)
 
 
+func _exit_tree() -> void:
+	if Engine.is_editor_hint():
+		return
+	if _plugin_portal != null:
+		_plugin_adapter.deactivate_portal(_plugin_portal, true)
+		if _plugin_portal.has_method("set"):
+			_plugin_portal.set("exit_portal", null)
+		if is_instance_valid(_plugin_portal):
+			_plugin_portal.free()
+	_plugin_portal = null
+	if _surface_material != null:
+		_surface_material.albedo_texture = null
+	if _surface != null:
+		_surface.material_override = null
+	if _viewport != null:
+		_viewport.render_target_update_mode = SubViewport.UPDATE_DISABLED
+		_viewport.world_3d = null
+		if is_instance_valid(_viewport):
+			_viewport.free()
+	_viewport = null
+	_portal_camera = null
+	_linked_portal = null
+	_prev_local_pos_by_entity.clear()
+	_teleport_until_msec.clear()
+
+
 func _process(delta: float) -> void:
 	if Engine.is_editor_hint():
 		return
@@ -206,7 +231,7 @@ func _resolve_linked_portal(force: bool) -> void:
 		_has_stable_window_projection = false
 		if use_portals_plugin:
 			_sync_plugin_link()
-	if portal_debug:
+	if portal_debug and _is_runtime_debug_enabled():
 		if linked_id != _last_linked_portal_id:
 			_last_linked_portal_id = linked_id
 			print("[Portal DEBUG] %s link target=%s resolved=%s" % [name, target, (str(linked_id) if linked_id != -1 else "none")])
@@ -214,7 +239,7 @@ func _resolve_linked_portal(force: bool) -> void:
 
 func _build_portal_surface() -> void:
 	_configure_portal_plane()
-	if portal_debug:
+	if portal_debug and _is_runtime_debug_enabled():
 		print("[Portal DEBUG] %s half_extents=%s depth=%.3f axis=%s reverse=%s" % [name, str(_portal_half_extents), _portal_depth, portal_axis, str(reverse_normal)])
 
 	if _surface == null:
@@ -367,7 +392,7 @@ func _is_render_ready() -> bool:
 
 
 func _debug_tick(delta: float) -> void:
-	if not portal_debug:
+	if not portal_debug or not _is_runtime_debug_enabled():
 		return
 	_debug_accum += delta
 	if _debug_accum < DEBUG_PRINT_INTERVAL:
@@ -732,6 +757,8 @@ func _try_configure_portal_plane_from_metadata() -> bool:
 	if not (md_v is Dictionary):
 		return false
 	var md: Dictionary = md_v as Dictionary
+	if _try_configure_portal_plane_from_exact_metadata(md):
+		return true
 	if not (md.has("normals") and md.has("positions") and md.has("textures") and md.has("texture_names")):
 		return false
 	var normals_v: Variant = md["normals"]
@@ -819,11 +846,69 @@ func _try_configure_portal_plane_from_metadata() -> bool:
 	_portal_depth = maxf(_support_extent(half_size, local_normal) * 2.0, 0.01)
 	_portal_local_xform = Transform3D(Basis(x_axis, y_axis, local_normal), local_center)
 	_auto_use_opposite_face = false
-	if portal_debug:
+	if portal_debug and _is_runtime_debug_enabled():
 		print("[Portal DEBUG] %s metadata space select local_center=%s world_as_local=%s direct_local=%s local_normal=%s fit_ok=%s half=%s" % [
 			name, str(local_center), str(local_center_world), str(local_center_direct), str(local_normal), str(fit_ok), str(_portal_half_extents)
 		])
 	return true
+
+
+func _try_configure_portal_plane_from_exact_metadata(md: Dictionary) -> bool:
+	var face_v: Variant = _dict_get_string_key(md, "portal_face", null)
+	if not (face_v is Dictionary):
+		return false
+	var face: Dictionary = face_v as Dictionary
+	var center_v: Variant = face.get("center", null)
+	var normal_v: Variant = face.get("normal", null)
+	var x_axis_v: Variant = face.get("x_axis", null)
+	var y_axis_v: Variant = face.get("y_axis", null)
+	var half_v: Variant = face.get("half_extents", null)
+	if not (center_v is Vector3 and normal_v is Vector3 and x_axis_v is Vector3 and y_axis_v is Vector3 and half_v is Vector2):
+		return false
+
+	var local_center: Vector3 = center_v as Vector3
+	var local_normal: Vector3 = (normal_v as Vector3).normalized()
+	var x_axis: Vector3 = (x_axis_v as Vector3).normalized()
+	var y_axis: Vector3 = (y_axis_v as Vector3).normalized()
+	var half_extents: Vector2 = half_v as Vector2
+
+	if local_normal.length_squared() < 0.000001:
+		return false
+	if reverse_normal:
+		local_normal = -local_normal
+		x_axis = -x_axis
+	y_axis = (y_axis - local_normal * y_axis.dot(local_normal)).normalized()
+	if y_axis.length_squared() < 0.000001:
+		var up_ref: Vector3 = Vector3.UP
+		if absf(up_ref.dot(local_normal)) > 0.98:
+			up_ref = Vector3.FORWARD
+		y_axis = (up_ref - local_normal * up_ref.dot(local_normal)).normalized()
+	if y_axis.length_squared() < 0.000001:
+		return false
+	x_axis = y_axis.cross(local_normal).normalized()
+	if x_axis.length_squared() < 0.000001:
+		return false
+	y_axis = local_normal.cross(x_axis).normalized()
+
+	var half_size: Vector3 = _compute_local_bounds().size.abs() * 0.5
+	_portal_local_xform = Transform3D(Basis(x_axis, y_axis, local_normal), local_center)
+	_portal_half_extents = Vector2(maxf(half_extents.x, 0.05), maxf(half_extents.y, 0.05))
+	_portal_depth = maxf(_support_extent(half_size, local_normal) * 2.0, 0.01)
+	_auto_use_opposite_face = false
+	if portal_debug and _is_runtime_debug_enabled():
+		print("[Portal DEBUG] %s exact metadata local_center=%s local_normal=%s half=%s" % [
+			name, str(local_center), str(local_normal), str(_portal_half_extents)
+		])
+	return true
+
+
+func _dict_get_string_key(dict: Dictionary, key: String, default_value: Variant = null) -> Variant:
+	if dict.has(key):
+		return dict[key]
+	var key_name: StringName = StringName(key)
+	if dict.has(key_name):
+		return dict[key_name]
+	return default_value
 
 
 func _point_in_bounds_score(bounds: AABB, p: Vector3) -> float:
@@ -1139,7 +1224,7 @@ func _apply_window_projection(z_near: float) -> bool:
 		_stable_frustum_offset = offset
 		_has_stable_window_projection = true
 		return true
-	if ENABLE_EXPERIMENTAL_OBLIQUE and render_use_oblique_clip and _apply_oblique_clip_projection(left, right, bottom, top, z_near, _portal_camera.far):
+	if render_use_oblique_clip and _apply_oblique_clip_projection(left, right, bottom, top, z_near, _portal_camera.far):
 		_stable_frustum_size = need_h
 		_stable_frustum_offset = offset
 		_has_stable_window_projection = true
@@ -1225,13 +1310,13 @@ func _sign_nonzero(v: float) -> float:
 
 func _is_oblique_projection_api_available() -> bool:
 	if _oblique_api_checked:
-		if render_use_oblique_clip and portal_debug and not _oblique_api_available and not _oblique_unavailable_logged:
+		if render_use_oblique_clip and portal_debug and _is_runtime_debug_enabled() and not _oblique_api_available and not _oblique_unavailable_logged:
 			_oblique_unavailable_logged = true
 			print("[Portal DEBUG] %s oblique clip API unavailable; using frustum fallback." % [name])
 		return _oblique_api_available
 	_oblique_api_checked = true
 	_oblique_api_available = _portal_camera != null and _portal_camera.has_method("set_custom_projection")
-	if render_use_oblique_clip and portal_debug and not _oblique_api_available and not _oblique_unavailable_logged:
+	if render_use_oblique_clip and portal_debug and _is_runtime_debug_enabled() and not _oblique_api_available and not _oblique_unavailable_logged:
 		_oblique_unavailable_logged = true
 		print("[Portal DEBUG] %s oblique clip API unavailable; using frustum fallback." % [name])
 	return _oblique_api_available
@@ -1250,6 +1335,13 @@ func _is_custom_projection_api_available() -> bool:
 	_custom_proj_api_checked = true
 	_custom_proj_api_available = _portal_camera != null and _portal_camera.has_method("set_custom_projection")
 	return _custom_proj_api_available
+
+
+func _is_runtime_debug_enabled() -> bool:
+	var dbg := get_node_or_null("/root/DEBUG")
+	if dbg != null and dbg.has_method("is_runtime_debug_enabled"):
+		return bool(dbg.call("is_runtime_debug_enabled"))
+	return false
 
 
 func _get_portal_corners_world() -> Array[Vector3]:
