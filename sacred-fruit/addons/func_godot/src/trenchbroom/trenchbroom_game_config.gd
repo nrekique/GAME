@@ -57,7 +57,7 @@ enum GameConfigVersion {
 @export var fgd_file : FuncGodotFGDFile = preload("res://addons/func_godot/fgd/func_godot_fgd.tres")
 
 ## Scale expression that modifies the default display scale of entities in TrenchBroom. See the [**TrenchBroom Documentation**](https://trenchbroom.github.io/manual/latest/#game_configuration_files_entities) for more information.
-@export var entity_scale: String = "32"
+@export var entity_scale: String = "1"
 
 ## Arrays containing the TrenchBroomTag resource type.
 @export_category("Tags")

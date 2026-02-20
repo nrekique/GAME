@@ -13,4 +13,5 @@ game_name = "Sacred Fruit"
 icon = ExtResource("5_b6swg")
 filesystem_search_path = "tb"
 fgd_file = ExtResource("4_lorow")
+entity_scale = "0.25"
 metadata/_custom_type_script = "uid://cnjify41re66d"

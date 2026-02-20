@@ -15,4 +15,5 @@ game_name = "Sacred Fruit"
 icon = ExtResource("7_syglu")
 filesystem_search_path = "tb"
 fgd_file = ExtResource("5_437bd")
+entity_scale = "0.25"
 brush_tags = Array[Resource]([ExtResource("1_kwmkr"), ExtResource("2_aoq2g")])

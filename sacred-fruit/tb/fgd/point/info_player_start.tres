@@ -21,6 +21,8 @@ class_property_descriptions = {
 }
 meta_properties = {
 "color": Color(0, 0.9, 0.3, 1),
+"iconsprite": "\"fgd/entities/sprites/player.png\"",
+"scale": "0.15",
 "size": AABB(-16, -16, -24, 16, 16, 32)
 }
 node_class = "Marker3D"
