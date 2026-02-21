@@ -8,6 +8,7 @@ const REQUIRED_PROPERTIES: PackedStringArray = [
 	"teleport_collision_mask",
 	"teleport_interactions",
 	"keep_viewports_hot",
+	"viewport_size_mode",
 	"view_direction",
 	"portal_render_layer",
 	"start_deactivated",
@@ -47,7 +48,8 @@ func validate_or_error() -> bool:
 
 
 func create_runtime_portal(parent: Node, node_name: String, portal_size: Vector2, src_cam: Camera3D,
-		enabled: bool, teleport_collision_mask: int, render_layer_mask: int) -> Node3D:
+		enabled: bool, teleport_collision_mask: int, keep_viewports_hot: bool, render_scale: float,
+		render_layer_mask: int) -> Node3D:
 	if parent == null:
 		push_error("Portal3DAdapter: parent is null.")
 		return null
@@ -66,7 +68,11 @@ func create_runtime_portal(parent: Node, node_name: String, portal_size: Vector2
 	portal.set("is_teleport", enabled)
 	portal.set("teleport_collision_mask", teleport_collision_mask)
 	portal.set("teleport_interactions", 1) # CALLBACK
-	portal.set("keep_viewports_hot", true)
+	portal.set("keep_viewports_hot", keep_viewports_hot)
+	# FRACTIONAL viewport mode uses a percent of the window size.
+	portal.set("viewport_size_mode", 2)
+	if _has_property(portal, "_viewport_size_fractional"):
+		portal.set("_viewport_size_fractional", clampf(render_scale, 0.1, 1.0))
 	portal.set("view_direction", 0) # FRONT_AND_BACK
 	portal.set("portal_render_layer", render_layer_mask)
 	portal.set("start_deactivated", true)
@@ -78,13 +84,16 @@ func create_runtime_portal(parent: Node, node_name: String, portal_size: Vector2
 
 
 func configure_runtime_portal(portal: Node, src_cam: Camera3D, enabled: bool,
-		teleport_collision_mask: int) -> void:
+		teleport_collision_mask: int, keep_viewports_hot: bool, render_scale: float) -> void:
 	if portal == null or src_cam == null:
 		return
 	portal.set("is_teleport", enabled)
 	portal.set("teleport_collision_mask", teleport_collision_mask)
 	portal.set("teleport_interactions", 1) # CALLBACK
-	portal.set("keep_viewports_hot", true)
+	portal.set("keep_viewports_hot", keep_viewports_hot)
+	portal.set("viewport_size_mode", 2)
+	if _has_property(portal, "_viewport_size_fractional"):
+		portal.set("_viewport_size_fractional", clampf(render_scale, 0.1, 1.0))
 	portal.set("player_camera", src_cam)
 
 
@@ -137,3 +146,12 @@ func _instantiate_portal() -> Node3D:
 	if portal_obj is Node3D:
 		return portal_obj as Node3D
 	return null
+
+
+func _has_property(node: Object, property_name: String) -> bool:
+	if node == null:
+		return false
+	for p in node.get_property_list():
+		if p is Dictionary and String((p as Dictionary).get("name", "")) == property_name:
+			return true
+	return false

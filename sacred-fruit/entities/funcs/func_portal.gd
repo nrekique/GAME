@@ -9,6 +9,7 @@ extends StaticBody3D
 @export_flags_3d_physics var plugin_teleport_collision_mask: int = 0xFFFFF
 @export var plugin_use_opposite_face: bool = false
 @export var plugin_face_from_portal_texture: bool = true
+@export var plugin_keep_viewports_hot: bool = true
 @export var portal_axis: String = "auto"
 @export var portal_debug: bool = false
 @export_range(0.25, 1.0, 0.05) var render_scale: float = 0.75
@@ -54,6 +55,13 @@ var _oblique_unavailable_logged: bool = false
 var _custom_proj_api_checked: bool = false
 var _custom_proj_api_available: bool = false
 var _auto_use_opposite_face: bool = false
+var _last_target_resolve_key: String = ""
+var _plugin_link_dirty: bool = true
+var _last_plugin_cam_id: int = -1
+var _last_plugin_enabled: bool = true
+var _last_plugin_mask: int = -1
+var _last_plugin_keep_hot: bool = true
+var _last_plugin_render_scale: float = -1.0
 
 
 static func _to_bool(value: Variant, default_value: bool) -> bool:
@@ -88,6 +96,8 @@ func _func_godot_apply_properties(props: Dictionary) -> void:
 		plugin_use_opposite_face = _to_bool(props["plugin_use_opposite_face"], plugin_use_opposite_face)
 	if props.has("plugin_face_from_portal_texture"):
 		plugin_face_from_portal_texture = _to_bool(props["plugin_face_from_portal_texture"], plugin_face_from_portal_texture)
+	if props.has("plugin_keep_viewports_hot"):
+		plugin_keep_viewports_hot = _to_bool(props["plugin_keep_viewports_hot"], plugin_keep_viewports_hot)
 	if props.has("portal_axis"):
 		portal_axis = String(props["portal_axis"]).strip_edges().to_lower()
 	if props.has("portal_debug"):
@@ -229,6 +239,7 @@ func _resolve_linked_portal(force: bool) -> void:
 	var linked_id: int = -1 if _linked_portal == null else _linked_portal.get_instance_id()
 	if linked_id != prev_linked_id:
 		_has_stable_window_projection = false
+		_plugin_link_dirty = true
 		if use_portals_plugin:
 			_sync_plugin_link()
 	if portal_debug and _is_runtime_debug_enabled():
@@ -585,6 +596,7 @@ func _on_properties_applied() -> void:
 		_setup_plugin_portal()
 		_resolve_linked_portal(true)
 		_sync_plugin_link()
+		_mark_plugin_runtime_dirty()
 		return
 	_has_stable_window_projection = false
 	_hide_source_mesh_children()
@@ -603,7 +615,8 @@ func _process_plugin_portal(delta: float) -> void:
 		_setup_plugin_portal_with_camera(src_cam)
 		if _plugin_portal == null:
 			return
-	_resolve_linked_portal(false)
+	if _needs_link_resolve():
+		_resolve_linked_portal(false)
 	_link_retry_accum += delta
 	if _linked_portal == null and _link_retry_accum >= LINK_RETRY_SECONDS:
 		_link_retry_accum = 0.0
@@ -613,7 +626,7 @@ func _process_plugin_portal(delta: float) -> void:
 	if _should_use_opposite_face():
 		pxf = _to_opposite_portal_face(pxf)
 	_plugin_portal.global_transform = pxf
-	_plugin_adapter.configure_runtime_portal(_plugin_portal, src_cam, enabled, plugin_teleport_collision_mask)
+	_configure_plugin_runtime_if_needed(src_cam)
 
 	if _linked_portal != null:
 		_sync_plugin_link()
@@ -639,12 +652,15 @@ func _setup_plugin_portal_with_camera(src_cam: Camera3D) -> void:
 		src_cam,
 		enabled,
 		plugin_teleport_collision_mask,
+		plugin_keep_viewports_hot,
+		render_scale,
 		PORTAL_SURFACE_LAYER_MASK
 	)
 	if p == null:
 		push_error("%s: Failed to create Portal3D runtime wrapper (plugin missing/version mismatch)." % name)
 		return
 	_plugin_portal = p
+	_mark_plugin_runtime_dirty()
 	var pxf: Transform3D = _get_portal_global_transform()
 	if _should_use_opposite_face():
 		pxf = _to_opposite_portal_face(pxf)
@@ -659,6 +675,9 @@ func _sync_plugin_link() -> void:
 		return
 	if _linked_portal == null or _linked_portal._plugin_portal == null:
 		_plugin_adapter.deactivate_portal(_plugin_portal)
+		_plugin_link_dirty = true
+		return
+	if not _plugin_link_dirty:
 		return
 	var src_cam: Camera3D = get_viewport().get_camera_3d()
 	if src_cam == null:
@@ -666,6 +685,8 @@ func _sync_plugin_link() -> void:
 	_ensure_camera_environment(src_cam)
 	if not _plugin_adapter.link_portals(_plugin_portal, _linked_portal._plugin_portal, src_cam):
 		push_error("%s: Failed to link runtime portal pair." % name)
+		return
+	_plugin_link_dirty = false
 
 
 func _to_opposite_portal_face(xf: Transform3D) -> Transform3D:
@@ -737,6 +758,63 @@ func _ensure_camera_environment(src_cam: Camera3D) -> void:
 		return
 	# Plugin _setup_cameras() duplicates camera/world environment; guarantee one exists.
 	src_cam.environment = Environment.new()
+
+
+func _mark_plugin_runtime_dirty() -> void:
+	_plugin_link_dirty = true
+	_last_plugin_cam_id = -1
+	_last_plugin_enabled = not enabled
+	_last_plugin_mask = -1
+	_last_plugin_keep_hot = not plugin_keep_viewports_hot
+	_last_plugin_render_scale = -1.0
+
+
+func _configure_plugin_runtime_if_needed(src_cam: Camera3D) -> void:
+	if _plugin_portal == null or src_cam == null:
+		return
+	var cam_id: int = src_cam.get_instance_id()
+	var scale: float = clampf(render_scale, 0.25, 1.0)
+	var changed: bool = false
+	if cam_id != _last_plugin_cam_id:
+		changed = true
+	if enabled != _last_plugin_enabled:
+		changed = true
+	if plugin_teleport_collision_mask != _last_plugin_mask:
+		changed = true
+	if plugin_keep_viewports_hot != _last_plugin_keep_hot:
+		changed = true
+	if absf(scale - _last_plugin_render_scale) > 0.001:
+		changed = true
+	if not changed:
+		return
+	_plugin_adapter.configure_runtime_portal(
+		_plugin_portal,
+		src_cam,
+		enabled,
+		plugin_teleport_collision_mask,
+		plugin_keep_viewports_hot,
+		scale
+	)
+	_last_plugin_cam_id = cam_id
+	_last_plugin_enabled = enabled
+	_last_plugin_mask = plugin_teleport_collision_mask
+	_last_plugin_keep_hot = plugin_keep_viewports_hot
+	_last_plugin_render_scale = scale
+	_plugin_link_dirty = true
+
+
+func _needs_link_resolve() -> bool:
+	var target_key: String = target.strip_edges()
+	if target_key != _last_target_resolve_key:
+		_last_target_resolve_key = target_key
+		return true
+	if _linked_portal == null:
+		return true
+	if not is_instance_valid(_linked_portal):
+		return true
+	if not _portal_matches_targetname(_linked_portal, target_key):
+		return true
+	return false
 
 
 func _configure_portal_plane() -> void:
