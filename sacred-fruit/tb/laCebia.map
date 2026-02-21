@@ -962,22 +962,22 @@
 }
 // entity 15
 {
-"classname" "player"
+"classname" "info_player_start"
 "origin" "-141 18 93"
 }
 // entity 16
 {
-"classname" "OmniLight3D"
+"classname" "light_omni"
 "origin" "-72 -88 152"
 }
 // entity 17
 {
-"classname" "OmniLight3D"
+"classname" "light_omni"
 "origin" "-72 88 152"
 }
 // entity 18
 {
-"classname" "SpotLight3D"
+"classname" "light_spot"
 "origin" "-71.0694 -8 155.473"
 "angle" "180"
 }

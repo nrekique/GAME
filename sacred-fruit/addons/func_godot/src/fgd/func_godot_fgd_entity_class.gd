@@ -69,6 +69,10 @@ func build_def_text(target_editor: FuncGodotFGDFile.FuncGodotTargetMapEditors = 
 			if prop == "size" or prop == "model":
 				continue
 		
+		# TrenchBroom does not support "scale(...)" as an entity header meta property.
+		if prop == "scale" and target_editor == FuncGodotFGDFile.FuncGodotTargetMapEditors.TRENCHBROOM:
+			continue
+		
 		if prop == 'model' and target_editor != FuncGodotFGDFile.FuncGodotTargetMapEditors.TRENCHBROOM:
 			continue
 		

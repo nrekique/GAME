@@ -2722,7 +2722,7 @@
 }
 // entity 20
 {
-"classname" "mover"
+"classname" "func_move"
 "axis" "0 1 0"
 "targetname" "door"
 "speed" "1"
@@ -3449,7 +3449,7 @@
 }
 // entity 24
 {
-"classname" "OmniLight3D"
+"classname" "light_omni"
 "origin" "552 568 87"
 "_tb_layer" "2525"
 }
@@ -4759,7 +4759,7 @@
 }
 // entity 33
 {
-"classname" "trigger"
+"classname" "trigger_multiple"
 "target" "door"
 "_tb_layer" "2525"
 // brush 0
@@ -5639,25 +5639,25 @@
 }
 // entity 45
 {
-"classname" "OmniLight3D"
+"classname" "light_omni"
 "origin" "480 310 52"
 "_tb_group" "2448"
 }
 // entity 46
 {
-"classname" "OmniLight3D"
+"classname" "light_omni"
 "origin" "553 480 87"
 "_tb_layer" "2525"
 }
 // entity 47
 {
-"classname" "OmniLight3D"
+"classname" "light_omni"
 "origin" "552 400 87"
 "_tb_layer" "2525"
 }
 // entity 48
 {
-"classname" "Portal"
+"classname" "func_portal"
 "_tb_layer" "2525"
 // brush 0
 {
@@ -6602,7 +6602,7 @@
 }
 // entity 54
 {
-"classname" "OmniLight3D"
+"classname" "light_omni"
 "origin" "700 568 87"
 "_tb_layer" "2525"
 }
@@ -6771,7 +6771,7 @@
 }
 // entity 56
 {
-"classname" "actor_marsfrog"
+"classname" "npc"
 "origin" "760 136 8"
 "_tb_layer" "2525"
 }
@@ -7219,13 +7219,13 @@
 }
 // entity 59
 {
-"classname" "OmniLight3D"
+"classname" "light_omni"
 "origin" "700 404 87"
 "_tb_layer" "2525"
 }
 // entity 60
 {
-"classname" "OmniLight3D"
+"classname" "light_omni"
 "origin" "700 480 87"
 "_tb_layer" "2525"
 }
@@ -7360,13 +7360,13 @@
 }
 // entity 65
 {
-"classname" "OmniLight3D"
+"classname" "light_omni"
 "origin" "626 454 27"
 "_tb_layer" "2525"
 }
 // entity 66
 {
-"classname" "illusionary"
+"classname" "func_illusionary"
 "_tb_layer" "2525"
 // brush 0
 {

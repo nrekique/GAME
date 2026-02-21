@@ -1412,7 +1412,7 @@
 }
 // entity 21
 {
-"classname" "actor_marsfrog"
+"classname" "npc"
 "origin" "328 232 0"
 }
 // entity 22

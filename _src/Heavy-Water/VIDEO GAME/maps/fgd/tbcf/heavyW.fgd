@@ -26,7 +26,7 @@
 @PointClass color(34 249 133) iconsprite("maps/fgd/sprites/player.png") size(-15 -15 -30, 15 15 30) = player[
 ]
 
-@PointClass color(48 231 235) model({ "path": "maps/fgd/models/npc.obj" }) size(-15 -15 -30, 15 15 30) = npc[
+@PointClass color(48 231 235) model({ "path": "maps/fgd/entities/models/npc.obj" }) size(-15 -15 -30, 15 15 30) = npc[
 ]
 
 @SolidClass color(193 0 204) size(-8 -8 -8, 8 8 8) = Portal : "Use along with portal texture, and link with another portal brush" [

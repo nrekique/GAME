@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="FuncGodotFGDPointClass" format=3 uid="uid://spqyp6anheae"]
+
+[ext_resource type="Script" uid="uid://dne2nmlkaibt5" path="res://addons/func_godot/src/fgd/func_godot_fgd_point_class.gd" id="1_point"]
+[ext_resource type="Resource" uid="uid://cwbnifad3sdgw" path="res://tb/fgd/base/targetname_base.tres" id="2_targetname"]
+[ext_resource type="Script" uid="uid://8mijoa3ymi6k" path="res://entities/logic/env_weather.gd" id="3_script"]
+
+[resource]
+script = ExtResource("1_point")
+script_class = ExtResource("3_script")
+apply_rotation_on_map_build = false
+apply_scale_on_map_build = false
+classname = "env_weather"
+description = "Global weather mode and intensity."
+base_classes = Array[Resource]([ExtResource("2_targetname")])
+class_properties = {
+"weather_intensity": 0.0,
+"weather_mode": "none"
+}
+class_property_descriptions = {
+"weather_intensity": "Weather particle intensity 0..1.",
+"weather_mode": "none/rain/snow"
+}
+meta_properties = {
+"color": Color(0.55, 0.7, 0.95, 1),
+"iconsprite": "\"fgd/entities/sprites/env_weather.png\"",
+"scale": "0.15",
+"size": AABB(-8, -8, -8, 8, 8, 8)
+}
+node_class = "Node3D"

@@ -1,5 +1,7 @@
 extends Node3D
 
+const SANDSTORM_CONTROLLER_SCRIPT := preload("res://scripts/sandstorm_controller.gd")
+
 @export var spawn_collectibles: bool = false
 @export var spawn_exit: bool = false
 
@@ -23,6 +25,13 @@ var _has_run: bool = false
 @export var collectible_collision_radius: float = 0.35
 @export var exit_box_size: Vector3 = Vector3(1.5, 2.0, 1.5)
 
+@export var enable_sandstorm: bool = true
+@export_range(0.0, 1.0, 0.01) var sandstorm_intensity: float = 0.85
+@export var sandstorm_wind_direction: Vector2 = Vector2(1.0, 0.25)
+@export_range(0.0, 4.0, 0.01) var sandstorm_wind_speed: float = 1.0
+
+var _sandstorm: Node3D = null
+
 
 func _ready() -> void:
 	if Engine.is_editor_hint():
@@ -42,6 +51,7 @@ func run_setup() -> void:
 	if get_tree() == null:
 		return
 	await get_tree().process_frame
+	_ensure_sandstorm()
 
 	var player := _find_player()
 	if player == null:
@@ -63,6 +73,25 @@ func run_setup() -> void:
 		_try_spawn_exit_from_map()
 	if fallback_spawn_hurt_from_map:
 		_try_spawn_hurt_from_map()
+
+
+func _ensure_sandstorm() -> void:
+	if not enable_sandstorm:
+		return
+	if SANDSTORM_CONTROLLER_SCRIPT == null:
+		return
+	if _sandstorm != null and is_instance_valid(_sandstorm):
+		return
+	var storm := SANDSTORM_CONTROLLER_SCRIPT.new() as Node3D
+	if storm == null:
+		return
+	storm.name = "SandstormController"
+	storm.set("enabled", true)
+	storm.set("intensity", sandstorm_intensity)
+	storm.set("wind_direction", sandstorm_wind_direction)
+	storm.set("wind_speed", sandstorm_wind_speed)
+	add_child(storm)
+	_sandstorm = storm
 
 
 func _try_spawn_collectibles_from_map() -> void:

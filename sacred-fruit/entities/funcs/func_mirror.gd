@@ -7,21 +7,42 @@ extends StaticBody3D
 @export var mirror_debug: bool = false
 @export var mirror_face_from_texture: bool = true
 @export var mirror_flip_u: bool = false
-@export_range(0.25, 1.0, 0.05) var render_scale: float = 0.75
+@export var use_plugin_mirror: bool = true
+@export var mirror_tint: Color = Color(0.9, 0.97, 0.94, 1.0)
+@export_range(0.0, 30.0, 0.01) var mirror_distortion: float = 0.0
+@export var mirror_distortion_texture: Texture2D
+@export_range(0.25, 1.0, 0.05) var render_scale: float = 0.60
 @export var render_use_window_projection: bool = true
 @export var render_use_oblique_clip: bool = false
 @export_range(-0.05, 0.05, 0.001) var render_camera_offset: float = 0.0
+@export var render_cull_exclude_layers: PackedInt32Array = PackedInt32Array()
+@export var manager_enable_budgeting: bool = true
+@export_range(1, 64, 1) var manager_max_active_mirrors: int = 2
+@export_range(0.02, 0.5, 0.01) var manager_refresh_seconds: float = 0.08
+@export_range(0.0, 4.0, 0.01) var manager_min_runtime_priority: float = 0.0
+@export var manager_require_visible_in_frustum: bool = true
+@export var manager_require_line_of_sight: bool = true
+@export var plugin_dynamic_resolution: bool = true
+@export_range(32, 1024, 1) var plugin_min_resolution_per_unit: int = 96
+@export_range(32, 2048, 1) var plugin_max_resolution_per_unit: int = 512
+@export_range(32, 1024, 1) var plugin_base_resolution_per_unit: int = 96
+@export_range(0.1, 8.0, 0.05) var plugin_resolution_near_distance: float = 1.0
+@export_range(1.0, 8.0, 0.05) var plugin_max_resolution_boost: float = 3.0
 @export var reverse_normal: bool = false
 @export var mirror_allow_legacy_face_fit: bool = false
 
 const DEBUG_PRINT_INTERVAL := 5.0
 const MIRROR_SURFACE_RENDER_LAYER := 19
 const MIRROR_SURFACE_LAYER_MASK := 1 << (MIRROR_SURFACE_RENDER_LAYER - 1)
+const PLUGIN_MIRROR_LAYER_INDEX := 2
+const MIRROR_RUNTIME_MANAGER_SCRIPT := preload("res://entities/funcs/mirror_runtime_manager.gd")
+const MIRROR_RUNTIME_MANAGER_NAME := "MirrorRuntimeManager"
 
 var _viewport: SubViewport
 var _mirror_camera: Camera3D
 var _surface: MeshInstance3D
 var _surface_material: ShaderMaterial
+var _plugin_mirror: Node3D
 var _mirror_local_xform: Transform3D = Transform3D.IDENTITY
 var _mirror_half_extents: Vector2 = Vector2.ONE * 0.5
 var _mirror_depth: float = 0.1
@@ -37,6 +58,13 @@ var _custom_proj_api_available: bool = false
 var _metadata_retry_pending: bool = false
 var _used_metadata_plane: bool = false
 var _metadata_warning_emitted: bool = false
+var _mirror_runtime_manager: Node = null
+var _managed_mirror_active: bool = true
+var _last_plugin_resolution_per_unit: int = -1
+var _last_plugin_cull_signature: String = ""
+var _last_plugin_tint: Color = Color(-1.0, -1.0, -1.0, -1.0)
+var _last_plugin_distortion: float = -1.0
+var _last_plugin_distortion_tex_id: int = -1
 
 const MIRROR_SURFACE_SHADER := "
 shader_type spatial;
@@ -44,15 +72,23 @@ render_mode unshaded, cull_disabled;
 uniform sampler2D mirror_tex : source_color;
 uniform bool mirror_valid = false;
 uniform bool mirror_flip_u = true;
+uniform vec3 mirror_tint = vec3(0.9, 0.97, 0.94);
+uniform sampler2D distort_tex : source_color;
+uniform float distort_strength = 0.0;
+uniform bool distort_enabled = false;
 void fragment() {
 	if (mirror_valid) {
 		// Mirror texture must be sampled in mesh UV-space.
 		// SCREEN_UV causes a screen-projected look (window-like drift).
 		vec2 uv = UV;
+		if (distort_enabled && distort_strength > 0.0001) {
+			vec2 d = texture(distort_tex, uv).rg * 2.0 - 1.0;
+			uv += d * (distort_strength * 0.03);
+		}
 		if (mirror_flip_u) {
 			uv.x = 1.0 - uv.x;
 		}
-		ALBEDO = texture(mirror_tex, uv).rgb;
+		ALBEDO = texture(mirror_tex, uv).rgb * mirror_tint;
 	} else {
 		ALBEDO = vec3(0.12, 0.12, 0.12);
 	}
@@ -88,6 +124,22 @@ func _func_godot_apply_properties(props: Dictionary) -> void:
 		mirror_face_from_texture = _to_bool(props["mirror_face_from_texture"], mirror_face_from_texture)
 	if props.has("mirror_flip_u"):
 		mirror_flip_u = _to_bool(props["mirror_flip_u"], mirror_flip_u)
+	if props.has("use_plugin_mirror"):
+		use_plugin_mirror = _to_bool(props["use_plugin_mirror"], use_plugin_mirror)
+	if props.has("mirror_tint"):
+		mirror_tint = _to_color(props["mirror_tint"], mirror_tint)
+	if props.has("mirror_distortion"):
+		mirror_distortion = clampf(float(props["mirror_distortion"]), 0.0, 30.0)
+	if props.has("mirror_distortion_texture"):
+		var tex_v: Variant = props["mirror_distortion_texture"]
+		if tex_v is Texture2D:
+			mirror_distortion_texture = tex_v as Texture2D
+		else:
+			var tex_path: String = String(tex_v).strip_edges()
+			if tex_path != "":
+				var loaded: Resource = load(tex_path)
+				if loaded is Texture2D:
+					mirror_distortion_texture = loaded as Texture2D
 	if props.has("render_scale"):
 		render_scale = clampf(float(props["render_scale"]), 0.25, 1.0)
 	if props.has("render_use_window_projection"):
@@ -96,6 +148,20 @@ func _func_godot_apply_properties(props: Dictionary) -> void:
 		render_use_oblique_clip = _to_bool(props["render_use_oblique_clip"], render_use_oblique_clip)
 	if props.has("render_camera_offset"):
 		render_camera_offset = clampf(float(props["render_camera_offset"]), -0.05, 0.05)
+	if props.has("render_cull_exclude_layers"):
+		render_cull_exclude_layers = _parse_layer_list(props["render_cull_exclude_layers"])
+	if props.has("manager_enable_budgeting"):
+		manager_enable_budgeting = _to_bool(props["manager_enable_budgeting"], manager_enable_budgeting)
+	if props.has("manager_max_active_mirrors"):
+		manager_max_active_mirrors = maxi(1, int(props["manager_max_active_mirrors"]))
+	if props.has("manager_refresh_seconds"):
+		manager_refresh_seconds = clampf(float(props["manager_refresh_seconds"]), 0.02, 0.5)
+	if props.has("manager_min_runtime_priority"):
+		manager_min_runtime_priority = clampf(float(props["manager_min_runtime_priority"]), 0.0, 4.0)
+	if props.has("manager_require_visible_in_frustum"):
+		manager_require_visible_in_frustum = _to_bool(props["manager_require_visible_in_frustum"], manager_require_visible_in_frustum)
+	if props.has("manager_require_line_of_sight"):
+		manager_require_line_of_sight = _to_bool(props["manager_require_line_of_sight"], manager_require_line_of_sight)
 	if props.has("reverse_normal"):
 		reverse_normal = _to_bool(props["reverse_normal"], reverse_normal)
 	_on_properties_applied()
@@ -104,6 +170,15 @@ func _func_godot_apply_properties(props: Dictionary) -> void:
 func _ready() -> void:
 	if Engine.is_editor_hint():
 		return
+	add_to_group("func_mirror")
+	_register_mirror_runtime_manager()
+	if use_plugin_mirror:
+		_configure_mirror_plane()
+		if mirror_face_from_texture and not _used_metadata_plane:
+			_configure_mirror_plane_from_bounds(_compute_local_bounds())
+		_hide_source_mesh_children()
+		_setup_plugin_mirror()
+		return
 	_build_mirror_surface()
 	_setup_mirror_viewport()
 
@@ -111,6 +186,10 @@ func _ready() -> void:
 func _exit_tree() -> void:
 	if Engine.is_editor_hint():
 		return
+	_unregister_mirror_runtime_manager()
+	if _plugin_mirror != null and is_instance_valid(_plugin_mirror):
+		_plugin_mirror.queue_free()
+	_plugin_mirror = null
 	if _surface_material != null:
 		_surface_material.set_shader_parameter("mirror_valid", false)
 		_surface_material.set_shader_parameter("mirror_tex", null)
@@ -128,6 +207,24 @@ func _exit_tree() -> void:
 func _process(delta: float) -> void:
 	if Engine.is_editor_hint():
 		return
+	if use_plugin_mirror:
+		_apply_mirror_runtime_budget()
+		if not enabled:
+			if _plugin_mirror != null and is_instance_valid(_plugin_mirror):
+				_plugin_mirror.visible = false
+			return
+		if manager_enable_budgeting and not _managed_mirror_active:
+			return
+		if _plugin_mirror == null or not is_instance_valid(_plugin_mirror):
+			_setup_plugin_mirror()
+		_sync_plugin_mirror()
+		_debug_tick(delta)
+		return
+	_apply_mirror_runtime_budget()
+	if manager_enable_budgeting and not _managed_mirror_active:
+		if _surface != null:
+			_surface.visible = false
+		return
 	if not enabled:
 		if _surface != null:
 			_surface.visible = false
@@ -141,6 +238,15 @@ func _process(delta: float) -> void:
 
 func _on_properties_applied() -> void:
 	if Engine.is_editor_hint() or not is_inside_tree():
+		return
+	_register_mirror_runtime_manager()
+	if use_plugin_mirror:
+		_configure_mirror_plane()
+		if mirror_face_from_texture and not _used_metadata_plane:
+			_configure_mirror_plane_from_bounds(_compute_local_bounds())
+		_hide_source_mesh_children()
+		_setup_plugin_mirror()
+		_sync_plugin_mirror()
 		return
 	# During FuncGodot startup, properties can apply before face metadata is attached.
 	# Defer mirror-surface rebuild to _ready in that case to avoid false fallback warnings.
@@ -196,6 +302,10 @@ func _setup_mirror_viewport() -> void:
 		_surface_material.set_shader_parameter("mirror_tex", _viewport.get_texture())
 		_surface_material.set_shader_parameter("mirror_valid", true)
 		_surface_material.set_shader_parameter("mirror_flip_u", mirror_flip_u)
+		_surface_material.set_shader_parameter("mirror_tint", mirror_tint)
+		_surface_material.set_shader_parameter("distort_tex", mirror_distortion_texture)
+		_surface_material.set_shader_parameter("distort_strength", mirror_distortion)
+		_surface_material.set_shader_parameter("distort_enabled", mirror_distortion_texture != null)
 
 
 func _sync_viewport_world() -> void:
@@ -274,6 +384,9 @@ func _update_mirror_camera() -> void:
 	_mirror_camera.keep_aspect = Camera3D.KEEP_HEIGHT
 	var src_mask: int = src_cam.cull_mask
 	var filtered_mask: int = src_mask & ~MIRROR_SURFACE_LAYER_MASK
+	for layer_num in render_cull_exclude_layers:
+		if layer_num >= 1 and layer_num <= 32:
+			filtered_mask &= ~(1 << (layer_num - 1))
 	_mirror_camera.cull_mask = filtered_mask if filtered_mask != 0 else src_mask
 	_mirror_camera.environment = src_cam.environment
 	_mirror_camera.attributes = src_cam.attributes
@@ -300,6 +413,10 @@ func _update_surface_state() -> void:
 		_surface_material.set_shader_parameter("mirror_tex", _viewport.get_texture())
 		_surface_material.set_shader_parameter("mirror_valid", true)
 		_surface_material.set_shader_parameter("mirror_flip_u", mirror_flip_u)
+		_surface_material.set_shader_parameter("mirror_tint", mirror_tint)
+		_surface_material.set_shader_parameter("distort_tex", mirror_distortion_texture)
+		_surface_material.set_shader_parameter("distort_strength", mirror_distortion)
+		_surface_material.set_shader_parameter("distort_enabled", mirror_distortion_texture != null)
 	else:
 		_surface_material.set_shader_parameter("mirror_valid", false)
 
@@ -491,6 +608,267 @@ func _sign_nonzero(v: float) -> float:
 	return -1.0 if v < 0.0 else 1.0
 
 
+func _to_color(value: Variant, default_value: Color) -> Color:
+	if value is Color:
+		return value as Color
+	var s: String = String(value).strip_edges()
+	if s == "":
+		return default_value
+	if s.begins_with("#"):
+		return Color.from_string(s, default_value)
+	var tokens: PackedStringArray = s.replace(",", " ").split(" ", false)
+	if tokens.size() >= 3:
+		var a: float = default_value.a
+		if tokens.size() >= 4:
+			a = tokens[3].to_float()
+		return Color(tokens[0].to_float(), tokens[1].to_float(), tokens[2].to_float(), a)
+	return default_value
+
+
+func _parse_layer_list(value: Variant) -> PackedInt32Array:
+	if value is PackedInt32Array:
+		return value as PackedInt32Array
+	var out: PackedInt32Array = PackedInt32Array()
+	if value is Array:
+		var arr: Array = value as Array
+		for item in arr:
+			var n: int = int(item)
+			if n >= 1 and n <= 32:
+				out.append(n)
+		return out
+	var text: String = String(value).strip_edges()
+	if text == "":
+		return out
+	var tokens: PackedStringArray = text.replace(",", " ").split(" ", false)
+	for token in tokens:
+		var n2: int = token.to_int()
+		if n2 >= 1 and n2 <= 32:
+			out.append(n2)
+	return out
+
+
+func _register_mirror_runtime_manager() -> void:
+	if Engine.is_editor_hint() or not manager_enable_budgeting:
+		return
+	if _mirror_runtime_manager == null:
+		var existing: Node = get_node_or_null("/root/%s" % MIRROR_RUNTIME_MANAGER_NAME)
+		if existing != null and existing.has_method("register_mirror"):
+			_mirror_runtime_manager = existing
+		else:
+			var mgr: Node = MIRROR_RUNTIME_MANAGER_SCRIPT.new()
+			mgr.name = MIRROR_RUNTIME_MANAGER_NAME
+			get_tree().root.add_child(mgr)
+			_mirror_runtime_manager = mgr
+	if _mirror_runtime_manager != null:
+		_mirror_runtime_manager.call("register_mirror", self, manager_max_active_mirrors, manager_refresh_seconds, manager_min_runtime_priority)
+
+
+func _unregister_mirror_runtime_manager() -> void:
+	if _mirror_runtime_manager == null:
+		return
+	if is_instance_valid(_mirror_runtime_manager):
+		_mirror_runtime_manager.call("unregister_mirror", self)
+	_mirror_runtime_manager = null
+
+
+func mirror_runtime_priority(cam: Camera3D) -> float:
+	if cam == null or not enabled:
+		return -1.0e20
+	if not use_plugin_mirror:
+		return -1.0e20
+	if manager_require_visible_in_frustum and not _is_mirror_visible_from_camera(cam):
+		return -1.0e20
+	if manager_require_line_of_sight and not _has_mirror_line_of_sight(cam):
+		return -1.0e20
+	var mirror_xf: Transform3D = _get_mirror_global_transform()
+	var mirror_origin: Vector3 = mirror_xf.origin
+	var to_mirror: Vector3 = mirror_origin - cam.global_position
+	var dist2: float = maxf(to_mirror.length_squared(), 0.001)
+	var dir_to_mirror: Vector3 = to_mirror.normalized()
+	var cam_forward: Vector3 = -cam.global_basis.z.normalized()
+	var face_normal: Vector3 = mirror_xf.basis.z.normalized()
+	var forward_align: float = maxf(cam_forward.dot(dir_to_mirror), 0.0)
+	var facing: float = absf(face_normal.dot(-dir_to_mirror))
+	var mirror_radius: float = maxf(_mirror_half_extents.length(), 0.05)
+	var distance_term: float = mirror_radius / maxf(sqrt(dist2), 0.05)
+	var distance_quality: float = clampf(distance_term * 2.0, 0.0, 2.0)
+	var behind_penalty: float = 0.2 if cam.is_position_behind(mirror_origin) else 1.0
+	return (distance_quality * 1.5 + forward_align + facing * 0.4) * behind_penalty
+
+
+func _is_mirror_visible_from_camera(cam: Camera3D) -> bool:
+	if cam == null:
+		return false
+	var origin: Vector3 = _get_mirror_global_transform().origin
+	if cam.is_position_in_frustum(origin):
+		return true
+	var corners: Array[Vector3] = _get_mirror_corners_world()
+	for corner: Vector3 in corners:
+		if cam.is_position_in_frustum(corner):
+			return true
+	return false
+
+
+func _has_mirror_line_of_sight(cam: Camera3D) -> bool:
+	if cam == null:
+		return false
+	var world: World3D = cam.get_world_3d()
+	if world == null:
+		return true
+	var from: Vector3 = cam.global_position
+	var to: Vector3 = _get_mirror_global_transform().origin
+	if from.distance_squared_to(to) <= 0.0001:
+		return true
+	var params: PhysicsRayQueryParameters3D = PhysicsRayQueryParameters3D.create(from, to)
+	params.collide_with_bodies = true
+	params.collide_with_areas = false
+	var excludes: Array[RID] = [self.get_rid()]
+	var cam_parent: Node = cam.get_parent()
+	if cam_parent is CollisionObject3D:
+		excludes.append((cam_parent as CollisionObject3D).get_rid())
+	params.exclude = excludes
+	var hit: Dictionary = world.direct_space_state.intersect_ray(params)
+	if hit.is_empty():
+		return true
+	var collider_v: Variant = hit.get("collider", null)
+	if collider_v == null:
+		return true
+	if collider_v is Node:
+		var node: Node = collider_v as Node
+		if self.is_ancestor_of(node) or node == self or node.is_ancestor_of(self):
+			return true
+	return false
+
+
+func _apply_mirror_runtime_budget() -> void:
+	if not manager_enable_budgeting:
+		_set_managed_mirror_active(true)
+		return
+	if _mirror_runtime_manager == null:
+		_register_mirror_runtime_manager()
+		if _mirror_runtime_manager == null:
+			return
+	var active: bool = bool(_mirror_runtime_manager.call("is_mirror_render_active", self))
+	_set_managed_mirror_active(active)
+
+
+func _set_managed_mirror_active(active: bool) -> void:
+	if _managed_mirror_active == active:
+		return
+	_managed_mirror_active = active
+	if _plugin_mirror != null and is_instance_valid(_plugin_mirror):
+		_plugin_mirror.set_process(active)
+		_plugin_mirror.visible = active and enabled
+		var plugin_vp: SubViewport = _get_plugin_subviewport()
+		if plugin_vp != null:
+			plugin_vp.render_target_update_mode = SubViewport.UPDATE_WHEN_VISIBLE if active else SubViewport.UPDATE_DISABLED
+	if _viewport != null:
+		_viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS if active else SubViewport.UPDATE_DISABLED
+
+
+func _get_plugin_subviewport() -> SubViewport:
+	if _plugin_mirror == null or not is_instance_valid(_plugin_mirror):
+		return null
+	var by_path: Node = _plugin_mirror.get_node_or_null("MirrorContainer/SubViewport")
+	if by_path is SubViewport:
+		return by_path as SubViewport
+	var by_name: Node = _plugin_mirror.find_child("SubViewport", true, false)
+	if by_name is SubViewport:
+		return by_name as SubViewport
+	return null
+
+
+func _setup_plugin_mirror() -> void:
+	if _plugin_mirror != null and is_instance_valid(_plugin_mirror):
+		return
+	var script_res: Resource = load("res://addons/Mirror/Mirror/Mirror.gd")
+	if not (script_res is Script):
+		push_warning("%s: Mirror plugin backend script not found. Falling back to built-in mirror backend." % name)
+		use_plugin_mirror = false
+		_build_mirror_surface()
+		_setup_mirror_viewport()
+		return
+	_plugin_mirror = Node3D.new()
+	_plugin_mirror.name = "PluginMirrorBackend"
+	_plugin_mirror.set_script(script_res as Script)
+	add_child(_plugin_mirror)
+	_plugin_mirror.set_process(_managed_mirror_active)
+	_sync_plugin_mirror()
+
+
+func _sync_plugin_mirror() -> void:
+	if _plugin_mirror == null or not is_instance_valid(_plugin_mirror):
+		return
+	_plugin_mirror.visible = enabled and _managed_mirror_active
+	_plugin_mirror.transform = _mirror_local_xform
+	var wanted_size: Vector2 = _mirror_half_extents * 2.0
+	_plugin_mirror.set("size", wanted_size)
+	var rpu: int = _compute_plugin_resolution_per_unit()
+	if rpu != _last_plugin_resolution_per_unit:
+		_plugin_mirror.set("ResolutionPerUnit", rpu)
+		_last_plugin_resolution_per_unit = rpu
+	_plugin_mirror.set("MainCamPath", NodePath(""))
+	if mirror_tint != _last_plugin_tint:
+		_plugin_mirror.set("MirrorColor", mirror_tint)
+		_last_plugin_tint = mirror_tint
+	if absf(mirror_distortion - _last_plugin_distortion) > 0.0001:
+		_plugin_mirror.set("MirrorDistortion", mirror_distortion)
+		_last_plugin_distortion = mirror_distortion
+	var tex_id: int = -1 if mirror_distortion_texture == null else mirror_distortion_texture.get_instance_id()
+	if tex_id != _last_plugin_distortion_tex_id:
+		_plugin_mirror.set("DistortionTexture", mirror_distortion_texture)
+		_last_plugin_distortion_tex_id = tex_id
+	var cull: Array[int] = _build_plugin_cull_mask()
+	var cull_sig: String = ""
+	for i in range(cull.size()):
+		if i > 0:
+			cull_sig += ","
+		cull_sig += str(cull[i])
+	if cull_sig != _last_plugin_cull_signature:
+		_plugin_mirror.set("cullMask", cull)
+		_last_plugin_cull_signature = cull_sig
+	var plugin_vp: SubViewport = _get_plugin_subviewport()
+	if plugin_vp != null:
+		plugin_vp.render_target_update_mode = SubViewport.UPDATE_WHEN_VISIBLE if _managed_mirror_active else SubViewport.UPDATE_DISABLED
+
+
+func _build_plugin_cull_mask() -> Array[int]:
+	var out: Array[int] = []
+	var seen: Dictionary = {}
+	# Mirror plugin expects 0-based layer indices.
+	var mirror_surface_idx: int = PLUGIN_MIRROR_LAYER_INDEX
+	out.append(mirror_surface_idx)
+	seen[mirror_surface_idx] = true
+	for layer_num in render_cull_exclude_layers:
+		if layer_num < 1 or layer_num > 32:
+			continue
+		var idx: int = layer_num - 1
+		if seen.has(idx):
+			continue
+		out.append(idx)
+		seen[idx] = true
+	return out
+
+
+func _compute_plugin_resolution_per_unit() -> int:
+	var base_rpu: int = maxi(int(round(float(plugin_base_resolution_per_unit) * render_scale)), 32)
+	var min_rpu: int = mini(plugin_min_resolution_per_unit, plugin_max_resolution_per_unit)
+	var max_rpu: int = maxi(plugin_min_resolution_per_unit, plugin_max_resolution_per_unit)
+	if not plugin_dynamic_resolution:
+		return clampi(base_rpu, min_rpu, max_rpu)
+
+	var src_cam: Camera3D = get_viewport().get_camera_3d()
+	if src_cam == null:
+		return clampi(base_rpu, min_rpu, max_rpu)
+	var mirror_xf: Transform3D = _get_mirror_global_transform()
+	var n: Vector3 = mirror_xf.basis.z.normalized()
+	var dist: float = absf((src_cam.global_position - mirror_xf.origin).dot(n))
+	var safe_dist: float = maxf(dist, 0.05)
+	var boost: float = clampf(plugin_resolution_near_distance / safe_dist, 1.0, plugin_max_resolution_boost)
+	var dynamic_rpu: int = int(round(float(base_rpu) * boost))
+	return clampi(dynamic_rpu, min_rpu, max_rpu)
+
+
 func _get_mirror_corners_world() -> Array[Vector3]:
 	var xf: Transform3D = _get_mirror_global_transform()
 	var hx: float = _mirror_half_extents.x
@@ -513,6 +891,8 @@ func _hide_source_mesh_children() -> void:
 			continue
 		if mi == _surface:
 			continue
+		if _plugin_mirror != null and is_instance_valid(_plugin_mirror) and _plugin_mirror.is_ancestor_of(mi):
+			continue
 		mi.visible = false
 
 
@@ -534,6 +914,9 @@ func _retry_configure_mirror_plane_from_metadata() -> void:
 		return
 	if _try_configure_mirror_plane_from_metadata():
 		_metadata_warning_emitted = false
+		if use_plugin_mirror:
+			_sync_plugin_mirror()
+			return
 		if _surface != null:
 			var quad := QuadMesh.new()
 			quad.size = _mirror_half_extents * 2.0

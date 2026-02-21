@@ -1,8 +1,8 @@
 [gd_resource type="Resource" script_class="FuncGodotFGDSolidClass" format=3 uid="uid://dkcen5acj3e61"]
 
-[ext_resource type="Script" path="res://addons/func_godot/src/fgd/func_godot_fgd_solid_class.gd" id="1_solid"]
-[ext_resource type="Resource" path="res://tb/fgd/base/func_base.tres" id="2_func_base"]
-[ext_resource type="Script" path="res://entities/funcs/func_mirror.gd" id="3_script"]
+[ext_resource type="Script" uid="uid://dhw5od2dxhpfo" path="res://addons/func_godot/src/fgd/func_godot_fgd_solid_class.gd" id="1_solid"]
+[ext_resource type="Resource" uid="uid://d4buv26pirxbl" path="res://tb/fgd/base/func_base.tres" id="2_func_base"]
+[ext_resource type="Script" uid="uid://drib6e5yvqx0m" path="res://entities/funcs/func_mirror.gd" id="3_script"]
 
 [resource]
 script = ExtResource("1_solid")
@@ -18,27 +18,57 @@ description = "Solid mirror brush. Reflects scene view but blocks player movemen
 base_classes = Array[Resource]([ExtResource("2_func_base")])
 class_properties = {
 "enabled": true,
+"manager_enable_budgeting": true,
+"manager_max_active_mirrors": 2,
+"manager_refresh_seconds": 0.08,
+"manager_require_line_of_sight": true,
+"manager_require_visible_in_frustum": true,
 "mirror_axis": "auto",
 "mirror_debug": false,
+"mirror_distortion": 0.0,
 "mirror_face_from_texture": true,
 "mirror_flip_u": false,
+"mirror_tint": Color(0.9, 0.97, 0.94, 1),
+"plugin_base_resolution_per_unit": 96,
+"plugin_dynamic_resolution": true,
+"plugin_max_resolution_boost": 3.0,
+"plugin_max_resolution_per_unit": 512,
+"plugin_min_resolution_per_unit": 96,
+"plugin_resolution_near_distance": 1.0,
 "render_camera_offset": 0.0,
-"render_scale": 0.75,
+"render_cull_exclude_layers": "",
+"render_scale": 0.6,
 "render_use_oblique_clip": true,
 "render_use_window_projection": true,
-"reverse_normal": false
+"reverse_normal": false,
+"use_plugin_mirror": true
 }
 class_property_descriptions = {
 "enabled": "Enable/disable this mirror at runtime.",
+"manager_enable_budgeting": "If true, only the top-priority mirrors render each budget refresh.",
+"manager_max_active_mirrors": "Maximum number of mirrors rendering at once.",
+"manager_refresh_seconds": "How often mirror active-set priority is recalculated.",
+"manager_require_line_of_sight": "Only allow mirror rendering budget candidates with clear camera line-of-sight (cheap ray test).",
+"manager_require_visible_in_frustum": "Only allow mirror rendering budget candidates when mirror origin/corners are inside camera frustum.",
 "mirror_axis": "Mirror facing axis override: auto, x, -x, y, -y, z, -z.",
 "mirror_debug": "Print runtime mirror diagnostics.",
+"mirror_distortion": "Distortion amount (0-30). Requires mirror_distortion_texture in the scene/script for visible warping.",
 "mirror_face_from_texture": "If true, detect the mirror-textured brush face and place runtime mirror on that side.",
 "mirror_flip_u": "Flip mirror texture horizontally. Leave off for matrix-driven reflection; enable only if your mirror appears reversed.",
+"mirror_tint": "Color tint multiplied with reflection.",
+"plugin_base_resolution_per_unit": "Base plugin mirror pixels-per-unit before dynamic boost.",
+"plugin_dynamic_resolution": "Increase mirror resolution when the camera is close to reduce blocky close-up reflections.",
+"plugin_max_resolution_boost": "Maximum close-range multiplier for plugin mirror resolution.",
+"plugin_max_resolution_per_unit": "Hard cap for plugin mirror pixels-per-unit.",
+"plugin_min_resolution_per_unit": "Minimum plugin mirror pixels-per-unit.",
+"plugin_resolution_near_distance": "Distance where dynamic close-up scaling starts to boost resolution.",
 "render_camera_offset": "Small offset along mirror normal to stabilize close views.",
+"render_cull_exclude_layers": "Comma-separated render layers (1-32) to hide from the mirror camera.",
 "render_scale": "Mirror render resolution scale. Lower = faster.",
 "render_use_oblique_clip": "Apply oblique near-plane clipping aligned to the mirror plane for close-up geometric correctness.",
 "render_use_window_projection": "Use off-axis projection so mirror view aligns to mirror quad.",
-"reverse_normal": "Flip mirror facing direction if the reflection appears on the wrong side."
+"reverse_normal": "Flip mirror facing direction if the reflection appears on the wrong side.",
+"use_plugin_mirror": "If true, use addon Mirror backend for reflection rendering."
 }
 meta_properties = {
 "color": Color(0.6, 0.8, 1, 1)

@@ -11,17 +11,20 @@ extends StaticBody3D
 @export var plugin_face_from_portal_texture: bool = true
 @export var plugin_keep_viewports_hot: bool = true
 @export var manager_enable_budgeting: bool = true
-@export_range(1, 64, 1) var manager_max_active_portals: int = 8
-@export_range(0.02, 0.5, 0.01) var manager_refresh_seconds: float = 0.08
+@export_range(1, 64, 1) var manager_max_active_portals: int = 4
+@export_range(0.02, 0.5, 0.01) var manager_refresh_seconds: float = 0.10
+@export_range(0.0, 4.0, 0.01) var manager_min_runtime_priority: float = 0.0
+@export var manager_require_visible_in_frustum: bool = true
+@export var manager_require_line_of_sight: bool = true
 @export var dynamic_quality_enabled: bool = true
-@export_range(0.25, 1.0, 0.05) var dynamic_min_render_scale: float = 0.35
+@export_range(0.25, 1.0, 0.05) var dynamic_min_render_scale: float = 0.30
 @export_range(0.5, 200.0, 0.5) var dynamic_near_distance: float = 6.0
 @export_range(1.0, 400.0, 0.5) var dynamic_far_distance: float = 32.0
 @export_range(0.0, 1.0, 0.05) var dynamic_size_influence: float = 0.65
 @export_range(0.01, 0.25, 0.01) var dynamic_scale_step: float = 0.05
 @export var portal_axis: String = "auto"
 @export var portal_debug: bool = false
-@export_range(0.25, 1.0, 0.05) var render_scale: float = 0.75
+@export_range(0.25, 1.0, 0.05) var render_scale: float = 0.60
 @export var render_use_window_projection: bool = true
 @export var render_use_oblique_clip: bool = false
 @export_range(-0.05, 0.05, 0.001) var render_camera_offset: float = 0.0
@@ -117,6 +120,12 @@ func _func_godot_apply_properties(props: Dictionary) -> void:
 		manager_max_active_portals = maxi(1, int(props["manager_max_active_portals"]))
 	if props.has("manager_refresh_seconds"):
 		manager_refresh_seconds = clampf(float(props["manager_refresh_seconds"]), 0.02, 0.5)
+	if props.has("manager_min_runtime_priority"):
+		manager_min_runtime_priority = clampf(float(props["manager_min_runtime_priority"]), 0.0, 4.0)
+	if props.has("manager_require_visible_in_frustum"):
+		manager_require_visible_in_frustum = _to_bool(props["manager_require_visible_in_frustum"], manager_require_visible_in_frustum)
+	if props.has("manager_require_line_of_sight"):
+		manager_require_line_of_sight = _to_bool(props["manager_require_line_of_sight"], manager_require_line_of_sight)
 	if props.has("dynamic_quality_enabled"):
 		dynamic_quality_enabled = _to_bool(props["dynamic_quality_enabled"], dynamic_quality_enabled)
 	if props.has("dynamic_min_render_scale"):
@@ -812,7 +821,7 @@ func _register_portal_runtime_manager() -> void:
 			get_tree().root.add_child(mgr)
 			_portal_runtime_manager = mgr
 	if _portal_runtime_manager != null:
-		_portal_runtime_manager.register_portal(self, manager_max_active_portals, manager_refresh_seconds)
+		_portal_runtime_manager.register_portal(self, manager_max_active_portals, manager_refresh_seconds, manager_min_runtime_priority)
 
 
 func _unregister_portal_runtime_manager() -> void:
@@ -828,6 +837,10 @@ func portal_runtime_priority(cam: Camera3D) -> float:
 		return -1.0e20
 	if _linked_portal == null or _plugin_portal == null:
 		return -1.0e20
+	if manager_require_visible_in_frustum and not _is_portal_visible_from_camera(cam):
+		return -1.0e20
+	if manager_require_line_of_sight and not _has_portal_line_of_sight(cam):
+		return -1.0e20
 	var portal_origin: Vector3 = _get_portal_global_transform().origin
 	var to_portal: Vector3 = portal_origin - cam.global_position
 	var dist2: float = maxf(to_portal.length_squared(), 0.001)
@@ -839,6 +852,54 @@ func portal_runtime_priority(cam: Camera3D) -> float:
 	var distance_term: float = 1.0 / (1.0 + dist2 * 0.02)
 	var behind_penalty: float = 0.2 if cam.is_position_behind(portal_origin) else 1.0
 	return (distance_term * 2.0 + forward_align + facing * 0.5) * behind_penalty
+
+
+func _is_portal_visible_from_camera(cam: Camera3D) -> bool:
+	if cam == null:
+		return false
+	var origin: Vector3 = _get_portal_global_transform().origin
+	if cam.is_position_in_frustum(origin):
+		return true
+	var corners: Array[Vector3] = _get_portal_corners_world()
+	for corner: Vector3 in corners:
+		if cam.is_position_in_frustum(corner):
+			return true
+	return false
+
+
+func _has_portal_line_of_sight(cam: Camera3D) -> bool:
+	if cam == null:
+		return false
+	var world: World3D = cam.get_world_3d()
+	if world == null:
+		return true
+	var from: Vector3 = cam.global_position
+	var to: Vector3 = _get_portal_global_transform().origin
+	if from.distance_squared_to(to) <= 0.0001:
+		return true
+	var params: PhysicsRayQueryParameters3D = PhysicsRayQueryParameters3D.create(from, to)
+	params.collide_with_bodies = true
+	params.collide_with_areas = false
+	var excludes: Array[RID] = [self.get_rid()]
+	var cam_parent: Node = cam.get_parent()
+	if cam_parent is CollisionObject3D:
+		excludes.append((cam_parent as CollisionObject3D).get_rid())
+	if _linked_portal != null:
+		excludes.append(_linked_portal.get_rid())
+	params.exclude = excludes
+	var hit: Dictionary = world.direct_space_state.intersect_ray(params)
+	if hit.is_empty():
+		return true
+	var collider_v: Variant = hit.get("collider", null)
+	if collider_v == null:
+		return true
+	if collider_v is Node:
+		var node: Node = collider_v as Node
+		if self.is_ancestor_of(node) or node == self or node.is_ancestor_of(self):
+			return true
+		if _linked_portal != null and (_linked_portal.is_ancestor_of(node) or node == _linked_portal or node.is_ancestor_of(_linked_portal)):
+			return true
+	return false
 
 
 func _apply_portal_runtime_budget() -> void:

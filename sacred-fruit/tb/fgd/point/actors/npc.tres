@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="FuncGodotFGDPointClass" format=3 uid="uid://l6e717y0t40x"]
+
+[ext_resource type="Script" uid="uid://dne2nmlkaibt5" path="res://addons/func_godot/src/fgd/func_godot_fgd_point_class.gd" id="1_point"]
+[ext_resource type="Resource" uid="uid://3com3yjkcsvg" path="res://tb/fgd/base/actor_base.tres" id="2_actor_base"]
+[ext_resource type="Resource" uid="uid://cwbnifad3sdgw" path="res://tb/fgd/base/targetname_base.tres" id="3_targetname_base"]
+[ext_resource type="PackedScene" uid="uid://cxdrqbhec2uoq" path="res://entities/actors/npc/npc.tscn" id="4_scene"]
+
+[resource]
+script = ExtResource("1_point")
+scene_file = ExtResource("4_scene")
+apply_scale_on_map_build = false
+classname = "npc"
+description = "Generic NPC actor. Uses the current default NPC scene."
+base_classes = Array[Resource]([ExtResource("2_actor_base"), ExtResource("3_targetname_base")])
+meta_properties = {
+"color": Color(0.85, 0.45, 0.2, 1),
+"iconsprite": "\"fgd/entities/sprites/npc.png\"",
+"model": "\"models/npc.obj\"",
+"size": AABB(-16, -16, -24, 16, 16, 32)
+}

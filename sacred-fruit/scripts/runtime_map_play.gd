@@ -6,9 +6,18 @@ extends Node3D
 const PLAYER_SCENE: PackedScene = preload("res://scenes/player.tscn")
 const SPECTATOR_SCENE: PackedScene = preload("res://scenes/spectator.tscn")
 const HOME_SETUP_SCRIPT := preload("res://scripts/home_setup.gd")
+const SANDSTORM_CONTROLLER_SCRIPT := preload("res://scripts/sandstorm_controller.gd")
+const RUNTIME_PERF_HUD_SCRIPT := preload("res://scripts/runtime_perf_hud.gd")
 
 var _map: FuncGodotMap
 var _player: Node3D
+var _sandstorm: Node3D
+var _perf_hud: CanvasLayer
+
+@export var enable_sandstorm: bool = true
+@export_range(0.0, 1.0, 0.01) var sandstorm_intensity: float = 0.85
+@export var sandstorm_wind_direction: Vector2 = Vector2(1.0, 0.25)
+@export_range(0.0, 4.0, 0.01) var sandstorm_wind_speed: float = 1.0
 
 
 func _ready() -> void:
@@ -19,6 +28,7 @@ func _ready() -> void:
 	# Minimal loading indicator.
 	var status := _make_status_label("Building map…")
 	add_child(status)
+	_setup_perf_hud()
 
 	var dbg := get_node_or_null("/root/DEBUG")
 	var map_path := ""
@@ -68,10 +78,27 @@ func _ready() -> void:
 	# Configure it for manual run.
 	if "auto_run" in setup:
 		setup.auto_run = false
+	# Runtime map play owns environment startup. Prevent HomeSetup from always
+	# spawning SandstormController regardless of map-authored env entities.
+	if "enable_sandstorm" in setup:
+		setup.enable_sandstorm = false
 	if setup.has_method("run_setup"):
 		await setup.call("run_setup")
 
+	_setup_sandstorm()
+
 	(status as Label).queue_free()
+
+
+func _setup_perf_hud() -> void:
+	if RUNTIME_PERF_HUD_SCRIPT == null:
+		return
+	if _perf_hud != null and is_instance_valid(_perf_hud):
+		return
+	var hud := RUNTIME_PERF_HUD_SCRIPT.new()
+	if hud is CanvasLayer:
+		_perf_hud = hud as CanvasLayer
+		add_child(_perf_hud)
 
 
 func _make_status_label(text: String) -> Label:
@@ -170,3 +197,56 @@ func _ensure_fallback_light() -> void:
 	light.name = "RuntimeFallbackLight"
 	light.rotation_degrees = Vector3(-45, 45, 0)
 	add_child(light)
+
+
+func _setup_sandstorm() -> void:
+	if not enable_sandstorm:
+		return
+	if not _map_requests_sandstorm():
+		return
+	if SANDSTORM_CONTROLLER_SCRIPT == null:
+		return
+	if _sandstorm != null and is_instance_valid(_sandstorm):
+		return
+	var storm := SANDSTORM_CONTROLLER_SCRIPT.new() as Node3D
+	if storm == null:
+		return
+	storm.name = "SandstormController"
+	storm.set("enabled", true)
+	storm.set("intensity", sandstorm_intensity)
+	storm.set("wind_direction", sandstorm_wind_direction)
+	storm.set("wind_speed", sandstorm_wind_speed)
+	add_child(storm)
+	_sandstorm = storm
+
+
+func _map_requests_sandstorm() -> bool:
+	if _map == null:
+		return false
+	var map_path := String(_map.local_map_file)
+	if map_path.is_empty():
+		map_path = String(_map.global_map_file)
+	if map_path.is_empty() or not FileAccess.file_exists(map_path):
+		return false
+
+	var text := FileAccess.get_file_as_string(map_path)
+	if text.is_empty():
+		return false
+
+	# Explicit map entity.
+	if text.find("\"classname\" \"env_sandstorm\"") != -1:
+		return true
+
+	# Legacy / fallback worldspawn keys.
+	if text.find("\"sandstorm_enabled\" \"1\"") != -1:
+		return true
+	if text.find("\"sandstorm_intensity\"") != -1:
+		return true
+	if text.find("\"sandstorm_wind_speed\"") != -1:
+		return true
+	if text.find("\"sandstorm_wind_direction\"") != -1:
+		return true
+	if text.find("\"sandstorm_fog_color\"") != -1:
+		return true
+
+	return false

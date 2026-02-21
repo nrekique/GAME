@@ -1,0 +1,47 @@
+[gd_resource type="Resource" script_class="FuncGodotFGDPointClass" format=3 uid="uid://bgm8ko0h3c7ve"]
+
+[ext_resource type="Script" uid="uid://dne2nmlkaibt5" path="res://addons/func_godot/src/fgd/func_godot_fgd_point_class.gd" id="1_point"]
+[ext_resource type="Resource" uid="uid://cwbnifad3sdgw" path="res://tb/fgd/base/targetname_base.tres" id="2_targetname"]
+[ext_resource type="Script" uid="uid://bbkub60115min" path="res://entities/logic/env_portal_budget.gd" id="3_script"]
+
+[resource]
+script = ExtResource("1_point")
+script_class = ExtResource("3_script")
+apply_rotation_on_map_build = false
+apply_scale_on_map_build = false
+classname = "env_portal_budget"
+description = "Global portal runtime budget and dynamic quality clamps."
+base_classes = Array[Resource]([ExtResource("2_targetname")])
+class_properties = {
+"mirror_max_active": 2,
+"mirror_min_priority": 0.0,
+"mirror_refresh_seconds": 0.08,
+"mirror_render_scale": 0.6,
+"profile_mode": "balanced",
+"portal_max_active": 4,
+"portal_min_priority": 0.0,
+"portal_max_render_scale": 0.6,
+"portal_min_render_scale": 0.3,
+"portal_refresh_seconds": 0.1,
+"stress_profile": false
+}
+class_property_descriptions = {
+"mirror_max_active": "Max mirrors rendering simultaneously.",
+"mirror_min_priority": "Drop mirrors with lower runtime score.",
+"mirror_refresh_seconds": "Mirror manager refresh period.",
+"mirror_render_scale": "Mirror render-scale cap.",
+"profile_mode": "Budget preset: cinematic, balanced, or stress.",
+"portal_max_active": "Max portals rendering simultaneously.",
+"portal_min_priority": "Drop portals with lower runtime score.",
+"portal_max_render_scale": "Upper render-scale bound.",
+"portal_min_render_scale": "Lower render-scale bound.",
+"portal_refresh_seconds": "Portal manager refresh period.",
+"stress_profile": "Enable aggressive stress-test defaults (portal=3, mirror=1, min_scale=0.25)."
+}
+meta_properties = {
+"color": Color(0.98, 0.72, 0.4, 1),
+"iconsprite": "\"fgd/entities/sprites/env_portal_budget.png\"",
+"scale": "0.15",
+"size": AABB(-8, -8, -8, 8, 8, 8)
+}
+node_class = "Node3D"

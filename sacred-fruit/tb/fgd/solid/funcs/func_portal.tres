@@ -1,10 +1,10 @@
 [gd_resource type="Resource" script_class="FuncGodotFGDSolidClass" format=3 uid="uid://sp6y4qyhm8xc"]
 
-[ext_resource type="Script" path="res://addons/func_godot/src/fgd/func_godot_fgd_solid_class.gd" id="1_solid"]
-[ext_resource type="Resource" path="res://tb/fgd/base/func_base.tres" id="2_func_base"]
-[ext_resource type="Resource" path="res://tb/fgd/base/target_base.tres" id="3_target_base"]
-[ext_resource type="Resource" path="res://tb/fgd/base/targetname_base.tres" id="4_targetname_base"]
-[ext_resource type="Script" path="res://entities/funcs/func_portal.gd" id="5_script"]
+[ext_resource type="Script" uid="uid://dhw5od2dxhpfo" path="res://addons/func_godot/src/fgd/func_godot_fgd_solid_class.gd" id="1_solid"]
+[ext_resource type="Resource" uid="uid://d4buv26pirxbl" path="res://tb/fgd/base/func_base.tres" id="2_func_base"]
+[ext_resource type="Resource" uid="uid://kerywjgft7vh" path="res://tb/fgd/base/target_base.tres" id="3_target_base"]
+[ext_resource type="Resource" uid="uid://cwbnifad3sdgw" path="res://tb/fgd/base/targetname_base.tres" id="4_targetname_base"]
+[ext_resource type="Script" uid="uid://dd3bdm2xeoa4s" path="res://entities/funcs/func_portal.gd" id="5_script"]
 
 [resource]
 script = ExtResource("1_solid")
@@ -21,17 +21,19 @@ classname = "func_portal"
 description = "Linked portal surface. Link two portals with matching target/targetname."
 base_classes = Array[Resource]([ExtResource("2_func_base"), ExtResource("3_target_base"), ExtResource("4_targetname_base")])
 class_properties = {
-"enabled": true,
 "dynamic_far_distance": 32.0,
-"dynamic_min_render_scale": 0.35,
+"dynamic_min_render_scale": 0.3,
 "dynamic_near_distance": 6.0,
 "dynamic_quality_enabled": true,
 "dynamic_scale_step": 0.05,
 "dynamic_size_influence": 0.65,
+"enabled": true,
 "exit_offset": 0.12,
 "manager_enable_budgeting": true,
-"manager_max_active_portals": 8,
-"manager_refresh_seconds": 0.08,
+"manager_max_active_portals": 4,
+"manager_refresh_seconds": 0.1,
+"manager_require_line_of_sight": true,
+"manager_require_visible_in_frustum": true,
 "plugin_face_from_portal_texture": true,
 "plugin_keep_viewports_hot": true,
 "plugin_teleport_collision_mask": 1048575,
@@ -40,7 +42,7 @@ class_properties = {
 "portal_debug": false,
 "render_camera_offset": 0.0,
 "render_min_link_distance": 0.03,
-"render_scale": 0.75,
+"render_scale": 0.6,
 "render_use_oblique_clip": false,
 "render_use_window_projection": true,
 "reverse_normal": false,
@@ -50,17 +52,19 @@ class_properties = {
 "use_portals_plugin": true
 }
 class_property_descriptions = {
-"enabled": "Enable/disable this portal at runtime.",
 "dynamic_far_distance": "At or beyond this distance, dynamic quality approaches the minimum portal render scale.",
 "dynamic_min_render_scale": "Lowest render scale used by dynamic quality when portals are far/small.",
 "dynamic_near_distance": "At or within this distance, dynamic quality keeps portal render scale near the authored render_scale.",
 "dynamic_quality_enabled": "Enable per-portal dynamic render scaling using camera distance and apparent portal size.",
 "dynamic_scale_step": "Quantization step for runtime render scale updates; larger values reduce viewport resize churn.",
 "dynamic_size_influence": "Blend weight between distance-based and apparent-size-based quality (0 = distance only, 1 = size only).",
+"enabled": "Enable/disable this portal at runtime.",
 "exit_offset": "How far from the destination portal plane to place teleported entities.",
 "manager_enable_budgeting": "If true, this portal participates in runtime top-K portal rendering budget selection.",
 "manager_max_active_portals": "Global cap for how many portal viewports stay active each refresh tick.",
 "manager_refresh_seconds": "How often to recompute the active portal set; larger values reduce CPU but react slower.",
+"manager_require_line_of_sight": "Only allow portal rendering budget candidates with clear camera line-of-sight (cheap ray test).",
+"manager_require_visible_in_frustum": "Only allow portal rendering budget candidates when portal origin/corners are inside camera frustum.",
 "plugin_face_from_portal_texture": "If true, detect the portal-textured brush face and place runtime portal on that exact side.",
 "plugin_keep_viewports_hot": "If true, keep paired portal viewports updating while the player overlaps the teleport area; disable for better performance in dense portal maps.",
 "plugin_teleport_collision_mask": "Physics mask used by plugin portal teleport area to detect teleportable bodies.",

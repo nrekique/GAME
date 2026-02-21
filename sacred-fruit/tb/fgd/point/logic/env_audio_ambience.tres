@@ -1,0 +1,31 @@
+[gd_resource type="Resource" script_class="FuncGodotFGDPointClass" format=3 uid="uid://cjveoypylexkg"]
+
+[ext_resource type="Script" uid="uid://dne2nmlkaibt5" path="res://addons/func_godot/src/fgd/func_godot_fgd_point_class.gd" id="1_point"]
+[ext_resource type="Resource" uid="uid://cwbnifad3sdgw" path="res://tb/fgd/base/targetname_base.tres" id="2_targetname"]
+[ext_resource type="Script" uid="uid://cacy8ftdidrlq" path="res://entities/logic/env_audio_ambience.gd" id="3_script"]
+
+[resource]
+script = ExtResource("1_point")
+script_class = ExtResource("3_script")
+apply_rotation_on_map_build = false
+apply_scale_on_map_build = false
+classname = "env_audio_ambience"
+description = "Plays looping ambience for the map."
+base_classes = Array[Resource]([ExtResource("2_targetname")])
+class_properties = {
+"ambience_bus": "SFX",
+"ambience_stream": "",
+"ambience_volume_db": -10.0
+}
+class_property_descriptions = {
+"ambience_bus": "Audio bus name.",
+"ambience_stream": "Resource path to audio stream.",
+"ambience_volume_db": "Playback volume in dB."
+}
+meta_properties = {
+"color": Color(0.45, 0.92, 0.7, 1),
+"iconsprite": "\"fgd/entities/sprites/env_audio_ambience.png\"",
+"scale": "0.15",
+"size": AABB(-8, -8, -8, 8, 8, 8)
+}
+node_class = "Node3D"

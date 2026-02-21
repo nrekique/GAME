@@ -2415,7 +2415,7 @@
 }
 // entity 7
 {
-"classname" "Portal"
+"classname" "func_portal"
 "_tb_group" "2636"
 // brush 0
 {
@@ -2429,7 +2429,7 @@
 }
 // entity 8
 {
-"classname" "trigger"
+"classname" "trigger_multiple"
 "target" "door"
 "_tb_group" "2636"
 // brush 0
@@ -2667,19 +2667,19 @@
 }
 // entity 12
 {
-"classname" "actor_marsfrog"
+"classname" "npc"
 "origin" "3104 2600 92"
 "_tb_group" "2636"
 }
 // entity 13
 {
-"classname" "OmniLight3D"
+"classname" "light_omni"
 "origin" "3044 3032 171"
 "_tb_group" "2636"
 }
 // entity 14
 {
-"classname" "OmniLight3D"
+"classname" "light_omni"
 "origin" "2897 2944 171"
 "_tb_group" "2636"
 }
@@ -3300,13 +3300,13 @@
 }
 // entity 21
 {
-"classname" "OmniLight3D"
+"classname" "light_omni"
 "origin" "3044 2868 171"
 "_tb_group" "2636"
 }
 // entity 22
 {
-"classname" "OmniLight3D"
+"classname" "light_omni"
 "origin" "2970 2918 111"
 "_tb_group" "2636"
 }
@@ -3367,7 +3367,7 @@
 }
 // entity 24
 {
-"classname" "illusionary"
+"classname" "func_illusionary"
 "_tb_group" "2636"
 // brush 0
 {
@@ -4414,7 +4414,7 @@
 }
 // entity 34
 {
-"classname" "mover"
+"classname" "func_move"
 "axis" "0 1 0"
 "targetname" "door"
 "speed" "1"
@@ -5108,7 +5108,7 @@
 }
 // entity 38
 {
-"classname" "OmniLight3D"
+"classname" "light_omni"
 "origin" "3044 2944 171"
 "_tb_group" "2636"
 }
@@ -5386,7 +5386,7 @@
 }
 // entity 42
 {
-"classname" "OmniLight3D"
+"classname" "light_omni"
 "origin" "2896 3032 171"
 "_tb_group" "2636"
 }
@@ -5897,7 +5897,7 @@
 }
 // entity 49
 {
-"classname" "OmniLight3D"
+"classname" "light_omni"
 "origin" "2896 2864 171"
 "_tb_group" "2636"
 }
@@ -7368,7 +7368,7 @@
 }
 // entity 63
 {
-"classname" "OmniLight3D"
+"classname" "light_omni"
 "origin" "2824 2774 136"
 "_tb_group" "2448"
 }
@@ -12263,7 +12263,7 @@
 }
 // entity 118
 {
-"classname" "actor_marsfrog"
+"classname" "npc"
 "origin" "3096 2568 92"
 }
 // entity 119
@@ -31071,7 +31071,7 @@
 }
 // entity 222
 {
-"classname" "SpotLight3D"
+"classname" "light_spot"
 "origin" "4703 3118 498"
 "angle" "180"
 "_tb_group" "2442"
@@ -31178,7 +31178,7 @@
 }
 // entity 224
 {
-"classname" "SpotLight3D"
+"classname" "light_spot"
 "origin" "4703 4184 498"
 "angle" "180"
 "_tb_group" "2441"
@@ -31285,7 +31285,7 @@
 }
 // entity 226
 {
-"classname" "SpotLight3D"
+"classname" "light_spot"
 "origin" "4703 1886 498"
 "angle" "180"
 "_tb_group" "2443"
@@ -31392,7 +31392,7 @@
 }
 // entity 228
 {
-"classname" "SpotLight3D"
+"classname" "light_spot"
 "origin" "4703 654 498"
 "angle" "180"
 "_tb_group" "2444"
@@ -31499,7 +31499,7 @@
 }
 // entity 230
 {
-"classname" "SpotLight3D"
+"classname" "light_spot"
 "origin" "4272 1120 498"
 "_tb_group" "2437"
 }
@@ -31605,7 +31605,7 @@
 }
 // entity 232
 {
-"classname" "SpotLight3D"
+"classname" "light_spot"
 "origin" "4272 2352 498"
 "_tb_group" "2432"
 }
@@ -31711,7 +31711,7 @@
 }
 // entity 234
 {
-"classname" "SpotLight3D"
+"classname" "light_spot"
 "origin" "4272 3584 498"
 "_tb_group" "2430"
 }
@@ -31817,7 +31817,7 @@
 }
 // entity 236
 {
-"classname" "SpotLight3D"
+"classname" "light_spot"
 "origin" "4272 4650 498"
 "_tb_group" "2433"
 }
@@ -31923,7 +31923,7 @@
 }
 // entity 238
 {
-"classname" "SpotLight3D"
+"classname" "light_spot"
 "origin" "4703 5401 498"
 "angle" "180"
 "_tb_group" "2440"
@@ -32030,7 +32030,7 @@
 }
 // entity 240
 {
-"classname" "SpotLight3D"
+"classname" "light_spot"
 "origin" "4272 5867 498"
 "_tb_group" "2434"
 }
