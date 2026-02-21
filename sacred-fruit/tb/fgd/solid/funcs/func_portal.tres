@@ -22,7 +22,16 @@ description = "Linked portal surface. Link two portals with matching target/targ
 base_classes = Array[Resource]([ExtResource("2_func_base"), ExtResource("3_target_base"), ExtResource("4_targetname_base")])
 class_properties = {
 "enabled": true,
+"dynamic_far_distance": 32.0,
+"dynamic_min_render_scale": 0.35,
+"dynamic_near_distance": 6.0,
+"dynamic_quality_enabled": true,
+"dynamic_scale_step": 0.05,
+"dynamic_size_influence": 0.65,
 "exit_offset": 0.12,
+"manager_enable_budgeting": true,
+"manager_max_active_portals": 8,
+"manager_refresh_seconds": 0.08,
 "plugin_face_from_portal_texture": true,
 "plugin_keep_viewports_hot": true,
 "plugin_teleport_collision_mask": 1048575,
@@ -42,7 +51,16 @@ class_properties = {
 }
 class_property_descriptions = {
 "enabled": "Enable/disable this portal at runtime.",
+"dynamic_far_distance": "At or beyond this distance, dynamic quality approaches the minimum portal render scale.",
+"dynamic_min_render_scale": "Lowest render scale used by dynamic quality when portals are far/small.",
+"dynamic_near_distance": "At or within this distance, dynamic quality keeps portal render scale near the authored render_scale.",
+"dynamic_quality_enabled": "Enable per-portal dynamic render scaling using camera distance and apparent portal size.",
+"dynamic_scale_step": "Quantization step for runtime render scale updates; larger values reduce viewport resize churn.",
+"dynamic_size_influence": "Blend weight between distance-based and apparent-size-based quality (0 = distance only, 1 = size only).",
 "exit_offset": "How far from the destination portal plane to place teleported entities.",
+"manager_enable_budgeting": "If true, this portal participates in runtime top-K portal rendering budget selection.",
+"manager_max_active_portals": "Global cap for how many portal viewports stay active each refresh tick.",
+"manager_refresh_seconds": "How often to recompute the active portal set; larger values reduce CPU but react slower.",
 "plugin_face_from_portal_texture": "If true, detect the portal-textured brush face and place runtime portal on that exact side.",
 "plugin_keep_viewports_hot": "If true, keep paired portal viewports updating while the player overlaps the teleport area; disable for better performance in dense portal maps.",
 "plugin_teleport_collision_mask": "Physics mask used by plugin portal teleport area to detect teleportable bodies.",

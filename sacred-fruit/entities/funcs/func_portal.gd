@@ -10,6 +10,15 @@ extends StaticBody3D
 @export var plugin_use_opposite_face: bool = false
 @export var plugin_face_from_portal_texture: bool = true
 @export var plugin_keep_viewports_hot: bool = true
+@export var manager_enable_budgeting: bool = true
+@export_range(1, 64, 1) var manager_max_active_portals: int = 8
+@export_range(0.02, 0.5, 0.01) var manager_refresh_seconds: float = 0.08
+@export var dynamic_quality_enabled: bool = true
+@export_range(0.25, 1.0, 0.05) var dynamic_min_render_scale: float = 0.35
+@export_range(0.5, 200.0, 0.5) var dynamic_near_distance: float = 6.0
+@export_range(1.0, 400.0, 0.5) var dynamic_far_distance: float = 32.0
+@export_range(0.0, 1.0, 0.05) var dynamic_size_influence: float = 0.65
+@export_range(0.01, 0.25, 0.01) var dynamic_scale_step: float = 0.05
 @export var portal_axis: String = "auto"
 @export var portal_debug: bool = false
 @export_range(0.25, 1.0, 0.05) var render_scale: float = 0.75
@@ -27,6 +36,8 @@ const DEBUG_PRINT_INTERVAL := 0.6
 const PORTAL_SURFACE_RENDER_LAYER := 20
 const PORTAL_SURFACE_LAYER_MASK := 1 << (PORTAL_SURFACE_RENDER_LAYER - 1)
 const PORTAL3D_ADAPTER_SCRIPT := preload("res://entities/funcs/portal3d_adapter.gd")
+const PORTAL_RUNTIME_MANAGER_SCRIPT := preload("res://entities/funcs/portal_runtime_manager.gd")
+const PORTAL_RUNTIME_MANAGER_NAME := "PortalRuntimeManager"
 
 var _linked_portal: FuncPortal = null
 var _plugin_adapter: RefCounted = PORTAL3D_ADAPTER_SCRIPT.new()
@@ -62,6 +73,8 @@ var _last_plugin_enabled: bool = true
 var _last_plugin_mask: int = -1
 var _last_plugin_keep_hot: bool = true
 var _last_plugin_render_scale: float = -1.0
+var _portal_runtime_manager: Node = null
+var _managed_viewport_active: bool = true
 
 
 static func _to_bool(value: Variant, default_value: bool) -> bool:
@@ -98,6 +111,24 @@ func _func_godot_apply_properties(props: Dictionary) -> void:
 		plugin_face_from_portal_texture = _to_bool(props["plugin_face_from_portal_texture"], plugin_face_from_portal_texture)
 	if props.has("plugin_keep_viewports_hot"):
 		plugin_keep_viewports_hot = _to_bool(props["plugin_keep_viewports_hot"], plugin_keep_viewports_hot)
+	if props.has("manager_enable_budgeting"):
+		manager_enable_budgeting = _to_bool(props["manager_enable_budgeting"], manager_enable_budgeting)
+	if props.has("manager_max_active_portals"):
+		manager_max_active_portals = maxi(1, int(props["manager_max_active_portals"]))
+	if props.has("manager_refresh_seconds"):
+		manager_refresh_seconds = clampf(float(props["manager_refresh_seconds"]), 0.02, 0.5)
+	if props.has("dynamic_quality_enabled"):
+		dynamic_quality_enabled = _to_bool(props["dynamic_quality_enabled"], dynamic_quality_enabled)
+	if props.has("dynamic_min_render_scale"):
+		dynamic_min_render_scale = clampf(float(props["dynamic_min_render_scale"]), 0.25, 1.0)
+	if props.has("dynamic_near_distance"):
+		dynamic_near_distance = clampf(float(props["dynamic_near_distance"]), 0.5, 200.0)
+	if props.has("dynamic_far_distance"):
+		dynamic_far_distance = clampf(float(props["dynamic_far_distance"]), 1.0, 400.0)
+	if props.has("dynamic_size_influence"):
+		dynamic_size_influence = clampf(float(props["dynamic_size_influence"]), 0.0, 1.0)
+	if props.has("dynamic_scale_step"):
+		dynamic_scale_step = clampf(float(props["dynamic_scale_step"]), 0.01, 0.25)
 	if props.has("portal_axis"):
 		portal_axis = String(props["portal_axis"]).strip_edges().to_lower()
 	if props.has("portal_debug"):
@@ -127,6 +158,7 @@ func _ready() -> void:
 		return
 
 	add_to_group("func_portal")
+	_register_portal_runtime_manager()
 	if targetname != "":
 		var game: Node = _get_game_manager()
 		if game != null and game.has_method("set_targetname"):
@@ -146,6 +178,7 @@ func _ready() -> void:
 func _exit_tree() -> void:
 	if Engine.is_editor_hint():
 		return
+	_unregister_portal_runtime_manager()
 	if _plugin_portal != null:
 		_plugin_adapter.deactivate_portal(_plugin_portal, true)
 		if _plugin_portal.has_method("set"):
@@ -593,11 +626,16 @@ func _on_properties_applied() -> void:
 		if game != null and game.has_method("set_targetname"):
 			game.call("set_targetname", self, targetname)
 	if use_portals_plugin:
+		if manager_enable_budgeting:
+			_register_portal_runtime_manager()
+		else:
+			_unregister_portal_runtime_manager()
 		_setup_plugin_portal()
 		_resolve_linked_portal(true)
 		_sync_plugin_link()
 		_mark_plugin_runtime_dirty()
 		return
+	_unregister_portal_runtime_manager()
 	_has_stable_window_projection = false
 	_hide_source_mesh_children()
 	_build_portal_surface()
@@ -630,6 +668,7 @@ func _process_plugin_portal(delta: float) -> void:
 
 	if _linked_portal != null:
 		_sync_plugin_link()
+	_apply_portal_runtime_budget()
 
 	_debug_tick(delta)
 
@@ -760,6 +799,75 @@ func _ensure_camera_environment(src_cam: Camera3D) -> void:
 	src_cam.environment = Environment.new()
 
 
+func _register_portal_runtime_manager() -> void:
+	if Engine.is_editor_hint() or not manager_enable_budgeting or not use_portals_plugin:
+		return
+	if _portal_runtime_manager == null:
+		var existing := get_node_or_null("/root/%s" % PORTAL_RUNTIME_MANAGER_NAME)
+		if existing != null and existing.has_method("register_portal"):
+			_portal_runtime_manager = existing
+		else:
+			var mgr := PORTAL_RUNTIME_MANAGER_SCRIPT.new()
+			mgr.name = PORTAL_RUNTIME_MANAGER_NAME
+			get_tree().root.add_child(mgr)
+			_portal_runtime_manager = mgr
+	if _portal_runtime_manager != null:
+		_portal_runtime_manager.register_portal(self, manager_max_active_portals, manager_refresh_seconds)
+
+
+func _unregister_portal_runtime_manager() -> void:
+	if _portal_runtime_manager == null:
+		return
+	if is_instance_valid(_portal_runtime_manager):
+		_portal_runtime_manager.unregister_portal(self)
+	_portal_runtime_manager = null
+
+
+func portal_runtime_priority(cam: Camera3D) -> float:
+	if cam == null or not enabled or not use_portals_plugin:
+		return -1.0e20
+	if _linked_portal == null or _plugin_portal == null:
+		return -1.0e20
+	var portal_origin: Vector3 = _get_portal_global_transform().origin
+	var to_portal: Vector3 = portal_origin - cam.global_position
+	var dist2: float = maxf(to_portal.length_squared(), 0.001)
+	var dir_to_portal: Vector3 = to_portal.normalized()
+	var cam_forward: Vector3 = -cam.global_basis.z.normalized()
+	var face_normal: Vector3 = _get_world_normal()
+	var forward_align: float = maxf(cam_forward.dot(dir_to_portal), 0.0)
+	var facing: float = absf(face_normal.dot(-dir_to_portal))
+	var distance_term: float = 1.0 / (1.0 + dist2 * 0.02)
+	var behind_penalty: float = 0.2 if cam.is_position_behind(portal_origin) else 1.0
+	return (distance_term * 2.0 + forward_align + facing * 0.5) * behind_penalty
+
+
+func _apply_portal_runtime_budget() -> void:
+	if _plugin_portal == null:
+		return
+	if not manager_enable_budgeting:
+		_set_managed_viewport_active(true)
+		return
+	if _portal_runtime_manager == null:
+		_register_portal_runtime_manager()
+		if _portal_runtime_manager == null:
+			return
+	var active: bool = bool(_portal_runtime_manager.call("is_portal_render_active", self))
+	_set_managed_viewport_active(active)
+
+
+func _set_managed_viewport_active(active: bool) -> void:
+	if _managed_viewport_active == active and _plugin_portal != null:
+		return
+	_managed_viewport_active = active
+	if _plugin_portal == null:
+		return
+	var vp_v: Variant = _plugin_portal.get("portal_viewport")
+	if not (vp_v is SubViewport):
+		return
+	var vp := vp_v as SubViewport
+	vp.render_target_update_mode = SubViewport.UPDATE_WHEN_VISIBLE if active else SubViewport.UPDATE_DISABLED
+
+
 func _mark_plugin_runtime_dirty() -> void:
 	_plugin_link_dirty = true
 	_last_plugin_cam_id = -1
@@ -772,8 +880,10 @@ func _mark_plugin_runtime_dirty() -> void:
 func _configure_plugin_runtime_if_needed(src_cam: Camera3D) -> void:
 	if _plugin_portal == null or src_cam == null:
 		return
+	if manager_enable_budgeting and not _managed_viewport_active:
+		return
 	var cam_id: int = src_cam.get_instance_id()
-	var scale: float = clampf(render_scale, 0.25, 1.0)
+	var scale: float = _compute_dynamic_render_scale(src_cam)
 	var changed: bool = false
 	if cam_id != _last_plugin_cam_id:
 		changed = true
@@ -801,6 +911,31 @@ func _configure_plugin_runtime_if_needed(src_cam: Camera3D) -> void:
 	_last_plugin_keep_hot = plugin_keep_viewports_hot
 	_last_plugin_render_scale = scale
 	_plugin_link_dirty = true
+
+
+func _compute_dynamic_render_scale(src_cam: Camera3D) -> float:
+	var max_scale: float = clampf(render_scale, 0.25, 1.0)
+	if not dynamic_quality_enabled or src_cam == null:
+		return max_scale
+	var min_scale: float = clampf(minf(dynamic_min_render_scale, max_scale), 0.25, 1.0)
+	var portal_origin: Vector3 = _get_portal_global_transform().origin
+	var dist: float = maxf(src_cam.global_position.distance_to(portal_origin), 0.01)
+	var near_d: float = clampf(dynamic_near_distance, 0.5, 400.0)
+	var far_d: float = maxf(dynamic_far_distance, near_d + 0.01)
+	var dist_t: float = clampf((dist - near_d) / (far_d - near_d), 0.0, 1.0)
+	var distance_quality: float = 1.0 - dist_t
+	var portal_radius: float = maxf(_portal_half_extents.length(), 0.05)
+	var angular_ratio: float = portal_radius / dist
+	var size_quality: float = clampf(angular_ratio * 2.5, 0.0, 1.0)
+	var quality: float = clampf(
+		lerpf(distance_quality, size_quality, dynamic_size_influence),
+		0.0,
+		1.0
+	)
+	var raw_scale: float = lerpf(min_scale, max_scale, quality)
+	var step: float = clampf(dynamic_scale_step, 0.01, 0.25)
+	var quantized: float = round(raw_scale / step) * step
+	return clampf(quantized, min_scale, max_scale)
 
 
 func _needs_link_resolve() -> bool:
