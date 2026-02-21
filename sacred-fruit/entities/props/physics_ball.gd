@@ -14,12 +14,16 @@ extends RigidBody3D
 @export_range(0.0, 3.0, 0.01) var gust_strength: float = 0.45
 @export_range(0.0, 8.0, 0.01) var gust_frequency: float = 1.3
 @export var shell_color: Color = Color(0.57, 0.42, 0.24, 1.0)
+@export var interact_pickup_enabled: bool = true
 
 var _wind_direction: Vector2 = Vector2(1.0, 0.25)
 var _wind_speed: float = 0.0
 var _wind_intensity: float = 1.0
 var _wind_poll_timer: float = 0.0
 var _source_cache: Node = null
+var _holder: Node3D = null
+var _held_target_position: Vector3 = Vector3.ZERO
+var _held_target_valid: bool = false
 
 
 func _func_godot_apply_properties(props: Dictionary) -> void:
@@ -45,6 +49,8 @@ func _func_godot_apply_properties(props: Dictionary) -> void:
 		gust_strength = maxf(float(props["gust_strength"]), 0.0)
 	if props.has("gust_frequency"):
 		gust_frequency = maxf(float(props["gust_frequency"]), 0.0)
+	if props.has("interact_pickup_enabled"):
+		interact_pickup_enabled = _to_bool(props["interact_pickup_enabled"], interact_pickup_enabled)
 
 
 func _ready() -> void:
@@ -69,9 +75,65 @@ func _physics_process(delta: float) -> void:
 	if _wind_poll_timer >= 0.35:
 		_wind_poll_timer = 0.0
 		_refresh_wind_source(false)
+	if is_held():
+		_apply_held_transform(delta)
+		return
 	if not tumbleweed_enabled:
 		return
 	_apply_wind_motion(delta)
+
+
+func interact(activator: Node = null) -> bool:
+	if not interact_pickup_enabled:
+		return false
+	var holder: Node3D = activator as Node3D
+	if holder == null:
+		return false
+	if is_held_by(holder):
+		drop()
+		return true
+	pickup(holder)
+	return true
+
+
+func pickup(holder: Node3D) -> void:
+	if holder == null:
+		return
+	_holder = holder
+	_held_target_valid = false
+	sleeping = false
+	freeze = true
+	linear_velocity = Vector3.ZERO
+	angular_velocity = Vector3.ZERO
+
+
+func drop(throw_velocity: Vector3 = Vector3.ZERO) -> void:
+	_holder = null
+	_held_target_valid = false
+	freeze = false
+	sleeping = false
+	linear_velocity = throw_velocity
+
+
+func set_hold_target_position(world_pos: Vector3) -> void:
+	_held_target_position = world_pos
+	_held_target_valid = true
+
+
+func is_held() -> bool:
+	return _holder != null and is_instance_valid(_holder)
+
+
+func is_held_by(node: Node) -> bool:
+	return is_held() and node == _holder
+
+
+func _apply_held_transform(delta: float) -> void:
+	if not _held_target_valid:
+		return
+	var t: float = clampf(delta * 18.0, 0.0, 1.0)
+	global_position = global_position.lerp(_held_target_position, t)
+	global_rotation = global_rotation.lerp(Vector3.ZERO, clampf(delta * 6.0, 0.0, 1.0))
 
 
 func _apply_wind_motion(delta: float) -> void:

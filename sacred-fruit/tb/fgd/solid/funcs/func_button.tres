@@ -18,15 +18,19 @@ classname = "func_button"
 description = "Trigger-style button volume that fires targets when touched."
 base_classes = Array[Resource]([ExtResource("1_func_base"), ExtResource("2_targetname"), ExtResource("3_target_base")])
 class_properties = {
+"interact_activates": true,
 "once": false,
 "target": "",
 "targetfunc": "",
+"touch_activates": true,
 "wait": 1.0
 }
 class_property_descriptions = {
+"interact_activates": "If true, player use/interact can press this button.",
 "once": "If true, button only works once.",
 "target": "Target to trigger when pressed.",
 "targetfunc": "Function to call on target entities.",
+"touch_activates": "If true, touching player body presses button.",
 "wait": "Seconds before the button can be used again."
 }
 meta_properties = {

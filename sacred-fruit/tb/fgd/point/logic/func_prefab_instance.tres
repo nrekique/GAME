@@ -1,0 +1,37 @@
+[gd_resource type="Resource" script_class="FuncGodotFGDPointClass" format=3]
+
+[ext_resource type="Script" uid="uid://dne2nmlkaibt5" path="res://addons/func_godot/src/fgd/func_godot_fgd_point_class.gd" id="1_point"]
+[ext_resource type="Resource" uid="uid://cwbnifad3sdgw" path="res://tb/fgd/base/targetname_base.tres" id="2_targetname"]
+[ext_resource type="Script" path="res://entities/logic/func_prefab_instance.gd" id="3_script"]
+
+[resource]
+script = ExtResource("1_point")
+script_class = ExtResource("3_script")
+apply_rotation_on_map_build = false
+apply_scale_on_map_build = false
+classname = "func_prefab_instance"
+description = "Instantiates a reusable PackedScene prefab at runtime."
+base_classes = Array[Resource]([ExtResource("2_targetname")])
+class_properties = {
+"clear_children_before_spawn": true,
+"enabled": true,
+"one_shot": true,
+"override_json": "",
+"prefab_scene": "",
+"spawn_on_ready": true
+}
+class_property_descriptions = {
+"clear_children_before_spawn": "If true, removes existing spawned instance before spawning again.",
+"enabled": "If false, this instance is inert.",
+"one_shot": "If true, only spawns once unless cleared/reset.",
+"override_json": "JSON Dictionary of overrides keyed by node_path:property.",
+"prefab_scene": "PackedScene path to instantiate (res://... .tscn).",
+"spawn_on_ready": "Spawn automatically when map loads."
+}
+meta_properties = {
+"color": Color(0.75, 0.6, 0.95, 1),
+"iconsprite": "\"fgd/entities/sprites/env_zone.png\"",
+"scale": "0.15",
+"size": AABB(-8, -8, -8, 8, 8, 8)
+}
+node_class = "Node3D"

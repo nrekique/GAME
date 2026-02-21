@@ -1,0 +1,39 @@
+[gd_resource type="Resource" script_class="FuncGodotFGDPointClass" format=3]
+
+[ext_resource type="Script" uid="uid://dne2nmlkaibt5" path="res://addons/func_godot/src/fgd/func_godot_fgd_point_class.gd" id="1_point"]
+[ext_resource type="Resource" uid="uid://cwbnifad3sdgw" path="res://tb/fgd/base/targetname_base.tres" id="2_targetname"]
+[ext_resource type="Script" path="res://entities/logic/env_sky_scene.gd" id="3_script"]
+
+[resource]
+script = ExtResource("1_point")
+script_class = ExtResource("3_script")
+apply_rotation_on_map_build = false
+apply_scale_on_map_build = false
+classname = "env_sky_scene"
+description = "Loads a 3D sky scene and optionally keeps it centered on the active camera."
+base_classes = Array[Resource]([ExtResource("2_targetname")])
+class_properties = {
+"copy_camera_rotation": false,
+"enabled": true,
+"follow_camera": true,
+"load_on_ready": true,
+"position_offset": Vector3(0, 0, 0),
+"rotation_speed_deg": Vector3(0, 0, 0),
+"sky_scene": ""
+}
+class_property_descriptions = {
+"copy_camera_rotation": "If true, sky scene matches active camera rotation.",
+"enabled": "If false, sky scene is not loaded.",
+"follow_camera": "If true, keeps sky scene centered on camera for distant background effect.",
+"load_on_ready": "Load sky scene on map start.",
+"position_offset": "World offset applied when follow_camera is enabled.",
+"rotation_speed_deg": "Continuous sky rotation speed in degrees/sec per axis.",
+"sky_scene": "PackedScene path to sky scene root (res://... .tscn)."
+}
+meta_properties = {
+"color": Color(0.45, 0.75, 1, 1),
+"iconsprite": "\"fgd/entities/sprites/env_weather.png\"",
+"scale": "0.15",
+"size": AABB(-8, -8, -8, 8, 8, 8)
+}
+node_class = "Node3D"

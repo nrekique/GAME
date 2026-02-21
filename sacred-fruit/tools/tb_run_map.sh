@@ -24,6 +24,23 @@ if [[ -z "$MAP_FILE" ]]; then
   exit 2
 fi
 
+if [[ "${TB_SKIP_LINT:-0}" != "1" ]]; then
+  LINT_MAP_FILE="$MAP_FILE"
+  if [[ ! -f "$LINT_MAP_FILE" ]]; then
+    if [[ -f "$ROOT_DIR/tb/$MAP_FILE" ]]; then
+      LINT_MAP_FILE="$ROOT_DIR/tb/$MAP_FILE"
+    elif [[ -f "$ROOT_DIR/$MAP_FILE" ]]; then
+      LINT_MAP_FILE="$ROOT_DIR/$MAP_FILE"
+    fi
+  fi
+  if [[ -f "$LINT_MAP_FILE" ]]; then
+    echo "Linting map: $LINT_MAP_FILE"
+    "$ROOT_DIR/tools/tb_lint_map.sh" "$LINT_MAP_FILE"
+  else
+    echo "WARN: map lint skipped (file not found for lint preflight): $MAP_FILE" >&2
+  fi
+fi
+
 if command -v godot >/dev/null 2>&1; then
   GODOT_BIN="godot"
 elif [[ -x "/Applications/Godot.app/Contents/MacOS/Godot" ]]; then

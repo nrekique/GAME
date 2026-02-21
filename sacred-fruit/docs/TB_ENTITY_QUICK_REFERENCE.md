@@ -84,10 +84,26 @@ Quick authoring sheet for common gameplay/environment entities.
 - `fog_density`
 - `wind_speed`
 
+`func_prefab_instance`
+- `prefab_scene` (`res://...tscn`)
+- `spawn_on_ready` (`0/1`)
+- `one_shot` (`0/1`)
+- `clear_children_before_spawn` (`0/1`)
+- `override_json` (JSON Dictionary keyed by `node_path:property`)
+
+`env_sky_scene`
+- `sky_scene` (`res://...tscn`)
+- `load_on_ready` (`0/1`)
+- `follow_camera` (`0/1`)
+- `copy_camera_rotation` (`0/1`)
+- `position_offset` (`x y z`)
+- `rotation_speed_deg` (`x y z` degrees/sec)
+
 ## Physics Props
 
 `physics_ball` (tumbleweed-ready)
 - `tumbleweed_enabled` (`0/1`)
+- `interact_pickup_enabled` (`0/1`)
 - `radius`
 - `mass_kg`
 - `wind_response`
@@ -109,10 +125,20 @@ Quick authoring sheet for common gameplay/environment entities.
 - `start_disabled` (`0/1`)
 - `one_shot` (`0/1`)
 
+## Interactions
+
+- Player `use` input is mapped to `E`.
+- `func_button` now supports both interaction styles:
+  - `touch_activates` (`0/1`)
+  - `interact_activates` (`0/1`)
+- `physics_ball` supports pickup/drop via `use` ray interaction.
+
 ## Target I/O Reminders
 
 - `targetname` defines group membership.
 - `target` fires group(s), comma-separated supported.
 - `targetfunc` chooses called method (default `use`).
+- `targetarg` optional argument payload passed to target input.
+- `targetdelay` optional delay (seconds) before dispatch.
 - `master` gates outputs through another entity/group.
 - `killtarget` removes entities by group after fire.

@@ -47,6 +47,9 @@ signal died
 @export var SWAY_ROLL_MAX_DEG: float = 1.6
 @export var SWAY_ROLL_SPEED: float = 8.0
 @export var SWAY_STRAFE_SCALE: float = 0.015
+@export_range(0.5, 8.0, 0.1) var INTERACT_DISTANCE: float = 3.2
+@export_range(0.3, 5.0, 0.1) var HOLD_DISTANCE: float = 1.8
+@export_range(0.0, 30.0, 0.1) var DROP_THROW_SPEED: float = 7.0
 
 # Feel helpers
 @export var COYOTE_TIME: float = 0.12
@@ -82,10 +85,13 @@ var _camera_roll: float = 0.0
 @onready var _headroom_raycast: RayCast3D = $RayCast
 @onready var _anim_player: AnimationPlayer = $Neck/Head/Eyes/AnimationPlayer
 
+var _held_ball: PhysicsBall = null
+
 
 func _ready() -> void:
 	add_to_group("PLAYER")
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+	_ensure_use_input_action()
 
 	var settings := get_node_or_null("/root/SETTINGS")
 	if settings != null:
@@ -187,6 +193,7 @@ func _physics_process(delta: float) -> void:
 			_anim_player.play("landing")
 
 	_apply_camera_grounding(delta, was_on_floor)
+	_update_held_ball()
 
 	if health > max_health and overheal_decay_per_sec > 0.0:
 		var new_health := maxf(float(max_health), float(health) - overheal_decay_per_sec * delta)
@@ -194,6 +201,8 @@ func _physics_process(delta: float) -> void:
 		if rounded != health:
 			health = rounded
 			_emit_health_changed()
+	if InputMap.has_action("use") and Input.is_action_just_pressed("use"):
+		_handle_interact_pressed()
 
 
 func _update_crouch_state(delta: float) -> void:
@@ -376,3 +385,78 @@ func die() -> void:
 
 func _emit_health_changed() -> void:
 	emit_signal("health_changed", health, max_health, max_overhealth)
+
+
+func _ensure_use_input_action() -> void:
+	if InputMap.has_action("use"):
+		return
+	InputMap.add_action("use", 0.2)
+	var ev := InputEventKey.new()
+	ev.physical_keycode = KEY_E
+	InputMap.action_add_event("use", ev)
+
+
+func _handle_interact_pressed() -> void:
+	if _held_ball != null and is_instance_valid(_held_ball):
+		_drop_held_ball()
+		return
+	var target_node: Node = _find_interaction_target()
+	if target_node == null:
+		return
+	if target_node.has_method("interact"):
+		var result: Variant = target_node.call("interact", self)
+		if result is bool and not bool(result):
+			return
+		if target_node is PhysicsBall and (target_node as PhysicsBall).is_held_by(self):
+			_held_ball = target_node as PhysicsBall
+		return
+	if target_node.has_method("use"):
+		target_node.call("use")
+
+
+func _find_interaction_target() -> Node:
+	if _camera == null:
+		return null
+	var world: World3D = _camera.get_world_3d()
+	if world == null:
+		return null
+	var from: Vector3 = _camera.global_position
+	var to: Vector3 = from + (-_camera.global_basis.z.normalized() * INTERACT_DISTANCE)
+	var params: PhysicsRayQueryParameters3D = PhysicsRayQueryParameters3D.create(from, to)
+	params.collide_with_bodies = true
+	params.collide_with_areas = true
+	params.exclude = [self.get_rid()]
+	var hit: Dictionary = world.direct_space_state.intersect_ray(params)
+	if hit.is_empty():
+		return null
+	var collider_v: Variant = hit.get("collider", null)
+	if collider_v == null:
+		return null
+	var n: Node = collider_v as Node
+	if n == null:
+		return null
+	var cur: Node = n
+	while cur != null:
+		if cur.has_method("interact") or cur.has_method("use"):
+			return cur
+		cur = cur.get_parent()
+	return null
+
+
+func _update_held_ball() -> void:
+	if _held_ball == null:
+		return
+	if not is_instance_valid(_held_ball) or not _held_ball.is_held_by(self):
+		_held_ball = null
+		return
+	var hold_target: Vector3 = _camera.global_position + (-_camera.global_basis.z.normalized() * HOLD_DISTANCE)
+	_held_ball.set_hold_target_position(hold_target)
+
+
+func _drop_held_ball() -> void:
+	if _held_ball == null or not is_instance_valid(_held_ball):
+		_held_ball = null
+		return
+	var throw_vel: Vector3 = -_camera.global_basis.z.normalized() * DROP_THROW_SPEED
+	_held_ball.drop(throw_vel)
+	_held_ball = null

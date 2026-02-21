@@ -10,6 +10,7 @@ signal collectible_count_changed(collected: int, required: int)
 signal exit_unlocked()
 signal player_health_changed(current: int, max_health: int, max_overhealth: int)
 signal player_died()
+signal io_event_dispatched(event: Dictionary)
 
 enum {
 	WORLD_LAYER = (1 << 0),
@@ -19,6 +20,8 @@ enum {
 
 @export var required_collectibles: int = 3
 @export var enable_ps1_geometry_shader: bool = true
+@export var io_debug_logging: bool = false
+@export_range(16, 1024, 1) var io_trace_capacity: int = 256
 @export_range(32.0, 1024.0, 1.0) var ps1_vertex_snap: float = 320.0
 @export_range(2.0, 64.0, 1.0) var ps1_color_steps: float = 32.0
 @export_range(0.0, 1.0, 0.01) var ps1_posterize_strength: float = 0.35
@@ -58,6 +61,9 @@ var _ps1_original_materials: Dictionary = {}
 var _ps1_scene_id: int = -1
 var _ps1_default_dither_texture: Texture2D = null
 var _last_worldspawn_id: int = -1
+var _io_trace: Array[Dictionary] = []
+var _io_seq: int = 0
+var _io_once_keys: Dictionary = {}
 
 
 static func _to_bool(value: Variant, default_value: bool = false) -> bool:
@@ -156,26 +162,244 @@ func _apply_killtarget(activator: Node) -> void:
 			killed[node_id] = true
 			node.queue_free()
 
-func use_targets(activator: Node, target: String) -> void:
+
+func _append_io_trace(event: Dictionary) -> void:
+	_io_trace.append(event)
+	while _io_trace.size() > io_trace_capacity:
+		_io_trace.remove_at(0)
+	io_event_dispatched.emit(event)
+	if io_debug_logging:
+		var source_name: String = String(event.get("source_name", ""))
+		var group_name: String = String(event.get("target_group", ""))
+		var input_name: String = String(event.get("input", "use"))
+		var delay_value: float = float(event.get("delay", 0.0))
+		var invoked: int = int(event.get("invoked_count", 0))
+		var target_count: int = int(event.get("target_count", 0))
+		print("[io] src=%s target=%s input=%s delay=%.3f invoked=%d/%d" % [source_name, group_name, input_name, delay_value, invoked, target_count])
+
+
+func io_get_trace() -> Array[Dictionary]:
+	return _io_trace.duplicate(true)
+
+
+func io_clear_trace() -> void:
+	_io_trace.clear()
+	_io_once_keys.clear()
+
+
+func _get_method_signature(node: Node, method_name: String) -> Dictionary:
+	var info_out: Dictionary = {"found": false, "min_args": 0, "max_args": 0}
+	if node == null or method_name.is_empty():
+		return info_out
+	var methods: Array[Dictionary] = node.get_method_list()
+	for method_info: Dictionary in methods:
+		if String(method_info.get("name", "")) != method_name:
+			continue
+		var args_v: Variant = method_info.get("args", [])
+		var defaults_v: Variant = method_info.get("default_args", [])
+		var arg_count: int = 0
+		var default_count: int = 0
+		if args_v is Array:
+			arg_count = (args_v as Array).size()
+		if defaults_v is Array:
+			default_count = (defaults_v as Array).size()
+		info_out["found"] = true
+		info_out["max_args"] = arg_count
+		info_out["min_args"] = maxi(arg_count - default_count, 0)
+		return info_out
+	return info_out
+
+
+func _call_method_best_effort(node: Node, method_name: String, args: Array) -> bool:
+	if node == null or method_name.is_empty():
+		return false
+	var sig: Dictionary = _get_method_signature(node, method_name)
+	if not bool(sig.get("found", false)):
+		return false
+	var min_args: int = int(sig.get("min_args", 0))
+	var max_args: int = int(sig.get("max_args", 0))
+	var call_count: int = mini(args.size(), max_args)
+	if call_count < min_args:
+		return false
+	var call_args: Array = []
+	for i in range(call_count):
+		call_args.append(args[i])
+	node.callv(method_name, call_args)
+	return true
+
+
+func _invoke_io_on_target(target_node: Node, input_name: String, arg: Variant, activator: Node, caller: Node) -> bool:
+	if target_node == null:
+		return false
+	if _call_method_best_effort(target_node, "io_input", [input_name, arg, activator, caller]):
+		return true
+	if _call_method_best_effort(target_node, input_name, [arg, activator, caller]):
+		return true
+	if input_name != "use":
+		if _call_method_best_effort(target_node, "use", [arg, activator, caller]):
+			return true
+	return false
+
+
+func _make_io_once_key(source_id: int, source_output: String, target_group: String, input_name: String) -> String:
+	return "%d|%s|%s|%s" % [source_id, source_output, target_group, input_name]
+
+
+func _apply_killtarget_after_delay(activator: Node, seconds: float) -> void:
+	await get_tree().create_timer(maxf(seconds, 0.0)).timeout
+	_apply_killtarget(activator)
+
+
+func _dispatch_target_group_now(
+		activator: Node,
+		target_group: String,
+		input_name: String,
+		arg: Variant,
+		delay_seconds: float,
+		source_output: String = "",
+		caller: Node = null
+	) -> void:
+	var target_list: Array[Node] = get_tree().get_nodes_in_group(target_group)
+	var invoked_count: int = 0
+	for targ: Node in target_list:
+		if _invoke_io_on_target(targ, input_name, arg, activator, caller):
+			invoked_count += 1
+	_io_seq += 1
+	var source_name: String = ""
+	if activator != null:
+		source_name = activator.name
+	var event: Dictionary = {
+		"seq": _io_seq,
+		"time_ms": Time.get_ticks_msec(),
+		"source_id": activator.get_instance_id() if activator != null else 0,
+		"source_name": source_name,
+		"source_output": source_output,
+		"target_group": target_group,
+		"input": input_name,
+		"arg": arg,
+		"delay": delay_seconds,
+		"target_count": target_list.size(),
+		"invoked_count": invoked_count
+	}
+	_append_io_trace(event)
+
+
+func _dispatch_target_group_after_delay(
+		activator: Node,
+		target_group: String,
+		input_name: String,
+		arg: Variant,
+		delay_seconds: float,
+		source_output: String = "",
+		caller: Node = null
+	) -> void:
+	await get_tree().create_timer(maxf(delay_seconds, 0.0)).timeout
+	_dispatch_target_group_now(activator, target_group, input_name, arg, delay_seconds, source_output, caller)
+
+
+func _dispatch_target_group(
+		activator: Node,
+		target_group: String,
+		input_name: String,
+		arg: Variant,
+		delay_seconds: float,
+		source_output: String = "",
+		once: bool = false,
+		caller: Node = null
+	) -> void:
+	if target_group.is_empty():
+		return
+	if activator != null and once:
+		var once_key: String = _make_io_once_key(activator.get_instance_id(), source_output, target_group, input_name)
+		if _io_once_keys.has(once_key):
+			return
+		_io_once_keys[once_key] = true
+	if delay_seconds > 0.0:
+		call_deferred("_dispatch_target_group_after_delay", activator, target_group, input_name, arg, delay_seconds, source_output, caller)
+	else:
+		_dispatch_target_group_now(activator, target_group, input_name, arg, delay_seconds, source_output, caller)
+
+
+func use_targets(activator: Node, target: String, overrides: Dictionary = {}) -> void:
 	if activator != null and not _master_allows(activator):
 		return
-	var f := String(_get_node_prop(activator, "targetfunc", "")).strip_edges()
+	var f: String = String(overrides.get("input", String(_get_node_prop(activator, "targetfunc", "")))).strip_edges()
 	if f.is_empty():
 		f = "use"
+	var arg: Variant = overrides.get("arg", _get_node_prop(activator, "targetarg", null))
+	var delay_seconds: float = maxf(float(overrides.get("delay", _get_node_prop(activator, "targetdelay", 0.0))), 0.0)
+	var source_output: String = String(overrides.get("source_output", "target"))
+	var once: bool = _to_bool(overrides.get("once", false), false)
+	var caller: Node = overrides.get("caller", activator) as Node
 	var seen_groups := {}
 	for chunk in target.split(","):
 		var group_name := String(chunk).strip_edges()
 		if group_name.is_empty() or seen_groups.has(group_name):
 			continue
 		seen_groups[group_name] = true
-		# Targetnames are really Godot Groups, so we can have multiple entities
-		# share a common "targetname" in Trenchbroom.
-		var target_list: Array[Node] = get_tree().get_nodes_in_group(group_name)
-		for targ in target_list:
-			if targ != null and targ.has_method(f):
-				targ.call(f)
+		_dispatch_target_group(activator, group_name, f, arg, delay_seconds, source_output, once, caller)
+	if activator != null:
+		if delay_seconds > 0.0:
+			call_deferred("_apply_killtarget_after_delay", activator, delay_seconds)
+		else:
+			_apply_killtarget(activator)
+
+
+func _parse_output_bool(value: String) -> bool:
+	var s: String = value.strip_edges().to_lower()
+	return s in ["1", "true", "yes", "on", "once"]
+
+
+func _parse_output_arg(value: String) -> Variant:
+	var trimmed: String = value.strip_edges()
+	if trimmed.is_empty():
+		return null
+	if trimmed.is_valid_int():
+		return int(trimmed)
+	if trimmed.is_valid_float():
+		return float(trimmed)
+	return trimmed
+
+
+func io_fire_output(activator: Node, output_value: String, source_output: String = "", default_input: String = "use") -> void:
+	var raw: String = output_value.strip_edges()
+	if raw.is_empty():
+		return
+	var lines: PackedStringArray = raw.split(";", false)
+	for ln in lines:
+		var line: String = String(ln).strip_edges()
+		if line.is_empty():
+			continue
+		var parts: PackedStringArray = line.split(",", false)
+		var target_group: String = String(parts[0]).strip_edges()
+		if target_group.is_empty():
+			continue
+		var input_name: String = default_input
+		var arg: Variant = null
+		var delay_seconds: float = 0.0
+		var once: bool = false
+		if parts.size() >= 2 and not String(parts[1]).strip_edges().is_empty():
+			input_name = String(parts[1]).strip_edges()
+		if parts.size() >= 3:
+			arg = _parse_output_arg(String(parts[2]))
+		if parts.size() >= 4:
+			delay_seconds = maxf(float(String(parts[3]).to_float()), 0.0)
+		if parts.size() >= 5:
+			once = _parse_output_bool(String(parts[4]))
+		_dispatch_target_group(activator, target_group, input_name, arg, delay_seconds, source_output, once, activator)
 	if activator != null:
 		_apply_killtarget(activator)
+
+
+func fire_output(activator: Node, output_key: String, fallback_target: String = "", default_input: String = "use") -> void:
+	if activator == null:
+		return
+	var raw_value: String = String(_get_node_prop(activator, output_key, "")).strip_edges()
+	if raw_value.is_empty():
+		if not fallback_target.strip_edges().is_empty():
+			use_targets(activator, fallback_target, {"source_output": output_key, "input": default_input})
+		return
+	io_fire_output(activator, raw_value, output_key, default_input)
 
 func set_targetname(node: Node, targetname: String) -> void:
 	if node == null:
