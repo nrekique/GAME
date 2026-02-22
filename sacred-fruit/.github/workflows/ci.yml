@@ -1,0 +1,42 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Install formatting and lint tools
+        run: |
+          python -m pip install --upgrade pip
+          pip install gdformat godot-lint
+
+      - name: Setup Godot Engine
+        uses: firebelley/setup-godot@v2
+        with:
+          version: '4.0.1'
+
+      - name: Run format and lint script
+        run: ./scripts/format_and_lint.sh
+
+      - name: Check for TODO comments
+        run: ./scripts/scan_todos.sh
+
+      - name: Run smoke tests
+        run: |
+          godot --no-window --headless --script res://tests/util_test.gd
+          godot --no-window --headless --script res://tests/io_test.gd
+          godot --no-window --headless --script res://tests/profile_test.gd
+          godot --no-window --headless --script res://tests/volume_test.gd
