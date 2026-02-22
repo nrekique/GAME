@@ -1,6 +1,7 @@
 @tool
 class_name FuncTrain
 extends AnimatableBody3D
+const Util := preload("res://scripts/util.gd")
 
 @export var target: String = ""
 @export var targetname: String = ""
@@ -18,7 +19,7 @@ func _func_godot_apply_properties(props: Dictionary) -> void:
 		speed = props["speed"] as float
 
 func _ready() -> void:
-	if Engine.is_editor_hint():
+	if Util.editor_hint():
 		return
 	if targetname != "":
 		GAME.set_targetname(self, targetname)
@@ -28,7 +29,7 @@ func _ready() -> void:
 			global_position = _current_corner.global_position
 
 func _physics_process(delta: float) -> void:
-	if Engine.is_editor_hint() or _waiting:
+	if Util.editor_hint() or _waiting:
 		return
 	if _current_corner == null:
 		return

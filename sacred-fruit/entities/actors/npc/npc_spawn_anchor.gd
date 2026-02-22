@@ -1,5 +1,6 @@
 @tool
 extends Node3D
+const Util := preload("res://scripts/util.gd")
 
 @export var visual_root_path: NodePath = NodePath("metarig")
 @export var origin_to_feet_units: float = 24.0
@@ -22,12 +23,12 @@ var _has_animation_player: bool = false
 
 func _ready() -> void:
 	_apply_alignment()
-	if Engine.is_editor_hint():
+	if Util.editor_hint():
 		return
 	_setup_idle_animation()
 
 func _process(delta: float) -> void:
-	if Engine.is_editor_hint():
+	if Util.editor_hint():
 		return
 	if _has_animation_player:
 		return
@@ -46,7 +47,7 @@ func _process(delta: float) -> void:
 	_idle_visual_root.rotation_degrees = r
 
 func _notification(what: int) -> void:
-	if Engine.is_editor_hint() and what == NOTIFICATION_ENTER_TREE:
+	if Util.editor_hint() and what == NOTIFICATION_ENTER_TREE:
 		call_deferred("_apply_alignment")
 
 func _apply_alignment() -> void:

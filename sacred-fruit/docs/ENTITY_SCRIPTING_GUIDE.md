@@ -162,6 +162,12 @@ From base FGD resources (`sacred-fruit/tb/fgd/base/*`):
 | `trigger_hurt` | `dmg`, `wait`, `start_disabled`, `one_shot`, `targetname` | Applies periodic damage while player remains inside. |
 | `trigger_changelevel` | `map`, `delay`, `targetname` | One-shot level transition trigger. |
 | `trigger_exit` | `map`, `delay`, `targetname` | Calls `GAME.try_exit()`, optional scene change on success. |
+| `damage_volume` | `amount`, `enabled` | Applies instant damage (calls `apply_damage()`) when bodies enter. |
+| `checkpoint_volume` | `enabled` | Respawns player at volume when entered (uses `GAME.handle_player_death`). |
+| `music_zone_volume` | `tag`, `enabled` | Switches music zone on entry. |
+| `ai_alert_volume` | `enabled` | Notifies AI system of entrant position. |
+| `quest_trigger_volume` | `tag`, `enabled` | Placeholder for quest scripting; no default action. |
+| `spawn_blocker_volume` | `enabled` | Marks area where spawning should be avoided. |
 
 ### 5.2.1 Portal Runtime Notes
 

@@ -1,6 +1,7 @@
 @tool
 class_name ItemAmmo
 extends Area3D
+const Util := preload("res://scripts/util.gd")
 
 @export var ammo_type: String = "bullets"
 @export var amount: int = 10
@@ -21,7 +22,7 @@ func _init() -> void:
 	connect("body_entered", _on_body_entered)
 
 func _ready() -> void:
-	if Engine.is_editor_hint():
+	if Util.editor_hint():
 		return
 	_ensure_default_children()
 	if targetname != "":
@@ -58,7 +59,7 @@ func _ensure_default_children() -> void:
 		add_child(mi)
 
 func _on_body_entered(body: Node) -> void:
-	if Engine.is_editor_hint():
+	if Util.editor_hint():
 		return
 	if body != null and body.is_in_group("PLAYER"):
 		var applied := false

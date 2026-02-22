@@ -4,6 +4,26 @@
 
 This version is compatible with Godot 4.0.1.
 
+
+## Project overview
+
+Sacred Fruit is a custom Godot 4.0 game framework built around Quake-style map entities.
+Features include a flexible I/O dispatch system, PS1 visual shader, and portal/mirror rendering.
+Refer to `docs/README.md` for detailed developer documentation, `docs/STYLE.md` for coding
+standards, and `docs/TESTS.md` for running the built-in smoke tests.
+
+Run `scripts/format_and_lint.sh` before committing code to apply standard formatting.
+
+You can adjust the active build profile (fast-iteration/playtest/shipping) by
+editing `project.godot` or using the provided script:
+
+```sh
+./scripts/build_profile.sh playtest
+```
+
+The current profile is read at startup by `GameManager`.
+
+
 A plugin created for godot to instance mirrors in a 3D scene. The mirrors use additional cameras to render the scene from a mirrored perspective.
 
 Mirror properties that can be adjusted:

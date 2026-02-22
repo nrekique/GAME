@@ -1,6 +1,7 @@
 @tool
 class_name TriggerHurt
 extends Area3D
+const Util := preload("res://scripts/util.gd")
 
 # Quake-ish defaults: "dmg" is damage per second, "wait" is tick interval.
 @export var damage_per_second: float = 20.0
@@ -45,7 +46,7 @@ func _init() -> void:
 
 
 func _ready() -> void:
-	if Engine.is_editor_hint():
+	if Util.editor_hint():
 		return
 
 	_enabled = not start_disabled
@@ -82,7 +83,7 @@ func set_enabled(value: bool) -> void:
 
 
 func _on_body_entered(body: Node) -> void:
-	if Engine.is_editor_hint():
+	if Util.editor_hint():
 		return
 	if not _enabled:
 		return
@@ -93,7 +94,7 @@ func _on_body_entered(body: Node) -> void:
 
 
 func _on_body_exited(body: Node) -> void:
-	if Engine.is_editor_hint():
+	if Util.editor_hint():
 		return
 	if body != null:
 		_bodies.erase(body)

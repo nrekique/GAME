@@ -1,6 +1,7 @@
 @tool
 class_name EnvFogController
 extends Node3D
+const Util := preload("res://scripts/util.gd")
 
 # Authoring-only entity consumed by sandstorm_controller.gd map parsing.
 @export var fog_enabled: bool = true
@@ -12,13 +13,13 @@ extends Node3D
 
 func _func_godot_apply_properties(props: Dictionary) -> void:
 	if props.has("fog_enabled"):
-		fog_enabled = _to_bool(props["fog_enabled"], fog_enabled)
+		fog_enabled = Util.to_bool(props["fog_enabled"], fog_enabled)
 	elif props.has("enabled"):
-		fog_enabled = _to_bool(props["enabled"], fog_enabled)
+		fog_enabled = Util.to_bool(props["enabled"], fog_enabled)
 	if props.has("volumetric_fog_enabled"):
-		volumetric_fog_enabled = _to_bool(props["volumetric_fog_enabled"], volumetric_fog_enabled)
+		volumetric_fog_enabled = Util.to_bool(props["volumetric_fog_enabled"], volumetric_fog_enabled)
 	elif props.has("volumetric_enabled"):
-		volumetric_fog_enabled = _to_bool(props["volumetric_enabled"], volumetric_fog_enabled)
+		volumetric_fog_enabled = Util.to_bool(props["volumetric_enabled"], volumetric_fog_enabled)
 	if props.has("fog_density"):
 		fog_density = clampf(float(props["fog_density"]), 0.0, 0.2)
 	if props.has("volumetric_fog_density"):
@@ -27,7 +28,7 @@ func _func_godot_apply_properties(props: Dictionary) -> void:
 		fog_color = _parse_color(props["fog_color"], fog_color)
 
 
-func _to_bool(value: Variant, fallback: bool) -> bool:
+func Util.to_bool(value: Variant, fallback: bool) -> bool:
 	match typeof(value):
 		TYPE_BOOL:
 			return bool(value)

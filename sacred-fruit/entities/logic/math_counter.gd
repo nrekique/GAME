@@ -1,6 +1,7 @@
 @tool
 class_name MathCounter
 extends Node3D
+const Util := preload("res://scripts/util.gd")
 
 @export var target: String = ""
 @export var targetfunc: String = ""
@@ -13,23 +14,6 @@ extends Node3D
 @export var fire_on_limit_only: bool = true
 
 
-static func _to_bool(value: Variant, default_value: bool) -> bool:
-	match typeof(value):
-		TYPE_BOOL:
-			return value
-		TYPE_INT, TYPE_FLOAT:
-			return float(value) != 0.0
-		TYPE_STRING:
-			var s := String(value).strip_edges().to_lower()
-			if s in ["1", "true", "yes", "on", "y"]:
-				return true
-			if s in ["0", "false", "no", "off", "n", ""]:
-				return false
-			return default_value
-		_:
-			return default_value
-
-
 func _func_godot_apply_properties(props: Dictionary) -> void:
 	if props.has("target"):
 		target = String(props["target"])
@@ -38,7 +22,7 @@ func _func_godot_apply_properties(props: Dictionary) -> void:
 	if props.has("targetname"):
 		targetname = String(props["targetname"])
 	if props.has("enabled"):
-		enabled = _to_bool(props["enabled"], enabled)
+		enabled = Util.to_bool(props["enabled"], enabled)
 	if props.has("value"):
 		value = float(props["value"])
 	elif props.has("start_value"):
@@ -50,12 +34,12 @@ func _func_godot_apply_properties(props: Dictionary) -> void:
 	if props.has("step"):
 		step = float(props["step"])
 	if props.has("fire_on_limit_only"):
-		fire_on_limit_only = _to_bool(props["fire_on_limit_only"], fire_on_limit_only)
+		fire_on_limit_only = Util.to_bool(props["fire_on_limit_only"], fire_on_limit_only)
 	value = clampf(value, min_value, max_value)
 
 
 func _ready() -> void:
-	if Engine.is_editor_hint():
+	if Util.editor_hint():
 		return
 	if targetname != "":
 		GAME.set_targetname(self, targetname)

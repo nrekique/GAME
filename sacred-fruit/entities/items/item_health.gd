@@ -1,6 +1,7 @@
 @tool
 class_name ItemHealth
 extends Area3D
+const Util := preload("res://scripts/util.gd")
 
 @export var amount: int = 25
 @export var allow_overheal: bool = false
@@ -24,13 +25,13 @@ func _init() -> void:
 	connect("body_entered", _on_body_entered)
 
 func _ready() -> void:
-	if Engine.is_editor_hint():
+	if Util.editor_hint():
 		return
 	if targetname != "":
 		GAME.set_targetname(self, targetname)
 
 func _on_body_entered(body: Node) -> void:
-	if Engine.is_editor_hint():
+	if Util.editor_hint():
 		return
 	if body != null and body.is_in_group("PLAYER"):
 		var applied := false

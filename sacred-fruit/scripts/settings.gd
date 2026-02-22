@@ -1,5 +1,5 @@
-extends Node
 class_name Settings
+extends Node
 
 signal settings_applied
 signal settings_changed

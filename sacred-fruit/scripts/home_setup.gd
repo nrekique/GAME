@@ -1,4 +1,5 @@
 extends Node3D
+const Util := preload("res://scripts/util.gd")
 
 const SANDSTORM_CONTROLLER_SCRIPT := preload("res://scripts/sandstorm_controller.gd")
 
@@ -34,7 +35,7 @@ var _sandstorm: Node3D = null
 
 
 func _ready() -> void:
-	if Engine.is_editor_hint():
+	if Util.editor_hint():
 		return
 	if not auto_run:
 		return

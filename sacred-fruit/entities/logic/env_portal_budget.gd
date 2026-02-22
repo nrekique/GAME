@@ -1,6 +1,7 @@
 @tool
 class_name EnvPortalBudget
 extends Node3D
+const Util := preload("res://scripts/util.gd")
 
 @export var profile_mode: String = "balanced" # cinematic, balanced, stress
 @export var stress_profile: bool = false
@@ -15,28 +16,11 @@ extends Node3D
 @export_range(0.0, 4.0, 0.01) var mirror_min_priority: float = 0.0
 
 
-static func _to_bool(value: Variant, default_value: bool) -> bool:
-	match typeof(value):
-		TYPE_BOOL:
-			return value
-		TYPE_INT, TYPE_FLOAT:
-			return float(value) != 0.0
-		TYPE_STRING:
-			var s: String = String(value).strip_edges().to_lower()
-			if s in ["1", "true", "yes", "on", "y"]:
-				return true
-			if s in ["0", "false", "no", "off", "n", ""]:
-				return false
-			return default_value
-		_:
-			return default_value
-
-
 func _func_godot_apply_properties(props: Dictionary) -> void:
 	if props.has("profile_mode"):
 		profile_mode = String(props["profile_mode"]).strip_edges().to_lower()
 	if props.has("stress_profile"):
-		stress_profile = _to_bool(props["stress_profile"], stress_profile)
+		stress_profile = Util.to_bool(props["stress_profile"], stress_profile)
 	if props.has("portal_max_active"):
 		portal_max_active = maxi(1, int(props["portal_max_active"]))
 	if props.has("portal_refresh_seconds"):

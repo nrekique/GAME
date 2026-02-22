@@ -1,5 +1,6 @@
 @tool
 extends ArrayMesh
+const Util := preload("res://scripts/util.gd")
 class_name PortalBoxMesh
 
 ## Inverted box with a flipped front side
@@ -17,7 +18,7 @@ class_name PortalBoxMesh
 		generate_portal_mesh()
 
 func _init() -> void:
-	if Engine.is_editor_hint():
+	if Util.editor_hint():
 		generate_portal_mesh()
 
 func generate_portal_mesh() -> void:

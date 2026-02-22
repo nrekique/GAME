@@ -1,6 +1,7 @@
 @tool
 class_name LogicTimer
 extends Node3D
+const Util := preload("res://scripts/util.gd")
 
 @export var target: String = ""
 @export var targetfunc: String = ""
@@ -16,23 +17,6 @@ var _time_left: float = 0.0
 var _rng := RandomNumberGenerator.new()
 
 
-static func _to_bool(value: Variant, default_value: bool) -> bool:
-	match typeof(value):
-		TYPE_BOOL:
-			return value
-		TYPE_INT, TYPE_FLOAT:
-			return float(value) != 0.0
-		TYPE_STRING:
-			var s := String(value).strip_edges().to_lower()
-			if s in ["1", "true", "yes", "on", "y"]:
-				return true
-			if s in ["0", "false", "no", "off", "n", ""]:
-				return false
-			return default_value
-		_:
-			return default_value
-
-
 func _func_godot_apply_properties(props: Dictionary) -> void:
 	if props.has("target"):
 		target = String(props["target"])
@@ -41,11 +25,11 @@ func _func_godot_apply_properties(props: Dictionary) -> void:
 	if props.has("targetname"):
 		targetname = String(props["targetname"])
 	if props.has("enabled"):
-		enabled = _to_bool(props["enabled"], enabled)
+		enabled = Util.to_bool(props["enabled"], enabled)
 	if props.has("start_on_spawn"):
-		start_on_spawn = _to_bool(props["start_on_spawn"], start_on_spawn)
+		start_on_spawn = Util.to_bool(props["start_on_spawn"], start_on_spawn)
 	if props.has("one_shot"):
-		one_shot = _to_bool(props["one_shot"], one_shot)
+		one_shot = Util.to_bool(props["one_shot"], one_shot)
 	if props.has("wait"):
 		wait = maxf(float(props["wait"]), 0.01)
 	if props.has("random_jitter"):
@@ -53,7 +37,7 @@ func _func_godot_apply_properties(props: Dictionary) -> void:
 
 
 func _ready() -> void:
-	if Engine.is_editor_hint():
+	if Util.editor_hint():
 		return
 	if targetname != "":
 		GAME.set_targetname(self, targetname)
@@ -62,7 +46,7 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
-	if Engine.is_editor_hint():
+	if Util.editor_hint():
 		return
 	if not enabled or not _running:
 		return

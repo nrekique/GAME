@@ -1,6 +1,7 @@
 @tool
 class_name EnvSkyScene
 extends Node3D
+const Util := preload("res://scripts/util.gd")
 
 @export var targetname: String = ""
 @export var enabled: bool = true
@@ -15,40 +16,23 @@ var _instance: Node3D = null
 var _camera: Camera3D = null
 
 
-static func _to_bool(value: Variant, default_value: bool) -> bool:
-	match typeof(value):
-		TYPE_BOOL:
-			return value
-		TYPE_INT, TYPE_FLOAT:
-			return float(value) != 0.0
-		TYPE_STRING:
-			var s := String(value).strip_edges().to_lower()
-			if s in ["1", "true", "yes", "on", "y"]:
-				return true
-			if s in ["0", "false", "no", "off", "n", ""]:
-				return false
-			return default_value
-		_:
-			return default_value
-
-
 func _func_godot_apply_properties(props: Dictionary) -> void:
 	if props.has("targetname"):
 		targetname = String(props["targetname"])
 	if props.has("enabled"):
-		enabled = _to_bool(props["enabled"], enabled)
+		enabled = Util.to_bool(props["enabled"], enabled)
 	if props.has("sky_scene"):
 		sky_scene = String(props["sky_scene"]).strip_edges()
 	if props.has("load_on_ready"):
-		load_on_ready = _to_bool(props["load_on_ready"], load_on_ready)
+		load_on_ready = Util.to_bool(props["load_on_ready"], load_on_ready)
 	if props.has("follow_camera"):
-		follow_camera = _to_bool(props["follow_camera"], follow_camera)
+		follow_camera = Util.to_bool(props["follow_camera"], follow_camera)
 	if props.has("position_offset"):
 		var off: Variant = props["position_offset"]
 		if off is Vector3:
 			position_offset = off
 	if props.has("copy_camera_rotation"):
-		copy_camera_rotation = _to_bool(props["copy_camera_rotation"], copy_camera_rotation)
+		copy_camera_rotation = Util.to_bool(props["copy_camera_rotation"], copy_camera_rotation)
 	if props.has("rotation_speed_deg"):
 		var rot: Variant = props["rotation_speed_deg"]
 		if rot is Vector3:
@@ -56,7 +40,7 @@ func _func_godot_apply_properties(props: Dictionary) -> void:
 
 
 func _ready() -> void:
-	if Engine.is_editor_hint():
+	if Util.editor_hint():
 		return
 	if not targetname.is_empty():
 		GAME.set_targetname(self, targetname)

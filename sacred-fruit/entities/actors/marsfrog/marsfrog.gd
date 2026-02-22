@@ -1,6 +1,7 @@
 @tool
 class_name Marsfrog
 extends Actor
+const Util := preload("res://scripts/util.gd")
 
 func use() -> void:
 	current_state = ActorStates.SCRIPTED
@@ -14,7 +15,7 @@ func _anim_finished(_anim: StringName) -> void:
 		current_state = ActorStates.NORMAL
 
 func _ready() -> void:
-	if Engine.is_editor_hint():
+	if Util.editor_hint():
 		return
 	super._ready()
 	anim_player = $marsfrog/AnimationPlayer
@@ -24,7 +25,7 @@ func _ready() -> void:
 		anim_player.play("walk")
 
 func _process(delta: float) -> void:
-	if Engine.is_editor_hint():
+	if Util.editor_hint():
 		return
 	super._process(delta)
 	if current_state == ActorStates.NORMAL:

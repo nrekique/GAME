@@ -1,6 +1,7 @@
 @tool
 class_name TriggerArea
 extends Area3D
+const Util := preload("res://scripts/util.gd")
 
 @export var target: String = ""
 @export var targetfunc: String = ""
@@ -41,6 +42,6 @@ func _init() -> void:
 	connect("body_entered", _on_ent_entered)
 
 func _ready() -> void:
-	if Engine.is_editor_hint():
+	if Util.editor_hint():
 		return
 	GAME.set_targetname(self, targetname)

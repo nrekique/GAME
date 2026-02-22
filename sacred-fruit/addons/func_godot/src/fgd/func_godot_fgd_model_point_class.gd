@@ -1,5 +1,6 @@
 @tool
 ## A special type of [FuncGodotFGDPointClass] entity that can automatically generate a special simplified GLB model file for the map editor display.
+const Util := preload("res://scripts/util.gd")
 ## Only supported in map editors that support GLTF or GLB.
 class_name FuncGodotFGDModelPointClass
 extends FuncGodotFGDPointClass
@@ -23,7 +24,7 @@ enum TargetMapEditor {
 		return generate_gd_ignore_file
 	set(ignore):
 		if (ignore != generate_gd_ignore_file):
-			if Engine.is_editor_hint():
+			if Util.editor_hint():
 				var path: String = _get_game_path().path_join(_get_model_folder())
 				var error: Error = DirAccess.make_dir_recursive_absolute(path)
 				if error != Error.OK:

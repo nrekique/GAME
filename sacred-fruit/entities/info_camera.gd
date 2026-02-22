@@ -1,6 +1,7 @@
 @tool
 class_name InfoCamera
 extends Camera3D
+const Util := preload("res://scripts/util.gd")
 
 @export var targetname: String = ""
 @export var camera_target: Node3D = null
@@ -18,12 +19,12 @@ func use() -> void:
 	current = true
 
 func _ready() -> void:
-	if Engine.is_editor_hint():
+	if Util.editor_hint():
 		return
 	GAME.set_targetname(self, targetname)
 
 func _process(_delta: float) -> void:
-	if Engine.is_editor_hint():
+	if Util.editor_hint():
 		return
 	if camera_target:
 		look_at(camera_target.global_position)

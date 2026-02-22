@@ -1,6 +1,7 @@
 @tool
 class_name FuncPortal
 extends StaticBody3D
+const Util := preload("res://scripts/util.gd")
 
 @export var target: String = ""
 @export var targetname: String = ""
@@ -80,42 +81,25 @@ var _portal_runtime_manager: Node = null
 var _managed_viewport_active: bool = true
 
 
-static func _to_bool(value: Variant, default_value: bool) -> bool:
-	match typeof(value):
-		TYPE_BOOL:
-			return value
-		TYPE_INT, TYPE_FLOAT:
-			return float(value) != 0.0
-		TYPE_STRING:
-			var s := String(value).strip_edges().to_lower()
-			if s in ["1", "true", "yes", "on", "y"]:
-				return true
-			if s in ["0", "false", "no", "off", "n", ""]:
-				return false
-			return default_value
-		_:
-			return default_value
-
-
 func _func_godot_apply_properties(props: Dictionary) -> void:
 	if props.has("target"):
 		target = String(props["target"])
 	if props.has("targetname"):
 		targetname = String(props["targetname"])
 	if props.has("enabled"):
-		enabled = _to_bool(props["enabled"], enabled)
+		enabled = Util.to_bool(props["enabled"], enabled)
 	if props.has("use_portals_plugin"):
-		use_portals_plugin = _to_bool(props["use_portals_plugin"], use_portals_plugin)
+		use_portals_plugin = Util.to_bool(props["use_portals_plugin"], use_portals_plugin)
 	if props.has("plugin_teleport_collision_mask"):
 		plugin_teleport_collision_mask = int(props["plugin_teleport_collision_mask"])
 	if props.has("plugin_use_opposite_face"):
-		plugin_use_opposite_face = _to_bool(props["plugin_use_opposite_face"], plugin_use_opposite_face)
+		plugin_use_opposite_face = Util.to_bool(props["plugin_use_opposite_face"], plugin_use_opposite_face)
 	if props.has("plugin_face_from_portal_texture"):
-		plugin_face_from_portal_texture = _to_bool(props["plugin_face_from_portal_texture"], plugin_face_from_portal_texture)
+		plugin_face_from_portal_texture = Util.to_bool(props["plugin_face_from_portal_texture"], plugin_face_from_portal_texture)
 	if props.has("plugin_keep_viewports_hot"):
-		plugin_keep_viewports_hot = _to_bool(props["plugin_keep_viewports_hot"], plugin_keep_viewports_hot)
+		plugin_keep_viewports_hot = Util.to_bool(props["plugin_keep_viewports_hot"], plugin_keep_viewports_hot)
 	if props.has("manager_enable_budgeting"):
-		manager_enable_budgeting = _to_bool(props["manager_enable_budgeting"], manager_enable_budgeting)
+		manager_enable_budgeting = Util.to_bool(props["manager_enable_budgeting"], manager_enable_budgeting)
 	if props.has("manager_max_active_portals"):
 		manager_max_active_portals = maxi(1, int(props["manager_max_active_portals"]))
 	if props.has("manager_refresh_seconds"):
@@ -123,11 +107,11 @@ func _func_godot_apply_properties(props: Dictionary) -> void:
 	if props.has("manager_min_runtime_priority"):
 		manager_min_runtime_priority = clampf(float(props["manager_min_runtime_priority"]), 0.0, 4.0)
 	if props.has("manager_require_visible_in_frustum"):
-		manager_require_visible_in_frustum = _to_bool(props["manager_require_visible_in_frustum"], manager_require_visible_in_frustum)
+		manager_require_visible_in_frustum = Util.to_bool(props["manager_require_visible_in_frustum"], manager_require_visible_in_frustum)
 	if props.has("manager_require_line_of_sight"):
-		manager_require_line_of_sight = _to_bool(props["manager_require_line_of_sight"], manager_require_line_of_sight)
+		manager_require_line_of_sight = Util.to_bool(props["manager_require_line_of_sight"], manager_require_line_of_sight)
 	if props.has("dynamic_quality_enabled"):
-		dynamic_quality_enabled = _to_bool(props["dynamic_quality_enabled"], dynamic_quality_enabled)
+		dynamic_quality_enabled = Util.to_bool(props["dynamic_quality_enabled"], dynamic_quality_enabled)
 	if props.has("dynamic_min_render_scale"):
 		dynamic_min_render_scale = clampf(float(props["dynamic_min_render_scale"]), 0.25, 1.0)
 	if props.has("dynamic_near_distance"):
@@ -141,13 +125,13 @@ func _func_godot_apply_properties(props: Dictionary) -> void:
 	if props.has("portal_axis"):
 		portal_axis = String(props["portal_axis"]).strip_edges().to_lower()
 	if props.has("portal_debug"):
-		portal_debug = _to_bool(props["portal_debug"], portal_debug)
+		portal_debug = Util.to_bool(props["portal_debug"], portal_debug)
 	if props.has("render_scale"):
 		render_scale = clampf(float(props["render_scale"]), 0.25, 1.0)
 	if props.has("render_use_window_projection"):
-		render_use_window_projection = _to_bool(props["render_use_window_projection"], render_use_window_projection)
+		render_use_window_projection = Util.to_bool(props["render_use_window_projection"], render_use_window_projection)
 	if props.has("render_use_oblique_clip"):
-		render_use_oblique_clip = _to_bool(props["render_use_oblique_clip"], render_use_oblique_clip)
+		render_use_oblique_clip = Util.to_bool(props["render_use_oblique_clip"], render_use_oblique_clip)
 	if props.has("render_camera_offset"):
 		render_camera_offset = clampf(float(props["render_camera_offset"]), -0.05, 0.05)
 	if props.has("render_min_link_distance"):
@@ -157,13 +141,13 @@ func _func_godot_apply_properties(props: Dictionary) -> void:
 	if props.has("exit_offset"):
 		exit_offset = clampf(float(props["exit_offset"]), 0.01, 0.5)
 	if props.has("reverse_normal"):
-		reverse_normal = _to_bool(props["reverse_normal"], reverse_normal)
+		reverse_normal = Util.to_bool(props["reverse_normal"], reverse_normal)
 
 	_on_properties_applied()
 
 
 func _ready() -> void:
-	if Engine.is_editor_hint():
+	if Util.editor_hint():
 		return
 
 	add_to_group("func_portal")
@@ -185,7 +169,7 @@ func _ready() -> void:
 
 
 func _exit_tree() -> void:
-	if Engine.is_editor_hint():
+	if Util.editor_hint():
 		return
 	_unregister_portal_runtime_manager()
 	if _plugin_portal != null:
@@ -212,7 +196,7 @@ func _exit_tree() -> void:
 
 
 func _process(delta: float) -> void:
-	if Engine.is_editor_hint():
+	if Util.editor_hint():
 		return
 
 	if use_portals_plugin:
@@ -237,7 +221,7 @@ func _process(delta: float) -> void:
 
 
 func _physics_process(_delta: float) -> void:
-	if Engine.is_editor_hint() or not enabled or _linked_portal == null:
+	if Util.editor_hint() or not enabled or _linked_portal == null:
 		return
 	if use_portals_plugin:
 		return
@@ -287,13 +271,13 @@ func _resolve_linked_portal(force: bool) -> void:
 	if portal_debug and _is_runtime_debug_enabled():
 		if linked_id != _last_linked_portal_id:
 			_last_linked_portal_id = linked_id
-			print("[Portal DEBUG] %s link target=%s resolved=%s" % [name, target, (str(linked_id) if linked_id != -1 else "none")])
+			Util.debug_print("[Portal DEBUG] %s link target=%s resolved=%s" % [name, target, (str(linked_id) if linked_id != -1 else "none")])
 
 
 func _build_portal_surface() -> void:
 	_configure_portal_plane()
 	if portal_debug and _is_runtime_debug_enabled():
-		print("[Portal DEBUG] %s half_extents=%s depth=%.3f axis=%s reverse=%s" % [name, str(_portal_half_extents), _portal_depth, portal_axis, str(reverse_normal)])
+		Util.debug_print("[Portal DEBUG] %s half_extents=%s depth=%.3f axis=%s reverse=%s" % [name, str(_portal_half_extents), _portal_depth, portal_axis, str(reverse_normal)])
 
 	if _surface == null:
 		_surface = MeshInstance3D.new()
@@ -460,7 +444,7 @@ func _debug_tick(delta: float) -> void:
 	var surf_vis: bool = (_surface != null and _surface.visible)
 	var p_xform: Transform3D = _get_portal_global_transform()
 	var portal_aspect: float = _portal_half_extents.x / maxf(_portal_half_extents.y, 0.001)
-	print("[Portal DEBUG] %s linked_id=%d linked_name=%s render_ok=%s visible=%s vp=%s world=%s cam=%s tex=%s axis=%s portal_aspect=%.3f normal=%s origin=%s" % [
+	Util.debug_print("[Portal DEBUG] %s linked_id=%d linked_name=%s render_ok=%s visible=%s vp=%s world=%s cam=%s tex=%s axis=%s portal_aspect=%.3f normal=%s origin=%s" % [
 		name, linked_id, linked_name, str(_render_ok), str(surf_vis), str(vp_size), str(has_world), str(has_cam), str(has_tex), portal_axis,
 		portal_aspect, str(p_xform.basis.z.normalized()), str(p_xform.origin)
 	])
@@ -626,7 +610,7 @@ func _portal_matches_targetname(portal: FuncPortal, wanted_target: String) -> bo
 
 
 func _on_properties_applied() -> void:
-	if Engine.is_editor_hint() or not is_inside_tree():
+	if Util.editor_hint() or not is_inside_tree():
 		return
 	if not is_in_group("func_portal"):
 		add_to_group("func_portal")
@@ -809,7 +793,7 @@ func _ensure_camera_environment(src_cam: Camera3D) -> void:
 
 
 func _register_portal_runtime_manager() -> void:
-	if Engine.is_editor_hint() or not manager_enable_budgeting or not use_portals_plugin:
+	if Util.editor_hint() or not manager_enable_budgeting or not use_portals_plugin:
 		return
 	if _portal_runtime_manager == null:
 		var existing := get_node_or_null("/root/%s" % PORTAL_RUNTIME_MANAGER_NAME)
@@ -1121,7 +1105,7 @@ func _try_configure_portal_plane_from_metadata() -> bool:
 	_portal_local_xform = Transform3D(Basis(x_axis, y_axis, local_normal), local_center)
 	_auto_use_opposite_face = false
 	if portal_debug and _is_runtime_debug_enabled():
-		print("[Portal DEBUG] %s metadata space select local_center=%s world_as_local=%s direct_local=%s local_normal=%s fit_ok=%s half=%s" % [
+		Util.debug_print("[Portal DEBUG] %s metadata space select local_center=%s world_as_local=%s direct_local=%s local_normal=%s fit_ok=%s half=%s" % [
 			name, str(local_center), str(local_center_world), str(local_center_direct), str(local_normal), str(fit_ok), str(_portal_half_extents)
 		])
 	return true
@@ -1170,7 +1154,7 @@ func _try_configure_portal_plane_from_exact_metadata(md: Dictionary) -> bool:
 	_portal_depth = maxf(_support_extent(half_size, local_normal) * 2.0, 0.01)
 	_auto_use_opposite_face = false
 	if portal_debug and _is_runtime_debug_enabled():
-		print("[Portal DEBUG] %s exact metadata local_center=%s local_normal=%s half=%s" % [
+		Util.debug_print("[Portal DEBUG] %s exact metadata local_center=%s local_normal=%s half=%s" % [
 			name, str(local_center), str(local_normal), str(_portal_half_extents)
 		])
 	return true
@@ -1586,13 +1570,13 @@ func _is_oblique_projection_api_available() -> bool:
 	if _oblique_api_checked:
 		if render_use_oblique_clip and portal_debug and _is_runtime_debug_enabled() and not _oblique_api_available and not _oblique_unavailable_logged:
 			_oblique_unavailable_logged = true
-			print("[Portal DEBUG] %s oblique clip API unavailable; using frustum fallback." % [name])
+			Util.debug_print("[Portal DEBUG] %s oblique clip API unavailable; using frustum fallback." % [name])
 		return _oblique_api_available
 	_oblique_api_checked = true
 	_oblique_api_available = _portal_camera != null and _portal_camera.has_method("set_custom_projection")
 	if render_use_oblique_clip and portal_debug and _is_runtime_debug_enabled() and not _oblique_api_available and not _oblique_unavailable_logged:
 		_oblique_unavailable_logged = true
-		print("[Portal DEBUG] %s oblique clip API unavailable; using frustum fallback." % [name])
+		Util.debug_print("[Portal DEBUG] %s oblique clip API unavailable; using frustum fallback." % [name])
 	return _oblique_api_available
 
 

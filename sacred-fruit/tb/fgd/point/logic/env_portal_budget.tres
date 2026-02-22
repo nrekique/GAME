@@ -17,12 +17,12 @@ class_properties = {
 "mirror_min_priority": 0.0,
 "mirror_refresh_seconds": 0.08,
 "mirror_render_scale": 0.6,
-"profile_mode": "balanced",
 "portal_max_active": 4,
-"portal_min_priority": 0.0,
 "portal_max_render_scale": 0.6,
+"portal_min_priority": 0.0,
 "portal_min_render_scale": 0.3,
 "portal_refresh_seconds": 0.1,
+"profile_mode": "balanced",
 "stress_profile": false
 }
 class_property_descriptions = {
@@ -30,12 +30,12 @@ class_property_descriptions = {
 "mirror_min_priority": "Drop mirrors with lower runtime score.",
 "mirror_refresh_seconds": "Mirror manager refresh period.",
 "mirror_render_scale": "Mirror render-scale cap.",
-"profile_mode": "Budget preset: cinematic, balanced, or stress.",
 "portal_max_active": "Max portals rendering simultaneously.",
-"portal_min_priority": "Drop portals with lower runtime score.",
 "portal_max_render_scale": "Upper render-scale bound.",
+"portal_min_priority": "Drop portals with lower runtime score.",
 "portal_min_render_scale": "Lower render-scale bound.",
 "portal_refresh_seconds": "Portal manager refresh period.",
+"profile_mode": "Budget preset: cinematic, balanced, or stress.",
 "stress_profile": "Enable aggressive stress-test defaults (portal=3, mirror=1, min_scale=0.25)."
 }
 meta_properties = {

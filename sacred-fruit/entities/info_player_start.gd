@@ -1,6 +1,7 @@
 @tool
 class_name InfoPlayerStart
 extends Marker3D
+const Util := preload("res://scripts/util.gd")
 
 @export var targetname: String = ""
 @export var angles: Vector3 = Vector3.ZERO
@@ -21,7 +22,7 @@ func _func_godot_apply_properties(props: Dictionary) -> void:
 		active = props["active"] as bool
 
 func _ready() -> void:
-	if Engine.is_editor_hint():
+	if Util.editor_hint():
 		return
 	if targetname != "":
 		GAME.set_targetname(self, targetname)

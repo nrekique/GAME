@@ -125,6 +125,31 @@ Quick authoring sheet for common gameplay/environment entities.
 - `start_disabled` (`0/1`)
 - `one_shot` (`0/1`)
 
+## Volumes
+
+_These areas emit `body_entered(body)` and `body_exited(body)` signals._
+
+`damage_volume`
+- `amount` (damage applied on entry)
+- `enabled` (`0/1`)
+
+`checkpoint_volume`
+- `enabled` (`0/1`)
+
+`music_zone_volume`
+- `tag` (zone name)
+- `enabled` (`0/1`)
+
+`ai_alert_volume`
+- `enabled` (`0/1`)
+
+`quest_trigger_volume`
+- `tag` (optional identifier)
+- `enabled` (`0/1`)
+
+`spawn_blocker_volume`
+- `enabled` (`0/1`)
+
 ## Interactions
 
 - Player `use` input is mapped to `E`.

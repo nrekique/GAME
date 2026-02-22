@@ -1,4 +1,5 @@
 extends Node3D
+const Util := preload("res://scripts/util.gd")
 
 # Export/import photo mode state (scene, camera, settings)
 const PHOTO_CAPTURE_DIR := "user://photos"
@@ -742,7 +743,7 @@ func import_photo_mode_state(path: String) -> void:
 
 
 func _ready() -> void:
-	if Engine.is_editor_hint():
+	if Util.editor_hint():
 		return
 	add_to_group("NO_HUD")
 

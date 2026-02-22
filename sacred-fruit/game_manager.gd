@@ -1,5 +1,6 @@
 class_name GameManager
 extends Node
+const Util := preload("res://scripts/util.gd")
 
 # Common inverse scale. Calculated as 1.0 / Inverse Scale Factor. 
 # Used to help translate properties using Quake Units into Godot Units.
@@ -19,27 +20,31 @@ enum {
 }
 
 @export var required_collectibles: int = 3
-@export var enable_ps1_geometry_shader: bool = true
+
+# PS1 shader configuration has been refactored into a dedicated manager.
+const PS1ShaderManager := preload("res://scripts/ps1_shader_manager.gd")
+var ps1_mgr: PS1ShaderManager = PS1ShaderManager.new()
+
 @export var io_debug_logging: bool = false
 @export_range(16, 1024, 1) var io_trace_capacity: int = 256
-@export_range(32.0, 1024.0, 1.0) var ps1_vertex_snap: float = 320.0
-@export_range(2.0, 64.0, 1.0) var ps1_color_steps: float = 32.0
-@export_range(0.0, 1.0, 0.01) var ps1_posterize_strength: float = 0.35
-@export_range(0.0, 1.0, 0.01) var ps1_affine_warp: float = 0.08
-@export_range(0.0, 0.02, 0.0001) var ps1_uv_jitter: float = 0.0006
-@export var ps1_jitter_depth_independent: bool = true
-@export var ps1_jitter_z_coordinate: bool = false
-@export var ps1_affine_texture_mapping: bool = false
-@export_range(0.0, 1.0, 0.01) var ps1_affine_mapping_strength: float = 0.0
-@export_range(0.0, 1.0, 0.01) var ps1_alpha_scissor_threshold: float = 0.0
-@export var ps1_dithering_enabled: bool = true
-@export_range(0.0, 2.0, 0.01) var ps1_dither_strength: float = 1.2
-@export_range(1, 8, 1) var ps1_dither_resolution_scale: int = 2
-@export var ps1_light_dither_enabled: bool = true
-@export var ps1_light_dither_texture: Texture2D
-@export_range(0.1, 16.0, 0.1) var ps1_light_dither_scale: float = 1.0
-@export_range(0.0, 1.0, 0.01) var ps1_light_dither_strength: float = 0.2
-@export_range(1.0, 16.0, 1.0) var ps1_light_dither_levels: float = 5.0
+
+# runtime configuration ----------------------------------------------------
+# value read from project settings by `scripts/build_profile.sh`.
+@export var build_profile: String = ""  # populated during _ready()
+
+# convenience helpers for conditional logic based on profile
+func is_profile(name: String) -> bool:
+	return build_profile == name
+
+func is_shipping() -> bool:
+	return is_profile("shipping")
+
+func is_playtest() -> bool:
+	return is_profile("playtest")
+
+func is_fast_iteration() -> bool:
+	return is_profile("fast-iteration")
+
 
 var collected_collectibles: int = 0
 var _hud: CanvasLayer = null
@@ -51,36 +56,11 @@ var player_health: int = 0
 var player_max_health: int = 0
 var player_max_overhealth: int = 0
 const NO_HUD_GROUP := "NO_HUD"
-const PS1_SHADER_PATH := "res://shaders/ps1_geometry.gdshader"
 
-var _ps1_shader: Shader = null
-var _ps1_material_cache: Dictionary = {}
-var _ps1_cached_materials: Array[ShaderMaterial] = []
-var _ps1_mesh_ids: Dictionary = {}
-var _ps1_original_materials: Dictionary = {}
-var _ps1_scene_id: int = -1
-var _ps1_default_dither_texture: Texture2D = null
 var _last_worldspawn_id: int = -1
-var _io_trace: Array[Dictionary] = []
-var _io_seq: int = 0
-var _io_once_keys: Dictionary = {}
 
-
-static func _to_bool(value: Variant, default_value: bool = false) -> bool:
-	match typeof(value):
-		TYPE_BOOL:
-			return value
-		TYPE_INT, TYPE_FLOAT:
-			return float(value) != 0.0
-		TYPE_STRING:
-			var s := String(value).strip_edges().to_lower()
-			if s in ["1", "true", "yes", "on", "y"]:
-				return true
-			if s in ["0", "false", "no", "off", "n", ""]:
-				return false
-			return default_value
-		_:
-			return default_value
+# worldspawn collision optimisation threshold
+const WORLDSPAWN_COLLIDER_THRESHOLD: int = 250
 
 
 func _get_node_prop(node: Node, key: String, default_value: Variant = null) -> Variant:
@@ -114,303 +94,27 @@ func _worldspawn_has_source_prop(worldspawn: Node, key: String) -> bool:
 	return (src_var as Dictionary).has(key)
 
 
-func _is_master_unlocked(master_node: Node) -> bool:
-	if master_node == null:
-		return false
-	if master_node.has_method("is_unlocked"):
-		return _to_bool(master_node.call("is_unlocked"), false)
-	for method_name in ["is_active", "is_enabled", "is_open", "is_on"]:
-		if master_node.has_method(method_name):
-			return _to_bool(master_node.call(method_name), false)
-	for property_name in ["unlocked", "active", "enabled", "open", "on", "button_pressed"]:
-		var value: Variant = _get_node_prop(master_node, property_name, null)
-		if value != null:
-			return _to_bool(value, false)
-	# If no explicit lock state exists, treat this master as unlocked.
-	return true
 
 
-func _master_allows(activator: Node) -> bool:
-	var master_name := String(_get_node_prop(activator, "master", "")).strip_edges()
-	if master_name.is_empty():
-		return true
-	var masters := get_tree().get_nodes_in_group(master_name)
-	if masters.is_empty():
-		return false
-	for m in masters:
-		if m is Node and _is_master_unlocked(m as Node):
-			return true
-	return false
+# --- IO manager facade methods ------------------------------------------------
 
-
-func _apply_killtarget(activator: Node) -> void:
-	var killtarget_raw := String(_get_node_prop(activator, "killtarget", ""))
-	if killtarget_raw.is_empty():
-		return
-	var killed := {}
-	for chunk in killtarget_raw.split(","):
-		var group_name := String(chunk).strip_edges()
-		if group_name.is_empty():
-			continue
-		for target_node in get_tree().get_nodes_in_group(group_name):
-			var node := target_node as Node
-			if node == null:
-				continue
-			var node_id := node.get_instance_id()
-			if killed.has(node_id):
-				continue
-			killed[node_id] = true
-			node.queue_free()
-
-
-func _append_io_trace(event: Dictionary) -> void:
-	_io_trace.append(event)
-	while _io_trace.size() > io_trace_capacity:
-		_io_trace.remove_at(0)
-	io_event_dispatched.emit(event)
-	if io_debug_logging:
-		var source_name: String = String(event.get("source_name", ""))
-		var group_name: String = String(event.get("target_group", ""))
-		var input_name: String = String(event.get("input", "use"))
-		var delay_value: float = float(event.get("delay", 0.0))
-		var invoked: int = int(event.get("invoked_count", 0))
-		var target_count: int = int(event.get("target_count", 0))
-		print("[io] src=%s target=%s input=%s delay=%.3f invoked=%d/%d" % [source_name, group_name, input_name, delay_value, invoked, target_count])
-
-
-func io_get_trace() -> Array[Dictionary]:
-	return _io_trace.duplicate(true)
-
-
-func io_clear_trace() -> void:
-	_io_trace.clear()
-	_io_once_keys.clear()
-
-
-func _get_method_signature(node: Node, method_name: String) -> Dictionary:
-	var info_out: Dictionary = {"found": false, "min_args": 0, "max_args": 0}
-	if node == null or method_name.is_empty():
-		return info_out
-	var methods: Array[Dictionary] = node.get_method_list()
-	for method_info: Dictionary in methods:
-		if String(method_info.get("name", "")) != method_name:
-			continue
-		var args_v: Variant = method_info.get("args", [])
-		var defaults_v: Variant = method_info.get("default_args", [])
-		var arg_count: int = 0
-		var default_count: int = 0
-		if args_v is Array:
-			arg_count = (args_v as Array).size()
-		if defaults_v is Array:
-			default_count = (defaults_v as Array).size()
-		info_out["found"] = true
-		info_out["max_args"] = arg_count
-		info_out["min_args"] = maxi(arg_count - default_count, 0)
-		return info_out
-	return info_out
-
-
-func _call_method_best_effort(node: Node, method_name: String, args: Array) -> bool:
-	if node == null or method_name.is_empty():
-		return false
-	var sig: Dictionary = _get_method_signature(node, method_name)
-	if not bool(sig.get("found", false)):
-		return false
-	var min_args: int = int(sig.get("min_args", 0))
-	var max_args: int = int(sig.get("max_args", 0))
-	var call_count: int = mini(args.size(), max_args)
-	if call_count < min_args:
-		return false
-	var call_args: Array = []
-	for i in range(call_count):
-		call_args.append(args[i])
-	node.callv(method_name, call_args)
-	return true
-
-
-func _invoke_io_on_target(target_node: Node, input_name: String, arg: Variant, activator: Node, caller: Node) -> bool:
-	if target_node == null:
-		return false
-	if _call_method_best_effort(target_node, "io_input", [input_name, arg, activator, caller]):
-		return true
-	if _call_method_best_effort(target_node, input_name, [arg, activator, caller]):
-		return true
-	if input_name != "use":
-		if _call_method_best_effort(target_node, "use", [arg, activator, caller]):
-			return true
-	return false
-
-
-func _make_io_once_key(source_id: int, source_output: String, target_group: String, input_name: String) -> String:
-	return "%d|%s|%s|%s" % [source_id, source_output, target_group, input_name]
-
-
-func _apply_killtarget_after_delay(activator: Node, seconds: float) -> void:
-	await get_tree().create_timer(maxf(seconds, 0.0)).timeout
-	_apply_killtarget(activator)
-
-
-func _dispatch_target_group_now(
-		activator: Node,
-		target_group: String,
-		input_name: String,
-		arg: Variant,
-		delay_seconds: float,
-		source_output: String = "",
-		caller: Node = null
-	) -> void:
-	var target_list: Array[Node] = get_tree().get_nodes_in_group(target_group)
-	var invoked_count: int = 0
-	for targ: Node in target_list:
-		if _invoke_io_on_target(targ, input_name, arg, activator, caller):
-			invoked_count += 1
-	_io_seq += 1
-	var source_name: String = ""
-	if activator != null:
-		source_name = activator.name
-	var event: Dictionary = {
-		"seq": _io_seq,
-		"time_ms": Time.get_ticks_msec(),
-		"source_id": activator.get_instance_id() if activator != null else 0,
-		"source_name": source_name,
-		"source_output": source_output,
-		"target_group": target_group,
-		"input": input_name,
-		"arg": arg,
-		"delay": delay_seconds,
-		"target_count": target_list.size(),
-		"invoked_count": invoked_count
-	}
-	_append_io_trace(event)
-
-
-func _dispatch_target_group_after_delay(
-		activator: Node,
-		target_group: String,
-		input_name: String,
-		arg: Variant,
-		delay_seconds: float,
-		source_output: String = "",
-		caller: Node = null
-	) -> void:
-	await get_tree().create_timer(maxf(delay_seconds, 0.0)).timeout
-	_dispatch_target_group_now(activator, target_group, input_name, arg, delay_seconds, source_output, caller)
-
-
-func _dispatch_target_group(
-		activator: Node,
-		target_group: String,
-		input_name: String,
-		arg: Variant,
-		delay_seconds: float,
-		source_output: String = "",
-		once: bool = false,
-		caller: Node = null
-	) -> void:
-	if target_group.is_empty():
-		return
-	if activator != null and once:
-		var once_key: String = _make_io_once_key(activator.get_instance_id(), source_output, target_group, input_name)
-		if _io_once_keys.has(once_key):
-			return
-		_io_once_keys[once_key] = true
-	if delay_seconds > 0.0:
-		call_deferred("_dispatch_target_group_after_delay", activator, target_group, input_name, arg, delay_seconds, source_output, caller)
-	else:
-		_dispatch_target_group_now(activator, target_group, input_name, arg, delay_seconds, source_output, caller)
-
+const IOManager := preload("res://scripts/io_manager.gd")
+var io_mgr: IOManager = IOManager.new()
 
 func use_targets(activator: Node, target: String, overrides: Dictionary = {}) -> void:
-	if activator != null and not _master_allows(activator):
-		return
-	var f: String = String(overrides.get("input", String(_get_node_prop(activator, "targetfunc", "")))).strip_edges()
-	if f.is_empty():
-		f = "use"
-	var arg: Variant = overrides.get("arg", _get_node_prop(activator, "targetarg", null))
-	var delay_seconds: float = maxf(float(overrides.get("delay", _get_node_prop(activator, "targetdelay", 0.0))), 0.0)
-	var source_output: String = String(overrides.get("source_output", "target"))
-	var once: bool = _to_bool(overrides.get("once", false), false)
-	var caller: Node = overrides.get("caller", activator) as Node
-	var seen_groups := {}
-	for chunk in target.split(","):
-		var group_name := String(chunk).strip_edges()
-		if group_name.is_empty() or seen_groups.has(group_name):
-			continue
-		seen_groups[group_name] = true
-		_dispatch_target_group(activator, group_name, f, arg, delay_seconds, source_output, once, caller)
-	if activator != null:
-		if delay_seconds > 0.0:
-			call_deferred("_apply_killtarget_after_delay", activator, delay_seconds)
-		else:
-			_apply_killtarget(activator)
-
-
-func _parse_output_bool(value: String) -> bool:
-	var s: String = value.strip_edges().to_lower()
-	return s in ["1", "true", "yes", "on", "once"]
-
-
-func _parse_output_arg(value: String) -> Variant:
-	var trimmed: String = value.strip_edges()
-	if trimmed.is_empty():
-		return null
-	if trimmed.is_valid_int():
-		return int(trimmed)
-	if trimmed.is_valid_float():
-		return float(trimmed)
-	return trimmed
-
+	io_mgr.use_targets(activator, target, overrides)
 
 func io_fire_output(activator: Node, output_value: String, source_output: String = "", default_input: String = "use") -> void:
-	var raw: String = output_value.strip_edges()
-	if raw.is_empty():
-		return
-	var lines: PackedStringArray = raw.split(";", false)
-	for ln in lines:
-		var line: String = String(ln).strip_edges()
-		if line.is_empty():
-			continue
-		var parts: PackedStringArray = line.split(",", false)
-		var target_group: String = String(parts[0]).strip_edges()
-		if target_group.is_empty():
-			continue
-		var input_name: String = default_input
-		var arg: Variant = null
-		var delay_seconds: float = 0.0
-		var once: bool = false
-		if parts.size() >= 2 and not String(parts[1]).strip_edges().is_empty():
-			input_name = String(parts[1]).strip_edges()
-		if parts.size() >= 3:
-			arg = _parse_output_arg(String(parts[2]))
-		if parts.size() >= 4:
-			delay_seconds = maxf(float(String(parts[3]).to_float()), 0.0)
-		if parts.size() >= 5:
-			once = _parse_output_bool(String(parts[4]))
-		_dispatch_target_group(activator, target_group, input_name, arg, delay_seconds, source_output, once, activator)
-	if activator != null:
-		_apply_killtarget(activator)
-
+	io_mgr.io_fire_output(activator, output_value, source_output, default_input)
 
 func fire_output(activator: Node, output_key: String, fallback_target: String = "", default_input: String = "use") -> void:
-	if activator == null:
-		return
-	var raw_value: String = String(_get_node_prop(activator, output_key, "")).strip_edges()
-	if raw_value.is_empty():
-		if not fallback_target.strip_edges().is_empty():
-			use_targets(activator, fallback_target, {"source_output": output_key, "input": default_input})
-		return
-	io_fire_output(activator, raw_value, output_key, default_input)
+	io_mgr.fire_output(activator, output_key, fallback_target, default_input)
 
 func set_targetname(node: Node, targetname: String) -> void:
-	if node == null:
-		return
-	if targetname.is_empty():
-		return
-	# Allow comma-delimited targetnames (Quake convention).
-	for t in targetname.split(","):
-		var name := String(t).strip_edges()
-		if not name.is_empty():
-			node.add_to_group(name)
+	io_mgr.set_targetname(node, targetname)
+
+func io_get_trace() -> Array[Dictionary]:
+	return io_mgr.io_get_trace()
 
 # Converts Quake 1 axis to Godot axis
 static func id_vec_to_godot_vec(vec: Variant)->Vector3:
@@ -425,11 +129,37 @@ static func id_vec_to_godot_vec(vec: Variant)->Vector3:
 
 
 func _ready() -> void:
-	if Engine.is_editor_hint():
+	if Util.editor_hint():
 		return
 
+	# load build profile from project settings (fallback keeps old behaviour)
+	build_profile = ProjectSettings.get_setting("application/build_profile", "fast-iteration")
+	if io_debug_logging:
+		Util.debug_print("[GameManager] build_profile=" + build_profile)
+
 	_reset_objective_state()
-	_setup_ps1_shader()
+
+# ---------------------------------------------------------------
+# spawn blocker helpers
+# ---------------------------------------------------------------
+
+# checks every SpawnBlockerVolume in the scene; returns true if the
+# provided position falls inside any of them.
+func is_spawn_blocked(point: Vector3) -> bool:
+	if Util.editor_hint():
+		return false
+	for vol in get_tree().get_nodes_in_group("spawn_blocker"):
+		if vol and vol.has_method("blocks_point") and vol.blocks_point(point):
+			return true
+	return false
+	# initialize PS1 manager (previously _setup_ps1_shader)
+	ps1_mgr._setup_ps1_shader()
+	# set up io manager
+	add_child(io_mgr)
+	io_mgr.io_debug_logging = io_debug_logging
+	io_mgr.io_trace_capacity = io_trace_capacity
+	# use Callable constructor to satisfy strict connect signature
+	io_mgr.connect("io_event_dispatched", Callable(self, "_on_io_event_dispatched"))
 	var tree := get_tree()
 	var on_added := Callable(self, "_on_tree_node_added")
 	if tree != null and not tree.is_connected("node_added", on_added):
@@ -469,9 +199,9 @@ func _handle_scene_change() -> void:
 	_spawn_hud_if_missing()
 	if _hud != null:
 		_hud.visible = true
-	if enable_ps1_geometry_shader:
-		_ensure_ps1_tracking_for_scene(current)
-		call_deferred("_apply_ps1_to_scene", current)
+	if ps1_mgr.is_ps1_shader_enabled():
+		ps1_mgr._ensure_ps1_tracking_for_scene(current)
+		ps1_mgr.apply_scene(current)
 	call_deferred("_apply_worldspawn_globals_from_scene")
 
 
@@ -664,13 +394,13 @@ func apply_worldspawn_globals(props: Dictionary, worldspawn: Node = null) -> voi
 			_set_objective_text(objective)
 
 	if _worldspawn_has_source_prop(worldspawn, "sf_ps1_shader"):
-		set_ps1_shader_enabled(_to_bool(props.get("sf_ps1_shader", enable_ps1_geometry_shader), enable_ps1_geometry_shader))
+		ps1_mgr.set_ps1_shader_enabled(Util.to_bool(props.get("sf_ps1_shader", ps1_mgr.enable_ps1_geometry_shader), ps1_mgr.enable_ps1_geometry_shader))
 
 	if _worldspawn_has_source_prop(worldspawn, "sf_ps1_dither_strength"):
 		var dither_strength := float(props.get("sf_ps1_dither_strength", -1.0))
 		if dither_strength >= 0.0:
-			ps1_dither_strength = dither_strength
-			_sync_all_ps1_material_params()
+			ps1_mgr.dither_strength = dither_strength
+			ps1_mgr._sync_all_ps1_material_params()
 
 	var current := get_tree().current_scene
 	if current == null:
@@ -692,7 +422,7 @@ func apply_worldspawn_globals(props: Dictionary, worldspawn: Node = null) -> voi
 	var env := world_env.environment
 
 	if _worldspawn_has_source_prop(worldspawn, "sf_fog_enabled"):
-		var fog_enabled := _to_bool(props.get("sf_fog_enabled", false), false)
+		var fog_enabled := Util.to_bool(props.get("sf_fog_enabled", false), false)
 		if "fog_enabled" in env:
 			env.set("fog_enabled", fog_enabled)
 		if "volumetric_fog_enabled" in env:
@@ -717,7 +447,7 @@ func apply_worldspawn_globals(props: Dictionary, worldspawn: Node = null) -> voi
 
 
 func _apply_worldspawn_globals_from_scene() -> void:
-	if Engine.is_editor_hint():
+	if Util.editor_hint():
 		return
 	var root := get_tree().current_scene
 	if root == null:
@@ -743,7 +473,7 @@ func _apply_worldspawn_globals_from_scene() -> void:
 
 
 func _optimize_worldspawn_collisions() -> void:
-	if Engine.is_editor_hint():
+	if Util.editor_hint():
 		return
 	var root := get_tree().current_scene
 	if root == null:
@@ -765,7 +495,7 @@ func _optimize_single_worldspawn(worldspawn: StaticBody3D) -> void:
 
 	# If we don't have a lot of brush colliders, leave it alone.
 	var shapes: Array[Node] = worldspawn.find_children("*collision_shape*", "CollisionShape3D", true, false)
-	if shapes.size() < 250:
+	if shapes.size() < WORLDSPAWN_COLLIDER_THRESHOLD:
 		return
 
 	var trimesh: Shape3D = mi.mesh.create_trimesh_shape()
@@ -780,337 +510,3 @@ func _optimize_single_worldspawn(worldspawn: StaticBody3D) -> void:
 	cs.name = "worldspawn_trimesh_collision"
 	cs.shape = trimesh
 	worldspawn.add_child(cs)
-
-
-func _setup_ps1_shader() -> void:
-	_ps1_material_cache.clear()
-	_ps1_cached_materials.clear()
-	_ps1_mesh_ids.clear()
-	_sync_ps1_global_shader_params()
-	if not enable_ps1_geometry_shader:
-		_ps1_shader = null
-		return
-	_ps1_shader = load(PS1_SHADER_PATH) as Shader
-	if _ps1_shader == null:
-		push_warning("PS1 shader missing at %s" % PS1_SHADER_PATH)
-		return
-
-
-func is_ps1_shader_enabled() -> bool:
-	return enable_ps1_geometry_shader
-
-
-func set_ps1_shader_enabled(enabled: bool) -> void:
-	if enable_ps1_geometry_shader == enabled:
-		_sync_ps1_global_shader_params()
-		if enabled:
-			_sync_all_ps1_material_params()
-			var current_scene := get_tree().current_scene
-			if current_scene != null:
-				_ensure_ps1_tracking_for_scene(current_scene)
-				_apply_ps1_to_scene(current_scene)
-		return
-	enable_ps1_geometry_shader = enabled
-	if enabled:
-		_setup_ps1_shader()
-		var current := get_tree().current_scene
-		if current != null:
-			_ensure_ps1_tracking_for_scene(current)
-			_apply_ps1_to_scene(current)
-	else:
-		_restore_ps1_materials()
-		_ps1_shader = null
-		_ps1_material_cache.clear()
-		_ps1_cached_materials.clear()
-		_ps1_mesh_ids.clear()
-		_ps1_scene_id = -1
-	_sync_ps1_global_shader_params()
-
-
-func _sync_all_ps1_material_params() -> void:
-	_sync_ps1_global_shader_params()
-	for mat in _ps1_cached_materials:
-		if mat is ShaderMaterial:
-			_sync_ps1_material_params(mat as ShaderMaterial)
-
-
-func _sync_ps1_global_shader_params() -> void:
-	if not _has_ps1_global_shader_globals():
-		return
-	var dither_texture := ps1_light_dither_texture
-	if dither_texture == null:
-		dither_texture = _get_default_ps1_light_dither_texture()
-	var light_strength := ps1_light_dither_strength
-	if not enable_ps1_geometry_shader or not ps1_light_dither_enabled:
-		light_strength = 0.0
-	RenderingServer.global_shader_parameter_set("dither_texture", dither_texture)
-	RenderingServer.global_shader_parameter_set("dither_scale", maxf(ps1_light_dither_scale, 0.001))
-	RenderingServer.global_shader_parameter_set("dither_strength", clampf(light_strength, 0.0, 1.0))
-	RenderingServer.global_shader_parameter_set("dither_levels", maxf(ps1_light_dither_levels, 1.0))
-
-
-var _ps1_globals_checked: bool = false
-var _ps1_globals_available: bool = false
-var _ps1_globals_warned: bool = false
-
-
-func _has_ps1_global_shader_globals() -> bool:
-	if _ps1_globals_checked:
-		return _ps1_globals_available
-	_ps1_globals_checked = true
-	var keys := [
-		"rendering/global_shader_parameters/dither_texture",
-		"rendering/global_shader_parameters/dither_scale",
-		"rendering/global_shader_parameters/dither_strength",
-		"rendering/global_shader_parameters/dither_levels"
-	]
-	for key in keys:
-		if not ProjectSettings.has_setting(key):
-			_ps1_globals_available = false
-			if not _ps1_globals_warned:
-				_ps1_globals_warned = true
-			return false
-	_ps1_globals_available = true
-	return true
-
-
-func _get_default_ps1_light_dither_texture() -> Texture2D:
-	if _ps1_default_dither_texture != null:
-		return _ps1_default_dither_texture
-	var matrix := PackedFloat32Array([
-		0.0 / 16.0, 8.0 / 16.0, 2.0 / 16.0, 10.0 / 16.0,
-		12.0 / 16.0, 4.0 / 16.0, 14.0 / 16.0, 6.0 / 16.0,
-		3.0 / 16.0, 11.0 / 16.0, 1.0 / 16.0, 9.0 / 16.0,
-		15.0 / 16.0, 7.0 / 16.0, 13.0 / 16.0, 5.0 / 16.0
-	])
-	var image := Image.create(4, 4, false, Image.FORMAT_RGBA8)
-	for y in range(4):
-		for x in range(4):
-			var v := matrix[y * 4 + x]
-			image.set_pixel(x, y, Color(v, v, v, 1.0))
-	_ps1_default_dither_texture = ImageTexture.create_from_image(image)
-	return _ps1_default_dither_texture
-
-
-func _ensure_ps1_tracking_for_scene(root: Node) -> void:
-	if root == null:
-		return
-	var scene_id := root.get_instance_id()
-	if _ps1_scene_id == scene_id:
-		return
-	_ps1_scene_id = scene_id
-	_ps1_mesh_ids.clear()
-	_ps1_original_materials.clear()
-
-
-func _store_ps1_original_materials(mesh: MeshInstance3D) -> void:
-	if mesh == null:
-		return
-	var mesh_id := mesh.get_instance_id()
-	if _ps1_original_materials.has(mesh_id):
-		return
-	var surface_overrides: Array = []
-	if mesh.mesh != null:
-		var count := mesh.mesh.get_surface_count()
-		surface_overrides.resize(count)
-		for i in range(count):
-			surface_overrides[i] = mesh.get_surface_override_material(i)
-	_ps1_original_materials[mesh_id] = {
-		"override": mesh.material_override,
-		"surface_overrides": surface_overrides
-	}
-
-
-func _restore_ps1_materials() -> void:
-	for mesh_key in _ps1_original_materials.keys():
-		var mesh_id := int(mesh_key)
-		var obj := instance_from_id(mesh_id)
-		if not (obj is MeshInstance3D):
-			continue
-		var mesh := obj as MeshInstance3D
-		var entry_var: Variant = _ps1_original_materials[mesh_key]
-		if not (entry_var is Dictionary):
-			continue
-		var entry := entry_var as Dictionary
-		mesh.material_override = entry.get("override", null)
-		var overrides_var: Variant = entry.get("surface_overrides", [])
-		if overrides_var is Array and mesh.mesh != null:
-			var overrides := overrides_var as Array
-			var count := mesh.mesh.get_surface_count()
-			for i in range(count):
-				var mat: Material = null
-				if i < overrides.size() and overrides[i] is Material:
-					mat = overrides[i] as Material
-				mesh.set_surface_override_material(i, mat)
-	_ps1_original_materials.clear()
-
-
-func _on_tree_node_added(node: Node) -> void:
-	if node is StaticBody3D and String(node.name).find("worldspawn") != -1:
-		call_deferred("_apply_worldspawn_globals_from_scene")
-	if not enable_ps1_geometry_shader:
-		return
-	if _ps1_shader == null:
-		return
-	if node is MeshInstance3D:
-		call_deferred("_apply_ps1_to_mesh_deferred", node)
-
-
-func _apply_ps1_to_mesh_deferred(node: Node) -> void:
-	if node is MeshInstance3D:
-		_apply_ps1_to_mesh(node as MeshInstance3D)
-
-
-func _apply_ps1_to_scene(root: Node) -> void:
-	if not enable_ps1_geometry_shader:
-		return
-	if root == null:
-		return
-	if _ps1_shader == null:
-		_setup_ps1_shader()
-		if _ps1_shader == null:
-			return
-	var meshes := root.find_children("*", "MeshInstance3D", true, false)
-	for m in meshes:
-		if m is MeshInstance3D:
-			_apply_ps1_to_mesh(m as MeshInstance3D)
-
-
-func _apply_ps1_to_mesh(mesh: MeshInstance3D) -> void:
-	if mesh == null:
-		return
-	if not is_instance_valid(mesh):
-		return
-	if _ps1_shader == null:
-		return
-	var mesh_id := mesh.get_instance_id()
-	if _ps1_mesh_ids.has(mesh_id):
-		return
-
-	_store_ps1_original_materials(mesh)
-
-	if mesh.material_override != null:
-		var converted_override := _convert_to_ps1_material(mesh.material_override)
-		if converted_override != null:
-			mesh.material_override = converted_override
-		_ps1_mesh_ids[mesh_id] = true
-		return
-
-	if mesh.mesh == null:
-		return
-	var surface_count := mesh.mesh.get_surface_count()
-	var converted_any := false
-	for i in range(surface_count):
-		var source := mesh.get_active_material(i)
-		if source == null:
-			source = mesh.mesh.surface_get_material(i)
-		var converted := _convert_to_ps1_material(source)
-		if converted != null:
-			mesh.set_surface_override_material(i, converted)
-			converted_any = true
-	if converted_any:
-		_ps1_mesh_ids[mesh_id] = true
-
-
-func _convert_to_ps1_material(source: Material) -> ShaderMaterial:
-	if _ps1_shader == null:
-		return null
-	if source == null:
-		return null
-	if source is ShaderMaterial:
-		var shader_source := source as ShaderMaterial
-		if shader_source.shader == _ps1_shader:
-			_sync_ps1_material_params(shader_source)
-			return shader_source
-
-	var key := "__null__"
-	if source != null:
-		if not source.resource_path.is_empty():
-			key = "path:" + source.resource_path
-		else:
-			key = "id:%d" % source.get_instance_id()
-
-	if _ps1_material_cache.has(key):
-		var cached: Variant = _ps1_material_cache[key]
-		if cached is ShaderMaterial:
-			var cached_material := cached as ShaderMaterial
-			_sync_ps1_material_params(cached_material)
-			return cached_material
-
-	var result := ShaderMaterial.new()
-	result.shader = _ps1_shader
-	result.resource_local_to_scene = true
-	result.set_shader_parameter("albedo_color", Color(1.0, 1.0, 1.0, 1.0))
-	result.set_shader_parameter("use_texture", false)
-	result.set_shader_parameter("metallic", 0.0)
-	result.set_shader_parameter("roughness", 1.0)
-	result.set_shader_parameter("uv_scale", Vector2.ONE)
-	result.set_shader_parameter("uv_offset", Vector2.ZERO)
-	result.set_shader_parameter("jitter_depth_independent", ps1_jitter_depth_independent)
-	result.set_shader_parameter("jitter_z_coordinate", ps1_jitter_z_coordinate)
-	result.set_shader_parameter("affine_texture_mapping", ps1_affine_texture_mapping)
-	result.set_shader_parameter("affine_mapping_strength", ps1_affine_mapping_strength)
-	result.set_shader_parameter("alpha_scissor_threshold", ps1_alpha_scissor_threshold)
-
-	if source is BaseMaterial3D:
-		var base := source as BaseMaterial3D
-		# Triplanar materials rely on world-space projection; keep original.
-		if base.uv1_triplanar:
-			return null
-		result.set_shader_parameter("albedo_color", base.albedo_color)
-		# Keep lighting stable for the PS1 look by avoiding imported PBR shininess.
-		result.set_shader_parameter("metallic", 0.0)
-		result.set_shader_parameter("roughness", 1.0)
-		var uv_scale := Vector2(base.uv1_scale.x, base.uv1_scale.y)
-		var uv_offset := Vector2(base.uv1_offset.x, base.uv1_offset.y)
-		if is_zero_approx(uv_scale.x):
-			uv_scale.x = 1.0
-		if is_zero_approx(uv_scale.y):
-			uv_scale.y = 1.0
-		result.set_shader_parameter("uv_scale", uv_scale)
-		result.set_shader_parameter("uv_offset", uv_offset)
-		if base.albedo_texture != null:
-			result.set_shader_parameter("use_texture", true)
-			result.set_shader_parameter("albedo_tex", base.albedo_texture)
-	elif source is ShaderMaterial:
-		var shader_source2 := source as ShaderMaterial
-		var tex := _extract_texture_from_shader(shader_source2)
-		if tex == null:
-			# Unknown custom shader material: keep original to avoid broken textures.
-			return null
-		result.set_shader_parameter("use_texture", true)
-		result.set_shader_parameter("albedo_tex", tex)
-
-	_sync_ps1_material_params(result)
-	_ps1_material_cache[key] = result
-	_ps1_cached_materials.append(result)
-	return result
-
-
-func _extract_texture_from_shader(material: ShaderMaterial) -> Texture2D:
-	if material == null:
-		return null
-	var candidate_names := ["albedo_texture", "texture_albedo", "albedo_tex", "base_texture", "texture"]
-	for n in candidate_names:
-		var value: Variant = material.get_shader_parameter(n)
-		if value is Texture2D:
-			return value as Texture2D
-	return null
-
-
-func _sync_ps1_material_params(material: ShaderMaterial) -> void:
-	if material == null:
-		return
-	material.set_shader_parameter("vertex_snap", ps1_vertex_snap)
-	material.set_shader_parameter("color_steps", ps1_color_steps)
-	material.set_shader_parameter("posterize_strength", ps1_posterize_strength)
-	material.set_shader_parameter("affine_warp_strength", ps1_affine_warp)
-	material.set_shader_parameter("uv_jitter", ps1_uv_jitter)
-	material.set_shader_parameter("jitter_depth_independent", ps1_jitter_depth_independent)
-	material.set_shader_parameter("jitter_z_coordinate", ps1_jitter_z_coordinate)
-	material.set_shader_parameter("affine_texture_mapping", ps1_affine_texture_mapping)
-	material.set_shader_parameter("affine_mapping_strength", ps1_affine_mapping_strength)
-	material.set_shader_parameter("alpha_scissor_threshold", ps1_alpha_scissor_threshold)
-	material.set_shader_parameter("dithering_enabled", ps1_dithering_enabled)
-	material.set_shader_parameter("color_dither_strength", ps1_dither_strength)
-	material.set_shader_parameter("dither_resolution_scale", ps1_dither_resolution_scale)

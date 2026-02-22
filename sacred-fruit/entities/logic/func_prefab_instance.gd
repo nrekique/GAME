@@ -1,6 +1,7 @@
 @tool
 class_name FuncPrefabInstance
 extends Node3D
+const Util := preload("res://scripts/util.gd")
 
 @export var targetname: String = ""
 @export var enabled: bool = true
@@ -14,42 +15,25 @@ var _spawned: bool = false
 var _instance: Node = null
 
 
-static func _to_bool(value: Variant, default_value: bool) -> bool:
-	match typeof(value):
-		TYPE_BOOL:
-			return value
-		TYPE_INT, TYPE_FLOAT:
-			return float(value) != 0.0
-		TYPE_STRING:
-			var s := String(value).strip_edges().to_lower()
-			if s in ["1", "true", "yes", "on", "y"]:
-				return true
-			if s in ["0", "false", "no", "off", "n", ""]:
-				return false
-			return default_value
-		_:
-			return default_value
-
-
 func _func_godot_apply_properties(props: Dictionary) -> void:
 	if props.has("targetname"):
 		targetname = String(props["targetname"])
 	if props.has("enabled"):
-		enabled = _to_bool(props["enabled"], enabled)
+		enabled = Util.to_bool(props["enabled"], enabled)
 	if props.has("prefab_scene"):
 		prefab_scene = String(props["prefab_scene"]).strip_edges()
 	if props.has("spawn_on_ready"):
-		spawn_on_ready = _to_bool(props["spawn_on_ready"], spawn_on_ready)
+		spawn_on_ready = Util.to_bool(props["spawn_on_ready"], spawn_on_ready)
 	if props.has("one_shot"):
-		one_shot = _to_bool(props["one_shot"], one_shot)
+		one_shot = Util.to_bool(props["one_shot"], one_shot)
 	if props.has("clear_children_before_spawn"):
-		clear_children_before_spawn = _to_bool(props["clear_children_before_spawn"], clear_children_before_spawn)
+		clear_children_before_spawn = Util.to_bool(props["clear_children_before_spawn"], clear_children_before_spawn)
 	if props.has("override_json"):
 		override_json = String(props["override_json"])
 
 
 func _ready() -> void:
-	if Engine.is_editor_hint():
+	if Util.editor_hint():
 		return
 	if not targetname.is_empty():
 		GAME.set_targetname(self, targetname)

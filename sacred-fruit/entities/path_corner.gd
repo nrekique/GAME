@@ -1,6 +1,7 @@
 @tool
 class_name PathCorner
 extends Marker3D
+const Util := preload("res://scripts/util.gd")
 
 @export var target: String = ""
 @export var targetname: String = ""
@@ -15,7 +16,7 @@ func _func_godot_apply_properties(props: Dictionary) -> void:
 		wait = props["wait"] as float
 
 func _ready() -> void:
-	if Engine.is_editor_hint():
+	if Util.editor_hint():
 		return
 	if targetname != "":
 		GAME.set_targetname(self, targetname)

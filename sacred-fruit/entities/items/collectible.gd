@@ -1,6 +1,7 @@
 @tool
 class_name Collectible
 extends Area3D
+const Util := preload("res://scripts/util.gd")
 
 @export var value: int = 1
 @export var auto_free: bool = true
@@ -23,7 +24,7 @@ func _init() -> void:
 
 
 func _ready() -> void:
-	if Engine.is_editor_hint():
+	if Util.editor_hint():
 		return
 	_ensure_default_children()
 	if targetname != "":
@@ -65,7 +66,7 @@ func _ensure_default_children() -> void:
 
 
 func _on_body_entered(body: Node) -> void:
-	if Engine.is_editor_hint():
+	if Util.editor_hint():
 		return
 	if body != null and body.is_in_group("PLAYER"):
 		_spawn_collect_vfx()

@@ -1,5 +1,6 @@
 @tool
 @icon("uid://ct62bsuel5hyc")
+const Util := preload("res://scripts/util.gd")
 class_name Portal3D extends Node3D
 
 ## Seamless 3D portal
@@ -447,7 +448,7 @@ func _on_portal_size_changed() -> void:
 #region GAMEPLAY LOGIC
 
 func _ready() -> void:
-	if Engine.is_editor_hint():
+	if Util.editor_hint():
 		_editor_ready.call_deferred()
 		return
 	
@@ -476,7 +477,7 @@ func _ready() -> void:
 
 
 func _process(_delta: float) -> void:
-	if Engine.is_editor_hint():
+	if Util.editor_hint():
 		return
 	
 	if is_teleport:
@@ -634,7 +635,7 @@ func _setup_mesh() -> void:
 	_portal_mesh_path = get_path_to(mi)
 
 func _setup_cameras() -> void:
-	assert(not Engine.is_editor_hint(), "This should never run in editor")
+	assert(not Util.editor_hint(), "This should never run in editor")
 	assert(portal_camera == null)
 	assert(portal_viewport == null)
 	
@@ -832,7 +833,7 @@ func _add_child_in_editor(parent: Node, node: Node) -> void:
 # Setters fire both on editor set and when the scene starts up (the engine is
 # assigning exported members). This should prevent the second case.
 func _caused_by_user_interaction() -> bool:
-	return Engine.is_editor_hint() and is_node_ready()
+	return Util.editor_hint() and is_node_ready()
 
 # Editor helper function. Groups nodes in 3D editor view.
 func _group_node(node: Node) -> void:

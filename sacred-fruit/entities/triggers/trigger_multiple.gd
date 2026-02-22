@@ -1,6 +1,7 @@
 @tool
 class_name TriggerMultiple
 extends Area3D
+const Util := preload("res://scripts/util.gd")
 
 @export var target: String = ""
 @export var targetfunc: String = ""
@@ -25,13 +26,13 @@ func _init() -> void:
 	connect("body_entered", _on_body_entered)
 
 func _ready() -> void:
-	if Engine.is_editor_hint():
+	if Util.editor_hint():
 		return
 	if targetname != "":
 		GAME.set_targetname(self, targetname)
 
 func _on_body_entered(body: Node) -> void:
-	if Engine.is_editor_hint() or not _ready_to_use:
+	if Util.editor_hint() or not _ready_to_use:
 		return
 	if body != null and body.is_in_group("PLAYER"):
 		_ready_to_use = false

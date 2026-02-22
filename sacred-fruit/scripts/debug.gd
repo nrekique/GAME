@@ -1,5 +1,6 @@
-extends Node
 class_name Debug
+extends Node
+const Util := preload("res://scripts/util.gd")
 
 # Simple debug overlay + runtime map launcher.
 # Toggle menu with F1.
@@ -156,7 +157,7 @@ func is_runtime_debug_enabled() -> bool:
 
 
 func _handle_startup_run_args() -> void:
-	if Engine.is_editor_hint():
+	if Util.editor_hint():
 		return
 	var args: PackedStringArray = OS.get_cmdline_user_args()
 	if args.is_empty():

@@ -1,6 +1,7 @@
 @tool
 class_name Actor
 extends CharacterBody3D
+const Util := preload("res://scripts/util.gd")
 
 enum ActorFlags {
 	PLAYER = 1,
@@ -53,14 +54,14 @@ func _init() -> void:
 	collision_mask = GameManager.WORLD_LAYER + GameManager.TRIGGER_LAYER
 
 func _ready() -> void:
-	if Engine.is_editor_hint():
+	if Util.editor_hint():
 		return
 	if flags & ActorFlags.PLAYER:
 		add_to_group("PLAYER")
 	GAME.set_targetname(self, targetname)
 
 func _process(_delta: float) -> void:
-	if Engine.is_editor_hint():
+	if Util.editor_hint():
 		return
 	
 	if flags & ActorFlags.PLAYER:
@@ -69,7 +70,7 @@ func _process(_delta: float) -> void:
 		move_input.y = float(Input.is_action_just_pressed("ui_accept"))
 
 func _physics_process(delta) -> void:
-	if Engine.is_editor_hint():
+	if Util.editor_hint():
 		return
 	
 	var current_fall_speed: float = velocity.y

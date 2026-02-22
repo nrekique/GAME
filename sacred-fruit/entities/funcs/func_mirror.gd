@@ -1,6 +1,7 @@
 @tool
 class_name FuncMirror
 extends StaticBody3D
+const Util := preload("res://scripts/util.gd")
 
 @export var enabled: bool = true
 @export var mirror_axis: String = "auto"
@@ -96,36 +97,19 @@ void fragment() {
 "
 
 
-static func _to_bool(value: Variant, default_value: bool) -> bool:
-	match typeof(value):
-		TYPE_BOOL:
-			return value
-		TYPE_INT, TYPE_FLOAT:
-			return float(value) != 0.0
-		TYPE_STRING:
-			var s := String(value).strip_edges().to_lower()
-			if s in ["1", "true", "yes", "on", "y"]:
-				return true
-			if s in ["0", "false", "no", "off", "n", ""]:
-				return false
-			return default_value
-		_:
-			return default_value
-
-
 func _func_godot_apply_properties(props: Dictionary) -> void:
 	if props.has("enabled"):
-		enabled = _to_bool(props["enabled"], enabled)
+		enabled = Util.to_bool(props["enabled"], enabled)
 	if props.has("mirror_axis"):
 		mirror_axis = String(props["mirror_axis"]).strip_edges().to_lower()
 	if props.has("mirror_debug"):
-		mirror_debug = _to_bool(props["mirror_debug"], mirror_debug)
+		mirror_debug = Util.to_bool(props["mirror_debug"], mirror_debug)
 	if props.has("mirror_face_from_texture"):
-		mirror_face_from_texture = _to_bool(props["mirror_face_from_texture"], mirror_face_from_texture)
+		mirror_face_from_texture = Util.to_bool(props["mirror_face_from_texture"], mirror_face_from_texture)
 	if props.has("mirror_flip_u"):
-		mirror_flip_u = _to_bool(props["mirror_flip_u"], mirror_flip_u)
+		mirror_flip_u = Util.to_bool(props["mirror_flip_u"], mirror_flip_u)
 	if props.has("use_plugin_mirror"):
-		use_plugin_mirror = _to_bool(props["use_plugin_mirror"], use_plugin_mirror)
+		use_plugin_mirror = Util.to_bool(props["use_plugin_mirror"], use_plugin_mirror)
 	if props.has("mirror_tint"):
 		mirror_tint = _to_color(props["mirror_tint"], mirror_tint)
 	if props.has("mirror_distortion"):
@@ -143,15 +127,15 @@ func _func_godot_apply_properties(props: Dictionary) -> void:
 	if props.has("render_scale"):
 		render_scale = clampf(float(props["render_scale"]), 0.25, 1.0)
 	if props.has("render_use_window_projection"):
-		render_use_window_projection = _to_bool(props["render_use_window_projection"], render_use_window_projection)
+		render_use_window_projection = Util.to_bool(props["render_use_window_projection"], render_use_window_projection)
 	if props.has("render_use_oblique_clip"):
-		render_use_oblique_clip = _to_bool(props["render_use_oblique_clip"], render_use_oblique_clip)
+		render_use_oblique_clip = Util.to_bool(props["render_use_oblique_clip"], render_use_oblique_clip)
 	if props.has("render_camera_offset"):
 		render_camera_offset = clampf(float(props["render_camera_offset"]), -0.05, 0.05)
 	if props.has("render_cull_exclude_layers"):
 		render_cull_exclude_layers = _parse_layer_list(props["render_cull_exclude_layers"])
 	if props.has("manager_enable_budgeting"):
-		manager_enable_budgeting = _to_bool(props["manager_enable_budgeting"], manager_enable_budgeting)
+		manager_enable_budgeting = Util.to_bool(props["manager_enable_budgeting"], manager_enable_budgeting)
 	if props.has("manager_max_active_mirrors"):
 		manager_max_active_mirrors = maxi(1, int(props["manager_max_active_mirrors"]))
 	if props.has("manager_refresh_seconds"):
@@ -159,16 +143,16 @@ func _func_godot_apply_properties(props: Dictionary) -> void:
 	if props.has("manager_min_runtime_priority"):
 		manager_min_runtime_priority = clampf(float(props["manager_min_runtime_priority"]), 0.0, 4.0)
 	if props.has("manager_require_visible_in_frustum"):
-		manager_require_visible_in_frustum = _to_bool(props["manager_require_visible_in_frustum"], manager_require_visible_in_frustum)
+		manager_require_visible_in_frustum = Util.to_bool(props["manager_require_visible_in_frustum"], manager_require_visible_in_frustum)
 	if props.has("manager_require_line_of_sight"):
-		manager_require_line_of_sight = _to_bool(props["manager_require_line_of_sight"], manager_require_line_of_sight)
+		manager_require_line_of_sight = Util.to_bool(props["manager_require_line_of_sight"], manager_require_line_of_sight)
 	if props.has("reverse_normal"):
-		reverse_normal = _to_bool(props["reverse_normal"], reverse_normal)
+		reverse_normal = Util.to_bool(props["reverse_normal"], reverse_normal)
 	_on_properties_applied()
 
 
 func _ready() -> void:
-	if Engine.is_editor_hint():
+	if Util.editor_hint():
 		return
 	add_to_group("func_mirror")
 	_register_mirror_runtime_manager()
@@ -184,7 +168,7 @@ func _ready() -> void:
 
 
 func _exit_tree() -> void:
-	if Engine.is_editor_hint():
+	if Util.editor_hint():
 		return
 	_unregister_mirror_runtime_manager()
 	if _plugin_mirror != null and is_instance_valid(_plugin_mirror):
@@ -205,7 +189,7 @@ func _exit_tree() -> void:
 
 
 func _process(delta: float) -> void:
-	if Engine.is_editor_hint():
+	if Util.editor_hint():
 		return
 	if use_plugin_mirror:
 		_apply_mirror_runtime_budget()
@@ -237,7 +221,7 @@ func _process(delta: float) -> void:
 
 
 func _on_properties_applied() -> void:
-	if Engine.is_editor_hint() or not is_inside_tree():
+	if Util.editor_hint() or not is_inside_tree():
 		return
 	_register_mirror_runtime_manager()
 	if use_plugin_mirror:
@@ -450,7 +434,7 @@ func _debug_tick(delta: float) -> void:
 	var has_tex: bool = (_viewport != null and _viewport.get_texture() != null)
 	var surf_vis: bool = (_surface != null and _surface.visible)
 	var m_xf: Transform3D = _get_mirror_global_transform()
-	print("[Mirror DEBUG] %s render_ok=%s visible=%s vp=%s world=%s cam=%s tex=%s axis=%s normal=%s origin=%s" % [
+	Util.debug_print("[Mirror DEBUG] %s render_ok=%s visible=%s vp=%s world=%s cam=%s tex=%s axis=%s normal=%s origin=%s" % [
 		name, str(_render_ok), str(surf_vis), str(vp_size), str(has_world), str(has_cam), str(has_tex), mirror_axis,
 		str(m_xf.basis.z.normalized()), str(m_xf.origin)
 	])
@@ -648,7 +632,7 @@ func _parse_layer_list(value: Variant) -> PackedInt32Array:
 
 
 func _register_mirror_runtime_manager() -> void:
-	if Engine.is_editor_hint() or not manager_enable_budgeting:
+	if Util.editor_hint() or not manager_enable_budgeting:
 		return
 	if _mirror_runtime_manager == null:
 		var existing: Node = get_node_or_null("/root/%s" % MIRROR_RUNTIME_MANAGER_NAME)
@@ -1030,7 +1014,7 @@ func _try_configure_mirror_plane_from_metadata() -> bool:
 	_mirror_depth = maxf(_support_extent(half_size, local_normal) * 2.0, 0.01)
 	_used_metadata_plane = true
 	if mirror_debug:
-		print("[Mirror DEBUG] %s metadata local_center=%s world_as_local=%s direct_local=%s local_normal=%s fit_ok=%s half=%s basis_det=%.4f metadata_used=%s" % [
+		Util.debug_print("[Mirror DEBUG] %s metadata local_center=%s world_as_local=%s direct_local=%s local_normal=%s fit_ok=%s half=%s basis_det=%.4f metadata_used=%s" % [
 			name, str(local_center), str(local_center_world), str(local_center_direct), str(local_normal), str(fit_ok), str(_mirror_half_extents), _mirror_local_xform.basis.determinant()
 			, str(_used_metadata_plane)
 		])
@@ -1080,7 +1064,7 @@ func _try_configure_mirror_plane_from_exact_metadata(md: Dictionary) -> bool:
 	_mirror_depth = maxf(_support_extent(half_size, local_normal) * 2.0, 0.01)
 	_used_metadata_plane = true
 	if mirror_debug and _is_runtime_debug_enabled():
-		print("[Mirror DEBUG] %s exact metadata local_center=%s local_normal=%s half=%s" % [
+		Util.debug_print("[Mirror DEBUG] %s exact metadata local_center=%s local_normal=%s half=%s" % [
 			name, str(local_center), str(local_normal), str(_mirror_half_extents)
 		])
 	return true

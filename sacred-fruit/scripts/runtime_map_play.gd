@@ -1,4 +1,6 @@
 extends Node3D
+const Util := preload("res://scripts/util.gd")
+const FuncGodotMap := preload("res://addons/func_godot/src/map/func_godot_map.gd")
 
 # Builds a FuncGodot map at runtime and then spawns the player.
 # Map path is provided by the DEBUG autoload (pending_runtime_map_path).
@@ -21,7 +23,7 @@ var _perf_hud: CanvasLayer
 
 
 func _ready() -> void:
-	if Engine.is_editor_hint():
+	if Util.editor_hint():
 		return
 	add_to_group("NO_HUD")
 
@@ -180,7 +182,7 @@ func _spawn_spectator() -> void:
 		var spec_node := spec as Node3D
 		var start_pos := Vector3(0, 2.0, 0)
 		if _map:
-			var meshes := _map.find_children("*", "MeshInstance3D", true, false)
+			var meshes: Array = _map.find_children("*", "MeshInstance3D", true, false)
 			if meshes.size() > 0:
 				var mesh := meshes[0] as MeshInstance3D
 				if mesh:

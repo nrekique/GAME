@@ -1,6 +1,7 @@
 @tool
 class_name TriggerExit
 extends Area3D
+const Util := preload("res://scripts/util.gd")
 
 @export var targetname: String = ""
 @export var map_path: String = ""
@@ -56,7 +57,7 @@ func _init() -> void:
 
 
 func _ready() -> void:
-	if Engine.is_editor_hint():
+	if Util.editor_hint():
 		return
 	if show_volume:
 		_ensure_debug_volume()
@@ -65,7 +66,7 @@ func _ready() -> void:
 
 
 func _on_body_entered(body: Node) -> void:
-	if Engine.is_editor_hint():
+	if Util.editor_hint():
 		return
 	if one_shot and _fired:
 		return

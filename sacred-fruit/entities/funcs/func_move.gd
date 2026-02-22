@@ -1,6 +1,7 @@
 @tool
 class_name FuncMove
 extends AnimatableBody3D
+const Util := preload("res://scripts/util.gd")
 
 @export var targetname: String = ""
 @export var move_pos: Array[Vector3] = [Vector3.ZERO, Vector3.ZERO]
@@ -45,7 +46,7 @@ func _init() -> void:
 	sync_to_physics = false
 
 func _ready() -> void:
-	if Engine.is_editor_hint():
+	if Util.editor_hint():
 		return
 	
 	GAME.set_targetname(self, targetname)
@@ -55,7 +56,7 @@ func _ready() -> void:
 		speed = 1.0 / speed
 
 func _physics_process(delta: float) -> void:
-	if Engine.is_editor_hint():
+	if Util.editor_hint():
 		return
 	
 	if move_progress != move_progress_target:

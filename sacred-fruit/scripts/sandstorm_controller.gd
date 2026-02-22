@@ -1,4 +1,5 @@
 extends Node3D
+const Util := preload("res://scripts/util.gd")
 
 @export var enabled: bool = true
 @export_range(0.0, 1.0, 0.01) var intensity: float = 0.85
@@ -58,7 +59,7 @@ var _saved_env: Dictionary = {}
 
 
 func _ready() -> void:
-	if Engine.is_editor_hint():
+	if Util.editor_hint():
 		set_process(false)
 		return
 	if allow_map_overrides:

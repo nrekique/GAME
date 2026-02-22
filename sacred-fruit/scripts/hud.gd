@@ -1,4 +1,5 @@
 extends CanvasLayer
+const Util := preload("res://scripts/util.gd")
 
 @onready var objective_label: Label = $Margin/VBox/Objective
 @onready var collect_label: Label = $Margin/VBox/Collect
@@ -6,7 +7,7 @@ extends CanvasLayer
 
 
 func _ready() -> void:
-	if Engine.is_editor_hint():
+	if Util.editor_hint():
 		return
 
 	# GAME is the autoload singleton (see project.godot)

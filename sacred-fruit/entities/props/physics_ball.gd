@@ -1,6 +1,7 @@
 @tool
 class_name PhysicsBall
 extends RigidBody3D
+const Util := preload("res://scripts/util.gd")
 
 @export var targetname: String = ""
 @export var tumbleweed_enabled: bool = true
@@ -30,7 +31,7 @@ func _func_godot_apply_properties(props: Dictionary) -> void:
 	if props.has("targetname"):
 		targetname = String(props["targetname"])
 	if props.has("tumbleweed_enabled"):
-		tumbleweed_enabled = _to_bool(props["tumbleweed_enabled"], tumbleweed_enabled)
+		tumbleweed_enabled = Util.to_bool(props["tumbleweed_enabled"], tumbleweed_enabled)
 	if props.has("radius"):
 		radius = maxf(float(props["radius"]), 0.1)
 	if props.has("mass_kg"):
@@ -50,7 +51,7 @@ func _func_godot_apply_properties(props: Dictionary) -> void:
 	if props.has("gust_frequency"):
 		gust_frequency = maxf(float(props["gust_frequency"]), 0.0)
 	if props.has("interact_pickup_enabled"):
-		interact_pickup_enabled = _to_bool(props["interact_pickup_enabled"], interact_pickup_enabled)
+		interact_pickup_enabled = Util.to_bool(props["interact_pickup_enabled"], interact_pickup_enabled)
 
 
 func _ready() -> void:
@@ -63,13 +64,13 @@ func _ready() -> void:
 	angular_damp = angular_damp_custom
 	continuous_cd = true
 	can_sleep = true
-	if not Engine.is_editor_hint() and targetname != "":
+	if not Util.editor_hint() and targetname != "":
 		GAME.set_targetname(self, targetname)
 	_refresh_wind_source(true)
 
 
 func _physics_process(delta: float) -> void:
-	if Engine.is_editor_hint():
+	if Util.editor_hint():
 		return
 	_wind_poll_timer += delta
 	if _wind_poll_timer >= 0.35:
@@ -185,7 +186,7 @@ func _refresh_wind_source(force_scan: bool) -> void:
 		_wind_intensity = 1.0
 	if "enabled" in source:
 		var raw_enabled: Variant = source.get("enabled")
-		if not _to_bool(raw_enabled, true):
+		if not Util.to_bool(raw_enabled, true):
 			_wind_speed = 0.0
 
 
@@ -264,19 +265,3 @@ func _parse_vec2(v: Variant, fallback: Vector2) -> Vector2:
 		return Vector2(parts[0], parts[1])
 	return fallback
 
-
-func _to_bool(value: Variant, default_value: bool) -> bool:
-	match typeof(value):
-		TYPE_BOOL:
-			return value
-		TYPE_INT, TYPE_FLOAT:
-			return float(value) != 0.0
-		TYPE_STRING:
-			var s: String = String(value).strip_edges().to_lower()
-			if s in ["1", "true", "yes", "on", "y"]:
-				return true
-			if s in ["0", "false", "no", "off", "n", ""]:
-				return false
-			return default_value
-		_:
-			return default_value

@@ -1,6 +1,7 @@
 @tool
 class_name MultiManager
 extends Node3D
+const Util := preload("res://scripts/util.gd")
 
 @export var targetname: String = ""
 @export var targetfunc: String = ""
@@ -28,32 +29,15 @@ extends Node3D
 var _used: bool = false
 
 
-static func _to_bool(value: Variant, default_value: bool) -> bool:
-	match typeof(value):
-		TYPE_BOOL:
-			return value
-		TYPE_INT, TYPE_FLOAT:
-			return float(value) != 0.0
-		TYPE_STRING:
-			var s := String(value).strip_edges().to_lower()
-			if s in ["1", "true", "yes", "on", "y"]:
-				return true
-			if s in ["0", "false", "no", "off", "n", ""]:
-				return false
-			return default_value
-		_:
-			return default_value
-
-
 func _func_godot_apply_properties(props: Dictionary) -> void:
 	if props.has("targetname"):
 		targetname = String(props["targetname"])
 	if props.has("targetfunc"):
 		targetfunc = String(props["targetfunc"])
 	if props.has("enabled"):
-		enabled = _to_bool(props["enabled"], enabled)
+		enabled = Util.to_bool(props["enabled"], enabled)
 	if props.has("trigger_once"):
-		trigger_once = _to_bool(props["trigger_once"], trigger_once)
+		trigger_once = Util.to_bool(props["trigger_once"], trigger_once)
 
 	for i in range(1, 9):
 		var tk := "target%d" % i
@@ -65,7 +49,7 @@ func _func_godot_apply_properties(props: Dictionary) -> void:
 
 
 func _ready() -> void:
-	if Engine.is_editor_hint():
+	if Util.editor_hint():
 		return
 	if targetname != "":
 		GAME.set_targetname(self, targetname)

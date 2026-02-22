@@ -1,0 +1,42 @@
+[gd_resource type="Resource" script_class="FuncGodotFGDSolidClass" format=3 uid="uid://vol_spawnblocker"]
+
+[ext_resource type="Script" path="res://addons/func_godot/src/fgd/func_godot_fgd_solid_class.gd" id="1_solid"]
+[ext_resource type="Resource" path="res://tb/fgd/base/trigger_base.tres" id="2_base"]
+[ext_resource type="Script" path="res://entities/logic/spawn_blocker_volume.gd" id="3_script"]
+
+[resource]
+script = ExtResource("1_solid")
+spawn_type = 2
+origin_type = 4
+build_visuals = false
+use_in_baked_light = false
+shadow_casting_setting = 0
+build_occlusion = false
+render_layers = 0
+collision_shape_type = 1
+collision_layer = 4
+collision_mask = 4
+collision_priority = 1.0
+collision_shape_margin = 0.04
+add_textures_metadata = false
+add_vertex_metadata = false
+add_face_position_metadata = false
+add_face_normal_metadata = false
+add_collision_shape_face_range_metadata = false
+script_class = ExtResource("3_script")
+classname = "spawn_blocker_volume"
+description = "Marks an area that should not spawn actors inside."
+func_godot_internal = false
+base_classes = Array[Resource]([ExtResource("2_base")])
+class_properties = {
+"enabled": true
+}
+class_property_descriptions = {
+"enabled": "If false the volume is ignored."
+}
+auto_apply_to_matching_node_properties = false
+meta_properties = {
+"color": Color(0, 0.5, 0.5, 1)
+}
+node_class = "Area3D"
+name_property = ""

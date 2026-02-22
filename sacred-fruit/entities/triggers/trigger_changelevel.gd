@@ -1,6 +1,7 @@
 @tool
 class_name TriggerChangeLevel
 extends Area3D
+const Util := preload("res://scripts/util.gd")
 
 @export var map_path: String = ""
 @export var delay: float = 0.0
@@ -24,13 +25,13 @@ func _init() -> void:
 	connect("body_entered", _on_body_entered)
 
 func _ready() -> void:
-	if Engine.is_editor_hint():
+	if Util.editor_hint():
 		return
 	if targetname != "":
 		GAME.set_targetname(self, targetname)
 
 func _on_body_entered(body: Node) -> void:
-	if Engine.is_editor_hint() or _used:
+	if Util.editor_hint() or _used:
 		return
 	if body != null and body.is_in_group("PLAYER"):
 		_used = true

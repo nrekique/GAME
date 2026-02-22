@@ -1,5 +1,6 @@
 @tool
 @icon("res://addons/func_godot/icons/icon_godot_ranger.svg")
+const Util := preload("res://scripts/util.gd")
 ## Defines a game in TrenchBroom to express a set of entity definitions and editor behaviors.
 class_name TrenchBroomGameConfig
 extends Resource
@@ -18,7 +19,7 @@ enum GameConfigVersion {
 		return export_file
 	set(new_export_file):
 		if new_export_file != export_file:
-			if Engine.is_editor_hint():
+			if Util.editor_hint():
 				do_export_file()
 
 ## Name of the game in TrenchBroom's game list.
