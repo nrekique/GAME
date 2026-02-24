@@ -49,8 +49,11 @@ func get_entity_dicts() -> Array:
 		var dict: Dictionary
 		dict["brush_count"] = entity.brushes.size()
 		
-		# TODO: This is a horrible remnant of the worldspawn layer system, remove it.
-		var brush_indices: PackedInt64Array
+		# `brush_indices` is retained for backwards compatibility; modern
+		# consumers may simply use `range()` when iterating.  We generate the
+		# contents dynamically rather than relying on an outdated worldspawn
+		# layer hack.
+		var brush_indices: PackedInt64Array = PackedInt64Array()
 		brush_indices.resize(entity.brushes.size())
 		for b in range(entity.brushes.size()):
 			brush_indices[b] = b

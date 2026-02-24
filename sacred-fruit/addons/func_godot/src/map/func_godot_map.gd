@@ -546,9 +546,15 @@ func build_entity_collision_shape_nodes() -> Array:
 						concave = true
 					
 					if entity_definition.spawn_type == FuncGodotFGDSolidClass.SpawnType.MERGE_WORLDSPAWN:
-						# TODO: Find the worldspawn object instead of assuming index 0
-						node = entity_nodes[0] as Node
-					
+				# older behaviour assumed the first entity was the worldspawn node; we
+				# now search for any node marked as "worldspawn" and fall back to
+				# index 0 if nothing is found.
+				var worldspawn_node: Node = null
+				for n in entity_nodes:
+					if n and n.has_method("get") and n.has_meta("classname") and n.get_meta("classname") == "worldspawn":
+						worldspawn_node = n
+						break
+				node = worldspawn_node if worldspawn_node else (entity_nodes[0] as Node)
 					if node and node is CollisionObject3D:
 						(node as CollisionObject3D).collision_layer = entity_definition.collision_layer
 						(node as CollisionObject3D).collision_mask = entity_definition.collision_mask

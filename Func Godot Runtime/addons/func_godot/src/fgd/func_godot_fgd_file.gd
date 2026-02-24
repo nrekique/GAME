@@ -13,11 +13,16 @@ enum FuncGodotTargetMapEditors {
 }
 
 ## Builds and exports the FGD file.
+# the export flag is used as a trigger when toggled in the editor.  In order
+# to avoid recursive getters we keep a private backing variable.  The setter
+# still performs the export when the value changes.
+var _export_file: bool = false
 @export var export_file: bool:
 	get:
-		return export_file # TODO Converter40 Non existent get function
+		return _export_file
 	set(new_export_file):
-		if new_export_file != export_file:
+		if new_export_file != _export_file:
+			_export_file = new_export_file
 			do_export_file(target_map_editor)
 
 func do_export_file(target_editor: FuncGodotTargetMapEditors = FuncGodotTargetMapEditors.TRENCHBROOM, fgd_output_folder: String = "") -> void:
