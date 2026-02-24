@@ -50,6 +50,12 @@ signal died
 @export_range(0.5, 8.0, 0.1) var INTERACT_DISTANCE: float = 3.2
 @export_range(0.3, 5.0, 0.1) var HOLD_DISTANCE: float = 1.8
 @export_range(0.0, 30.0, 0.1) var DROP_THROW_SPEED: float = 7.0
+@export_range(0.0, 60.0, 0.1) var PUNT_THROW_SPEED: float = 15.0
+@export var show_interact_crosshair: bool = true
+@export_range(1.0, 12.0, 1.0) var crosshair_dot_size: float = 4.0
+@export var crosshair_idle_color: Color = Color(1.0, 1.0, 1.0, 0.9)
+@export var crosshair_target_color: Color = Color(0.65, 1.0, 0.65, 0.95)
+@export var crosshair_holding_color: Color = Color(1.0, 0.85, 0.45, 0.95)
 
 # Feel helpers
 @export var COYOTE_TIME: float = 0.12
@@ -86,12 +92,17 @@ var _camera_roll: float = 0.0
 @onready var _anim_player: AnimationPlayer = $Neck/Head/Eyes/AnimationPlayer
 
 var _held_ball: PhysicsBall = null
+var _current_interaction_target: Node = null
+var _crosshair_layer: CanvasLayer = null
+var _crosshair_dot: ColorRect = null
 
 
 func _ready() -> void:
 	add_to_group("PLAYER")
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 	_ensure_use_input_action()
+	_ensure_throw_input_action()
+	_ensure_interact_crosshair()
 
 	var settings := get_node_or_null("/root/SETTINGS")
 	if settings != null:
@@ -194,6 +205,8 @@ func _physics_process(delta: float) -> void:
 
 	_apply_camera_grounding(delta, was_on_floor)
 	_update_held_ball()
+	_update_interaction_target()
+	_update_interact_crosshair()
 
 	if health > max_health and overheal_decay_per_sec > 0.0:
 		var new_health := maxf(float(max_health), float(health) - overheal_decay_per_sec * delta)
@@ -203,6 +216,8 @@ func _physics_process(delta: float) -> void:
 			_emit_health_changed()
 	if InputMap.has_action("use") and Input.is_action_just_pressed("use"):
 		_handle_interact_pressed()
+	if InputMap.has_action("throw_held") and Input.is_action_just_pressed("throw_held"):
+		_handle_throw_pressed()
 
 
 func _update_crouch_state(delta: float) -> void:
@@ -396,11 +411,24 @@ func _ensure_use_input_action() -> void:
 	InputMap.action_add_event("use", ev)
 
 
+func _ensure_throw_input_action() -> void:
+	if InputMap.has_action("throw_held"):
+		return
+	InputMap.add_action("throw_held", 0.2)
+	var ev := InputEventMouseButton.new()
+	ev.button_index = MOUSE_BUTTON_LEFT
+	InputMap.action_add_event("throw_held", ev)
+
+
 func _handle_interact_pressed() -> void:
 	if _held_ball != null and is_instance_valid(_held_ball):
-		_drop_held_ball()
+		_release_held_ball()
 		return
-	var target_node: Node = _find_interaction_target()
+	var target_node: Node = _current_interaction_target
+	if target_node != null and not is_instance_valid(target_node):
+		target_node = null
+	if target_node == null:
+		target_node = _find_interaction_target()
 	if target_node == null:
 		return
 	if target_node.has_method("interact"):
@@ -412,6 +440,15 @@ func _handle_interact_pressed() -> void:
 		return
 	if target_node.has_method("use"):
 		target_node.call("use")
+
+
+func _handle_throw_pressed() -> void:
+	if _held_ball == null:
+		return
+	if not is_instance_valid(_held_ball) or not _held_ball.is_held_by(self):
+		_held_ball = null
+		return
+	_throw_held_ball()
 
 
 func _find_interaction_target() -> Node:
@@ -443,6 +480,16 @@ func _find_interaction_target() -> Node:
 	return null
 
 
+func _update_interaction_target() -> void:
+	if _held_ball != null and is_instance_valid(_held_ball) and _held_ball.is_held_by(self):
+		_current_interaction_target = _held_ball
+		return
+	if Input.get_mouse_mode() != Input.MOUSE_MODE_CAPTURED:
+		_current_interaction_target = null
+		return
+	_current_interaction_target = _find_interaction_target()
+
+
 func _update_held_ball() -> void:
 	if _held_ball == null:
 		return
@@ -453,10 +500,75 @@ func _update_held_ball() -> void:
 	_held_ball.set_hold_target_position(hold_target)
 
 
-func _drop_held_ball() -> void:
+func _release_held_ball() -> void:
 	if _held_ball == null or not is_instance_valid(_held_ball):
 		_held_ball = null
 		return
-	var throw_vel: Vector3 = -_camera.global_basis.z.normalized() * DROP_THROW_SPEED
+	var drop_vel: Vector3 = -_camera.global_basis.z.normalized() * DROP_THROW_SPEED
+	_held_ball.drop(drop_vel)
+	_held_ball = null
+
+
+func _throw_held_ball() -> void:
+	if _held_ball == null or not is_instance_valid(_held_ball):
+		_held_ball = null
+		return
+	var throw_vel: Vector3 = -_camera.global_basis.z.normalized() * PUNT_THROW_SPEED
 	_held_ball.drop(throw_vel)
 	_held_ball = null
+
+
+func _ensure_interact_crosshair() -> void:
+	if not show_interact_crosshair:
+		return
+	if _crosshair_layer != null and is_instance_valid(_crosshair_layer):
+		return
+	_crosshair_layer = CanvasLayer.new()
+	_crosshair_layer.name = "InteractCrosshair"
+	_crosshair_layer.layer = 10
+	add_child(_crosshair_layer)
+
+	var root := Control.new()
+	root.name = "Root"
+	root.set_anchors_preset(Control.PRESET_FULL_RECT)
+	root.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_crosshair_layer.add_child(root)
+
+	_crosshair_dot = ColorRect.new()
+	_crosshair_dot.name = "Dot"
+	_crosshair_dot.color = crosshair_idle_color
+	_crosshair_dot.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	root.add_child(_crosshair_dot)
+	_set_crosshair_dot_size(crosshair_dot_size)
+
+
+func _set_crosshair_dot_size(size_px: float) -> void:
+	if _crosshair_dot == null:
+		return
+	var s: float = maxf(size_px, 1.0)
+	_crosshair_dot.anchor_left = 0.5
+	_crosshair_dot.anchor_top = 0.5
+	_crosshair_dot.anchor_right = 0.5
+	_crosshair_dot.anchor_bottom = 0.5
+	_crosshair_dot.offset_left = -s * 0.5
+	_crosshair_dot.offset_top = -s * 0.5
+	_crosshair_dot.offset_right = s * 0.5
+	_crosshair_dot.offset_bottom = s * 0.5
+
+
+func _update_interact_crosshair() -> void:
+	if _crosshair_layer == null or _crosshair_dot == null:
+		return
+	var active: bool = Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED
+	_crosshair_layer.visible = active
+	if not active:
+		return
+	if _held_ball != null and is_instance_valid(_held_ball) and _held_ball.is_held_by(self):
+		_crosshair_dot.color = crosshair_holding_color
+		_set_crosshair_dot_size(crosshair_dot_size + 1.0)
+	elif _current_interaction_target != null:
+		_crosshair_dot.color = crosshair_target_color
+		_set_crosshair_dot_size(crosshair_dot_size + 1.0)
+	else:
+		_crosshair_dot.color = crosshair_idle_color
+		_set_crosshair_dot_size(crosshair_dot_size)

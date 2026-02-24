@@ -7,7 +7,7 @@ extends Volume
 
 func _ready() -> void:
 	# call base setup then join group
-	. _ready()
+	super._ready()
 	add_to_group("spawn_blocker")
 
 func _process_body(body: Node, entered: bool) -> void:

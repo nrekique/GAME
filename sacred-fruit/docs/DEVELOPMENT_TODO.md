@@ -27,10 +27,26 @@
     `GAME.is_spawn_blocked` helper, and corresponding FGD entries for each type.
 - [ ] 6. AI authoring layer
   - Nav regions, patrol pathing, cover markers, perception blockers, spawn wave points.
-- [ ] 7. Lighting pipeline
-  - Baked/dynamic policy, reflection probes, per-zone light culling masks.
-- [ ] 8. Save/state hooks
-  - Persistence keys like `save_id`, `starts_enabled`, `one_shot`, checkpoint restore rules.
+  - Phase 1 started: added point entities (`ai_nav_region`, `ai_patrol_point`,
+    `ai_cover_marker`, `ai_perception_blocker`, `ai_spawn_wave_point`) and
+    `GAME` query helpers (`get_ai_nav_regions`, `get_ai_patrol_points`,
+    `get_ai_cover_markers`, `is_ai_perception_blocked`,
+    `get_ai_spawn_wave_points`) plus `GAME.alert_ai` signal hook.
+  - Added `AIController` (idle/patrol/alert) and mapper-facing NPC AI keys
+    (`ai_enabled`, `ai_route_id`, `ai_patrol_speed`, `ai_alert_duration`,
+    `ai_reacts_to_alerts`) via `npc_spawn_anchor`.
+  - Added `ai_wave_spawner` point entity for marker-driven NPC wave spawning.
+  - Phase 1 fixes: `ai_wave_spawner` now accepts `npc_scene` map key path and
+    enforces per-point `max_spawn_count`; patrol controllers refresh routes to
+    handle late-loaded markers.
+- [x] 7. Lighting pipeline
+  - Added mapper-facing light `bake_mode` policy (`dynamic` / `static` / `disabled`) in light FGD + runtime light script.
+  - Added `env_reflection_probe` point entity with probe cull mask, intensity, and update mode.
+  - Added per-zone light/reflection mask overrides on `env_zone` (`light_cull_mask`, `reflection_cull_mask`, `reflection_intensity_scale`) applied at runtime from camera position.
+- [x] 8. Save/state hooks
+  - Added persistent runtime keys in `GAME`: `save_id`, `starts_enabled`, `one_shot` support for `Volume` subclasses.
+  - Added checkpoint registration/activation and restore-first respawn rules in `GAME.respawn_player`.
+  - `checkpoint_volume` now registers checkpoints with optional `checkpoint_id` and persistence through runtime state config.
 - [ ] 9. Performance budgets in editor
   - Per-entity cost hints and mapper-facing perf heatmaps.
 - [ ] 10. Automated smoke tests

@@ -21,14 +21,17 @@ func _ready():
 	print("[TEST] DamageVolume applied damage and raised signal")
 
 
-	# checkpoint volume should call GAME.handle_player_death if singleton present
+	# checkpoint volume should register an active checkpoint on enter
 	var stub_game := Node.new()
-	stub_game.handle_player_death = func(b,d): stub_game.called = true
+	stub_game.register_checkpoint = func(id, pos, rot): stub_game.last_checkpoint = id
+	stub_game.set_active_checkpoint = func(id): stub_game.active_checkpoint = id
 	Engine.set_singleton("GAME", stub_game)
 	var chk := preload("res://entities/logic/checkpoint_volume.gd").new()
+	chk.save_id = "cp_a"
 	chk._on_body_entered(actor)
-	assert(stub_game.called == true)
-	print("[TEST] CheckpointVolume invoked GAME.handle_player_death")
+	assert(stub_game.last_checkpoint == "cp_a")
+	assert(stub_game.active_checkpoint == "cp_a")
+	print("[TEST] CheckpointVolume registered checkpoint id")
 
 	# spawn blocker should flag a point inside its area
 	var sb := preload("res://entities/logic/spawn_blocker_volume.gd").new()

@@ -12,7 +12,7 @@ var scale_factor: float = 0.03125
 		scale_factor = 1.0 / value
 
 ## [FuncGodotFGDFile] that translates map file classnames into Godot nodes and packed scenes.
-@export var entity_fgd: FuncGodotFGDFile = preload("res://addons/func_godot/fgd/func_godot_fgd.tres")
+@export var entity_fgd: Resource = preload("res://addons/func_godot/fgd/func_godot_fgd.tres")
 
 ## Default class property to use in naming generated nodes. This setting is overridden by `name_property` in [FuncGodotFGDEntityClass].
 ## Naming occurs before adding to the [SceneTree] and applying properties.

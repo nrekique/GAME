@@ -2,6 +2,8 @@
 ## Base entity definition class. Not to be used directly, use [FuncGodotFGDBaseClass], [FuncGodotFGDSolidClass], or [FuncGodotFGDPointClass] instead.
 class_name FuncGodotFGDEntityClass
 extends Resource
+const TARGET_EDITOR_TRENCHBROOM := 1
+const TARGET_EDITOR_JACK := 2
 
 var prefix: String = ""
 
@@ -44,7 +46,7 @@ var prefix: String = ""
 ## Nodes will be named `"entity_" + name_property`. An entity's name should be unique, otherwise you may run into unexpected behavior.
 @export var name_property := ""
 
-func build_def_text(target_editor: FuncGodotFGDFile.FuncGodotTargetMapEditors = FuncGodotFGDFile.FuncGodotTargetMapEditors.TRENCHBROOM) -> String:
+func build_def_text(target_editor: int = TARGET_EDITOR_TRENCHBROOM) -> String:
 	# Class prefix
 	var res : String = prefix
 	
@@ -70,10 +72,10 @@ func build_def_text(target_editor: FuncGodotFGDFile.FuncGodotTargetMapEditors = 
 				continue
 		
 		# TrenchBroom does not support "scale(...)" as an entity header meta property.
-		if prop == "scale" and target_editor == FuncGodotFGDFile.FuncGodotTargetMapEditors.TRENCHBROOM:
+		if prop == "scale" and target_editor == TARGET_EDITOR_TRENCHBROOM:
 			continue
 		
-		if prop == 'model' and target_editor != FuncGodotFGDFile.FuncGodotTargetMapEditors.TRENCHBROOM:
+		if prop == 'model' and target_editor != TARGET_EDITOR_TRENCHBROOM:
 			continue
 		
 		var value = meta_props[prop]
@@ -184,7 +186,7 @@ func build_def_text(target_editor: FuncGodotFGDFile.FuncGodotTargetMapEditors = 
 				if value is Resource:
 					prop_val = value.resource_path
 					if value is Material:
-						if target_editor != FuncGodotFGDFile.FuncGodotTargetMapEditors.JACK:
+						if target_editor != TARGET_EDITOR_JACK:
 							prop_type = "material"
 						else:
 							prop_type = "shader"

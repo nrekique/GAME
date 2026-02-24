@@ -1,4 +1,5 @@
-class_name PortalSettings extends Object
+class_name PortalSettings
+extends Object
 
 ## Static helper class for portal project settings.
 ##

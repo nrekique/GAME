@@ -1,9 +1,9 @@
 @tool
 ## A special type of [FuncGodotFGDPointClass] entity that can automatically generate a special simplified GLB model file for the map editor display.
-const Util := preload("res://scripts/util.gd")
 ## Only supported in map editors that support GLTF or GLB.
 class_name FuncGodotFGDModelPointClass
 extends FuncGodotFGDPointClass
+const Util := preload("res://scripts/util.gd")
 
 enum TargetMapEditor {
 	GENERIC,
@@ -37,7 +37,7 @@ enum TargetMapEditor {
 				file.store_string('')
 				file.close()
 
-func build_def_text(target_editor: FuncGodotFGDFile.FuncGodotTargetMapEditors = FuncGodotFGDFile.FuncGodotTargetMapEditors.TRENCHBROOM) -> String:
+func build_def_text(target_editor: int = 1) -> String:
 	_generate_model()
 	return super()
 

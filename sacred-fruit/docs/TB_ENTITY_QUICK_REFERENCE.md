@@ -79,10 +79,21 @@ Quick authoring sheet for common gameplay/environment entities.
 - `ambience_bus` (default: `SFX`)
 
 `env_zone` (radial point zone)
+- `enabled` (`0/1`)
 - `radius`
 - `intensity`
 - `fog_density`
 - `wind_speed`
+- `light_cull_mask` (`-1` to ignore)
+- `reflection_cull_mask` (`-1` to ignore)
+- `reflection_intensity_scale` (`-1` to ignore)
+
+`env_reflection_probe`
+- `enabled` (`0/1`)
+- `box_size` (`x y z`)
+- `update_mode` (`once`/`always`)
+- `probe_intensity`
+- `probe_cull_mask`
 
 `func_prefab_instance`
 - `prefab_scene` (`res://...tscn`)
@@ -135,6 +146,10 @@ _These areas emit `body_entered(body)` and `body_exited(body)` signals._
 
 `checkpoint_volume`
 - `enabled` (`0/1`)
+- `checkpoint_id` (optional unique checkpoint key)
+- `save_id` (optional persistence key)
+- `starts_enabled` (`0/1`)
+- `one_shot` (`0/1`)
 
 `music_zone_volume`
 - `tag` (zone name)
@@ -149,6 +164,54 @@ _These areas emit `body_entered(body)` and `body_exited(body)` signals._
 
 `spawn_blocker_volume`
 - `enabled` (`0/1`)
+
+## AI Authoring (Phase 1)
+
+`ai_nav_region`
+- `enabled` (`0/1`)
+- `region_id` (optional unique id)
+- `nav_tag` (optional category: `indoor`, `rooftop`, etc.)
+- `radius`
+
+`ai_patrol_point`
+- `enabled` (`0/1`)
+- `route_id` (route/group id)
+- `order` (integer ordering within route)
+- `wait` (seconds)
+
+`ai_cover_marker`
+- `enabled` (`0/1`)
+- `team` (optional team filter)
+- `exposure` (`0..1`)
+- `crouch_only` (`0/1`)
+
+`ai_perception_blocker`
+- `enabled` (`0/1`)
+- `radius`
+
+`ai_spawn_wave_point`
+- `enabled` (`0/1`)
+- `wave_id`
+- `squad_id` (optional)
+- `max_spawn_count`
+- `cooldown`
+
+`ai_wave_spawner`
+- `enabled` (`0/1`)
+- `wave_id`
+- `squad_id` (optional)
+- `npc_scene` (`res://...tscn`)
+- `spawn_on_ready` (`0/1`)
+- `spawn_interval`
+- `max_alive`
+- `total_spawn_limit`
+
+`npc` (AI keys)
+- `ai_enabled` (`0/1`)
+- `ai_route_id`
+- `ai_patrol_speed`
+- `ai_alert_duration`
+- `ai_reacts_to_alerts` (`0/1`)
 
 ## Interactions
 

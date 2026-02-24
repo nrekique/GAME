@@ -12,6 +12,20 @@ apply_scale_on_map_build = false
 classname = "npc"
 description = "Generic NPC actor. Uses the current default NPC scene."
 base_classes = Array[Resource]([ExtResource("2_actor_base"), ExtResource("3_targetname_base")])
+class_properties = {
+"ai_alert_duration": 4.0,
+"ai_enabled": false,
+"ai_patrol_speed": 2.0,
+"ai_reacts_to_alerts": true,
+"ai_route_id": "default"
+}
+class_property_descriptions = {
+"ai_alert_duration": "Seconds to remain in alert state after AI alert.",
+"ai_enabled": "Enable simple AI controller (idle/patrol/alert).",
+"ai_patrol_speed": "Movement speed when patrolling or moving to alerts.",
+"ai_reacts_to_alerts": "If true, reacts to GAME.ai_alerted events.",
+"ai_route_id": "Patrol route id (matches ai_patrol_point.route_id)."
+}
 meta_properties = {
 "color": Color(0.85, 0.45, 0.2, 1),
 "iconsprite": "\"fgd/entities/sprites/npc.png\"",

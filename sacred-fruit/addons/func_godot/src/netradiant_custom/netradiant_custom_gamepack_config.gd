@@ -1,9 +1,9 @@
 @tool
 @icon("res://addons/func_godot/icons/icon_godot_ranger.svg")
-const Util := preload("res://scripts/util.gd")
 ## Builds a gamepack for NetRadiant Custom.
 class_name NetRadiantCustomGamePackConfig
 extends Resource
+const Util := preload("res://scripts/util.gd")
 
 ## Button to export / update this gamepack's configuration in the NetRadiant Custom Gamepacks Folder.
 @export var export_file: bool:

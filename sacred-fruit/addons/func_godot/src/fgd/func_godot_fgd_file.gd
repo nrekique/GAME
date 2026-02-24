@@ -1,9 +1,9 @@
 @tool
 @icon("res://addons/func_godot/icons/icon_godot_ranger.svg")
-const Util := preload("res://scripts/util.gd")
 ## [Resource] file used to express a set of [FuncGodotFGDEntity] definitions. Can be exported as an FGD file for use with a Quake map editor. Used in conjunction with a [FuncGodotMapSetting] resource to generate nodes in a [FuncGodotMap] node.
 class_name FuncGodotFGDFile
 extends Resource
+const Util := preload("res://scripts/util.gd")
 
 ## Supported map editors enum, used in conjunction with [member target_map_editor].
 enum FuncGodotTargetMapEditors {

@@ -1,0 +1,33 @@
+[gd_resource type="Resource" script_class="FuncGodotFGDPointClass" format=3]
+
+[ext_resource type="Script" path="res://addons/func_godot/src/fgd/func_godot_fgd_point_class.gd" id="1_point"]
+[ext_resource type="Resource" path="res://tb/fgd/base/targetname_base.tres" id="2_targetname"]
+[ext_resource type="Script" path="res://entities/logic/ai_spawn_wave_point.gd" id="3_script"]
+
+[resource]
+script = ExtResource("1_point")
+script_class = ExtResource("3_script")
+classname = "ai_spawn_wave_point"
+description = "Spawn location for AI wave/squad logic."
+base_classes = Array[Resource]([ExtResource("2_targetname")])
+class_properties = {
+"cooldown": 0.0,
+"enabled": true,
+"max_spawn_count": 1,
+"squad_id": "",
+"wave_id": "default"
+}
+class_property_descriptions = {
+"cooldown": "Seconds before this point can spawn again.",
+"enabled": "If false, disabled.",
+"max_spawn_count": "Maximum spawns allowed from this point.",
+"squad_id": "Optional squad filter id.",
+"wave_id": "Wave/group id."
+}
+meta_properties = {
+"color": Color(0.9, 0.2, 0.9, 1),
+"iconsprite": "\"fgd/entities/sprites/npc.png\"",
+"scale": "0.15",
+"size": AABB(-8, -8, -8, 8, 8, 8)
+}
+node_class = "Marker3D"

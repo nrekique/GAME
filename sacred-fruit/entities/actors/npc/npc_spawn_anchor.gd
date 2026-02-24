@@ -12,6 +12,11 @@ const Util := preload("res://scripts/util.gd")
 @export_range(0.1, 8.0, 0.01) var idle_bob_frequency: float = 1.2
 @export_range(0.0, 8.0, 0.01) var idle_sway_degrees: float = 3.0
 @export_range(0.1, 8.0, 0.01) var idle_sway_frequency: float = 0.8
+@export var ai_enabled: bool = false
+@export var ai_route_id: String = "default"
+@export_range(0.1, 20.0, 0.01) var ai_patrol_speed: float = 2.0
+@export_range(0.0, 30.0, 0.01) var ai_alert_duration: float = 4.0
+@export var ai_reacts_to_alerts: bool = true
 
 var _base_visual_position: Vector3 = Vector3.ZERO
 var _aligned_visual_position: Vector3 = Vector3.ZERO
@@ -20,12 +25,15 @@ var _idle_visual_root: Node3D = null
 var _base_visual_rotation: Vector3 = Vector3.ZERO
 var _idle_phase: float = 0.0
 var _has_animation_player: bool = false
+var _ai_controller: Node = null
+const AI_CONTROLLER_SCRIPT := preload("res://entities/logic/ai_controller.gd")
 
 func _ready() -> void:
 	_apply_alignment()
 	if Util.editor_hint():
 		return
 	_setup_idle_animation()
+	_setup_ai_controller()
 
 func _process(delta: float) -> void:
 	if Util.editor_hint():
@@ -135,3 +143,37 @@ func _pick_idle_clip(anim_player: AnimationPlayer) -> String:
 		if name.to_lower().find("idle") != -1:
 			return name
 	return ""
+
+func _func_godot_apply_properties(props: Dictionary) -> void:
+	if props.has("ai_enabled"):
+		ai_enabled = Util.to_bool(props["ai_enabled"], ai_enabled)
+	if props.has("ai_route_id"):
+		ai_route_id = String(props["ai_route_id"]).strip_edges()
+	if props.has("ai_patrol_speed"):
+		ai_patrol_speed = maxf(float(props["ai_patrol_speed"]), 0.1)
+	if props.has("ai_alert_duration"):
+		ai_alert_duration = maxf(float(props["ai_alert_duration"]), 0.0)
+	if props.has("ai_reacts_to_alerts"):
+		ai_reacts_to_alerts = Util.to_bool(props["ai_reacts_to_alerts"], ai_reacts_to_alerts)
+
+func _setup_ai_controller() -> void:
+	if not ai_enabled:
+		return
+	if AI_CONTROLLER_SCRIPT == null:
+		return
+	if _ai_controller != null and is_instance_valid(_ai_controller):
+		return
+	var ctrl := AI_CONTROLLER_SCRIPT.new()
+	if ctrl == null:
+		return
+	ctrl.name = "AIController"
+	if ctrl.has_method("setup"):
+		ctrl.call("setup", self, {
+			"enabled": ai_enabled,
+			"route_id": ai_route_id,
+			"patrol_speed": ai_patrol_speed,
+			"alert_duration": ai_alert_duration,
+			"reacts_to_alerts": ai_reacts_to_alerts
+		})
+	add_child(ctrl)
+	_ai_controller = ctrl

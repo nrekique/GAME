@@ -1,7 +1,0 @@
-[configuration]
-
-entry_symbol = "godot_apple_plugins_start"
-compatibility_minimum = 4.4
-
-[libraries]
-ios = "res://addons/GodotApplePlugins/bin/GodotApplePlugins.xcframework"

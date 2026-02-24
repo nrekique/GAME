@@ -123,7 +123,7 @@ From base FGD resources (`sacred-fruit/tb/fgd/base/*`):
 | `item_health` | `amount`, `allow_overheal`, `overheal_cap`, `auto_free`, `targetname` | Applies health to player (directly and via GAME fallback). |
 | `item_ammo` | `ammo_type`, `amount`, `auto_free`, `targetname` | Calls `add_ammo` on player/GAME fallback. |
 | `physics_ball` | `tumbleweed_enabled`, `radius`, `mass_kg`, `wind_response`, `rolling_torque`, `max_speed` | `RigidBody3D` physics prop. In tumbleweed mode it samples map wind/sandstorm settings and rolls with gusting wind force. |
-| `npc` | `flags`, `scale`, `targetname` (+ actor base) | Generic NPC actor entity using the default NPC scene. |
+| `npc` | `flags`, `scale`, `targetname`, `ai_enabled`, `ai_route_id`, `ai_patrol_speed`, `ai_alert_duration`, `ai_reacts_to_alerts` (+ actor base) | Generic NPC actor entity using the default NPC scene with optional idle/patrol/alert AI controller. |
 | `path_corner` | `target`, `wait`, `targetname` | Train path node for `func_train`. |
 | `logic_auto` (new) | `enabled`, `fire_once`, `delay` + target base | Fires outputs automatically on spawn, optional delay, optional one-shot. |
 | `logic_relay` | `enabled`, `trigger_once`, `delay` + target base | Relay with delayed optional one-shot fire. |
@@ -140,6 +140,12 @@ From base FGD resources (`sacred-fruit/tb/fgd/base/*`):
 | `env_portal_budget` | `portal_max_active`, `portal_refresh_seconds`, `portal_max_render_scale`, `portal_min_render_scale` | Applies runtime portal budgeting overrides to all `func_portal` entities. |
 | `env_audio_ambience` | `ambience_stream`, `ambience_volume_db`, `ambience_bus` | Plays looped ambience stream at map runtime via `AudioStreamPlayer`. |
 | `env_zone` | `radius`, `intensity`, `fog_density`, `wind_speed` | Radial local override zone blended by camera distance. |
+| `ai_nav_region` | `enabled`, `region_id`, `nav_tag`, `radius` | Authoring marker for AI navigation metadata buckets. |
+| `ai_patrol_point` | `enabled`, `route_id`, `order`, `wait` | Ordered patrol points fetched with `GAME.get_ai_patrol_points(route_id)`. |
+| `ai_cover_marker` | `enabled`, `team`, `exposure`, `crouch_only` | Candidate cover position, query via `GAME.get_ai_cover_markers(team)`. |
+| `ai_perception_blocker` | `enabled`, `radius` | LOS blocker proxy used by `GAME.is_ai_perception_blocked(start, end)`. |
+| `ai_spawn_wave_point` | `enabled`, `wave_id`, `squad_id`, `max_spawn_count`, `cooldown` | Spawn anchor metadata for wave systems via `GAME.get_ai_spawn_wave_points(...)`. |
+| `ai_wave_spawner` | `enabled`, `wave_id`, `squad_id`, `npc_scene`, `spawn_on_ready`, `spawn_interval`, `max_alive`, `total_spawn_limit` | Runtime NPC wave spawner that consumes `ai_spawn_wave_point` markers and respects per-point cooldown/max count. |
 
 ## 5.2 Solid / Brush Entities
 
@@ -163,7 +169,7 @@ From base FGD resources (`sacred-fruit/tb/fgd/base/*`):
 | `trigger_changelevel` | `map`, `delay`, `targetname` | One-shot level transition trigger. |
 | `trigger_exit` | `map`, `delay`, `targetname` | Calls `GAME.try_exit()`, optional scene change on success. |
 | `damage_volume` | `amount`, `enabled` | Applies instant damage (calls `apply_damage()`) when bodies enter. |
-| `checkpoint_volume` | `enabled` | Respawns player at volume when entered (uses `GAME.handle_player_death`). |
+| `checkpoint_volume` | `enabled`, `checkpoint_id`, `save_id`, `starts_enabled`, `one_shot` | Registers/activates checkpoint on entry; respawn uses active checkpoint first. |
 | `music_zone_volume` | `tag`, `enabled` | Switches music zone on entry. |
 | `ai_alert_volume` | `enabled` | Notifies AI system of entrant position. |
 | `quest_trigger_volume` | `tag`, `enabled` | Placeholder for quest scripting; no default action. |

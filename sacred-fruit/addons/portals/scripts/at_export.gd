@@ -1,4 +1,5 @@
-class_name AtExport extends Object
+class_name AtExport
+extends Object
 
 ## Helper class for defining custom export inspector.
 ##

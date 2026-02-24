@@ -1,9 +1,10 @@
 @tool
 @icon("res://addons/func_godot/icons/icon_slipgate3d.svg")
-const Util := preload("res://scripts/util.gd")
 ## A scene generator node that parses a Quake map file using a [FuncGodotFGDFile]. Uses a [FuncGodotMapSettings] resource to define map build settings.
 ## To use this node, select an instance of the node in the Godot editor and select "Quick Build", "Full Build", or "Unwrap UV2" from the toolbar. Alternatively, call [method manual_build] from code.
-class_name FuncGodotMap extends Node3D
+class_name FuncGodotMap
+extends Node3D
+const Util := preload("res://scripts/util.gd")
 
 ## How long to wait between child/owner batches
 const YIELD_DURATION := 0.0
@@ -545,19 +546,17 @@ func build_entity_collision_shape_nodes() -> Array:
 					elif entity_definition.collision_shape_type == FuncGodotFGDSolidClass.CollisionShapeType.CONCAVE:
 						concave = true
 					
-					if entity_definition.spawn_type == FuncGodotFGDSolidClass.SpawnType.MERGE_WORLDSPAWN:
-				# older behaviour assumed the first entity was the worldspawn node; we
-				# now search for any node marked as "worldspawn" and fall back to
-				# index 0 if nothing is found.
-				var worldspawn_node: Node = null
-				for n in entity_nodes:
-					if n and n.has_method("get") and n.has_meta("classname") and n.get_meta("classname") == "worldspawn":
-						worldspawn_node = n
-						break
-				node = worldspawn_node if worldspawn_node else (entity_nodes[0] as Node)
-					if node and node is CollisionObject3D:
-						(node as CollisionObject3D).collision_layer = entity_definition.collision_layer
-						(node as CollisionObject3D).collision_mask = entity_definition.collision_mask
+						if entity_definition.spawn_type == FuncGodotFGDSolidClass.SpawnType.MERGE_WORLDSPAWN:
+							# Older behavior assumed index 0 was worldspawn; prefer explicit metadata when present.
+							var worldspawn_node: Node = null
+							for n in entity_nodes:
+								if n != null and n.has_meta("classname") and String(n.get_meta("classname")) == "worldspawn":
+									worldspawn_node = n
+									break
+							node = worldspawn_node if worldspawn_node != null else (entity_nodes[0] as Node)
+						if node and node is CollisionObject3D:
+							(node as CollisionObject3D).collision_layer = entity_definition.collision_layer
+							(node as CollisionObject3D).collision_mask = entity_definition.collision_mask
 						(node as CollisionObject3D).collision_priority = entity_definition.collision_priority
 		
 		# don't create collision shapes that wont be attached to a CollisionObject3D as they are a waste

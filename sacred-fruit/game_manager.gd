@@ -12,6 +12,7 @@ signal exit_unlocked()
 signal player_health_changed(current: int, max_health: int, max_overhealth: int)
 signal player_died()
 signal io_event_dispatched(event: Dictionary)
+signal ai_alerted(position: Vector3, source: Node)
 
 enum {
 	WORLD_LAYER = (1 << 0),
@@ -61,6 +62,19 @@ var _last_worldspawn_id: int = -1
 
 # worldspawn collision optimisation threshold
 const WORLDSPAWN_COLLIDER_THRESHOLD: int = 250
+const RUNTIME_STATE_PATH := "user://runtime_state.cfg"
+const ZONE_LIGHTING_UPDATE_INTERVAL := 0.10
+
+var _runtime_entity_enabled: Dictionary = {}
+var _runtime_fired_once: Dictionary = {}
+var _runtime_checkpoints: Dictionary = {}
+var _runtime_active_checkpoint_id: String = ""
+
+var _zone_lighting_elapsed: float = 0.0
+var _zone_light_base_masks: Dictionary = {}
+var _zone_probe_base_masks: Dictionary = {}
+var _zone_probe_base_intensity: Dictionary = {}
+var _zone_last_hash: int = 0
 
 
 func _get_node_prop(node: Node, key: String, default_value: Variant = null) -> Variant:
@@ -137,7 +151,34 @@ func _ready() -> void:
 	if io_debug_logging:
 		Util.debug_print("[GameManager] build_profile=" + build_profile)
 
+	_load_runtime_state()
+	set_process(true)
 	_reset_objective_state()
+	# initialize PS1 manager (previously _setup_ps1_shader)
+	ps1_mgr._setup_ps1_shader()
+	# set up io manager
+	add_child(io_mgr)
+	io_mgr.io_debug_logging = io_debug_logging
+	io_mgr.io_trace_capacity = io_trace_capacity
+	io_mgr.connect("io_event_dispatched", Callable(self, "_on_io_event_dispatched"))
+	var tree := get_tree()
+	var on_added := Callable(self, "_on_tree_node_added")
+	if tree != null and not tree.is_connected("node_added", on_added):
+		tree.connect("node_added", on_added)
+	if tree != null:
+		tree.root.child_entered_tree.connect(_on_root_child_entered_tree)
+	call_deferred("_handle_scene_change")
+	call_deferred("_optimize_worldspawn_collisions")
+	call_deferred("_try_register_existing_player")
+
+func _process(delta: float) -> void:
+	if Util.editor_hint():
+		return
+	_zone_lighting_elapsed += delta
+	if _zone_lighting_elapsed < ZONE_LIGHTING_UPDATE_INTERVAL:
+		return
+	_zone_lighting_elapsed = 0.0
+	_update_zone_lighting_overrides()
 
 # ---------------------------------------------------------------
 # spawn blocker helpers
@@ -152,33 +193,90 @@ func is_spawn_blocked(point: Vector3) -> bool:
 		if vol and vol.has_method("blocks_point") and vol.blocks_point(point):
 			return true
 	return false
-	# initialize PS1 manager (previously _setup_ps1_shader)
-	ps1_mgr._setup_ps1_shader()
-	# set up io manager
-	add_child(io_mgr)
-	io_mgr.io_debug_logging = io_debug_logging
-	io_mgr.io_trace_capacity = io_trace_capacity
-	# use Callable constructor to satisfy strict connect signature
-	io_mgr.connect("io_event_dispatched", Callable(self, "_on_io_event_dispatched"))
-	var tree := get_tree()
-	var on_added := Callable(self, "_on_tree_node_added")
-	if tree != null and not tree.is_connected("node_added", on_added):
-		tree.connect("node_added", on_added)
-	# Spawn HUD only in gameplay scenes (not in menus). It will be shown/hidden
-	# automatically when scenes change.
-	tree.root.child_entered_tree.connect(_on_root_child_entered_tree)
-	call_deferred("_handle_scene_change")
-	# For huge baked func_godot scenes (like HOME.tscn), this can reduce node count
-	# and speed up physics broadphase by replacing thousands of brush colliders with
-	# a single trimesh collider derived from the visual mesh.
-	call_deferred("_optimize_worldspawn_collisions")
-	# In case player registers before GAME is ready, try to find one.
-	call_deferred("_try_register_existing_player")
 
 
 func _on_root_child_entered_tree(_node: Node) -> void:
 	# When the scene root changes, update HUD visibility.
 	call_deferred("_handle_scene_change")
+
+func _on_tree_node_added(node: Node) -> void:
+	if node == null:
+		return
+	if node.is_in_group("PLAYER"):
+		call_deferred("_try_register_existing_player")
+
+func _on_io_event_dispatched(event: Dictionary) -> void:
+	emit_signal("io_event_dispatched", event)
+
+func alert_ai(position: Vector3, source: Node = null) -> void:
+	emit_signal("ai_alerted", position, source)
+
+func get_ai_nav_regions(nav_tag: String = "") -> Array[Node3D]:
+	var key := nav_tag.strip_edges().to_lower()
+	var nodes: Array = []
+	if key.is_empty():
+		nodes = get_tree().get_nodes_in_group("ai_nav_region")
+	else:
+		nodes = get_tree().get_nodes_in_group("ai_nav_tag_%s" % key)
+	var out: Array[Node3D] = []
+	for n in nodes:
+		if n is Node3D and Util.to_bool(_get_node_prop(n, "enabled", true), true):
+			out.append(n as Node3D)
+	return out
+
+func get_ai_patrol_points(route_id: String = "default") -> Array[Node3D]:
+	var key := route_id.strip_edges().to_lower()
+	if key.is_empty():
+		key = "default"
+	var nodes := get_tree().get_nodes_in_group("ai_patrol_route_%s" % key)
+	var out: Array[Node3D] = []
+	for n in nodes:
+		if n is Node3D and Util.to_bool(_get_node_prop(n, "enabled", true), true):
+			out.append(n as Node3D)
+	out.sort_custom(func(a: Node3D, b: Node3D) -> bool:
+		return int(_get_node_prop(a, "order", 0)) < int(_get_node_prop(b, "order", 0))
+	)
+	return out
+
+func get_ai_cover_markers(team: String = "") -> Array[Node3D]:
+	var key := team.strip_edges().to_lower()
+	var nodes: Array = []
+	if key.is_empty():
+		nodes = get_tree().get_nodes_in_group("ai_cover_marker")
+	else:
+		nodes = get_tree().get_nodes_in_group("ai_cover_team_%s" % key)
+	var out: Array[Node3D] = []
+	for n in nodes:
+		if n is Node3D and Util.to_bool(_get_node_prop(n, "enabled", true), true):
+			out.append(n as Node3D)
+	return out
+
+func is_ai_perception_blocked(start_pos: Vector3, end_pos: Vector3) -> bool:
+	for n in get_tree().get_nodes_in_group("ai_perception_blocker"):
+		if n == null or not is_instance_valid(n):
+			continue
+		if n.has_method("blocks_line") and bool(n.call("blocks_line", start_pos, end_pos)):
+			return true
+	return false
+
+func get_ai_spawn_wave_points(wave_id: String = "default", squad_id: String = "") -> Array[Node3D]:
+	var wave_key := wave_id.strip_edges().to_lower()
+	if wave_key.is_empty():
+		wave_key = "default"
+	var nodes: Array = get_tree().get_nodes_in_group("ai_spawn_wave_%s" % wave_key)
+	var squad_key := squad_id.strip_edges().to_lower()
+	var out: Array[Node3D] = []
+	for n in nodes:
+		if not (n is Node3D):
+			continue
+		if not Util.to_bool(_get_node_prop(n, "enabled", true), true):
+			continue
+		if not squad_key.is_empty():
+			var node_squad := String(_get_node_prop(n, "squad_id", "")).strip_edges().to_lower()
+			if node_squad != squad_key:
+				continue
+		out.append(n as Node3D)
+	return out
 
 
 func _handle_scene_change() -> void:
@@ -186,6 +284,10 @@ func _handle_scene_change() -> void:
 	if current == null:
 		return
 	_last_worldspawn_id = -1
+	_zone_last_hash = 0
+	_zone_light_base_masks.clear()
+	_zone_probe_base_masks.clear()
+	_zone_probe_base_intensity.clear()
 	var in_ui := current is Control
 	if in_ui:
 		if _hud != null:
@@ -279,6 +381,8 @@ func handle_player_death(player: Node, delay: float = 1.0) -> void:
 func respawn_player(player: Node) -> void:
 	if player == null or not is_instance_valid(player):
 		return
+	if _try_respawn_at_checkpoint(player):
+		return
 	# Find an active info_player_start in the current scene.
 	var current := get_tree().current_scene
 	if current == null:
@@ -296,6 +400,126 @@ func respawn_player(player: Node) -> void:
 			register_player(player)
 			_set_objective_text(_default_objective_text())
 			return
+
+
+func register_checkpoint(checkpoint_id: String, pos: Vector3, rot_deg: Vector3 = Vector3.ZERO) -> void:
+	var key := checkpoint_id.strip_edges()
+	if key.is_empty():
+		return
+	_runtime_checkpoints[key] = {
+		"position": [pos.x, pos.y, pos.z],
+		"rotation_degrees": [rot_deg.x, rot_deg.y, rot_deg.z]
+	}
+	_runtime_active_checkpoint_id = key
+	_save_runtime_state()
+
+
+func set_active_checkpoint(checkpoint_id: String) -> void:
+	var key := checkpoint_id.strip_edges()
+	if key.is_empty():
+		return
+	if not _runtime_checkpoints.has(key):
+		return
+	_runtime_active_checkpoint_id = key
+	_save_runtime_state()
+
+
+func get_active_checkpoint() -> String:
+	return _runtime_active_checkpoint_id
+
+
+func state_get_enabled(save_id: String, default_enabled: bool = true) -> bool:
+	var key := save_id.strip_edges()
+	if key.is_empty():
+		return default_enabled
+	if _runtime_entity_enabled.has(key):
+		return Util.to_bool(_runtime_entity_enabled[key], default_enabled)
+	return default_enabled
+
+
+func state_set_enabled(save_id: String, enabled: bool) -> void:
+	var key := save_id.strip_edges()
+	if key.is_empty():
+		return
+	_runtime_entity_enabled[key] = enabled
+	_save_runtime_state()
+
+
+func state_has_fired(save_id: String) -> bool:
+	var key := save_id.strip_edges()
+	if key.is_empty():
+		return false
+	if not _runtime_fired_once.has(key):
+		return false
+	return Util.to_bool(_runtime_fired_once[key], false)
+
+
+func state_mark_fired(save_id: String) -> void:
+	var key := save_id.strip_edges()
+	if key.is_empty():
+		return
+	_runtime_fired_once[key] = true
+	_save_runtime_state()
+
+
+func _try_respawn_at_checkpoint(player: Node) -> bool:
+	if _runtime_active_checkpoint_id.is_empty():
+		return false
+	if not _runtime_checkpoints.has(_runtime_active_checkpoint_id):
+		return false
+	var cp_var: Variant = _runtime_checkpoints[_runtime_active_checkpoint_id]
+	if not (cp_var is Dictionary):
+		return false
+	var cp := cp_var as Dictionary
+	var pos := _vec3_from_data(cp.get("position", []), Vector3.ZERO)
+	var rot := _vec3_from_data(cp.get("rotation_degrees", []), Vector3.ZERO)
+	if player is Node3D:
+		(player as Node3D).global_position = pos
+		(player as Node3D).global_rotation_degrees = rot
+	if player.has_method("reset_health"):
+		player.call("reset_health")
+	register_player(player)
+	_set_objective_text(_default_objective_text())
+	return true
+
+
+func _vec3_from_data(value: Variant, fallback: Vector3) -> Vector3:
+	if value is Vector3:
+		return value
+	if value is Array:
+		var arr := value as Array
+		if arr.size() >= 3:
+			return Vector3(float(arr[0]), float(arr[1]), float(arr[2]))
+	return fallback
+
+
+func _save_runtime_state() -> void:
+	var cfg := ConfigFile.new()
+	cfg.set_value("entity", "enabled", _runtime_entity_enabled)
+	cfg.set_value("entity", "fired_once", _runtime_fired_once)
+	cfg.set_value("checkpoint", "data", _runtime_checkpoints)
+	cfg.set_value("checkpoint", "active_id", _runtime_active_checkpoint_id)
+	cfg.save(RUNTIME_STATE_PATH)
+
+
+func _load_runtime_state() -> void:
+	_runtime_entity_enabled.clear()
+	_runtime_fired_once.clear()
+	_runtime_checkpoints.clear()
+	_runtime_active_checkpoint_id = ""
+	var cfg := ConfigFile.new()
+	if cfg.load(RUNTIME_STATE_PATH) != OK:
+		return
+	var enabled_var: Variant = cfg.get_value("entity", "enabled", {})
+	if enabled_var is Dictionary:
+		_runtime_entity_enabled = enabled_var
+	var fired_var: Variant = cfg.get_value("entity", "fired_once", {})
+	if fired_var is Dictionary:
+		_runtime_fired_once = fired_var
+	var checkpoints_var: Variant = cfg.get_value("checkpoint", "data", {})
+	if checkpoints_var is Dictionary:
+		_runtime_checkpoints = checkpoints_var
+	_runtime_active_checkpoint_id = String(cfg.get_value("checkpoint", "active_id", ""))
 
 
 func _reset_objective_state() -> void:
@@ -375,6 +599,78 @@ func _spawn_hud_if_missing() -> void:
 	_hud = hud_scene.instantiate() as CanvasLayer
 	if _hud != null:
 		get_tree().root.add_child(_hud)
+
+func _update_zone_lighting_overrides() -> void:
+	var current := get_tree().current_scene
+	if current == null:
+		return
+	var cam := get_viewport().get_camera_3d()
+	if cam == null:
+		return
+	var zone := _get_strongest_env_zone(current, cam.global_position)
+	var zone_hash := _compute_zone_hash(zone)
+	if zone_hash == _zone_last_hash:
+		return
+	_zone_last_hash = zone_hash
+	_apply_zone_lighting(current, zone)
+
+func _get_strongest_env_zone(root: Node, camera_pos: Vector3) -> EnvZone:
+	var zones: Array = root.find_children("*", "Node3D", true, false)
+	var best: EnvZone = null
+	var best_weight := 0.0
+	for z in zones:
+		if not (z is EnvZone):
+			continue
+		var zone := z as EnvZone
+		if not zone.enabled:
+			continue
+		var zone_radius := maxf(zone.radius * INVERSE_SCALE, 0.01)
+		var dist := camera_pos.distance_to(zone.global_position)
+		if dist > zone_radius:
+			continue
+		var weight := 1.0 - clampf(dist / zone_radius, 0.0, 1.0)
+		if weight > best_weight:
+			best_weight = weight
+			best = zone
+	return best
+
+func _compute_zone_hash(zone: EnvZone) -> int:
+	if zone == null:
+		return 0
+	return hash([zone.get_instance_id(), zone.light_cull_mask, zone.reflection_cull_mask, zone.reflection_intensity_scale])
+
+func _apply_zone_lighting(root: Node, zone: EnvZone) -> void:
+	var lights: Array = root.find_children("*", "Light3D", true, false)
+	for light_node in lights:
+		if not (light_node is Light3D):
+			continue
+		var light := light_node as Light3D
+		var lid := light.get_instance_id()
+		if not _zone_light_base_masks.has(lid):
+			_zone_light_base_masks[lid] = light.light_cull_mask
+		if zone != null and zone.light_cull_mask >= 0:
+			light.light_cull_mask = zone.light_cull_mask
+		else:
+			light.light_cull_mask = int(_zone_light_base_masks[lid])
+
+	var probes: Array = root.find_children("*", "ReflectionProbe", true, false)
+	for probe_node in probes:
+		if not (probe_node is ReflectionProbe):
+			continue
+		var probe := probe_node as ReflectionProbe
+		var pid := probe.get_instance_id()
+		if not _zone_probe_base_masks.has(pid):
+			_zone_probe_base_masks[pid] = probe.cull_mask
+		if not _zone_probe_base_intensity.has(pid):
+			_zone_probe_base_intensity[pid] = probe.intensity
+		if zone != null and zone.reflection_cull_mask >= 0:
+			probe.cull_mask = zone.reflection_cull_mask
+		else:
+			probe.cull_mask = int(_zone_probe_base_masks[pid])
+		if zone != null and zone.reflection_intensity_scale >= 0.0:
+			probe.intensity = float(_zone_probe_base_intensity[pid]) * zone.reflection_intensity_scale
+		else:
+			probe.intensity = float(_zone_probe_base_intensity[pid])
 
 
 func apply_worldspawn_globals(props: Dictionary, worldspawn: Node = null) -> void:

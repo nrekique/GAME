@@ -1,0 +1,31 @@
+[gd_resource type="Resource" script_class="FuncGodotFGDPointClass" format=3]
+
+[ext_resource type="Script" path="res://addons/func_godot/src/fgd/func_godot_fgd_point_class.gd" id="1_point"]
+[ext_resource type="Resource" path="res://tb/fgd/base/targetname_base.tres" id="2_targetname"]
+[ext_resource type="Script" path="res://entities/logic/ai_nav_region.gd" id="3_script"]
+
+[resource]
+script = ExtResource("1_point")
+script_class = ExtResource("3_script")
+classname = "ai_nav_region"
+description = "AI navigation region marker (radius + tag)."
+base_classes = Array[Resource]([ExtResource("2_targetname")])
+class_properties = {
+"enabled": true,
+"nav_tag": "",
+"radius": 12.0,
+"region_id": ""
+}
+class_property_descriptions = {
+"enabled": "If false, ignored by AI systems.",
+"nav_tag": "Optional region tag (e.g. indoor, rooftop).",
+"radius": "Region radius in map units.",
+"region_id": "Optional unique id for scripts."
+}
+meta_properties = {
+"color": Color(0.2, 0.9, 0.6, 1),
+"iconsprite": "\"fgd/entities/sprites/env_zone.png\"",
+"scale": "0.15",
+"size": AABB(-8, -8, -8, 8, 8, 8)
+}
+node_class = "Node3D"

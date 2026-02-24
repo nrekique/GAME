@@ -1,5 +1,6 @@
 @tool
-class_name QuakeWadImportPlugin extends EditorImportPlugin
+class_name QuakeWadImportPlugin
+extends EditorImportPlugin
 
 enum WadFormat {
 	Quake,

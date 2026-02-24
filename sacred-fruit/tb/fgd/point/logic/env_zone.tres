@@ -13,15 +13,23 @@ classname = "env_zone"
 description = "Radial environment override zone around its origin."
 base_classes = Array[Resource]([ExtResource("2_targetname")])
 class_properties = {
+"enabled": true,
 "fog_density": 0.05,
 "intensity": 0.85,
+"light_cull_mask": -1,
 "radius": 12.0,
+"reflection_cull_mask": -1,
+"reflection_intensity_scale": -1.0,
 "wind_speed": 1.0
 }
 class_property_descriptions = {
+"enabled": "If false, this zone is ignored at runtime.",
 "fog_density": "Target fog density inside the zone.",
 "intensity": "Target storm intensity inside the zone.",
+"light_cull_mask": "If >= 0, override Light3D light_cull_mask while camera is inside this zone.",
 "radius": "Zone radius (map units).",
+"reflection_cull_mask": "If >= 0, override ReflectionProbe cull_mask while camera is inside this zone.",
+"reflection_intensity_scale": "If >= 0, multiplier applied to ReflectionProbe intensity while camera is inside this zone.",
 "wind_speed": "Target wind speed inside the zone."
 }
 meta_properties = {

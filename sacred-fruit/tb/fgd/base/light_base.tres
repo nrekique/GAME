@@ -10,6 +10,7 @@ description = ""
 func_godot_internal = false
 base_classes = Array[Resource]([ExtResource("1_7kwyg")])
 class_properties = {
+"bake_mode": "dynamic",
 "color": Color(1, 1, 1, 1),
 "energy": 1.0,
 "indirect_energy": 1.0,
@@ -17,6 +18,7 @@ class_properties = {
 "shadows": false
 }
 class_property_descriptions = {
+"bake_mode": "Bake policy: dynamic, static, or disabled.",
 "color": "The light's color.",
 "energy": "The light's strength multiplier. For OmniLight3D and SpotLight3D, changing this value will only change the light color's intensity, not the light's radius.",
 "indirect_energy": "The light's strength multiplier. For OmniLight3D and SpotLight3D, changing this value will only change the light color's intensity, not the light's radius.",

@@ -1,7 +1,7 @@
 @tool
+class_name PortalBoxMesh
 extends ArrayMesh
 const Util := preload("res://scripts/util.gd")
-class_name PortalBoxMesh
 
 ## Inverted box with a flipped front side
 ##

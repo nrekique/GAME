@@ -1,7 +1,9 @@
 @tool
 @icon("uid://ct62bsuel5hyc")
+class_name Portal3D
+extends Node3D
 const Util := preload("res://scripts/util.gd")
-class_name Portal3D extends Node3D
+const PortalBoxMeshScript := preload("res://addons/portals/scripts/portal_boxmesh.gd")
 
 ## Seamless 3D portal
 ##
@@ -434,7 +436,7 @@ func _on_portal_size_changed() -> void:
 		push_error("Failed to update portal size, portal has no mesh")
 		return
 	
-	var p: PortalBoxMesh = portal_mesh.mesh
+	var p = portal_mesh.mesh
 	p.size = Vector3(portal_size.x, portal_size.y, 1)
 	portal_mesh.scale.z = _portal_thickness
 	
@@ -623,7 +625,7 @@ func _setup_mesh() -> void:
 	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	mi.layers = portal_render_layer
 	
-	var p := PortalBoxMesh.new()
+	var p := PortalBoxMeshScript.new()
 	p.size = Vector3(portal_size.x, portal_size.y, 1)
 	mi.mesh = p
 	mi.scale.z = _portal_thickness

@@ -29,10 +29,18 @@ description = "Respawn checkpoint - triggers player death/respawn when entered."
 func_godot_internal = false
 base_classes = Array[Resource]([ExtResource("2_base")])
 class_properties = {
-"enabled": true
+"checkpoint_id": "",
+"enabled": true,
+"one_shot": false,
+"save_id": "",
+"starts_enabled": true
 }
 class_property_descriptions = {
-"enabled": "If false the volume is ignored."
+"checkpoint_id": "Unique checkpoint identifier. If empty, save_id is used.",
+"enabled": "If false the volume is ignored.",
+"one_shot": "If true, the volume disables after first activation.",
+"save_id": "Optional persistence key for enabled/fired state across loads.",
+"starts_enabled": "Initial enabled state before save restore is applied."
 }
 auto_apply_to_matching_node_properties = false
 meta_properties = {

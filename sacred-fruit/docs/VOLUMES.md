@@ -7,8 +7,8 @@ one of the ready‑made volume types into their map or write custom variants.
 ## Provided subclasses
 
 * `DamageVolume` – calls `apply_damage(amount)` on any body that enters.
-* `CheckpointVolume` – currently invokes `GAME.handle_player_death` on entry;
-  intended to respawn the player at the volume position.
+* `CheckpointVolume` – registers a respawn checkpoint on entry. `GAME.respawn_player`
+  now restores to the active checkpoint before falling back to `info_player_start`.
 * `SpawnBlockerVolume` – placeholder that can be queried by the spawning system
   to prevent actors from appearing inside the area.
 * `MusicZoneVolume` – tells `GAME` to switch music to the tagged zone on entry.
@@ -17,7 +17,9 @@ one of the ready‑made volume types into their map or write custom variants.
 
 ## Authoring tips
 
-* All volumes export `enabled`, `amount`, and `tag` variables.  Further
+* All volumes export `enabled`, `amount`, and `tag` variables. They also support
+  `save_id`, `starts_enabled`, and `one_shot` for persistence-friendly behavior.
+  Further
   subclasses may add additional exports as needed.
 * Use `Volume` directly for custom logic by overriding `_process_body(body, entered)`.
 * In editor mode (`@tool`) volumes continue to exist but won’t run their

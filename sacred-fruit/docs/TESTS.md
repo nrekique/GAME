@@ -23,6 +23,9 @@ godot --no-window --headless --script res://tests/profile_test.gd
 
 # run volume subclass smoke tests
 godot --no-window --headless --script res://tests/volume_test.gd
+
+# run AI authoring/query smoke tests
+godot --no-window --headless --script res://tests/ai_authoring_test.gd
 ```
 
 Each script quits the engine when complete; failures will abort with an assertion error printed.

@@ -1,4 +1,5 @@
-class_name FuncGodot extends RefCounted
+class_name FuncGodot
+extends RefCounted
 
 var map_data:= FuncGodotMapData.new()
 var map_parser:= FuncGodotMapParser.new(map_data)

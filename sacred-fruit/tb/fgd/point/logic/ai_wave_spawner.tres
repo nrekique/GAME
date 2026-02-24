@@ -1,0 +1,39 @@
+[gd_resource type="Resource" script_class="FuncGodotFGDPointClass" format=3]
+
+[ext_resource type="Script" path="res://addons/func_godot/src/fgd/func_godot_fgd_point_class.gd" id="1_point"]
+[ext_resource type="Resource" path="res://tb/fgd/base/targetname_base.tres" id="2_targetname"]
+[ext_resource type="Script" path="res://entities/logic/ai_wave_spawner.gd" id="3_script"]
+
+[resource]
+script = ExtResource("1_point")
+script_class = ExtResource("3_script")
+classname = "ai_wave_spawner"
+description = "Spawns NPCs using ai_spawn_wave_point authoring markers."
+base_classes = Array[Resource]([ExtResource("2_targetname")])
+class_properties = {
+"enabled": true,
+"max_alive": 4,
+"npc_scene": "res://entities/actors/npc/npc.tscn",
+"spawn_interval": 1.0,
+"spawn_on_ready": true,
+"squad_id": "",
+"total_spawn_limit": 16,
+"wave_id": "default"
+}
+class_property_descriptions = {
+"enabled": "If false, spawner is idle.",
+"max_alive": "Maximum alive NPCs managed by this spawner.",
+"npc_scene": "PackedScene path for spawned NPC prefab (res://...tscn).",
+"spawn_interval": "Seconds between spawn attempts.",
+"spawn_on_ready": "Start wave spawning automatically.",
+"squad_id": "Optional squad filter for ai_spawn_wave_point.",
+"total_spawn_limit": "Total number of NPCs to spawn before stopping.",
+"wave_id": "Wave id to query from ai_spawn_wave_point markers."
+}
+meta_properties = {
+"color": Color(0.95, 0.2, 0.55, 1),
+"iconsprite": "\"fgd/entities/sprites/logic_relay.png\"",
+"scale": "0.15",
+"size": AABB(-8, -8, -8, 8, 8, 8)
+}
+node_class = "Node3D"

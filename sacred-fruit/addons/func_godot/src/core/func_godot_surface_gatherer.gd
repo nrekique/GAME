@@ -1,4 +1,5 @@
-class_name FuncGodotSurfaceGatherer extends RefCounted
+class_name FuncGodotSurfaceGatherer
+extends RefCounted
 
 var map_data: FuncGodotMapData
 var map_settings: FuncGodotMapSettings
