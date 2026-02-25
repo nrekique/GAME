@@ -1,0 +1,14 @@
+[remap]
+
+importer="func_godot.map"
+type="Resource"
+uid="uid://ckrn0an3315ap"
+path="res://.godot/imported/outside.map-d3097e93eb7cd119121428fe69af137e.tres"
+
+[deps]
+
+source_file="res://tb/maps/outside.map"
+dest_files=["res://.godot/imported/outside.map-d3097e93eb7cd119121428fe69af137e.tres"]
+
+[params]
+

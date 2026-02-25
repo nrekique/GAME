@@ -56,6 +56,20 @@
   - Phase 1 started: dialogue runtime manager + UI shell, NPC interaction hook, mapper-facing NPC dialogue keys, and sample branching conversation data.
   - Phase 2 started: cinematic player focus framing on active NPC dialogue, paced line reveal flow, and richer choice presentation with explicit requirement tags.
   - Next: quest/faction wiring, VO/subtitle timing, companion interjections, and authoring tools for large dialogue graphs.
+- [ ] 12. Mapping standards + icon backlog
+  - Publish mapper-facing building standards doc with canonical unit scale, door/wall metrics, road/sidewalk widths, and indoor/outdoor lighting targets.
+  - Reserve unique icons for likely upcoming entities:
+    - `io_debug_monitor`
+    - `perf_budget_marker`
+    - `perf_heatmap_volume`
+    - `test_spawn_point`
+    - `test_assert_trigger`
+    - `dialogue_anchor`
+    - `dialogue_graph_runner`
+    - `dialogue_gate`
+    - `dialogue_event_emit`
+    - `vo_subtitle_zone`
+    - `companion_interject_point`
 
 ## Codebase audit follow‑ups
 

@@ -137,6 +137,18 @@ Quick authoring sheet for common gameplay/environment entities.
 - `start_disabled` (`0/1`)
 - `one_shot` (`0/1`)
 
+## Doors
+
+`func_door` (swinging or translating)
+- `move_rot` (`x y z` degrees; use `0 90 0` for a 90deg Y swing)
+- `move_pos` (`x y z` in Quake units; leave `0 0 0` for pure swing)
+- `speed` (default `120`; translation uses Q1 units/sec, rotation-only uses deg/sec)
+- `auto_close` (`0/1`)
+- `wait` (seconds before close if `auto_close=1`)
+- `lock_open` (`0/1`)
+- `required_key` (optional key id, e.g. `blue`, `two`)
+- `consume_required_key` (`0/1`, consumes key on first open)
+
 ## Volumes
 
 _These areas emit `body_entered(body)` and `body_exited(body)` signals._

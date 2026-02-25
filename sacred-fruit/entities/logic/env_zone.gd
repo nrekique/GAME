@@ -1,7 +1,7 @@
 @tool
 class_name EnvZone
 extends Node3D
-const Util := preload("res://scripts/util.gd")
+const Util := preload("res://scripts/core/util.gd")
 
 @export var enabled: bool = true
 @export_range(0.1, 4096.0, 0.1) var radius: float = 12.0

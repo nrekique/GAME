@@ -1,7 +1,7 @@
 @tool
 class_name Marsfrog
 extends Actor
-const Util := preload("res://scripts/util.gd")
+const Util := preload("res://scripts/core/util.gd")
 
 func use() -> void:
 	current_state = ActorStates.SCRIPTED

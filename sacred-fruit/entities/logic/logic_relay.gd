@@ -1,7 +1,7 @@
 @tool
 class_name LogicRelay
 extends Node3D
-const Util := preload("res://scripts/util.gd")
+const Util := preload("res://scripts/core/util.gd")
 
 @export var target: String = ""
 @export var targetfunc: String = ""

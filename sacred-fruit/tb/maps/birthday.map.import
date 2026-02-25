@@ -1,0 +1,14 @@
+[remap]
+
+importer="func_godot.map"
+type="Resource"
+uid="uid://c10sbl5x04dsv"
+path="res://.godot/imported/birthday.map-2b048678288789d8c17af79d4da91a6d.tres"
+
+[deps]
+
+source_file="res://tb/maps/birthday.map"
+dest_files=["res://.godot/imported/birthday.map-2b048678288789d8c17af79d4da91a6d.tres"]
+
+[params]
+

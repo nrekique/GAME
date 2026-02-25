@@ -1,4 +1,5 @@
 extends SceneTree
+const FUNC_PORTAL_SCRIPT: Script = preload("res://entities/funcs/func_portal.gd")
 
 const DEFAULT_PAIRS: int = 16
 const DEFAULT_SAMPLE_SECONDS: float = 8.0
@@ -160,8 +161,10 @@ func _make_portal(
 		world_normal: Vector3,
 		render_scale: float,
 		keep_hot: bool
-	) -> FuncPortal:
-	var portal := FuncPortal.new()
+	) -> Node3D:
+	var portal := FUNC_PORTAL_SCRIPT.new() as Node3D
+	if portal == null:
+		return Node3D.new()
 	portal.name = node_name
 	portal.targetname = targetname
 	portal.target = target

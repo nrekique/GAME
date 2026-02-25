@@ -1,7 +1,7 @@
 @tool
 class_name InfoCamera
 extends Camera3D
-const Util := preload("res://scripts/util.gd")
+const Util := preload("res://scripts/core/util.gd")
 
 @export var targetname: String = ""
 @export var camera_target: Node3D = null

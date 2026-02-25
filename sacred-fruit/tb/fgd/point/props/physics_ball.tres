@@ -42,7 +42,7 @@ class_property_descriptions = {
 }
 meta_properties = {
 "color": Color(0.62, 0.45, 0.2, 1),
-"iconsprite": "\"fgd/entities/sprites/item_collectible.png\"",
+"iconsprite": "\"fgd/entities/sprites/physics_ball.png\"",
 "scale": "0.2",
 "size": AABB(-8, -8, -8, 8, 8, 8)
 }

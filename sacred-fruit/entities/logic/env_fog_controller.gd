@@ -1,7 +1,7 @@
 @tool
 class_name EnvFogController
 extends Node3D
-const Util := preload("res://scripts/util.gd")
+const Util := preload("res://scripts/core/util.gd")
 
 # Authoring-only entity consumed by sandstorm_controller.gd map parsing.
 @export var fog_enabled: bool = true

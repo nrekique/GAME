@@ -1,7 +1,7 @@
 @tool
 class_name AIPatrolPoint
 extends Marker3D
-const Util := preload("res://scripts/util.gd")
+const Util := preload("res://scripts/core/util.gd")
 
 @export var enabled: bool = true
 @export var route_id: String = "default"

@@ -3,7 +3,7 @@
 ## Only supported in map editors that support GLTF or GLB.
 class_name FuncGodotFGDModelPointClass
 extends FuncGodotFGDPointClass
-const Util := preload("res://scripts/util.gd")
+const Util := preload("res://scripts/core/util.gd")
 
 enum TargetMapEditor {
 	GENERIC,

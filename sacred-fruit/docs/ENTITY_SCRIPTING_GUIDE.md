@@ -157,7 +157,7 @@ From base FGD resources (`sacred-fruit/tb/fgd/base/*`):
 | `func_illusionary` | (none custom) | Non-colliding decorative geometry; occluders enabled. |
 | `func_detail_illusionary` | (none custom) | Non-colliding detail; no occluders. |
 | `func_move` | `move_pos`, `move_rot`, `speed`, `targetname` | Interpolated movement/rotation with `use/toggle/mv_forward/mv_reverse`. |
-| `func_door` | `target`, `wait`, `auto_close` + func_move/base target keys | Door open/close with optional auto-close and target firing on open. |
+| `func_door` | `target`, `wait`, `auto_close`, `lock_open`, `required_key`, `consume_required_key` + func_move/base target keys | Door open/close with optional key lock, optional auto-close, and target firing on open. |
 | `func_button` | `target`, `targetfunc`, `wait`, `once`, `targetname` | Touch-triggered output source with cooldown or one-shot. |
 | `func_train` | `target`, `speed`, `targetname` | Moves along `path_corner` chain. |
 | `func_portal` | `target`, `targetname`, `enabled`, `render_scale`, `dynamic_min_render_scale`, `dynamic_near_distance`, `dynamic_far_distance`, `manager_enable_budgeting`, `manager_max_active_portals`, `manager_refresh_seconds`, `teleport_cooldown`, `exit_offset`, `reverse_normal` | Linked render+teleport portal with runtime dynamic quality scaling and global budget manager support. |
@@ -205,6 +205,29 @@ Interaction with `env_portal_budget`:
   - `manager_refresh_seconds`
   - `render_scale` (max quality cap)
   - `dynamic_min_render_scale` (min quality floor)
+
+### 5.2.2 Swinging Doors (Authoring Recipe)
+
+Use this setup for predictable hinge doors in TrenchBroom:
+
+1. Create one `func_door` entity containing:
+   - door visible brush(es)
+   - one `special/origin` brush placed at the hinge pivot
+2. Set movement keys:
+   - `move_rot` to swing amount (example: `0 90 0`)
+   - `move_pos` to `0 0 0` for pure swing doors
+   - `speed` for swing rate (default `120`, interpreted as degrees/sec for rotation-only doors)
+3. Optional close behavior:
+   - `auto_close=1` with `wait=<seconds>`
+   - `lock_open=1` to keep door open once activated
+4. Optional key lock:
+   - set `required_key` on door (example: `two`)
+   - place `item_key` entity with matching `key_id` (`two`)
+   - set `consume_required_key=1` if the key should be spent when opening
+
+Runtime interaction feedback:
+- Crosshair dot is green when door can be opened.
+- Crosshair dot is red when player is looking at a keyed door without the required key.
 
 ## 5.3 Environment Entity Rules
 

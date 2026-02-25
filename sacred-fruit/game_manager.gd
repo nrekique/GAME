@@ -1,6 +1,6 @@
 class_name GameManager
 extends Node
-const Util := preload("res://scripts/util.gd")
+const Util := preload("res://scripts/core/util.gd")
 
 # Common inverse scale. Calculated as 1.0 / Inverse Scale Factor. 
 # Used to help translate properties using Quake Units into Godot Units.
@@ -13,6 +13,7 @@ signal player_health_changed(current: int, max_health: int, max_overhealth: int)
 signal player_died()
 signal io_event_dispatched(event: Dictionary)
 signal ai_alerted(position: Vector3, source: Node)
+signal keys_changed(keys: PackedStringArray)
 
 enum {
 	WORLD_LAYER = (1 << 0),
@@ -23,8 +24,10 @@ enum {
 @export var required_collectibles: int = 3
 
 # PS1 shader configuration has been refactored into a dedicated manager.
-const PS1ShaderManager := preload("res://scripts/ps1_shader_manager.gd")
+const PS1ShaderManager := preload("res://scripts/env/ps1_shader_manager.gd")
 var ps1_mgr: PS1ShaderManager = PS1ShaderManager.new()
+const INFO_PLAYER_START_SCRIPT: Script = preload("res://entities/info_player_start.gd")
+const ENV_ZONE_SCRIPT: Script = preload("res://entities/logic/env_zone.gd")
 
 @export var io_debug_logging: bool = false
 @export_range(16, 1024, 1) var io_trace_capacity: int = 256
@@ -48,6 +51,7 @@ func is_fast_iteration() -> bool:
 
 
 var collected_collectibles: int = 0
+var _keys: Dictionary = {}
 var _hud: CanvasLayer = null
 var _exit_unlocked_emitted: bool = false
 var _has_won: bool = false
@@ -108,11 +112,17 @@ func _worldspawn_has_source_prop(worldspawn: Node, key: String) -> bool:
 	return (src_var as Dictionary).has(key)
 
 
+func _is_script_instance(node: Node, script_res: Script) -> bool:
+	if node == null or script_res == null:
+		return false
+	return node.get_script() == script_res
+
+
 
 
 # --- IO manager facade methods ------------------------------------------------
 
-const IOManager := preload("res://scripts/io_manager.gd")
+const IOManager := preload("res://scripts/core/io_manager.gd")
 var io_mgr: IOManager = IOManager.new()
 
 func use_targets(activator: Node, target: String, overrides: Dictionary = {}) -> void:
@@ -389,11 +399,10 @@ func respawn_player(player: Node) -> void:
 		return
 	var starts := current.find_children("*", "Marker3D", true, false)
 	for s in starts:
-		if s is InfoPlayerStart and (s as InfoPlayerStart).active:
-			var start := s as InfoPlayerStart
+		if _is_script_instance(s, INFO_PLAYER_START_SCRIPT) and Util.to_bool(s.get("active"), false):
 			if player is Node3D:
-				(player as Node3D).global_position = start.global_position
-				(player as Node3D).rotation_degrees = start.angles
+				(player as Node3D).global_position = s.global_position
+				(player as Node3D).rotation_degrees = s.get("angles")
 			# Restore health if supported.
 			if player.has_method("reset_health"):
 				player.call("reset_health")
@@ -524,9 +533,11 @@ func _load_runtime_state() -> void:
 
 func _reset_objective_state() -> void:
 	collected_collectibles = 0
+	_keys.clear()
 	_exit_unlocked_emitted = false
 	_has_won = false
 	emit_signal("collectible_count_changed", collected_collectibles, required_collectibles)
+	emit_signal("keys_changed", get_keys())
 	_set_objective_text(_default_objective_text())
 
 
@@ -556,6 +567,43 @@ func collect(value: int = 1) -> void:
 	else:
 		var remaining := required_collectibles - collected_collectibles
 		_set_objective_text("Collect %d more" % remaining)
+
+
+func has_key(key_id: String) -> bool:
+	var id := key_id.strip_edges().to_lower()
+	if id.is_empty():
+		return true
+	return _keys.has(id)
+
+
+func give_key(key_id: String) -> bool:
+	var id := key_id.strip_edges().to_lower()
+	if id.is_empty():
+		return false
+	if _keys.has(id):
+		return false
+	_keys[id] = true
+	emit_signal("keys_changed", get_keys())
+	return true
+
+
+func consume_key(key_id: String) -> bool:
+	var id := key_id.strip_edges().to_lower()
+	if id.is_empty():
+		return false
+	if not _keys.has(id):
+		return false
+	_keys.erase(id)
+	emit_signal("keys_changed", get_keys())
+	return true
+
+
+func get_keys() -> PackedStringArray:
+	var out := PackedStringArray()
+	for id in _keys.keys():
+		out.append(String(id))
+	out.sort()
+	return out
 
 
 func can_exit() -> bool:
@@ -614,17 +662,19 @@ func _update_zone_lighting_overrides() -> void:
 	_zone_last_hash = zone_hash
 	_apply_zone_lighting(current, zone)
 
-func _get_strongest_env_zone(root: Node, camera_pos: Vector3) -> EnvZone:
+func _get_strongest_env_zone(root: Node, camera_pos: Vector3) -> Node3D:
 	var zones: Array = root.find_children("*", "Node3D", true, false)
-	var best: EnvZone = null
+	var best: Node3D = null
 	var best_weight := 0.0
 	for z in zones:
-		if not (z is EnvZone):
+		if not _is_script_instance(z, ENV_ZONE_SCRIPT):
 			continue
-		var zone := z as EnvZone
-		if not zone.enabled:
+		var zone := z as Node3D
+		if zone == null:
 			continue
-		var zone_radius := maxf(zone.radius * INVERSE_SCALE, 0.01)
+		if not Util.to_bool(zone.get("enabled"), true):
+			continue
+		var zone_radius := maxf(float(zone.get("radius")) * INVERSE_SCALE, 0.01)
 		var dist := camera_pos.distance_to(zone.global_position)
 		if dist > zone_radius:
 			continue
@@ -634,12 +684,17 @@ func _get_strongest_env_zone(root: Node, camera_pos: Vector3) -> EnvZone:
 			best = zone
 	return best
 
-func _compute_zone_hash(zone: EnvZone) -> int:
+func _compute_zone_hash(zone: Node3D) -> int:
 	if zone == null:
 		return 0
-	return hash([zone.get_instance_id(), zone.light_cull_mask, zone.reflection_cull_mask, zone.reflection_intensity_scale])
+	return hash([
+		zone.get_instance_id(),
+		int(zone.get("light_cull_mask")),
+		int(zone.get("reflection_cull_mask")),
+		float(zone.get("reflection_intensity_scale"))
+	])
 
-func _apply_zone_lighting(root: Node, zone: EnvZone) -> void:
+func _apply_zone_lighting(root: Node, zone: Node3D) -> void:
 	var lights: Array = root.find_children("*", "Light3D", true, false)
 	for light_node in lights:
 		if not (light_node is Light3D):
@@ -648,8 +703,11 @@ func _apply_zone_lighting(root: Node, zone: EnvZone) -> void:
 		var lid := light.get_instance_id()
 		if not _zone_light_base_masks.has(lid):
 			_zone_light_base_masks[lid] = light.light_cull_mask
-		if zone != null and zone.light_cull_mask >= 0:
-			light.light_cull_mask = zone.light_cull_mask
+		var zone_light_mask: int = -1
+		if zone != null:
+			zone_light_mask = int(zone.get("light_cull_mask"))
+		if zone_light_mask >= 0:
+			light.light_cull_mask = zone_light_mask
 		else:
 			light.light_cull_mask = int(_zone_light_base_masks[lid])
 
@@ -663,12 +721,17 @@ func _apply_zone_lighting(root: Node, zone: EnvZone) -> void:
 			_zone_probe_base_masks[pid] = probe.cull_mask
 		if not _zone_probe_base_intensity.has(pid):
 			_zone_probe_base_intensity[pid] = probe.intensity
-		if zone != null and zone.reflection_cull_mask >= 0:
-			probe.cull_mask = zone.reflection_cull_mask
+		var zone_probe_mask: int = -1
+		var zone_probe_intensity_scale: float = -1.0
+		if zone != null:
+			zone_probe_mask = int(zone.get("reflection_cull_mask"))
+			zone_probe_intensity_scale = float(zone.get("reflection_intensity_scale"))
+		if zone_probe_mask >= 0:
+			probe.cull_mask = zone_probe_mask
 		else:
 			probe.cull_mask = int(_zone_probe_base_masks[pid])
-		if zone != null and zone.reflection_intensity_scale >= 0.0:
-			probe.intensity = float(_zone_probe_base_intensity[pid]) * zone.reflection_intensity_scale
+		if zone_probe_intensity_scale >= 0.0:
+			probe.intensity = float(_zone_probe_base_intensity[pid]) * zone_probe_intensity_scale
 		else:
 			probe.intensity = float(_zone_probe_base_intensity[pid])
 

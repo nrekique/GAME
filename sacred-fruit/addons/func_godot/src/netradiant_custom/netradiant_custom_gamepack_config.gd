@@ -3,7 +3,7 @@
 ## Builds a gamepack for NetRadiant Custom.
 class_name NetRadiantCustomGamePackConfig
 extends Resource
-const Util := preload("res://scripts/util.gd")
+const Util := preload("res://scripts/core/util.gd")
 
 ## Button to export / update this gamepack's configuration in the NetRadiant Custom Gamepacks Folder.
 @export var export_file: bool:

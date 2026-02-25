@@ -1,7 +1,7 @@
 @tool
 class_name ItemAmmo
 extends Area3D
-const Util := preload("res://scripts/util.gd")
+const Util := preload("res://scripts/core/util.gd")
 
 @export var ammo_type: String = "bullets"
 @export var amount: int = 10

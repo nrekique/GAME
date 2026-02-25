@@ -1,0 +1,14 @@
+[remap]
+
+importer="func_godot.map"
+type="Resource"
+uid="uid://ggyac8udfmyg"
+path="res://.godot/imported/grill.map-e983ba43b292d70e2b3d21f26f3bf06d.tres"
+
+[deps]
+
+source_file="res://tb/maps/grill.map"
+dest_files=["res://.godot/imported/grill.map-e983ba43b292d70e2b3d21f26f3bf06d.tres"]
+
+[params]
+

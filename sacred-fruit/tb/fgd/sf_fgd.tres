@@ -5,6 +5,7 @@
 
 [resource]
 script = ExtResource("1_sgb8f")
+export_file = true
 fgd_name = "sacredFruit"
 base_fgd_files = Array[Resource]([ExtResource("2_fgd_main")])
 metadata/_custom_type_script = "uid://oqca3vmn1ssq"

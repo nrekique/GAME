@@ -1,0 +1,14 @@
+[remap]
+
+importer="func_godot.map"
+type="Resource"
+uid="uid://cysikcdsarg04"
+path="res://.godot/imported/laCebia.map-7dd54ab792059614e4c6325b4c38556b.tres"
+
+[deps]
+
+source_file="res://tb/maps/laCebia.map"
+dest_files=["res://.godot/imported/laCebia.map-7dd54ab792059614e4c6325b4c38556b.tres"]
+
+[params]
+

@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://cg04a27f6tx3e"]
 
-[ext_resource type="Script" path="res://scripts/ui_health_check.gd" id="1_ui_health_check"]
+[ext_resource type="Script" path="res://scripts/debug/ui_health_check.gd" id="1_ui_health_check"]
 
 [node name="UIHealthCheck" type="Control"]
 anchors_preset = 15

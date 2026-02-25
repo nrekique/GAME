@@ -1,32 +1,16 @@
-[gd_resource type="Resource" script_class="FuncGodotFGDSolidClass" format=3 uid="uid://vol_water"]
+[gd_resource type="Resource" script_class="FuncGodotFGDSolidClass" format=3 uid="uid://cohik18ow4m1x"]
 
-[ext_resource type="Script" path="res://addons/func_godot/src/fgd/func_godot_fgd_solid_class.gd" id="1_solid"]
-[ext_resource type="Resource" path="res://tb/fgd/base/trigger_base.tres" id="2_base"]
-[ext_resource type="Script" path="res://entities/logic/water_volume.gd" id="3_script"]
+[ext_resource type="Script" uid="uid://dhw5od2dxhpfo" path="res://addons/func_godot/src/fgd/func_godot_fgd_solid_class.gd" id="1_solid"]
+[ext_resource type="Resource" uid="uid://hnx0olvm0jt2" path="res://tb/fgd/base/trigger_base.tres" id="2_base"]
+[ext_resource type="Script" uid="uid://drjyr8873uw6q" path="res://entities/logic/water_volume.gd" id="3_script"]
 
 [resource]
 script = ExtResource("1_solid")
-spawn_type = 2
-origin_type = 4
-build_visuals = true
-use_in_baked_light = true
 shadow_casting_setting = 0
-build_occlusion = false
-render_layers = 1
-collision_shape_type = 1
 collision_layer = 4
-collision_mask = 1
-collision_priority = 1.0
-collision_shape_margin = 0.04
-add_textures_metadata = false
-add_vertex_metadata = false
-add_face_position_metadata = false
-add_face_normal_metadata = false
-add_collision_shape_face_range_metadata = false
 script_class = ExtResource("3_script")
 classname = "water_volume"
 description = "Combined water brush: visible water surface + player swim volume + rigid-body buoyancy/drag."
-func_godot_internal = false
 base_classes = Array[Resource]([ExtResource("2_base")])
 class_properties = {
 "affect_sleeping_bodies": false,
@@ -44,9 +28,7 @@ class_property_descriptions = {
 "linear_drag": "Linear drag applied to rigid bodies inside the water volume.",
 "starts_enabled": "Initial runtime enabled state."
 }
-auto_apply_to_matching_node_properties = false
 meta_properties = {
 "color": Color(0, 0.6, 1, 1)
 }
 node_class = "Area3D"
-name_property = ""

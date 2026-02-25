@@ -1,0 +1,44 @@
+site_name: Sacred Fruit Docs
+site_description: Mapper and developer documentation for Sacred Fruit
+site_dir: site
+docs_dir: docs
+
+theme:
+  name: material
+  features:
+    - navigation.sections
+    - navigation.top
+    - content.code.copy
+    - search.suggest
+    - search.highlight
+
+markdown_extensions:
+  - admonition
+  - tables
+  - toc:
+      permalink: true
+
+nav:
+  - Home: index.md
+  - Roadmap:
+    - Development TODO: DEVELOPMENT_TODO.md
+  - Mapping:
+    - TrenchBroom Quick Reference: TB_ENTITY_QUICK_REFERENCE.md
+    - Map Building Guidelines: MAP_BUILDING_GUIDELINES.md
+    - Kit Spec Template: KIT_SPEC_TEMPLATE.md
+    - Map Linting: MAP_LINTING.md
+    - Worldspawn Keys Reference: WORLDSPAWN_KEYS_REFERENCE.md
+    - Volumes: VOLUMES.md
+  - Entities:
+    - Entity Scripting Guide: ENTITY_SCRIPTING_GUIDE.md
+    - Entity I/O System: ENTITY_IO_SYSTEM.md
+    - Dialogue Markdown: DIALOGUE_MARKDOWN.md
+  - Rendering:
+    - Portal Tuning Playbook: PORTAL_TUNING_PLAYBOOK.md
+    - Mirror Policy: MIRROR_POLICY.md
+    - Environment Stack Order: ENV_STACK_ORDER.md
+    - PS1 Shader Parameters: PS1_SHADER_PARAMETERS.md
+  - Contributing:
+    - Style: STYLE.md
+    - Tests: TESTS.md
+    - Build Profiles: BUILD_PROFILES.md

@@ -1,7 +1,7 @@
 @tool
 class_name AICoverMarker
 extends Marker3D
-const Util := preload("res://scripts/util.gd")
+const Util := preload("res://scripts/core/util.gd")
 
 @export var enabled: bool = true
 @export var team: String = ""

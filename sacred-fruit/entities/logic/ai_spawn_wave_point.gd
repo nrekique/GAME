@@ -1,7 +1,7 @@
 @tool
 class_name AISpawnWavePoint
 extends Marker3D
-const Util := preload("res://scripts/util.gd")
+const Util := preload("res://scripts/core/util.gd")
 
 @export var enabled: bool = true
 @export var wave_id: String = "default"

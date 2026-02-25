@@ -1,8 +1,8 @@
 [gd_scene format=3 uid="uid://uatps07qdk4p"]
 
-[ext_resource type="Script" uid="uid://ccpok0mbjcacr" path="res://scripts/photo_mode.gd" id="1_photo_mode"]
-[ext_resource type="Script" uid="uid://cyvr6tbkekioc" path="res://scripts/photo_guides.gd" id="2_guides"]
-[ext_resource type="Script" uid="uid://df5gxsjrtw4ba" path="res://scripts/photo_histogram.gd" id="3_histogram"]
+[ext_resource type="Script" uid="uid://ccpok0mbjcacr" path="res://scripts/photo/photo_mode.gd" id="1_photo_mode"]
+[ext_resource type="Script" uid="uid://cyvr6tbkekioc" path="res://scripts/photo/photo_guides.gd" id="2_guides"]
+[ext_resource type="Script" uid="uid://df5gxsjrtw4ba" path="res://scripts/photo/photo_histogram.gd" id="3_histogram"]
 [ext_resource type="Theme" path="res://themes/rapidraw_photo_theme.tres" id="4_photo_theme"]
 [ext_resource type="Texture2D" uid="uid://dp5wiw4ibbp8p" path="res://themes/icons/tab_camera.svg" id="6_tab_camera"]
 [ext_resource type="Texture2D" uid="uid://bhjvg6r5201re" path="res://themes/icons/tab_exposure.svg" id="7_tab_exposure"]
@@ -16,7 +16,7 @@
 [ext_resource type="Texture2D" uid="uid://dtnhmeupj1axa" path="res://themes/icons/tab_effects.svg" id="15_tab_effects"]
 [ext_resource type="Texture2D" uid="uid://cbfuothb2ef7c" path="res://themes/icons/tab_composition.svg" id="16_tab_composition"]
 [ext_resource type="Texture2D" uid="uid://bs7yqq254p5b5" path="res://themes/icons/tab_presets.svg" id="17_tab_presets"]
-[ext_resource type="Script" uid="uid://b5q8fxhx0lq37" path="res://scripts/photo_viewfinder.gd" id="18_viewfinder"]
+[ext_resource type="Script" uid="uid://b5q8fxhx0lq37" path="res://scripts/photo/photo_viewfinder.gd" id="18_viewfinder"]
 
 [node name="PhotoMode" type="Node3D" unique_id=33282436]
 script = ExtResource("1_photo_mode")

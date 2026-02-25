@@ -1,7 +1,7 @@
 @tool
 class_name EnvPortalBudget
 extends Node3D
-const Util := preload("res://scripts/util.gd")
+const Util := preload("res://scripts/core/util.gd")
 
 @export var profile_mode: String = "balanced" # cinematic, balanced, stress
 @export var stress_profile: bool = false

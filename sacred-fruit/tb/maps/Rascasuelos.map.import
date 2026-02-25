@@ -1,0 +1,14 @@
+[remap]
+
+importer="func_godot.map"
+type="Resource"
+uid="uid://x1u3vhjdgthv"
+path="res://.godot/imported/Rascasuelos.map-741a888c515cbe5a7197a54b2ac045ca.tres"
+
+[deps]
+
+source_file="res://tb/maps/Rascasuelos.map"
+dest_files=["res://.godot/imported/Rascasuelos.map-741a888c515cbe5a7197a54b2ac045ca.tres"]
+
+[params]
+

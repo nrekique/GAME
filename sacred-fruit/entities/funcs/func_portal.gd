@@ -1,7 +1,7 @@
 @tool
 class_name FuncPortal
 extends StaticBody3D
-const Util := preload("res://scripts/util.gd")
+const Util := preload("res://scripts/core/util.gd")
 
 @export var target: String = ""
 @export var targetname: String = ""

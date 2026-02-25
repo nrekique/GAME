@@ -1,0 +1,14 @@
+[remap]
+
+importer="func_godot.map"
+type="Resource"
+uid="uid://qxdbmmvkip62"
+path="res://.godot/imported/reno.map-f761ecfec072fe9b80d177f6a7f52295.tres"
+
+[deps]
+
+source_file="res://tb/maps/reno.map"
+dest_files=["res://.godot/imported/reno.map-f761ecfec072fe9b80d177f6a7f52295.tres"]
+
+[params]
+

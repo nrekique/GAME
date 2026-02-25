@@ -1,7 +1,7 @@
 # PS1 Shader Parameters
 
 The PS1 retro look is controlled by a number of exported variables in
-`res://scripts/ps1_shader_manager.gd`.  Tweak these values at runtime or set them on a
+`res://scripts/env/ps1_shader_manager.gd`.  Tweak these values at runtime or set them on a
 `GAME` autoload node to change the appearance globally.
 
 | Property | Description | Range / default |

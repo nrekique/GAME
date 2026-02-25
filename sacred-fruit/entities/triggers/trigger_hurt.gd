@@ -1,7 +1,7 @@
 @tool
 class_name TriggerHurt
 extends Area3D
-const Util := preload("res://scripts/util.gd")
+const Util := preload("res://scripts/core/util.gd")
 
 # Quake-ish defaults: "dmg" is damage per second, "wait" is tick interval.
 @export var damage_per_second: float = 20.0

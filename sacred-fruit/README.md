@@ -23,6 +23,19 @@ editing `project.godot` or using the provided script:
 
 The current profile is read at startup by `GameManager`.
 
+## Docs in Browser (MkDocs)
+
+Run the docs site locally:
+
+```sh
+python3 -m pip install -r requirements-docs.txt
+mkdocs serve
+```
+
+Then open:
+
+- http://127.0.0.1:8000
+
 
 A plugin created for godot to instance mirrors in a 3D scene. The mirrors use additional cameras to render the scene from a mirrored perspective.
 

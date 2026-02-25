@@ -1,7 +1,7 @@
 @tool
 class_name TriggerExit
 extends Area3D
-const Util := preload("res://scripts/util.gd")
+const Util := preload("res://scripts/core/util.gd")
 
 @export var targetname: String = ""
 @export var map_path: String = ""

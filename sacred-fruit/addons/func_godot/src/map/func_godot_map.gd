@@ -4,7 +4,14 @@
 ## To use this node, select an instance of the node in the Godot editor and select "Quick Build", "Full Build", or "Unwrap UV2" from the toolbar. Alternatively, call [method manual_build] from code.
 class_name FuncGodotMap
 extends Node3D
-const Util := preload("res://scripts/util.gd")
+const Util := preload("res://scripts/core/util.gd")
+const FuncGodotMapSettings := preload("res://addons/func_godot/src/map/func_godot_map_settings.gd")
+const FuncGodot := preload("res://addons/func_godot/src/core/func_godot.gd")
+const FuncGodotTextureLoader := preload("res://addons/func_godot/src/util/func_godot_texture_loader.gd")
+const FuncGodotFGDEntityClass := preload("res://addons/func_godot/src/fgd/func_godot_fgd_entity_class.gd")
+const FuncGodotFGDSolidClass := preload("res://addons/func_godot/src/fgd/func_godot_fgd_solid_class.gd")
+const FuncGodotFGDPointClass := preload("res://addons/func_godot/src/fgd/func_godot_fgd_point_class.gd")
+const FuncGodotMapData := preload("res://addons/func_godot/src/core/func_godot_map_data.gd")
 
 ## How long to wait between child/owner batches
 const YIELD_DURATION := 0.0
@@ -327,13 +334,12 @@ func set_core_entity_definitions() -> void:
 			core_ent_defs[classname]['spawn_type'] = entity_definition.spawn_type
 			core_ent_defs[classname]['origin_type'] = entity_definition.origin_type
 			
-			const MFlags = FuncGodotMapData.FuncGodotEntityMetadataInclusionFlags
-			var flags := MFlags.NONE
-			if entity_definition.add_textures_metadata: flags |= MFlags.TEXTURES
-			if entity_definition.add_vertex_metadata: flags |= MFlags.VERTEX
-			if entity_definition.add_face_normal_metadata: flags |= MFlags.FACE_NORMAL
-			if entity_definition.add_face_position_metadata: flags |= MFlags.FACE_POSITION
-			if entity_definition.add_collision_shape_face_range_metadata: flags |= MFlags.COLLISION_SHAPE_TO_FACE_RANGE_MAP
+			var flags: int = FuncGodotMapData.FuncGodotEntityMetadataInclusionFlags.NONE
+			if entity_definition.add_textures_metadata: flags |= FuncGodotMapData.FuncGodotEntityMetadataInclusionFlags.TEXTURES
+			if entity_definition.add_vertex_metadata: flags |= FuncGodotMapData.FuncGodotEntityMetadataInclusionFlags.VERTEX
+			if entity_definition.add_face_normal_metadata: flags |= FuncGodotMapData.FuncGodotEntityMetadataInclusionFlags.FACE_NORMAL
+			if entity_definition.add_face_position_metadata: flags |= FuncGodotMapData.FuncGodotEntityMetadataInclusionFlags.FACE_POSITION
+			if entity_definition.add_collision_shape_face_range_metadata: flags |= FuncGodotMapData.FuncGodotEntityMetadataInclusionFlags.COLLISION_SHAPE_TO_FACE_RANGE_MAP
 			core_ent_defs[classname]['metadata_inclusion_flags'] = flags
 	func_godot.set_entity_definitions(core_ent_defs)
 

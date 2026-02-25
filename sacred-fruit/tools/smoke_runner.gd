@@ -1,4 +1,5 @@
 extends RefCounted
+const FUNC_PORTAL_SCRIPT: Script = preload("res://entities/funcs/func_portal.gd")
 
 const SETTINGS_VBOX_PATH := "CanvasLayer/PhotoUI/RootMargin/RootHBox/Panel/Margin/SettingsScroll/VBox"
 const ALWAYS_ROWS: PackedStringArray = ["HistogramCard", "Title", "Status"]
@@ -32,8 +33,8 @@ static func run_portal_pair(host: Node) -> Dictionary:
 	cam.position = Vector3(0.0, 1.2, -2.5)
 	root.add_child(cam)
 
-	var p1: FuncPortal = _make_portal("PortalA", "portal_a", "portal_b", Vector3(0.0, 1.2, 0.0), Vector3(0.0, 0.0, 1.0))
-	var p2: FuncPortal = _make_portal("PortalB", "portal_b", "portal_a", Vector3(0.0, 1.2, 4.0), Vector3(0.0, 0.0, -1.0))
+	var p1: Node3D = _make_portal("PortalA", "portal_a", "portal_b", Vector3(0.0, 1.2, 0.0), Vector3(0.0, 0.0, 1.0))
+	var p2: Node3D = _make_portal("PortalB", "portal_b", "portal_a", Vector3(0.0, 1.2, 4.0), Vector3(0.0, 0.0, -1.0))
 	root.add_child(p1)
 	root.add_child(p2)
 
@@ -135,8 +136,10 @@ static func run_photo_mode_layout(host: Node) -> Dictionary:
 	return {"ok": true, "name": "photo_mode", "message": "PASS"}
 
 
-static func _make_portal(node_name: String, targetname: String, target: String, world_pos: Vector3, world_normal: Vector3) -> FuncPortal:
-	var portal := FuncPortal.new()
+static func _make_portal(node_name: String, targetname: String, target: String, world_pos: Vector3, world_normal: Vector3) -> Node3D:
+	var portal := FUNC_PORTAL_SCRIPT.new() as Node3D
+	if portal == null:
+		return Node3D.new()
 	portal.name = node_name
 	portal.targetname = targetname
 	portal.target = target

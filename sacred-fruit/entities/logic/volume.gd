@@ -1,7 +1,7 @@
 @tool
 class_name Volume
 extends Area3D
-const Util := preload("res://scripts/util.gd")
+const Util := preload("res://scripts/core/util.gd")
 
 # generic volume node that tracks overlapping bodies and forwards events
 # to an overridable hook. Subclasses should implement `_process_body` with

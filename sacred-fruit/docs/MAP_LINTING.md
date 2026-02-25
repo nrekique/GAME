@@ -5,13 +5,13 @@ Use the map linter before compile/playtest to catch common entity wiring issues.
 ## Command
 
 ```bash
-tools/tb_lint_map.sh "tb/fgd test.map"
+tools/tb_lint_map.sh "tb/maps/fgd test.map"
 ```
 
 Optional:
 
 ```bash
-tools/tb_lint_map.sh "tb/fgd test.map" --fgd-root tb/fgd
+tools/tb_lint_map.sh "tb/maps/fgd test.map" --fgd-root tb/fgd
 ```
 
 ## Current checks (phase 1)

@@ -1,7 +1,7 @@
 @tool
 class_name AIWaveSpawner
 extends Node3D
-const Util := preload("res://scripts/util.gd")
+const Util := preload("res://scripts/core/util.gd")
 const DEFAULT_NPC_SCENE: PackedScene = preload("res://entities/actors/npc/npc.tscn")
 
 @export var enabled: bool = true

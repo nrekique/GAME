@@ -1,7 +1,7 @@
 @tool
 class_name Collectible
 extends Area3D
-const Util := preload("res://scripts/util.gd")
+const Util := preload("res://scripts/core/util.gd")
 
 @export var value: int = 1
 @export var auto_free: bool = true

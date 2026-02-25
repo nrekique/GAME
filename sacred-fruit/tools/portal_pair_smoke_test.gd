@@ -1,6 +1,7 @@
 extends SceneTree
 
 const REQUIRED_FRAMES := 8
+const FUNC_PORTAL_SCRIPT: Script = preload("res://entities/funcs/func_portal.gd")
 
 
 func _init() -> void:
@@ -64,8 +65,10 @@ func _run() -> void:
 	quit(0)
 
 
-func _make_portal(node_name: String, targetname: String, target: String, world_pos: Vector3, world_normal: Vector3) -> FuncPortal:
-	var portal := FuncPortal.new()
+func _make_portal(node_name: String, targetname: String, target: String, world_pos: Vector3, world_normal: Vector3) -> Node3D:
+	var portal := FUNC_PORTAL_SCRIPT.new() as Node3D
+	if portal == null:
+		return Node3D.new()
 	portal.name = node_name
 	portal.targetname = targetname
 	portal.target = target

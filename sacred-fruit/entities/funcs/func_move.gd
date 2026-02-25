@@ -1,7 +1,7 @@
 @tool
 class_name FuncMove
 extends AnimatableBody3D
-const Util := preload("res://scripts/util.gd")
+const Util := preload("res://scripts/core/util.gd")
 
 @export var targetname: String = ""
 @export var move_pos: Array[Vector3] = [Vector3.ZERO, Vector3.ZERO]
@@ -30,7 +30,7 @@ func _func_godot_apply_properties(props: Dictionary) -> void:
 		var r: Vector3 = props["move_rot"]
 		for i in 3:
 			move_rot[i] = deg_to_rad(r[i])
-	speed = props["speed"] as float
+	speed = maxf(float(props.get("speed", speed)), 0.0)
 	if _is_ready_runtime:
 		_finalize_runtime_motion_state()
 
@@ -98,7 +98,21 @@ func _finalize_runtime_motion_state() -> void:
 	move_pos[0] = position
 	move_pos[1] = move_pos[0] + _move_pos_relative
 	_base_rotation = rotation
-	_move_rate = 0.0 if speed <= 0.0 else (1.0 / speed)
+	if speed <= 0.0:
+		_move_rate = 0.0
+		return
+	# Treat speed as movement speed:
+	# - translation: world units / sec
+	# - rotation-only movers: degrees / sec
+	var move_distance: float = move_pos[0].distance_to(move_pos[1])
+	if move_distance > 0.0001:
+		_move_rate = speed / move_distance
+		return
+	var rotate_degrees: float = abs(rad_to_deg(move_rot.x)) + abs(rad_to_deg(move_rot.y)) + abs(rad_to_deg(move_rot.z))
+	if rotate_degrees > 0.0001:
+		_move_rate = speed / rotate_degrees
+	else:
+		_move_rate = 0.0
 
 func _ready() -> void:
 	if Util.editor_hint():

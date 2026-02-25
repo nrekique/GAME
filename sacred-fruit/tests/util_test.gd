@@ -1,6 +1,6 @@
 extends Node
 
-const Util := preload("res://scripts/util.gd")
+const Util := preload("res://scripts/core/util.gd")
 
 func _ready():
 	# simple boolean conversions

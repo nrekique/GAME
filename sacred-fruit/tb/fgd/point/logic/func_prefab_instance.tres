@@ -30,7 +30,7 @@ class_property_descriptions = {
 }
 meta_properties = {
 "color": Color(0.75, 0.6, 0.95, 1),
-"iconsprite": "\"fgd/entities/sprites/env_zone.png\"",
+"iconsprite": "\"fgd/entities/sprites/func_prefab_instance.png\"",
 "scale": "0.15",
 "size": AABB(-8, -8, -8, 8, 8, 8)
 }

@@ -1,7 +1,7 @@
 @tool
 class_name ItemHealth
 extends Area3D
-const Util := preload("res://scripts/util.gd")
+const Util := preload("res://scripts/core/util.gd")
 
 @export var amount: int = 25
 @export var allow_overheal: bool = false

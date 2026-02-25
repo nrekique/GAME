@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/zsh
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
@@ -9,7 +9,7 @@ fi
 
 MODE="play"
 if [[ $# -ge 2 ]]; then
-  LAST_ARG="${!#}"
+  LAST_ARG="${@: -1}"
   case "$LAST_ARG" in
     play|photo|spectator)
       MODE="$LAST_ARG"
@@ -37,7 +37,9 @@ fi
 if [[ "${TB_SKIP_LINT:-0}" != "1" ]]; then
   LINT_MAP_FILE="$MAP_FILE"
   if [[ ! -f "$LINT_MAP_FILE" ]]; then
-    if [[ -f "$ROOT_DIR/tb/$MAP_FILE" ]]; then
+    if [[ -f "$ROOT_DIR/tb/maps/$MAP_FILE" ]]; then
+      LINT_MAP_FILE="$ROOT_DIR/tb/maps/$MAP_FILE"
+    elif [[ -f "$ROOT_DIR/tb/$MAP_FILE" ]]; then
       LINT_MAP_FILE="$ROOT_DIR/tb/$MAP_FILE"
     elif [[ -f "$ROOT_DIR/$MAP_FILE" ]]; then
       LINT_MAP_FILE="$ROOT_DIR/$MAP_FILE"
@@ -48,6 +50,15 @@ if [[ "${TB_SKIP_LINT:-0}" != "1" ]]; then
     "$ROOT_DIR/tools/tb_lint_map.sh" "$LINT_MAP_FILE"
   else
     echo "WARN: map lint skipped (file not found for lint preflight): $MAP_FILE" >&2
+  fi
+fi
+
+GODOT_APP=""
+if [[ "$(uname -s)" == "Darwin" ]]; then
+  if [[ -d "/Applications/Godot.app" ]]; then
+    GODOT_APP="/Applications/Godot.app"
+  elif [[ -d "$HOME/Applications/Godot.app" ]]; then
+    GODOT_APP="$HOME/Applications/Godot.app"
   fi
 fi
 
@@ -94,7 +105,42 @@ if ! : > "$LOG_FILE" 2>/dev/null; then
   exit 1
 fi
 
-if [[ "${TB_SKIP_IMPORT_CHECK:-0}" != "1" ]]; then
+USER_DATA_DIR="${TB_GODOT_USER_DATA_DIR:-$ROOT_DIR/.godot/userdata}"
+if ! mkdir -p "$USER_DATA_DIR" 2>/dev/null; then
+  USER_DATA_DIR="$ROOT_DIR/.godot"
+fi
+
+maybe_clear_stale_godot_script_cache() {
+  local cache_cfg="$ROOT_DIR/.godot/global_script_class_cache.cfg"
+  [[ -f "$cache_cfg" ]] || return 0
+
+  local stale=0
+  while IFS= read -r script_path; do
+    script_path="${script_path#res://}"
+    if [[ ! -f "$ROOT_DIR/$script_path" ]]; then
+      stale=1
+      break
+    fi
+  done < <(grep -Eo '"path": "res://[^"]+\.gd"' "$cache_cfg" | sed -E 's/^"path": "(res:\/\/[^"]+)"$/\1/')
+
+  if [[ "$stale" -eq 1 ]]; then
+    echo "Detected stale Godot script cache (moved/deleted script paths)."
+    rm -f \
+      "$ROOT_DIR/.godot/global_script_class_cache.cfg" \
+      "$ROOT_DIR/.godot/uid_cache.bin" \
+      "$ROOT_DIR/.godot/editor/filesystem_cache10" \
+      "$ROOT_DIR/.godot/editor/script_editor_cache.cfg"
+  fi
+}
+
+if [[ "${TB_SKIP_CACHE_REFRESH:-0}" != "1" ]]; then
+  maybe_clear_stale_godot_script_cache
+fi
+
+# Import-cache audit is expensive and can crash certain macOS bash launchers
+# (notably when run from TrenchBroom) due heavy fork/exec pressure.
+# Keep this opt-in for manual diagnostics.
+if [[ "${TB_ENABLE_IMPORT_CHECK:-0}" == "1" ]]; then
   find_missing_import_artifact() {
     while IFS= read -r import_file; do
       source_rel="$(awk -F'\"' '/^source_file=/{print $2; exit}' "$import_file")"
@@ -126,8 +172,26 @@ if [[ "${TB_SKIP_IMPORT_CHECK:-0}" != "1" ]]; then
   fi
 fi
 
+GODOT_ARGS=(--user-data-dir "$USER_DATA_DIR" --log-file "$LOG_FILE" --path "$ROOT_DIR" -- --tb-run-map "$MAP_FILE")
 if [[ ${#EXTRA_ARGS[@]} -gt 0 ]]; then
-  exec "$GODOT_BIN" --log-file "$LOG_FILE" --path "$ROOT_DIR" -- --tb-run-map "$MAP_FILE" "${EXTRA_ARGS[@]}"
-else
-  exec "$GODOT_BIN" --log-file "$LOG_FILE" --path "$ROOT_DIR" -- --tb-run-map "$MAP_FILE"
+  GODOT_ARGS+=("${EXTRA_ARGS[@]}")
 fi
+
+# macOS 26 + Godot 4.6 can abort in NSApp startup when launching the raw Mach-O
+# directly from terminal tools. Launching the .app bundle via `open` avoids that path.
+if [[ "$(uname -s)" == "Darwin" && "${TB_FORCE_DIRECT_GODOT_BIN:-0}" != "1" ]]; then
+  if [[ -n "$GODOT_APP" ]]; then
+    if open -n -a "$GODOT_APP" --args "${GODOT_ARGS[@]}"; then
+      exit 0
+    fi
+    echo "WARN: failed to launch via macOS app bundle; falling back to direct binary." >&2
+  elif [[ "$GODOT_BIN" == */Godot.app/Contents/MacOS/Godot ]]; then
+    GODOT_APP="${GODOT_BIN%/Contents/MacOS/Godot}"
+    if open -n -a "$GODOT_APP" --args "${GODOT_ARGS[@]}"; then
+      exit 0
+    fi
+    echo "WARN: failed to launch via macOS app bundle; falling back to direct binary." >&2
+  fi
+fi
+
+exec "$GODOT_BIN" "${GODOT_ARGS[@]}"

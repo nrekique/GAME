@@ -3,7 +3,7 @@
 ## Defines a game in TrenchBroom to express a set of entity definitions and editor behaviors.
 class_name TrenchBroomGameConfig
 extends Resource
-const Util := preload("res://scripts/util.gd")
+const Util := preload("res://scripts/core/util.gd")
 
 ## Keeps track of each individual version
 enum GameConfigVersion {

@@ -1,7 +1,7 @@
 @tool
 class_name PhysicsBall
 extends RigidBody3D
-const Util := preload("res://scripts/util.gd")
+const Util := preload("res://scripts/core/util.gd")
 
 @export var targetname: String = ""
 @export var tumbleweed_enabled: bool = true

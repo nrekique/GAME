@@ -1,7 +1,7 @@
 @tool
 class_name AIPerceptionBlocker
 extends Node3D
-const Util := preload("res://scripts/util.gd")
+const Util := preload("res://scripts/core/util.gd")
 
 @export var enabled: bool = true
 @export_range(0.1, 1024.0, 0.1) var radius: float = 4.0

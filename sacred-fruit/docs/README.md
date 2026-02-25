@@ -4,6 +4,8 @@ Core references for Sacred Fruit map/entity workflow.
 
 - `DEVELOPMENT_TODO.md`
   - Current roadmap and implementation status.
+- `REPO_REORG_PLAN.md`
+  - Phased plan to reorganize repository layout with low-risk migration steps.
 - `TB_ENTITY_QUICK_REFERENCE.md`
   - Fast mapper cheat-sheet for TrenchBroom entity keys.
 - `ENTITY_SCRIPTING_GUIDE.md`
@@ -14,6 +16,10 @@ Core references for Sacred Fruit map/entity workflow.
   - Authoring format for `.md` dialogue files used by NPC conversation runtime.
 - `MAP_LINTING.md`
   - Map lint command, checks, and preflight behavior.
+- `MAP_BUILDING_GUIDELINES.md`
+  - Canonical mapper standards for scale, doors, wall heights, roads, sidewalks, lighting, and prefab kit consistency.
+- `KIT_SPEC_TEMPLATE.md`
+  - Fill-in template for defining modular kit contracts (module sizes, snap rules, adjacency, validation maps, and versioning).
 - `PORTAL_TUNING_PLAYBOOK.md`
   - Portal and mirror budget tuning presets and troubleshooting.
 - `MIRROR_POLICY.md`

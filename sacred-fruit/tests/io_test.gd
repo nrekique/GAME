@@ -2,7 +2,7 @@ extends Node
 
 # simple smoke test for IO manager
 
-const IO := preload("res://scripts/io_manager.gd")
+const IO := preload("res://scripts/core/io_manager.gd")
 
 func _ready():
 	var mgr := IO.new()

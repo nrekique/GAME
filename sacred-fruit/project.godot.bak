@@ -28,9 +28,9 @@ config/icon="uid://11wvyxmo2gpm"
 [autoload]
 
 GAME="*res://game_manager.gd"
-Exit="*res://scripts/exit.gd"
-SETTINGS="*res://scripts/settings.gd"
-DEBUG="*res://scripts/debug.gd"
+Exit="*res://scripts/core/exit.gd"
+SETTINGS="*res://scripts/core/settings.gd"
+DEBUG="*res://scripts/debug/debug.gd"
 
 [display]
 

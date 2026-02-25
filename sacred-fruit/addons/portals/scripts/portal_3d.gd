@@ -2,7 +2,7 @@
 @icon("uid://ct62bsuel5hyc")
 class_name Portal3D
 extends Node3D
-const Util := preload("res://scripts/util.gd")
+const Util := preload("res://scripts/core/util.gd")
 const PortalBoxMeshScript := preload("res://addons/portals/scripts/portal_boxmesh.gd")
 
 ## Seamless 3D portal

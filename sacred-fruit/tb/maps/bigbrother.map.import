@@ -1,0 +1,14 @@
+[remap]
+
+importer="func_godot.map"
+type="Resource"
+uid="uid://fng0iodp38b0"
+path="res://.godot/imported/bigbrother.map-6fc36911b772726e25ac9a6f6ea3015e.tres"
+
+[deps]
+
+source_file="res://tb/maps/bigbrother.map"
+dest_files=["res://.godot/imported/bigbrother.map-6fc36911b772726e25ac9a6f6ea3015e.tres"]
+
+[params]
+

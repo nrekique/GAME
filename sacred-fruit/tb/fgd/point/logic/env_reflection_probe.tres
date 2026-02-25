@@ -26,7 +26,7 @@ class_property_descriptions = {
 }
 meta_properties = {
 "color": Color(0.45, 0.75, 1, 1),
-"iconsprite": "\"fgd/entities/sprites/env_zone.png\"",
+"iconsprite": "\"fgd/entities/sprites/env_reflection_probe.png\"",
 "scale": "0.15",
 "size": AABB(-8, -8, -8, 8, 8, 8)
 }

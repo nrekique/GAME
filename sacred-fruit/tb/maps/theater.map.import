@@ -1,0 +1,14 @@
+[remap]
+
+importer="func_godot.map"
+type="Resource"
+uid="uid://dswegv8t1l48t"
+path="res://.godot/imported/theater.map-b115a10b95d8fb354b99fb5cd734695f.tres"
+
+[deps]
+
+source_file="res://tb/maps/theater.map"
+dest_files=["res://.godot/imported/theater.map-b115a10b95d8fb354b99fb5cd734695f.tres"]
+
+[params]
+

@@ -17,16 +17,23 @@ description = "Basic door that opens on use and optionally auto-closes."
 base_classes = Array[Resource]([ExtResource("1_func_base"), ExtResource("2_targetname"), ExtResource("3_target_base")])
 class_properties = {
 "auto_close": true,
+"consume_required_key": false,
+"lock_open": false,
 "move_pos": Vector3(0, 0, 0),
+"required_key": "",
 "move_rot": Vector3(0, 0, 0),
-"speed": 3.0,
+"speed": 120.0,
 "target": "",
 "wait": 3.0
 }
 class_property_descriptions = {
 "auto_close": "If true, door closes after wait.",
+"consume_required_key": "If true, consumes required_key when the door is opened.",
+"lock_open": "If true, once opened the door cannot be closed by use/toggle.",
 "move_pos": "Relative destination position in Quake Units.",
+"required_key": "Key id required to open this door (example: blue, red, gold). Empty means no key required.",
 "move_rot": "Rotation destination in degrees.",
+"speed": "Move speed. Translation uses Quake Units per second; rotation-only doors use degrees per second.",
 "target": "Target to trigger when the door opens.",
 "wait": "Seconds before auto-close."
 }

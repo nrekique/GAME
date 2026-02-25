@@ -3690,7 +3690,7 @@ mesh = SubResource("QuadMesh_q5hob")
 
 [node name="FuncGodotMap" type="Node3D" parent="." unique_id=1658915255]
 script = ExtResource("4_se2tg")
-local_map_file = "res://tb/home.map"
+local_map_file = "res://tb/maps/home.map"
 map_settings = ExtResource("5_cexdb")
 metadata/_custom_type_script = "uid://br6nldk1val40"
 

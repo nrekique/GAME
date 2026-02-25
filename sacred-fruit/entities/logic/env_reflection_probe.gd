@@ -1,7 +1,7 @@
 @tool
 class_name EnvReflectionProbe
 extends ReflectionProbe
-const Util := preload("res://scripts/util.gd")
+const Util := preload("res://scripts/core/util.gd")
 
 @export var enabled: bool = true
 @export var box_size: Vector3 = Vector3(8.0, 8.0, 8.0)

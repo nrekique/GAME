@@ -22,16 +22,16 @@ config/name_localized={
 run/main_scene="res://scenes/ui/main_menu.tscn"
 config/features=PackedStringArray("4.6", "Forward Plus")
 boot_splash/show_image=false
-config/icon="uid://11wvyxmo2gpm"
+config/icon="res://sf-macOS-Default.png"
 build_profile="fast-iteration"
 
 [autoload]
 
 GAME="*res://game_manager.gd"
-DIALOGUE="*res://scripts/dialogue_manager.gd"
-Exit="*res://scripts/exit.gd"
-SETTINGS="*res://scripts/settings.gd"
-DEBUG="*res://scripts/debug.gd"
+DIALOGUE="*res://scripts/core/dialogue_manager.gd"
+Exit="*res://scripts/core/exit.gd"
+SETTINGS="*res://scripts/core/settings.gd"
+DEBUG="*res://scripts/debug/debug.gd"
 
 [display]
 

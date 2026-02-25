@@ -24,7 +24,7 @@ class_property_descriptions = {
 }
 meta_properties = {
 "color": Color(0.3, 0.7, 1, 1),
-"iconsprite": "\"fgd/entities/sprites/info_camera.png\"",
+"iconsprite": "\"fgd/entities/sprites/ai_cover_marker.png\"",
 "scale": "0.15",
 "size": AABB(-8, -8, -8, 8, 8, 8)
 }

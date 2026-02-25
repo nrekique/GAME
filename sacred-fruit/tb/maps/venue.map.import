@@ -1,0 +1,14 @@
+[remap]
+
+importer="func_godot.map"
+type="Resource"
+uid="uid://c8fawti58ntfp"
+path="res://.godot/imported/venue.map-31cecf96f55ee30e5ad417569f62cdbc.tres"
+
+[deps]
+
+source_file="res://tb/maps/venue.map"
+dest_files=["res://.godot/imported/venue.map-31cecf96f55ee30e5ad417569f62cdbc.tres"]
+
+[params]
+

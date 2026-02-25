@@ -1,6 +1,6 @@
 @tool
 extends Node3D
-const Util := preload("res://scripts/util.gd")
+const Util := preload("res://scripts/core/util.gd")
 
 @export var visual_root_path: NodePath = NodePath("metarig")
 @export var origin_to_feet_units: float = 24.0

@@ -1,7 +1,7 @@
 @tool
 class_name InfoIntermission
 extends Camera3D
-const Util := preload("res://scripts/util.gd")
+const Util := preload("res://scripts/core/util.gd")
 
 @export var targetname: String = ""
 @export var angles: Vector3 = Vector3.ZERO

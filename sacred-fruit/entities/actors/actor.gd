@@ -1,7 +1,7 @@
 @tool
 class_name Actor
 extends CharacterBody3D
-const Util := preload("res://scripts/util.gd")
+const Util := preload("res://scripts/core/util.gd")
 
 enum ActorFlags {
 	PLAYER = 1,

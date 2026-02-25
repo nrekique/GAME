@@ -1,7 +1,7 @@
 @tool
 class_name WorldspawnEntity
 extends StaticBody3D
-const Util := preload("res://scripts/util.gd")
+const Util := preload("res://scripts/core/util.gd")
 
 @export var func_godot_properties: Dictionary = {}
 

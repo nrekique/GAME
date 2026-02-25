@@ -1,6 +1,6 @@
 # Entity I/O System
 
-The runtime entity I/O dispatcher is implemented by `IOManager` (`res://scripts/io_manager.gd`) and exposed through the `GAME` autoload.
+The runtime entity I/O dispatcher is implemented by `IOManager` (`res://scripts/core/io_manager.gd`) and exposed through the `GAME` autoload.
 
 ## Core APIs
 
