@@ -51,6 +51,11 @@
   - Per-entity cost hints and mapper-facing perf heatmaps.
 - [ ] 10. Automated smoke tests
   - Headless map load/build checks and perf CSV diff reporting in CI.
+- [ ] 11. Dialogue + conversation layer
+  - Fallout-style branching dialogue with topic questions, gated checks (skills/reputation/flags), and persistent outcomes.
+  - Phase 1 started: dialogue runtime manager + UI shell, NPC interaction hook, mapper-facing NPC dialogue keys, and sample branching conversation data.
+  - Phase 2 started: cinematic player focus framing on active NPC dialogue, paced line reveal flow, and richer choice presentation with explicit requirement tags.
+  - Next: quest/faction wiring, VO/subtitle timing, companion interjections, and authoring tools for large dialogue graphs.
 
 ## Codebase audit follow‑ups
 

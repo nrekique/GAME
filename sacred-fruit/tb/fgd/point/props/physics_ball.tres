@@ -23,6 +23,7 @@ class_properties = {
 "radius": 0.35,
 "rolling_torque": 1.8,
 "tumbleweed_enabled": true,
+"water_buoyancy": 1.05,
 "wind_response": 6.0
 }
 class_property_descriptions = {
@@ -36,6 +37,7 @@ class_property_descriptions = {
 "radius": "Sphere radius for collider and default mesh.",
 "rolling_torque": "Extra torque applied to help rolling in wind direction.",
 "tumbleweed_enabled": "If true, applies wind force/torque for tumbleweed behavior.",
+"water_buoyancy": "Buoyancy override used inside water_volume. 1.0 neutral, below sinks, above floats.",
 "wind_response": "Force multiplier for wind to motion conversion."
 }
 meta_properties = {

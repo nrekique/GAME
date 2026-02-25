@@ -13,7 +13,6 @@ config_version=5
 compatibility/default_parent_skeleton_in_mesh_instance_3d=true
 
 [application]
-build_profile="fast-iteration"
 
 config/name="Sacred Fruit"
 config/name_localized={
@@ -24,10 +23,12 @@ run/main_scene="res://scenes/ui/main_menu.tscn"
 config/features=PackedStringArray("4.6", "Forward Plus")
 boot_splash/show_image=false
 config/icon="uid://11wvyxmo2gpm"
+build_profile="fast-iteration"
 
 [autoload]
 
 GAME="*res://game_manager.gd"
+DIALOGUE="*res://scripts/dialogue_manager.gd"
 Exit="*res://scripts/exit.gd"
 SETTINGS="*res://scripts/settings.gd"
 DEBUG="*res://scripts/debug.gd"

@@ -12,13 +12,22 @@ const Util := preload("res://scripts/util.gd")
 @export_range(0.1, 8.0, 0.01) var idle_bob_frequency: float = 1.2
 @export_range(0.0, 8.0, 0.01) var idle_sway_degrees: float = 3.0
 @export_range(0.1, 8.0, 0.01) var idle_sway_frequency: float = 0.8
+@export_range(0.2, 2.0, 0.01) var npc_visual_scale: float = 0.82
 @export var ai_enabled: bool = false
 @export var ai_route_id: String = "default"
 @export_range(0.1, 20.0, 0.01) var ai_patrol_speed: float = 2.0
 @export_range(0.0, 30.0, 0.01) var ai_alert_duration: float = 4.0
 @export var ai_reacts_to_alerts: bool = true
+@export var dialogue_enabled: bool = true
+@export_file("*.json", "*.md", "*.markdown") var dialogue_resource_path: String = "res://data/dialogue/npc_default.md"
+@export var dialogue_speaker_name: String = ""
+@export var dialogue_once_flag: String = ""
+@export_range(0.2, 3.0, 0.01) var dialogue_focus_height: float = 1.15
+@export var dialogue_focus_bone_name: String = "spine.003"
+@export_range(-0.5, 0.5, 0.01) var dialogue_focus_bone_offset: float = -0.06
 
 var _base_visual_position: Vector3 = Vector3.ZERO
+var _base_visual_scale: Vector3 = Vector3.ONE
 var _aligned_visual_position: Vector3 = Vector3.ZERO
 var _cached_base_position: bool = false
 var _idle_visual_root: Node3D = null
@@ -65,12 +74,14 @@ func _apply_alignment() -> void:
 
 	if not _cached_base_position:
 		_base_visual_position = visual_root.position
+		_base_visual_scale = visual_root.scale
 		_cached_base_position = true
 
 	var scale_factor: float = _find_map_scale_factor()
 	var feet_offset: Vector3 = Vector3(0.0, -origin_to_feet_units * scale_factor, 0.0)
 	_aligned_visual_position = _base_visual_position + feet_offset + extra_offset
 	visual_root.position = _aligned_visual_position
+	visual_root.scale = _base_visual_scale * maxf(npc_visual_scale, 0.01)
 	if _idle_visual_root == visual_root:
 		_base_visual_rotation = visual_root.rotation_degrees
 
@@ -145,6 +156,8 @@ func _pick_idle_clip(anim_player: AnimationPlayer) -> String:
 	return ""
 
 func _func_godot_apply_properties(props: Dictionary) -> void:
+	if props.has("npc_visual_scale"):
+		npc_visual_scale = clampf(float(props["npc_visual_scale"]), 0.2, 2.0)
 	if props.has("ai_enabled"):
 		ai_enabled = Util.to_bool(props["ai_enabled"], ai_enabled)
 	if props.has("ai_route_id"):
@@ -155,6 +168,21 @@ func _func_godot_apply_properties(props: Dictionary) -> void:
 		ai_alert_duration = maxf(float(props["ai_alert_duration"]), 0.0)
 	if props.has("ai_reacts_to_alerts"):
 		ai_reacts_to_alerts = Util.to_bool(props["ai_reacts_to_alerts"], ai_reacts_to_alerts)
+	if props.has("dialogue_enabled"):
+		dialogue_enabled = Util.to_bool(props["dialogue_enabled"], dialogue_enabled)
+	if props.has("dialogue_resource_path"):
+		dialogue_resource_path = String(props["dialogue_resource_path"]).strip_edges()
+	if props.has("dialogue_speaker_name"):
+		dialogue_speaker_name = String(props["dialogue_speaker_name"]).strip_edges()
+	if props.has("dialogue_once_flag"):
+		dialogue_once_flag = String(props["dialogue_once_flag"]).strip_edges()
+	if props.has("dialogue_focus_height"):
+		dialogue_focus_height = maxf(float(props["dialogue_focus_height"]), 0.2)
+	if props.has("dialogue_focus_bone_name"):
+		dialogue_focus_bone_name = String(props["dialogue_focus_bone_name"]).strip_edges()
+	if props.has("dialogue_focus_bone_offset"):
+		dialogue_focus_bone_offset = clampf(float(props["dialogue_focus_bone_offset"]), -0.5, 0.5)
+	_apply_alignment()
 
 func _setup_ai_controller() -> void:
 	if not ai_enabled:
@@ -177,3 +205,66 @@ func _setup_ai_controller() -> void:
 		})
 	add_child(ctrl)
 	_ai_controller = ctrl
+
+
+func interact(activator: Node = null) -> bool:
+	if Util.editor_hint():
+		return false
+	if not dialogue_enabled:
+		return false
+	if dialogue_resource_path.strip_edges().is_empty():
+		return false
+
+	var game: Node = get_node_or_null("/root/GAME")
+	var once_key: String = dialogue_once_flag.strip_edges()
+	if once_key != "" and game != null and game.has_method("state_has_fired"):
+		if bool(game.call("state_has_fired", once_key)):
+			return false
+
+	var dialogue: Node = get_node_or_null("/root/DIALOGUE")
+	if dialogue == null or not dialogue.has_method("start_dialogue_from_resource"):
+		return false
+
+	if activator != null and activator.has_method("_release_held_ball"):
+		activator.call("_release_held_ball")
+
+	var started_v: Variant = dialogue.call(
+		"start_dialogue_from_resource",
+		dialogue_resource_path,
+		dialogue_speaker_name,
+		activator,
+		self
+	)
+	var started: bool = started_v is bool and bool(started_v)
+	if started and once_key != "" and game != null and game.has_method("state_mark_fired"):
+		game.call("state_mark_fired", once_key)
+	return started
+
+
+func use(activator: Node = null) -> void:
+	interact(activator)
+
+
+func get_dialogue_focus_point() -> Vector3:
+	var skeleton: Skeleton3D = _find_dialogue_focus_skeleton()
+	if skeleton != null:
+		var bone_name: String = dialogue_focus_bone_name.strip_edges()
+		if not bone_name.is_empty():
+			var bone_idx: int = skeleton.find_bone(bone_name)
+			if bone_idx >= 0:
+				var bone_pose: Transform3D = skeleton.get_bone_global_pose(bone_idx)
+				return skeleton.to_global(bone_pose.origin) + Vector3(0.0, dialogue_focus_bone_offset, 0.0)
+
+	var visual_root: Node3D = get_node_or_null(visual_root_path) as Node3D
+	if visual_root != null and is_instance_valid(visual_root):
+		return visual_root.global_position + Vector3(0.0, dialogue_focus_height, 0.0)
+	return global_position + Vector3(0.0, dialogue_focus_height, 0.0)
+
+
+func _find_dialogue_focus_skeleton() -> Skeleton3D:
+	var visual_root: Node3D = get_node_or_null(visual_root_path) as Node3D
+	if visual_root != null and is_instance_valid(visual_root):
+		var under_visual: Skeleton3D = visual_root.find_child("Skeleton3D", true, false) as Skeleton3D
+		if under_visual != null:
+			return under_visual
+	return find_child("Skeleton3D", true, false) as Skeleton3D

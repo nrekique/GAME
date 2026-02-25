@@ -120,6 +120,7 @@ Quick authoring sheet for common gameplay/environment entities.
 - `wind_response`
 - `rolling_torque`
 - `max_speed`
+- `water_buoyancy` (`0..3`, `1` neutral, `<1` sinks, `>1` floats)
 
 ## Triggers
 
@@ -164,6 +165,15 @@ _These areas emit `body_entered(body)` and `body_exited(body)` signals._
 
 `spawn_blocker_volume`
 - `enabled` (`0/1`)
+
+`water_volume`
+- `enabled` (`0/1`)
+- `starts_enabled` (`0/1`)
+- `default_buoyancy` (`0..3`, `1` neutral, `<1` sinks, `>1` floats)
+- `linear_drag`
+- `angular_drag`
+- `affect_sleeping_bodies` (`0/1`)
+- Use a normal water-textured brush (`special/water`) for visuals and swim volume in one.
 
 ## AI Authoring (Phase 1)
 

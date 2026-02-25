@@ -122,7 +122,7 @@ From base FGD resources (`sacred-fruit/tb/fgd/base/*`):
 | `item_collectible` | `value`, `auto_free`, `targetname` | Calls `GAME.collect(value)` on player overlap. |
 | `item_health` | `amount`, `allow_overheal`, `overheal_cap`, `auto_free`, `targetname` | Applies health to player (directly and via GAME fallback). |
 | `item_ammo` | `ammo_type`, `amount`, `auto_free`, `targetname` | Calls `add_ammo` on player/GAME fallback. |
-| `physics_ball` | `tumbleweed_enabled`, `radius`, `mass_kg`, `wind_response`, `rolling_torque`, `max_speed` | `RigidBody3D` physics prop. In tumbleweed mode it samples map wind/sandstorm settings and rolls with gusting wind force. |
+| `physics_ball` | `tumbleweed_enabled`, `radius`, `mass_kg`, `wind_response`, `rolling_torque`, `max_speed`, `water_buoyancy` | `RigidBody3D` physics prop. In tumbleweed mode it samples map wind/sandstorm settings and rolls with gusting wind force. `water_buoyancy` controls float/sink behavior in `water_volume`. |
 | `npc` | `flags`, `scale`, `targetname`, `ai_enabled`, `ai_route_id`, `ai_patrol_speed`, `ai_alert_duration`, `ai_reacts_to_alerts` (+ actor base) | Generic NPC actor entity using the default NPC scene with optional idle/patrol/alert AI controller. |
 | `path_corner` | `target`, `wait`, `targetname` | Train path node for `func_train`. |
 | `logic_auto` (new) | `enabled`, `fire_once`, `delay` + target base | Fires outputs automatically on spawn, optional delay, optional one-shot. |
@@ -174,6 +174,7 @@ From base FGD resources (`sacred-fruit/tb/fgd/base/*`):
 | `ai_alert_volume` | `enabled` | Notifies AI system of entrant position. |
 | `quest_trigger_volume` | `tag`, `enabled` | Placeholder for quest scripting; no default action. |
 | `spawn_blocker_volume` | `enabled` | Marks area where spawning should be avoided. |
+| `water_volume` | `enabled`, `starts_enabled`, `default_buoyancy`, `linear_drag`, `angular_drag`, `affect_sleeping_bodies` | Combined water brush: renders textured water geometry, applies swim-style movement to the player, and applies buoyancy/drag to rigid bodies inside. |
 
 ### 5.2.1 Portal Runtime Notes
 

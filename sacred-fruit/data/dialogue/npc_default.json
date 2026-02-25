@@ -1,0 +1,92 @@
+{
+  "id": "npc_default",
+  "speaker": "Wastelander",
+  "start": "intro",
+  "nodes": {
+    "intro": {
+      "text": "Keep your voice down. The dunes carry sound farther than you'd think.",
+      "choices": [
+        {
+          "text": "Who are you?",
+          "next": "who"
+        },
+        {
+          "text": "Any work around here?",
+          "next": "work"
+        },
+        {
+          "text": "[Speech 25] Tell me what you're not saying.",
+          "check_skill": "speech",
+          "check_skill_min": 25,
+          "next": "speech_pass",
+          "next_on_fail": "speech_fail"
+        },
+        {
+          "text": "Goodbye.",
+          "end": true
+        }
+      ]
+    },
+    "who": {
+      "text": "Name's Harker. I keep this camp supplied and mostly alive.",
+      "choices": [
+        {
+          "text": "Back.",
+          "next": "intro"
+        }
+      ]
+    },
+    "work": {
+      "text": "Water pumps keep failing. If you can bring me spare seals, we can talk payment.",
+      "choices": [
+        {
+          "text": "I'll take the job.",
+          "set_fact": [
+            "quest_water_started"
+          ],
+          "add_faction_rep": {
+            "settlers": 1
+          },
+          "next": "job_accepted"
+        },
+        {
+          "text": "Not interested.",
+          "next": "intro"
+        }
+      ]
+    },
+    "job_accepted": {
+      "text": "Good. Bring back three seal rings and don't get buried out there.",
+      "choices": [
+        {
+          "text": "I'll be back.",
+          "end": true
+        }
+      ]
+    },
+    "speech_pass": {
+      "text": "Fine. Raiders are using the old refinery at dusk. I never told you that.",
+      "choices": [
+        {
+          "text": "I appreciate it.",
+          "set_fact": [
+            "learned_refinery_secret"
+          ],
+          "add_skill": {
+            "speech": 1
+          },
+          "next": "intro"
+        }
+      ]
+    },
+    "speech_fail": {
+      "text": "You're not half as subtle as you think.",
+      "choices": [
+        {
+          "text": "Back.",
+          "next": "intro"
+        }
+      ]
+    }
+  }
+}

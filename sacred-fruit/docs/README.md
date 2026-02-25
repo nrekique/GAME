@@ -10,6 +10,8 @@ Core references for Sacred Fruit map/entity workflow.
   - Full entity/runtime behavior reference.
 - `ENTITY_IO_SYSTEM.md`
   - Runtime target/input/output dispatch model and debug hooks.
+- `DIALOGUE_MARKDOWN.md`
+  - Authoring format for `.md` dialogue files used by NPC conversation runtime.
 - `MAP_LINTING.md`
   - Map lint command, checks, and preflight behavior.
 - `PORTAL_TUNING_PLAYBOOK.md`

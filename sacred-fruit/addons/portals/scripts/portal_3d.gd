@@ -364,6 +364,8 @@ class TeleportableMeta:
 # as the keys of the dictionary. Registering them by their object references becomes unreliable 
 # when the teleport candidate gets freed.
 var _watchlist_teleportables: Dictionary[int, TeleportableMeta] = {}
+var _camera_side_sign: float = 0.0
+const _CAMERA_SIDE_HYSTERESIS: float = 0.03
 
 #endregion
 
@@ -511,7 +513,14 @@ func _process_cameras() -> void:
 	var near_diagonal: float = Vector3(half_width, half_height, player_camera.near).length()
 	portal_mesh.scale.z = near_diagonal
 	
-	var player_in_front_of_portal: bool = forward_distance(player_camera) > 0
+	var fw: float = forward_distance(player_camera)
+	if fw > _CAMERA_SIDE_HYSTERESIS:
+		_camera_side_sign = 1.0
+	elif fw < -_CAMERA_SIDE_HYSTERESIS:
+		_camera_side_sign = -1.0
+	elif _camera_side_sign == 0.0:
+		_camera_side_sign = 1.0 if fw >= 0.0 else -1.0
+	var player_in_front_of_portal: bool = _camera_side_sign > 0.0
 	var portal_shift: float = 0
 	match view_direction:
 		ViewDirection.ONLY_FRONT:

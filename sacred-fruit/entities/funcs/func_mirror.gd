@@ -66,6 +66,7 @@ var _last_plugin_cull_signature: String = ""
 var _last_plugin_tint: Color = Color(-1.0, -1.0, -1.0, -1.0)
 var _last_plugin_distortion: float = -1.0
 var _last_plugin_distortion_tex_id: int = -1
+var _source_camera_cache: Camera3D = null
 
 const MIRROR_SURFACE_SHADER := "
 shader_type spatial;
@@ -328,7 +329,7 @@ func _update_mirror_camera() -> void:
 		return
 	if mirror_face_from_texture and not _used_metadata_plane:
 		return
-	var src_cam: Camera3D = get_viewport().get_camera_3d()
+	var src_cam: Camera3D = _get_source_camera()
 	if src_cam == null:
 		return
 	var mirror_xf: Transform3D = _get_mirror_global_transform()
@@ -710,17 +711,51 @@ func _has_mirror_line_of_sight(cam: Camera3D) -> bool:
 	var cam_parent: Node = cam.get_parent()
 	if cam_parent is CollisionObject3D:
 		excludes.append((cam_parent as CollisionObject3D).get_rid())
-	params.exclude = excludes
-	var hit: Dictionary = world.direct_space_state.intersect_ray(params)
-	if hit.is_empty():
-		return true
-	var collider_v: Variant = hit.get("collider", null)
-	if collider_v == null:
-		return true
-	if collider_v is Node:
-		var node: Node = collider_v as Node
-		if self.is_ancestor_of(node) or node == self or node.is_ancestor_of(self):
+	for _i in range(8):
+		params.exclude = excludes
+		var hit: Dictionary = world.direct_space_state.intersect_ray(params)
+		if hit.is_empty():
 			return true
+		var collider_v: Variant = hit.get("collider", null)
+		if collider_v == null:
+			return true
+		if collider_v is Node:
+			var node: Node = collider_v as Node
+			if self.is_ancestor_of(node) or node == self or node.is_ancestor_of(self):
+				var own_collider: CollisionObject3D = _find_collision_object_ancestor(node)
+				if own_collider != null and not excludes.has(own_collider.get_rid()):
+					excludes.append(own_collider.get_rid())
+					continue
+				return true
+			if _is_runtime_los_ignored_collider(node):
+				var ignored_collider: CollisionObject3D = _find_collision_object_ancestor(node)
+				if ignored_collider != null and not excludes.has(ignored_collider.get_rid()):
+					excludes.append(ignored_collider.get_rid())
+					continue
+				return true
+		return false
+	return true
+
+
+func _find_collision_object_ancestor(node: Node) -> CollisionObject3D:
+	var cur: Node = node
+	while cur != null:
+		if cur is CollisionObject3D:
+			return cur as CollisionObject3D
+		cur = cur.get_parent()
+	return null
+
+
+func _is_runtime_los_ignored_collider(node: Node) -> bool:
+	var cur: Node = node
+	while cur != null:
+		if cur.is_in_group("runtime_los_ignore"):
+			return true
+		if cur.has_method("is_held"):
+			var held_v: Variant = cur.call("is_held")
+			if held_v is bool and bool(held_v):
+				return true
+		cur = cur.get_parent()
 	return false
 
 
@@ -841,7 +876,7 @@ func _compute_plugin_resolution_per_unit() -> int:
 	if not plugin_dynamic_resolution:
 		return clampi(base_rpu, min_rpu, max_rpu)
 
-	var src_cam: Camera3D = get_viewport().get_camera_3d()
+	var src_cam: Camera3D = _get_source_camera()
 	if src_cam == null:
 		return clampi(base_rpu, min_rpu, max_rpu)
 	var mirror_xf: Transform3D = _get_mirror_global_transform()
@@ -851,6 +886,37 @@ func _compute_plugin_resolution_per_unit() -> int:
 	var boost: float = clampf(plugin_resolution_near_distance / safe_dist, 1.0, plugin_max_resolution_boost)
 	var dynamic_rpu: int = int(round(float(base_rpu) * boost))
 	return clampi(dynamic_rpu, min_rpu, max_rpu)
+
+
+func _get_source_camera() -> Camera3D:
+	var current: Camera3D = get_viewport().get_camera_3d()
+	if current != null and not _is_node_within_group(current, "PLAYER"):
+		_source_camera_cache = current
+		return current
+	if _source_camera_cache != null and is_instance_valid(_source_camera_cache) and _is_node_within_group(_source_camera_cache, "PLAYER"):
+		return _source_camera_cache
+	for n in get_tree().get_nodes_in_group("PLAYER"):
+		if n == null or not is_instance_valid(n):
+			continue
+		if not n.has_method("get_portal_source_camera"):
+			continue
+		var cam_v: Variant = n.call("get_portal_source_camera")
+		if cam_v is Camera3D:
+			var cam: Camera3D = cam_v as Camera3D
+			if cam != null and is_instance_valid(cam):
+				_source_camera_cache = cam
+				return cam
+	_source_camera_cache = current
+	return current
+
+
+func _is_node_within_group(node: Node, group_name: String) -> bool:
+	var cur: Node = node
+	while cur != null:
+		if cur.is_in_group(group_name):
+			return true
+		cur = cur.get_parent()
+	return false
 
 
 func _get_mirror_corners_world() -> Array[Vector3]:

@@ -14,6 +14,7 @@ one of the ready‑made volume types into their map or write custom variants.
 * `MusicZoneVolume` – tells `GAME` to switch music to the tagged zone on entry.
 * `AIAlertVolume` – notifies the AI system of an alert at the entrant's position.
 * `QuestTriggerVolume` – hook for quest scripting, emits no behaviour by default.
+* `WaterVolume` – combined brush+volume water entity: keeps water visuals, switches player to swim-style movement, and applies buoyancy/drag to rigid bodies inside.
 
 ## Authoring tips
 

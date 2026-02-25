@@ -79,6 +79,7 @@ var _last_plugin_keep_hot: bool = true
 var _last_plugin_render_scale: float = -1.0
 var _portal_runtime_manager: Node = null
 var _managed_viewport_active: bool = true
+var _source_camera_cache: Camera3D = null
 
 
 func _func_godot_apply_properties(props: Dictionary) -> void:
@@ -357,7 +358,7 @@ func _update_portal_camera() -> void:
 	if _portal_camera == null or _linked_portal == null:
 		return
 
-	var src_cam := get_viewport().get_camera_3d()
+	var src_cam := _get_source_camera()
 	if src_cam == null:
 		return
 
@@ -638,7 +639,7 @@ func _on_properties_applied() -> void:
 
 
 func _process_plugin_portal(delta: float) -> void:
-	var src_cam: Camera3D = get_viewport().get_camera_3d()
+	var src_cam: Camera3D = _get_source_camera()
 	if src_cam == null:
 		return
 
@@ -667,7 +668,7 @@ func _process_plugin_portal(delta: float) -> void:
 
 
 func _setup_plugin_portal() -> void:
-	var src_cam: Camera3D = get_viewport().get_camera_3d()
+	var src_cam: Camera3D = _get_source_camera()
 	if src_cam == null:
 		return
 	_setup_plugin_portal_with_camera(src_cam)
@@ -711,7 +712,7 @@ func _sync_plugin_link() -> void:
 		return
 	if not _plugin_link_dirty:
 		return
-	var src_cam: Camera3D = get_viewport().get_camera_3d()
+	var src_cam: Camera3D = _get_source_camera()
 	if src_cam == null:
 		return
 	_ensure_camera_environment(src_cam)
@@ -792,6 +793,37 @@ func _ensure_camera_environment(src_cam: Camera3D) -> void:
 	src_cam.environment = Environment.new()
 
 
+func _get_source_camera() -> Camera3D:
+	var current: Camera3D = get_viewport().get_camera_3d()
+	if current != null and not _is_node_within_group(current, "PLAYER"):
+		_source_camera_cache = current
+		return current
+	if _source_camera_cache != null and is_instance_valid(_source_camera_cache) and _is_node_within_group(_source_camera_cache, "PLAYER"):
+		return _source_camera_cache
+	for n in get_tree().get_nodes_in_group("PLAYER"):
+		if n == null or not is_instance_valid(n):
+			continue
+		if not n.has_method("get_portal_source_camera"):
+			continue
+		var cam_v: Variant = n.call("get_portal_source_camera")
+		if cam_v is Camera3D:
+			var cam: Camera3D = cam_v as Camera3D
+			if cam != null and is_instance_valid(cam):
+				_source_camera_cache = cam
+				return cam
+	_source_camera_cache = current
+	return current
+
+
+func _is_node_within_group(node: Node, group_name: String) -> bool:
+	var cur: Node = node
+	while cur != null:
+		if cur.is_in_group(group_name):
+			return true
+		cur = cur.get_parent()
+	return false
+
+
 func _register_portal_runtime_manager() -> void:
 	if Util.editor_hint() or not manager_enable_budgeting or not use_portals_plugin:
 		return
@@ -870,19 +902,57 @@ func _has_portal_line_of_sight(cam: Camera3D) -> bool:
 		excludes.append((cam_parent as CollisionObject3D).get_rid())
 	if _linked_portal != null:
 		excludes.append(_linked_portal.get_rid())
-	params.exclude = excludes
-	var hit: Dictionary = world.direct_space_state.intersect_ray(params)
-	if hit.is_empty():
-		return true
-	var collider_v: Variant = hit.get("collider", null)
-	if collider_v == null:
-		return true
-	if collider_v is Node:
-		var node: Node = collider_v as Node
-		if self.is_ancestor_of(node) or node == self or node.is_ancestor_of(self):
+	for _i in range(8):
+		params.exclude = excludes
+		var hit: Dictionary = world.direct_space_state.intersect_ray(params)
+		if hit.is_empty():
 			return true
-		if _linked_portal != null and (_linked_portal.is_ancestor_of(node) or node == _linked_portal or node.is_ancestor_of(_linked_portal)):
+		var collider_v: Variant = hit.get("collider", null)
+		if collider_v == null:
 			return true
+		if collider_v is Node:
+			var node: Node = collider_v as Node
+			if self.is_ancestor_of(node) or node == self or node.is_ancestor_of(self):
+				var own_collider: CollisionObject3D = _find_collision_object_ancestor(node)
+				if own_collider != null and not excludes.has(own_collider.get_rid()):
+					excludes.append(own_collider.get_rid())
+					continue
+				return true
+			if _linked_portal != null and (_linked_portal.is_ancestor_of(node) or node == _linked_portal or node.is_ancestor_of(_linked_portal)):
+				var linked_collider: CollisionObject3D = _find_collision_object_ancestor(node)
+				if linked_collider != null and not excludes.has(linked_collider.get_rid()):
+					excludes.append(linked_collider.get_rid())
+					continue
+				return true
+			if _is_runtime_los_ignored_collider(node):
+				var ignored_collider: CollisionObject3D = _find_collision_object_ancestor(node)
+				if ignored_collider != null and not excludes.has(ignored_collider.get_rid()):
+					excludes.append(ignored_collider.get_rid())
+					continue
+				return true
+		return false
+	return true
+
+
+func _find_collision_object_ancestor(node: Node) -> CollisionObject3D:
+	var cur: Node = node
+	while cur != null:
+		if cur is CollisionObject3D:
+			return cur as CollisionObject3D
+		cur = cur.get_parent()
+	return null
+
+
+func _is_runtime_los_ignored_collider(node: Node) -> bool:
+	var cur: Node = node
+	while cur != null:
+		if cur.is_in_group("runtime_los_ignore"):
+			return true
+		if cur.has_method("is_held"):
+			var held_v: Variant = cur.call("is_held")
+			if held_v is bool and bool(held_v):
+				return true
+		cur = cur.get_parent()
 	return false
 
 

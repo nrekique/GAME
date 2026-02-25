@@ -16,6 +16,9 @@ var move_state: MoveStates = MoveStates.READY
 var move_progress: float = 0.0
 var move_progress_target: float = 0.0
 var sfx: AudioStreamPlayer3D
+var _base_rotation: Vector3 = Vector3.ZERO
+
+const PIVOT_FALLBACK_MIN_DISTANCE: float = 0.5
 
 func _func_godot_apply_properties(props: Dictionary) -> void:
 	targetname = props["targetname"] as String
@@ -45,13 +48,54 @@ func _init() -> void:
 	add_to_group("func_move")
 	sync_to_physics = false
 
+func _infer_visual_center_local() -> Vector3:
+	var mins: Vector3 = Vector3.INF
+	var maxs: Vector3 = -Vector3.INF
+	var found_mesh: bool = false
+	for child in get_children():
+		if not (child is MeshInstance3D):
+			continue
+		var mesh_instance: MeshInstance3D = child as MeshInstance3D
+		if mesh_instance.mesh == null:
+			continue
+		var aabb: AABB = mesh_instance.get_aabb()
+		var local_min: Vector3 = mesh_instance.position + aabb.position
+		var local_max: Vector3 = local_min + aabb.size
+		if mins != Vector3.INF:
+			mins = mins.min(local_min)
+		else:
+			mins = local_min
+		if maxs != -Vector3.INF:
+			maxs = maxs.max(local_max)
+		else:
+			maxs = local_max
+		found_mesh = true
+	if not found_mesh:
+		return Vector3.ZERO
+	return maxs - ((maxs - mins) * 0.5)
+
+func _apply_pivot_fallback_from_visuals() -> void:
+	# Some imported brush entities can end up with the root left at local origin while the
+	# generated mesh is offset in local-space, which causes rotation around world origin.
+	if position.length_squared() > 0.000001:
+		return
+	var inferred_center: Vector3 = _infer_visual_center_local()
+	if inferred_center.length() < PIVOT_FALLBACK_MIN_DISTANCE:
+		return
+	position = inferred_center
+	for child in get_children():
+		if child is Node3D:
+			(child as Node3D).position -= inferred_center
+
 func _ready() -> void:
 	if Util.editor_hint():
 		return
 	
+	_apply_pivot_fallback_from_visuals()
 	GAME.set_targetname(self, targetname)
 	move_pos[0] = position
 	move_pos[1] += move_pos[0]
+	_base_rotation = rotation
 	if speed > 0.0:
 		speed = 1.0 / speed
 
@@ -67,4 +111,4 @@ func _physics_process(delta: float) -> void:
 		if move_pos[0] != move_pos[1]:
 			position = move_pos[0].lerp(move_pos[1], move_progress)
 		if move_rot != Vector3.ZERO:
-			rotation = Vector3.ZERO.lerp(move_rot, move_progress)
+			rotation = _base_rotation.lerp(_base_rotation + move_rot, move_progress)
