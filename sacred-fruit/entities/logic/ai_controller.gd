@@ -36,6 +36,7 @@ func setup(agent: Node3D, config: Dictionary = {}) -> void:
 func _ready() -> void:
 	if Util.editor_hint():
 		return
+	add_to_group("ai_controller")
 	if not enabled:
 		set_process(false)
 		return
@@ -124,3 +125,17 @@ func _look_horizontal(dir: Vector3) -> void:
 	var r := _agent.rotation
 	r.y = yaw
 	_agent.rotation = r
+
+
+func get_debug_snapshot() -> Dictionary:
+	var now: float = Time.get_ticks_msec() / 1000.0
+	var alert_remaining: float = maxf(0.0, _alert_until_sec - now)
+	return {
+		"enabled": enabled,
+		"state": _state,
+		"route_id": route_id,
+		"patrol_points": _patrol_points.size(),
+		"patrol_index": _patrol_index,
+		"alert_remaining": alert_remaining,
+		"reacts_to_alerts": reacts_to_alerts
+	}

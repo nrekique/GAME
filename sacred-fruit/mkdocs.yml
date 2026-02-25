@@ -26,12 +26,18 @@ nav:
     - TrenchBroom Quick Reference: TB_ENTITY_QUICK_REFERENCE.md
     - Map Building Guidelines: MAP_BUILDING_GUIDELINES.md
     - Kit Spec Template: KIT_SPEC_TEMPLATE.md
+    - Door + Key Authoring: DOOR_KEY_AUTHORING.md
     - Map Linting: MAP_LINTING.md
+    - Map Validation Cookbook: MAP_VALIDATION_COOKBOOK.md
+    - FGD to Runtime Key Matrix: FGD_RUNTIME_KEY_MATRIX.md
+    - Runtime Map Pipeline: RUNTIME_MAP_PIPELINE.md
+    - Runtime Logs and Crash Signatures: RUNTIME_LOGS_AND_CRASH_SIGNATURES.md
     - Worldspawn Keys Reference: WORLDSPAWN_KEYS_REFERENCE.md
     - Volumes: VOLUMES.md
   - Entities:
     - Entity Scripting Guide: ENTITY_SCRIPTING_GUIDE.md
     - Entity I/O System: ENTITY_IO_SYSTEM.md
+    - Entity Interaction Contract: ENTITY_INTERACTION_CONTRACT.md
     - Dialogue Markdown: DIALOGUE_MARKDOWN.md
   - Rendering:
     - Portal Tuning Playbook: PORTAL_TUNING_PLAYBOOK.md
@@ -42,3 +48,5 @@ nav:
     - Style: STYLE.md
     - Tests: TESTS.md
     - Build Profiles: BUILD_PROFILES.md
+    - Docs Contribution Workflow: DOCS_CONTRIBUTION_WORKFLOW.md
+    - Docs Backlog: DOCS_BACKLOG.md

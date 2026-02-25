@@ -25,7 +25,7 @@
     extend further.
   - Added `body_entered`/`body_exited` signals, spawn blocker group and
     `GAME.is_spawn_blocked` helper, and corresponding FGD entries for each type.
-- [ ] 6. AI authoring layer
+- [x] 6. AI authoring layer
   - Nav regions, patrol pathing, cover markers, perception blockers, spawn wave points.
   - Phase 1 started: added point entities (`ai_nav_region`, `ai_patrol_point`,
     `ai_cover_marker`, `ai_perception_blocker`, `ai_spawn_wave_point`) and
@@ -39,6 +39,9 @@
   - Phase 1 fixes: `ai_wave_spawner` now accepts `npc_scene` map key path and
     enforces per-point `max_spawn_count`; patrol controllers refresh routes to
     handle late-loaded markers.
+  - Added runtime AI HUD (`F7`) with controller state/route summaries.
+  - Added AI lint checks for route/wave wiring and patrol order collisions.
+  - Expanded AI smoke tests for missing-route idle behavior and no-wave-point spawn handling.
 - [x] 7. Lighting pipeline
   - Added mapper-facing light `bake_mode` policy (`dynamic` / `static` / `disabled`) in light FGD + runtime light script.
   - Added `env_reflection_probe` point entity with probe cull mask, intensity, and update mode.
@@ -47,21 +50,25 @@
   - Added persistent runtime keys in `GAME`: `save_id`, `starts_enabled`, `one_shot` support for `Volume` subclasses.
   - Added checkpoint registration/activation and restore-first respawn rules in `GAME.respawn_player`.
   - `checkpoint_volume` now registers checkpoints with optional `checkpoint_id` and persistence through runtime state config.
-- [ ] 9. Performance budgets in editor
-  - Per-entity cost hints and mapper-facing perf heatmaps.
-- [ ] 10. Automated smoke tests
-  - Headless map load/build checks and perf CSV diff reporting in CI.
+- [x] 9. Performance budgets in editor
+  - Added mapper-facing point entities: `perf_budget_marker`, `perf_heatmap_volume`.
+  - Added runtime budget aggregation API in `GAME` (`get_perf_budget_markers`, `get_perf_heatmap_volumes`, `get_perf_budget_at_point`).
+  - Runtime perf HUD now reports budget score/status at camera position.
+- [x] 10. Automated smoke tests
+  - Added `tools/map_build_smoke.gd` for headless runtime map load/build checks.
+  - Added `tools/run_smoke_suite.sh` and wired CI to run the full smoke suite.
+  - Added `tools/perf_regression_check.py` for portal stress perf CSV generation and baseline diff reporting in CI.
+  - Perf artifacts now uploaded from CI (`artifacts/perf/*`).
 - [ ] 11. Dialogue + conversation layer
   - Fallout-style branching dialogue with topic questions, gated checks (skills/reputation/flags), and persistent outcomes.
   - Phase 1 started: dialogue runtime manager + UI shell, NPC interaction hook, mapper-facing NPC dialogue keys, and sample branching conversation data.
   - Phase 2 started: cinematic player focus framing on active NPC dialogue, paced line reveal flow, and richer choice presentation with explicit requirement tags.
+  - Phase 3 started: quest-stage gating/effects (`require_quest`, `exclude_quest`, `min_quest_stage`, `add_quest_stage`, `set_quest_stage`) plus dialogue integration smoke test coverage.
   - Next: quest/faction wiring, VO/subtitle timing, companion interjections, and authoring tools for large dialogue graphs.
 - [ ] 12. Mapping standards + icon backlog
   - Publish mapper-facing building standards doc with canonical unit scale, door/wall metrics, road/sidewalk widths, and indoor/outdoor lighting targets.
   - Reserve unique icons for likely upcoming entities:
     - `io_debug_monitor`
-    - `perf_budget_marker`
-    - `perf_heatmap_volume`
     - `test_spawn_point`
     - `test_assert_trigger`
     - `dialogue_anchor`
@@ -70,13 +77,18 @@
     - `dialogue_event_emit`
     - `vo_subtitle_zone`
     - `companion_interject_point`
+  - Documentation queue items 4-7 added in `DOCS_BACKLOG.md`:
+    - FGD-to-runtime key matrix
+    - Runtime logs/crash signatures index
+    - Mapping validation cookbook
+    - Documentation contribution workflow
 
 ## Codebase audit follow‑ups
 
 - [x] Break up **monolithic scripts** (`game_manager.gd`, `func_portal.gd`, `func_mirror.gd`, etc.) into smaller modules or helpers.  
-  - PS1 shader subsystem moved to `scripts/ps1_shader_manager.gd`.
-  - I/O dispatch and target system extracted to `scripts/io_manager.gd` with GameManager wrappers.
-- [x] Centralize shared utilities (e.g. `_to_bool`, bool/prop helpers) in `scripts/util.gd`; updated callers across the repo.
+  - PS1 shader subsystem moved to `scripts/env/ps1_shader_manager.gd`.
+  - I/O dispatch and target system extracted to `scripts/core/io_manager.gd` with GameManager wrappers.
+- [x] Centralize shared utilities (e.g. `_to_bool`, bool/prop helpers) in `scripts/core/util.gd`; updated callers across the repo.
 - [x] Gate debug prints using `Util.debug_enabled` and replaced ad‑hoc prints with `Util.debug_print` where appropriate.
 - [ ] Remove or gate all `print`‑style debug logs behind a global debug flag; consider using `push_warning()` or a logging subsystem.
 - [x] Eliminate editor‑hint clutter by moving editor‑only code into proper `tool` scripts or separate editor plugins.  

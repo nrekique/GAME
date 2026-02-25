@@ -24,6 +24,11 @@ tools/tb_lint_map.sh "tb/maps/fgd test.map" --fgd-root tb/fgd
   - Warn when portals/mirrors exist without `env_portal_budget`.
   - Warn on invalid `profile_mode`.
   - Warn on heavy `cinematic` profile with high portal/mirror counts.
+- AI authoring checks:
+  - Warn on duplicate `ai_patrol_point.order` values within the same `route_id`.
+  - Warn when `npc ai_enabled=1` references an `ai_route_id` without patrol points.
+  - Warn when `ai_wave_spawner` has no matching `ai_spawn_wave_point` markers.
+  - Warn when `ai_wave_spawner.npc_scene` is not a `res://...*.tscn` path.
 
 ## Notes
 

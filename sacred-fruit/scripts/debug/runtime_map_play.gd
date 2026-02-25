@@ -10,12 +10,14 @@ const SPECTATOR_SCENE: PackedScene = preload("res://scenes/spectator.tscn")
 const HOME_SETUP_SCRIPT := preload("res://scripts/core/home_setup.gd")
 const SANDSTORM_CONTROLLER_SCRIPT := preload("res://scripts/env/sandstorm_controller.gd")
 const RUNTIME_PERF_HUD_SCRIPT := preload("res://scripts/debug/runtime_perf_hud.gd")
+const RUNTIME_AI_HUD_SCRIPT := preload("res://scripts/debug/runtime_ai_hud.gd")
 const INFO_PLAYER_START_SCRIPT: Script = preload("res://entities/info_player_start.gd")
 
 var _map: FuncGodotMap
 var _player: Node3D
 var _sandstorm: Node3D
 var _perf_hud: CanvasLayer
+var _ai_hud: CanvasLayer
 
 @export var enable_sandstorm: bool = true
 @export_range(0.0, 1.0, 0.01) var sandstorm_intensity: float = 0.85
@@ -32,6 +34,7 @@ func _ready() -> void:
 	var status := _make_status_label("Building map…")
 	add_child(status)
 	_setup_perf_hud()
+	_setup_ai_hud()
 
 	var dbg := get_node_or_null("/root/DEBUG")
 	var map_path := ""
@@ -102,6 +105,17 @@ func _setup_perf_hud() -> void:
 	if hud is CanvasLayer:
 		_perf_hud = hud as CanvasLayer
 		add_child(_perf_hud)
+
+
+func _setup_ai_hud() -> void:
+	if RUNTIME_AI_HUD_SCRIPT == null:
+		return
+	if _ai_hud != null and is_instance_valid(_ai_hud):
+		return
+	var hud := RUNTIME_AI_HUD_SCRIPT.new()
+	if hud is CanvasLayer:
+		_ai_hud = hud as CanvasLayer
+		add_child(_ai_hud)
 
 
 func _make_status_label(text: String) -> Label:

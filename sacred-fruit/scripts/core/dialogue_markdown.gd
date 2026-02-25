@@ -205,9 +205,9 @@ static func _apply_choice_attribute(choice: Dictionary, key: String, raw_value: 
 			choice[key] = int(raw_value)
 		"hide_if_locked", "end":
 			choice[key] = Util.to_bool(raw_value, false)
-		"require_fact", "exclude_fact", "set_fact", "clear_fact":
+		"require_fact", "exclude_fact", "set_fact", "clear_fact", "require_quest", "exclude_quest":
 			choice[key] = _parse_string_list(raw_value)
-		"add_skill", "set_skill", "add_faction_rep", "set_faction_rep":
+		"add_skill", "set_skill", "add_faction_rep", "set_faction_rep", "add_quest_stage", "set_quest_stage", "min_quest_stage":
 			choice[key] = _parse_number_map(raw_value)
 		_:
 			choice[key] = _parse_scalar(raw_value)

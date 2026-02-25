@@ -140,6 +140,8 @@ From base FGD resources (`sacred-fruit/tb/fgd/base/*`):
 | `env_portal_budget` | `portal_max_active`, `portal_refresh_seconds`, `portal_max_render_scale`, `portal_min_render_scale` | Applies runtime portal budgeting overrides to all `func_portal` entities. |
 | `env_audio_ambience` | `ambience_stream`, `ambience_volume_db`, `ambience_bus` | Plays looped ambience stream at map runtime via `AudioStreamPlayer`. |
 | `env_zone` | `radius`, `intensity`, `fog_density`, `wind_speed` | Radial local override zone blended by camera distance. |
+| `perf_budget_marker` | `enabled`, `cost`, `radius`, `falloff_exponent`, `budget_limit`, `tag` | Point-based performance cost hint sampled by `GAME.get_perf_budget_at_point(...)`. |
+| `perf_heatmap_volume` | `enabled`, `cost`, `extents`, `budget_limit`, `tag` | Local cost zone sampled by `GAME.get_perf_budget_at_point(...)` for heatmap-style authoring. |
 | `ai_nav_region` | `enabled`, `region_id`, `nav_tag`, `radius` | Authoring marker for AI navigation metadata buckets. |
 | `ai_patrol_point` | `enabled`, `route_id`, `order`, `wait` | Ordered patrol points fetched with `GAME.get_ai_patrol_points(route_id)`. |
 | `ai_cover_marker` | `enabled`, `team`, `exposure`, `crouch_only` | Candidate cover position, query via `GAME.get_ai_cover_markers(team)`. |
@@ -290,6 +292,13 @@ After outputs execute, both groups are removed from scene tree.
 - `target3 = seq_c`, `delay3 = 2.5`
 
 Use `trigger_once = 1` for cutscene-style single-run behavior.
+
+### 6.5 Performance budget heatmap authoring
+1. Place `perf_budget_marker` near expected expensive content clusters.
+2. Set marker `cost`, `radius`, and `falloff_exponent`.
+3. Place `perf_heatmap_volume` over known heavy zones (dense props, mirrors, portals).
+4. Set optional `budget_limit` per marker/volume for local constraints.
+5. In runtime map mode, press `F8` to view budget score/status at camera position.
 
 ## 7. Test Plan (for your next refinement pass)
 

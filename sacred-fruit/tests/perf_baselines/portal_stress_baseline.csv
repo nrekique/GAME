@@ -1,0 +1,2 @@
+timestamp_unix,pairs,portals,render_scale,keep_hot,samples,avg_fps,p95_ms,p99_ms,max_ms
+1735689600,16,32,0.5,True,480,30.0,40.0,50.0,80.0

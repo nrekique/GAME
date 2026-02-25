@@ -35,8 +35,18 @@ jobs:
         run: ./scripts/scan_todos.sh
 
       - name: Run smoke tests
+        run: ./tools/run_smoke_suite.sh
+
+      - name: Generate perf CSV + baseline diff report
         run: |
-          godot --no-window --headless --script res://tests/util_test.gd
-          godot --no-window --headless --script res://tests/io_test.gd
-          godot --no-window --headless --script res://tests/profile_test.gd
-          godot --no-window --headless --script res://tests/volume_test.gd
+          python ./tools/perf_regression_check.py \
+            --output-csv artifacts/perf/portal_stress_current.csv \
+            --summary-md artifacts/perf/portal_stress_report.md \
+            --raw-log artifacts/perf/portal_stress_raw.log
+
+      - name: Upload perf artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: perf-artifacts
+          path: artifacts/perf/

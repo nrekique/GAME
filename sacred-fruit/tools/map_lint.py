@@ -50,6 +50,15 @@ class LintMessage:
     message: str
 
 
+def to_bool(raw: str, default: bool = False) -> bool:
+    value = (raw or "").strip().lower()
+    if value in {"1", "true", "yes", "on", "y"}:
+        return True
+    if value in {"0", "false", "no", "off", "n"}:
+        return False
+    return default
+
+
 def parse_map_entities(map_path: Path) -> list[dict[str, str]]:
     entities: list[dict[str, str]] = []
     depth = 0
@@ -197,6 +206,11 @@ def lint_entities(
     portal_count = 0
     mirror_count = 0
     budget_entities: list[tuple[int, dict[str, str]]] = []
+    patrol_orders: dict[str, dict[int, list[int]]] = defaultdict(lambda: defaultdict(list))
+    patrol_count_by_route: dict[str, int] = defaultdict(int)
+    spawn_points_by_wave_squad: dict[tuple[str, str], int] = defaultdict(int)
+    ai_enabled_npcs: list[tuple[int, str]] = []
+    wave_spawners: list[tuple[int, str, str, str]] = []
 
     for idx, e in enumerate(entities, start=1):
         classname = e.get("classname", "").strip()
@@ -206,6 +220,29 @@ def lint_entities(
             mirror_count += 1
         if classname == "env_portal_budget":
             budget_entities.append((idx, e))
+        if classname == "ai_patrol_point":
+            route = e.get("route_id", "default").strip().lower() or "default"
+            order_raw = e.get("order", "0").strip()
+            try:
+                order = int(order_raw)
+            except ValueError:
+                order = 0
+            patrol_orders[route][order].append(idx)
+            patrol_count_by_route[route] += 1
+        if classname == "ai_spawn_wave_point":
+            wave_id = e.get("wave_id", "default").strip().lower() or "default"
+            squad_id = e.get("squad_id", "").strip().lower()
+            spawn_points_by_wave_squad[(wave_id, squad_id)] += 1
+        if classname == "npc":
+            ai_enabled = to_bool(e.get("ai_enabled", ""), False)
+            if ai_enabled:
+                route = e.get("ai_route_id", "default").strip().lower() or "default"
+                ai_enabled_npcs.append((idx, route))
+        if classname == "ai_wave_spawner":
+            wave_id = e.get("wave_id", "default").strip().lower() or "default"
+            squad_id = e.get("squad_id", "").strip().lower()
+            npc_scene = e.get("npc_scene", "").strip()
+            wave_spawners.append((idx, wave_id, squad_id, npc_scene))
 
         if classname not in defs:
             out.append(LintMessage("WARN", idx, classname, "unknown classname in FGD"))
@@ -270,6 +307,73 @@ def lint_entities(
                     idx,
                     "env_portal_budget",
                     "profile_mode not set; runtime default is balanced",
+                )
+            )
+
+    # AI authoring checks -----------------------------------------------------
+    for route, order_map in patrol_orders.items():
+        for order, entity_ids in order_map.items():
+            if len(entity_ids) > 1:
+                out.append(
+                    LintMessage(
+                        "WARN",
+                        None,
+                        "ai_patrol_point",
+                        f'duplicate ai_patrol_point order "{order}" on route "{route}" at entities {entity_ids}',
+                    )
+                )
+
+    for idx, route in ai_enabled_npcs:
+        if patrol_count_by_route.get(route, 0) == 0:
+            out.append(
+                LintMessage(
+                    "WARN",
+                    idx,
+                    "npc",
+                    f'ai_enabled npc references ai_route_id "{route}" but no ai_patrol_point exists for that route',
+                )
+            )
+
+    for idx, wave_id, squad_id, npc_scene in wave_spawners:
+        exact_count = spawn_points_by_wave_squad.get((wave_id, squad_id), 0)
+        wave_any_count = sum(
+            count for (w, _s), count in spawn_points_by_wave_squad.items() if w == wave_id
+        )
+        if squad_id:
+            if exact_count == 0:
+                out.append(
+                    LintMessage(
+                        "WARN",
+                        idx,
+                        "ai_wave_spawner",
+                        f'wave "{wave_id}" squad "{squad_id}" has no matching ai_spawn_wave_point',
+                    )
+                )
+        elif wave_any_count == 0:
+            out.append(
+                LintMessage(
+                    "WARN",
+                    idx,
+                    "ai_wave_spawner",
+                    f'wave "{wave_id}" has no ai_spawn_wave_point markers',
+                )
+            )
+        if npc_scene and not npc_scene.startswith("res://"):
+            out.append(
+                LintMessage(
+                    "WARN",
+                    idx,
+                    "ai_wave_spawner",
+                    f'npc_scene "{npc_scene}" should be a res:// path',
+                )
+            )
+        if npc_scene and not npc_scene.endswith(".tscn"):
+            out.append(
+                LintMessage(
+                    "WARN",
+                    idx,
+                    "ai_wave_spawner",
+                    f'npc_scene "{npc_scene}" should end with .tscn',
                 )
             )
     return out

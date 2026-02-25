@@ -43,6 +43,21 @@ Quick authoring sheet for common gameplay/environment entities.
 - `portal_max_render_scale`
 - `portal_min_render_scale`
 
+`perf_budget_marker`
+- `enabled` (`0/1`)
+- `cost` (base local perf cost)
+- `radius` (influence radius)
+- `falloff_exponent` (center weighting; higher is steeper)
+- `budget_limit` (optional local cap; `<=0` uses global HUD thresholds)
+- `tag` (optional grouping key)
+
+`perf_heatmap_volume`
+- `enabled` (`0/1`)
+- `cost` (added while inside volume)
+- `extents` (`x y z` half-size)
+- `budget_limit` (optional local cap)
+- `tag` (optional grouping key)
+
 ## Environment
 
 `env_sandstorm`
@@ -234,6 +249,9 @@ _These areas emit `body_entered(body)` and `body_exited(body)` signals._
 - `ai_patrol_speed`
 - `ai_alert_duration`
 - `ai_reacts_to_alerts` (`0/1`)
+
+Runtime debug:
+- `F7` toggles AI HUD (controller counts/states, route/point summary).
 
 ## Interactions
 

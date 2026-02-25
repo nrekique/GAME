@@ -8,6 +8,7 @@ const MIRROR_MANAGER_PATH := "/root/MirrorRuntimeManager"
 @export var toggle_action: StringName = &"debug_toggle_perf_hud"
 @export var csv_logging_enabled: bool = false
 @export var csv_toggle_action: StringName = &"debug_toggle_perf_csv"
+@export var show_budget_summary: bool = true
 
 var _label: Label
 var _accum: float = 0.0
@@ -96,7 +97,24 @@ func _update_text() -> void:
 		_append_csv_sample(fps, frame_ms, process_ms, physics_ms, draw_calls, portal_active, portal_total, mirror_active, mirror_total)
 
 	var csv_state: String = "ON" if csv_logging_enabled else "OFF"
-	_label.text = "PERF HUD (F8)\nCSV LOG (F9): %s\nFPS %.1f  Frame %.2f ms\nProcess %.2f ms  Physics %.2f ms\nDraw Calls %d\nPortals %d/%d active\nMirrors %d/%d active" % [
+	var budget_line: String = ""
+	if show_budget_summary:
+		var game := get_node_or_null("/root/GAME")
+		var cam := get_viewport().get_camera_3d()
+		if game != null and cam != null and game.has_method("get_perf_budget_at_point"):
+			var budget: Dictionary = game.call("get_perf_budget_at_point", cam.global_position, "")
+			var score: float = float(budget.get("score", 0.0))
+			var status: String = String(budget.get("status", "ok"))
+			var markers: int = int(budget.get("marker_hits", 0))
+			var volumes: int = int(budget.get("volume_hits", 0))
+			var budget_limit: float = float(budget.get("budget_limit", -1.0))
+			if budget_limit > 0.0:
+				budget_line = "\nBudget %.1f/%.1f (%s) [m:%d v:%d]" % [score, budget_limit, status, markers, volumes]
+			else:
+				var warn_th: float = float(budget.get("warning_threshold", 0.0))
+				var crit_th: float = float(budget.get("critical_threshold", 0.0))
+				budget_line = "\nBudget %.1f (warn %.1f / crit %.1f) (%s) [m:%d v:%d]" % [score, warn_th, crit_th, status, markers, volumes]
+	_label.text = "PERF HUD (F8)\nCSV LOG (F9): %s\nFPS %.1f  Frame %.2f ms\nProcess %.2f ms  Physics %.2f ms\nDraw Calls %d\nPortals %d/%d active\nMirrors %d/%d active%s" % [
 		csv_state,
 		fps,
 		frame_ms,
@@ -106,7 +124,8 @@ func _update_text() -> void:
 		portal_active,
 		portal_total,
 		mirror_active,
-		mirror_total
+		mirror_total,
+		budget_line
 	]
 
 

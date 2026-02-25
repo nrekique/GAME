@@ -85,6 +85,10 @@ func _ready() -> void:
 	ctrl._process(0.05)
 	assert(String(ctrl.get("_state")) == "alert")
 	print("[TEST] NPC anchor attaches AIController when enabled")
+	var snap: Dictionary = ctrl.call("get_debug_snapshot")
+	assert(String(snap.get("route_id", "")) == "route_a")
+	assert(int(snap.get("patrol_points", 0)) >= 3)
+	print("[TEST] AIController debug snapshot reports route + patrol points")
 
 	var spawner := preload("res://entities/logic/ai_wave_spawner.gd").new()
 	spawner.wave_id = "wave_a"
@@ -127,6 +131,36 @@ func _ready() -> void:
 	var resolved := spawner_path.call("_resolve_npc_scene")
 	assert(resolved is PackedScene)
 	print("[TEST] Wave spawner accepts npc_scene path key")
+
+	var no_route_ctrl := preload("res://entities/logic/ai_controller.gd").new()
+	var no_route_actor := Node3D.new()
+	no_route_actor.global_position = Vector3.ZERO
+	add_child(no_route_actor)
+	add_child(no_route_ctrl)
+	no_route_ctrl.call("setup", no_route_actor, {
+		"enabled": true,
+		"route_id": "missing_route",
+		"patrol_speed": 2.0
+	})
+	await get_tree().process_frame
+	no_route_ctrl._process(0.05)
+	assert(String(no_route_ctrl.get("_state")) == "idle")
+	print("[TEST] AIController stays idle when route has no patrol points")
+
+	var no_points_spawner := preload("res://entities/logic/ai_wave_spawner.gd").new()
+	no_points_spawner.wave_id = "wave_missing"
+	no_points_spawner.spawn_on_ready = false
+	no_points_spawner.spawn_interval = 0.01
+	no_points_spawner.total_spawn_limit = 2
+	no_points_spawner.max_alive = 2
+	no_points_spawner.npc_scene = npc_packed
+	add_child(no_points_spawner)
+	no_points_spawner.trigger_wave()
+	for i in range(8):
+		no_points_spawner._process(0.02)
+		await get_tree().process_frame
+	assert(int(no_points_spawner.get("_spawned_total")) == 0)
+	print("[TEST] AI wave spawner does not spawn without matching wave points")
 
 	get_tree().quit()
 

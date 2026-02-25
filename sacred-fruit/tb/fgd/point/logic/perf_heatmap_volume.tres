@@ -1,0 +1,33 @@
+[gd_resource type="Resource" script_class="FuncGodotFGDPointClass" format=3]
+
+[ext_resource type="Script" path="res://addons/func_godot/src/fgd/func_godot_fgd_point_class.gd" id="1_point"]
+[ext_resource type="Resource" path="res://tb/fgd/base/targetname_base.tres" id="2_targetname"]
+[ext_resource type="Script" path="res://entities/logic/perf_heatmap_volume.gd" id="3_script"]
+
+[resource]
+script = ExtResource("1_point")
+script_class = ExtResource("3_script")
+classname = "perf_heatmap_volume"
+description = "Axis-aligned local performance cost zone for mapper heatmap authoring."
+base_classes = Array[Resource]([ExtResource("2_targetname")])
+class_properties = {
+"budget_limit": -1.0,
+"cost": 6.0,
+"enabled": true,
+"extents": Vector3(8, 4, 8),
+"tag": ""
+}
+class_property_descriptions = {
+"budget_limit": "Optional local budget threshold while camera is inside volume.",
+"cost": "Performance cost added while point is inside the volume.",
+"enabled": "If false, volume is ignored.",
+"extents": "Half-size extents of the volume in map units.",
+"tag": "Optional grouping tag for filtered budget queries."
+}
+meta_properties = {
+"color": Color(1, 0.4, 0.2, 1),
+"iconsprite": "\"fgd/entities/sprites/perf_heatmap_volume.png\"",
+"scale": "0.15",
+"size": AABB(-8, -8, -8, 8, 8, 8)
+}
+node_class = "Node3D"

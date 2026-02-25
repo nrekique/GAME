@@ -31,6 +31,8 @@ const ENV_ZONE_SCRIPT: Script = preload("res://entities/logic/env_zone.gd")
 
 @export var io_debug_logging: bool = false
 @export_range(16, 1024, 1) var io_trace_capacity: int = 256
+@export_range(0.0, 500.0, 0.1) var perf_budget_warning_score: float = 12.0
+@export_range(0.0, 500.0, 0.1) var perf_budget_critical_score: float = 20.0
 
 # runtime configuration ----------------------------------------------------
 # value read from project settings by `scripts/build_profile.sh`.
@@ -287,6 +289,102 @@ func get_ai_spawn_wave_points(wave_id: String = "default", squad_id: String = ""
 				continue
 		out.append(n as Node3D)
 	return out
+
+
+func get_perf_budget_markers(tag: String = "") -> Array[Node3D]:
+	var key := tag.strip_edges().to_lower()
+	var nodes: Array = []
+	if key.is_empty():
+		nodes = get_tree().get_nodes_in_group("perf_budget_marker")
+	else:
+		nodes = get_tree().get_nodes_in_group("perf_tag_%s" % key)
+	var out: Array[Node3D] = []
+	for n in nodes:
+		if n is Node3D and Util.to_bool(_get_node_prop(n, "enabled", true), true):
+			if n.is_in_group("perf_budget_marker"):
+				out.append(n as Node3D)
+	return out
+
+
+func get_perf_heatmap_volumes(tag: String = "") -> Array[Node3D]:
+	var key := tag.strip_edges().to_lower()
+	var nodes: Array = []
+	if key.is_empty():
+		nodes = get_tree().get_nodes_in_group("perf_heatmap_volume")
+	else:
+		nodes = get_tree().get_nodes_in_group("perf_tag_%s" % key)
+	var out: Array[Node3D] = []
+	for n in nodes:
+		if n is Node3D and Util.to_bool(_get_node_prop(n, "enabled", true), true):
+			if n.is_in_group("perf_heatmap_volume"):
+				out.append(n as Node3D)
+	return out
+
+
+func get_perf_budget_at_point(point: Vector3, tag: String = "") -> Dictionary:
+	var score: float = 0.0
+	var marker_hits: int = 0
+	var volume_hits: int = 0
+	var min_budget_limit: float = -1.0
+
+	for marker in get_perf_budget_markers(tag):
+		var m_cost: float = 0.0
+		if marker.has_method("estimate_cost_at_point"):
+			m_cost = maxf(float(marker.call("estimate_cost_at_point", point)), 0.0)
+		else:
+			var radius: float = maxf(float(_get_node_prop(marker, "radius", 0.0)), 0.0)
+			var base_cost: float = maxf(float(_get_node_prop(marker, "cost", 0.0)), 0.0)
+			if radius > 0.0:
+				var d: float = marker.global_position.distance_to(point)
+				if d < radius:
+					m_cost = base_cost * (1.0 - d / radius)
+		if m_cost > 0.0:
+			score += m_cost
+			marker_hits += 1
+		var marker_limit: float = float(_get_node_prop(marker, "budget_limit", -1.0))
+		if marker_limit > 0.0 and (min_budget_limit < 0.0 or marker_limit < min_budget_limit):
+			min_budget_limit = marker_limit
+
+	for volume in get_perf_heatmap_volumes(tag):
+		var v_cost: float = 0.0
+		if volume.has_method("estimate_cost_at_point"):
+			v_cost = maxf(float(volume.call("estimate_cost_at_point", point)), 0.0)
+		else:
+			var ext: Vector3 = _get_node_prop(volume, "extents", Vector3.ZERO)
+			if ext != Vector3.ZERO:
+				var lp: Vector3 = volume.global_transform.affine_inverse() * point
+				if absf(lp.x) <= ext.x and absf(lp.y) <= ext.y and absf(lp.z) <= ext.z:
+					v_cost = maxf(float(_get_node_prop(volume, "cost", 0.0)), 0.0)
+		if v_cost > 0.0:
+			score += v_cost
+			volume_hits += 1
+			var volume_limit: float = float(_get_node_prop(volume, "budget_limit", -1.0))
+			if volume_limit > 0.0 and (min_budget_limit < 0.0 or volume_limit < min_budget_limit):
+				min_budget_limit = volume_limit
+
+	var warning_threshold: float = perf_budget_warning_score
+	var critical_threshold: float = perf_budget_critical_score
+	var status: String = "ok"
+	if min_budget_limit > 0.0:
+		if score >= min_budget_limit:
+			status = "critical"
+		elif score >= min_budget_limit * 0.8:
+			status = "warn"
+	else:
+		if score >= critical_threshold:
+			status = "critical"
+		elif score >= warning_threshold:
+			status = "warn"
+
+	return {
+		"score": score,
+		"status": status,
+		"marker_hits": marker_hits,
+		"volume_hits": volume_hits,
+		"warning_threshold": warning_threshold,
+		"critical_threshold": critical_threshold,
+		"budget_limit": min_budget_limit
+	}
 
 
 func _handle_scene_change() -> void:

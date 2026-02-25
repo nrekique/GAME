@@ -50,6 +50,8 @@ Terminal choice:
   - `check_skill`, `check_skill_min`
   - `skill`, `min_skill`
   - `faction`, `min_faction_rep`
+  - `require_quest`, `exclude_quest`
+  - `min_quest_stage`
   - `hide_if_locked`
 - Facts:
   - `require_fact`, `exclude_fact`
@@ -57,6 +59,7 @@ Terminal choice:
 - Stat/rep changes:
   - `add_skill`, `set_skill`
   - `add_faction_rep`, `set_faction_rep`
+  - `add_quest_stage`, `set_quest_stage`
 - I/O hooks:
   - `io_target`, `io_input`, `io_arg`
 
@@ -71,6 +74,8 @@ Map values use `name:number` pairs:
 ```md
 | add_skill=speech:1,science:2
 | add_faction_rep=settlers:1
+| min_quest_stage=water:1
+| set_quest_stage=water:2
 ```
 
 ## Example

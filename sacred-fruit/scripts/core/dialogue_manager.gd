@@ -25,6 +25,7 @@ var _mouse_mode_before_dialogue: int = Input.MOUSE_MODE_CAPTURED
 var _facts: Dictionary = {}
 var _skills: Dictionary = {"speech": 25}
 var _faction_rep: Dictionary = {}
+var _quest_stage: Dictionary = {}
 
 
 func _ready() -> void:
@@ -169,6 +170,31 @@ func set_faction_rep(faction_name: String, value: int) -> void:
 
 func add_faction_rep(faction_name: String, delta: int) -> void:
 	set_faction_rep(faction_name, get_faction_rep(faction_name, 0) + delta)
+
+
+func get_quest_stage(quest_id: String, default_value: int = 0) -> int:
+	var key: String = quest_id.strip_edges().to_lower()
+	if key.is_empty():
+		return default_value
+	if not _quest_stage.has(key):
+		return default_value
+	return int(_quest_stage[key])
+
+
+func set_quest_stage(quest_id: String, stage: int) -> void:
+	var key: String = quest_id.strip_edges().to_lower()
+	if key.is_empty():
+		return
+	_quest_stage[key] = stage
+	_save_state()
+
+
+func add_quest_stage(quest_id: String, delta: int) -> void:
+	set_quest_stage(quest_id, get_quest_stage(quest_id, 0) + delta)
+
+
+func has_started_quest(quest_id: String) -> bool:
+	return get_quest_stage(quest_id, 0) > 0
 
 
 func has_fact(fact_name: String) -> bool:
@@ -364,6 +390,22 @@ func _first_unmet_requirement_reason(choice: Dictionary) -> String:
 		var min_rep: int = int(choice.get("min_faction_rep", 0))
 		if get_faction_rep(faction_name, 0) < min_rep:
 			return "%s rep %d required" % [faction_name.capitalize(), min_rep]
+
+	for quest in _to_string_array(choice.get("require_quest", [])):
+		if not has_started_quest(quest):
+			return "Requires quest %s" % quest
+	for quest in _to_string_array(choice.get("exclude_quest", [])):
+		if has_started_quest(quest):
+			return "Blocked by quest %s" % quest
+
+	var min_quest_stage_v: Variant = choice.get("min_quest_stage", {})
+	if min_quest_stage_v is Dictionary:
+		var min_quest_stage := min_quest_stage_v as Dictionary
+		for quest_key in min_quest_stage.keys():
+			var quest_name: String = String(quest_key).strip_edges()
+			var min_stage: int = int(min_quest_stage[quest_key])
+			if get_quest_stage(quest_name, 0) < min_stage:
+				return "%s stage %d required" % [quest_name, min_stage]
 	return ""
 
 
@@ -381,6 +423,12 @@ func _choice_requirement_label(choice: Dictionary) -> String:
 	var min_faction_name: String = String(choice.get("faction", "")).strip_edges().to_lower()
 	if not min_faction_name.is_empty() and choice.has("min_faction_rep"):
 		labels.append("%s rep %d" % [min_faction_name.capitalize(), int(choice.get("min_faction_rep", 0))])
+
+	var min_quest_stage_v: Variant = choice.get("min_quest_stage", {})
+	if min_quest_stage_v is Dictionary:
+		var min_quest_stage := min_quest_stage_v as Dictionary
+		for quest_key in min_quest_stage.keys():
+			labels.append("%s stage %d" % [String(quest_key), int(min_quest_stage[quest_key])])
 
 	var facts_required: PackedStringArray = _to_string_array(choice.get("require_fact", []))
 	if not facts_required.is_empty():
@@ -447,6 +495,17 @@ func _apply_choice_effects(choice: Dictionary) -> void:
 		var set_rep: Dictionary = set_rep_v as Dictionary
 		for faction_key in set_rep.keys():
 			set_faction_rep(String(faction_key), int(set_rep[faction_key]))
+
+	var add_quest_stage_v: Variant = choice.get("add_quest_stage", {})
+	if add_quest_stage_v is Dictionary:
+		var add_quest_stage_map := add_quest_stage_v as Dictionary
+		for quest_key in add_quest_stage_map.keys():
+			add_quest_stage(String(quest_key), int(add_quest_stage_map[quest_key]))
+	var set_quest_stage_v: Variant = choice.get("set_quest_stage", {})
+	if set_quest_stage_v is Dictionary:
+		var set_quest_stage_map := set_quest_stage_v as Dictionary
+		for quest_key in set_quest_stage_map.keys():
+			set_quest_stage(String(quest_key), int(set_quest_stage_map[quest_key]))
 
 	var io_target: String = String(choice.get("io_target", "")).strip_edges()
 	if not io_target.is_empty():
@@ -520,6 +579,7 @@ func _save_state() -> void:
 	cfg.set_value("dialogue", "facts", _facts)
 	cfg.set_value("dialogue", "skills", _skills)
 	cfg.set_value("dialogue", "faction_rep", _faction_rep)
+	cfg.set_value("dialogue", "quest_stage", _quest_stage)
 	cfg.save(DIALOGUE_STATE_PATH)
 
 
@@ -527,6 +587,7 @@ func _load_state() -> void:
 	_facts.clear()
 	_skills = {"speech": 25}
 	_faction_rep.clear()
+	_quest_stage.clear()
 	var cfg := ConfigFile.new()
 	if cfg.load(DIALOGUE_STATE_PATH) != OK:
 		return
@@ -539,3 +600,6 @@ func _load_state() -> void:
 	var reps_v: Variant = cfg.get_value("dialogue", "faction_rep", {})
 	if reps_v is Dictionary:
 		_faction_rep = reps_v as Dictionary
+	var quest_v: Variant = cfg.get_value("dialogue", "quest_stage", {})
+	if quest_v is Dictionary:
+		_quest_stage = quest_v as Dictionary

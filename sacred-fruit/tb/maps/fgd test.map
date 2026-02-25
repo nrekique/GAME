@@ -470,7 +470,7 @@
 // entity 15
 {
 "classname" "light_omni"
-"origin" "-728 -312 104"
+"origin" "-904 -392 104"
 "energy" "16.000000"
 "color" "255 100 255"
 "shadows" "1"
@@ -817,7 +817,7 @@
 // entity 31
 {
 "classname" "item_key"
-"origin" "-726 -314 22"
+"origin" "-598 -202 22"
 "key_id" "two"
 }
 // entity 32

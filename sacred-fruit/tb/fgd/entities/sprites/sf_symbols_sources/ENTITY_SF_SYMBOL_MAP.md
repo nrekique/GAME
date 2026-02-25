@@ -8,6 +8,8 @@ Edit this mapping however you want before exporting.
 - env_postfx -> slider.horizontal.3
 - env_weather -> cloud.rain
 - env_portal_budget -> circle.hexagongrid
+- perf_budget_marker -> speedometer
+- perf_heatmap_volume -> square.grid.3x3.square
 - env_audio_ambience -> speaker.wave.3
 - env_zone -> scope
 - env_message -> text.bubble
