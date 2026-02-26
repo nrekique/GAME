@@ -881,7 +881,7 @@
 // entity 37
 {
 "classname" "ai_patrol_point"
-"origin" "-648 -104 24"
+"origin" "-696 -104 24"
 "route_id" "enemy_patrol"
 "order" "2"
 "targetname" "enemy_patrol_p3"

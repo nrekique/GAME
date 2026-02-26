@@ -214,6 +214,7 @@ _These areas emit `body_entered(body)` and `body_exited(body)` signals._
 - `enabled` (`0/1`)
 - `route_id` (route/group id)
 - `order` (integer ordering within route)
+- `target` (optional next point `targetname`; shows TrenchBroom link arrow)
 - `wait` (seconds)
 
 `ai_cover_marker`
@@ -252,6 +253,19 @@ _These areas emit `body_entered(body)` and `body_exited(body)` signals._
 
 Runtime debug:
 - `F7` toggles AI HUD (controller counts/states, route/point summary).
+
+`npc_enemy_patrol` (preset)
+- `ai_enabled` default `1`
+- `dialogue_enabled` default `0`
+- `ai_route_id` default `enemy_patrol`
+- Uses same scene as `npc`, but tuned for drop-in patrol enemies.
+
+Basic path setup:
+1. Place one `npc_enemy_patrol`.
+2. Set `ai_route_id` (example: `enemy_patrol_a`).
+3. Place at least 2 `ai_patrol_point` entities with matching `route_id`.
+4. Set patrol `order` values (0, 1, 2...) to define loop path.
+5. Optional visual links: give each patrol point a `targetname`, then set each point's `target` to the next point `targetname` to display route arrows in TrenchBroom.
 
 ## Interactions
 

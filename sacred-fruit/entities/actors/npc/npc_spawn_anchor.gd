@@ -7,6 +7,7 @@ const Util := preload("res://scripts/core/util.gd")
 @export var default_inverse_scale_factor: float = 32.0
 @export var extra_offset: Vector3 = Vector3.ZERO
 @export var idle_animation_name: String = "idle"
+@export var walk_animation_name: String = "walk"
 @export var idle_fallback_enabled: bool = true
 @export_range(0.0, 0.2, 0.001) var idle_bob_amplitude: float = 0.02
 @export_range(0.1, 8.0, 0.01) var idle_bob_frequency: float = 1.2
@@ -34,6 +35,11 @@ var _idle_visual_root: Node3D = null
 var _base_visual_rotation: Vector3 = Vector3.ZERO
 var _idle_phase: float = 0.0
 var _has_animation_player: bool = false
+var _anim_player: AnimationPlayer = null
+var _idle_clip_name: String = ""
+var _walk_clip_name: String = ""
+var _current_anim_clip: String = ""
+var _ai_is_moving: bool = false
 var _ai_controller: Node = null
 const AI_CONTROLLER_SCRIPT := preload("res://entities/logic/ai_controller.gd")
 
@@ -42,7 +48,7 @@ func _ready() -> void:
 	if Util.editor_hint():
 		return
 	_setup_idle_animation()
-	_setup_ai_controller()
+	_sync_ai_controller()
 
 func _process(delta: float) -> void:
 	if Util.editor_hint():
@@ -116,11 +122,14 @@ func _setup_idle_animation() -> void:
 	if anim_player == null:
 		_has_animation_player = false
 		return
-	var clip: String = _pick_idle_clip(anim_player)
-	if clip == "":
+	_anim_player = anim_player
+	_idle_clip_name = _pick_idle_clip(anim_player)
+	_walk_clip_name = _pick_walk_clip(anim_player)
+	if _idle_clip_name == "" and _walk_clip_name == "":
 		_has_animation_player = false
 		return
-	anim_player.play(clip)
+	if _idle_clip_name != "":
+		_play_anim(_idle_clip_name)
 	_has_animation_player = true
 
 func _find_animation_player(root: Node) -> AnimationPlayer:
@@ -155,6 +164,53 @@ func _pick_idle_clip(anim_player: AnimationPlayer) -> String:
 			return name
 	return ""
 
+
+func _pick_walk_clip(anim_player: AnimationPlayer) -> String:
+	if walk_animation_name != "" and anim_player.has_animation(walk_animation_name):
+		return walk_animation_name
+	var candidate_names: PackedStringArray = PackedStringArray([
+		"walk",
+		"Walk",
+		"walking",
+		"Walking",
+		"walk_loop",
+		"WalkLoop",
+		"Armature|Walk",
+		"mixamo.com"
+	])
+	for candidate in candidate_names:
+		if anim_player.has_animation(candidate):
+			return candidate
+	var names: PackedStringArray = anim_player.get_animation_list()
+	for name in names:
+		var lower := name.to_lower()
+		if lower.find("walk") != -1 or lower.find("mixamo") != -1:
+			return name
+	return ""
+
+
+func _play_anim(clip: String) -> void:
+	if _anim_player == null or clip == "":
+		return
+	if _current_anim_clip == clip and _anim_player.is_playing():
+		return
+	_anim_player.play(clip)
+	_current_anim_clip = clip
+
+
+func set_ai_move_state(moving: bool) -> void:
+	_ai_is_moving = moving
+	if not _has_animation_player:
+		return
+	if _ai_is_moving and _walk_clip_name != "":
+		_play_anim(_walk_clip_name)
+	else:
+		if _idle_clip_name != "":
+			_play_anim(_idle_clip_name)
+		elif _anim_player != null:
+			_anim_player.stop()
+			_current_anim_clip = ""
+
 func _func_godot_apply_properties(props: Dictionary) -> void:
 	if props.has("npc_visual_scale"):
 		npc_visual_scale = clampf(float(props["npc_visual_scale"]), 0.2, 2.0)
@@ -183,13 +239,27 @@ func _func_godot_apply_properties(props: Dictionary) -> void:
 	if props.has("dialogue_focus_bone_offset"):
 		dialogue_focus_bone_offset = clampf(float(props["dialogue_focus_bone_offset"]), -0.5, 0.5)
 	_apply_alignment()
+	if not Util.editor_hint():
+		_sync_ai_controller()
 
-func _setup_ai_controller() -> void:
+func _sync_ai_controller() -> void:
+	if not is_inside_tree():
+		return
+	if _ai_controller != null and is_instance_valid(_ai_controller):
+		if _ai_controller.has_method("setup"):
+			_ai_controller.call("setup", self, {
+				"enabled": ai_enabled,
+				"route_id": ai_route_id,
+				"patrol_speed": ai_patrol_speed,
+				"alert_duration": ai_alert_duration,
+				"reacts_to_alerts": ai_reacts_to_alerts
+			})
+		_ai_controller.set_process(ai_enabled)
+		_ai_controller.set_physics_process(ai_enabled)
+		return
 	if not ai_enabled:
 		return
 	if AI_CONTROLLER_SCRIPT == null:
-		return
-	if _ai_controller != null and is_instance_valid(_ai_controller):
 		return
 	var ctrl := AI_CONTROLLER_SCRIPT.new()
 	if ctrl == null:

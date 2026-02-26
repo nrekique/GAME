@@ -2,14 +2,15 @@
 
 [ext_resource type="Script" path="res://addons/func_godot/src/fgd/func_godot_fgd_point_class.gd" id="1_point"]
 [ext_resource type="Resource" path="res://tb/fgd/base/targetname_base.tres" id="2_targetname"]
-[ext_resource type="Script" path="res://entities/logic/ai_patrol_point.gd" id="3_script"]
+[ext_resource type="Resource" path="res://tb/fgd/base/target_base.tres" id="3_target_base"]
+[ext_resource type="Script" path="res://entities/logic/ai_patrol_point.gd" id="4_script"]
 
 [resource]
 script = ExtResource("1_point")
-script_class = ExtResource("3_script")
+script_class = ExtResource("4_script")
 classname = "ai_patrol_point"
 description = "Ordered patrol waypoint for NPC route traversal."
-base_classes = Array[Resource]([ExtResource("2_targetname")])
+base_classes = Array[Resource]([ExtResource("2_targetname"), ExtResource("3_target_base")])
 class_properties = {
 "enabled": true,
 "order": 0,

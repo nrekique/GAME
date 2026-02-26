@@ -866,26 +866,20 @@
 "origin" "-440 40 24"
 "route_id" "enemy_patrol"
 "order" "0"
-"targetname" "enemy_patrol_p1"
-"target" "enemy_patrol_p2"
 }
 // entity 36
 {
 "classname" "ai_patrol_point"
-"origin" "-648 40 24"
+"origin" "-760 40 24"
 "route_id" "enemy_patrol"
 "order" "1"
-"targetname" "enemy_patrol_p2"
-"target" "enemy_patrol_p3"
 }
 // entity 37
 {
 "classname" "ai_patrol_point"
-"origin" "-648 -104 24"
+"origin" "-776 -104 24"
 "route_id" "enemy_patrol"
 "order" "2"
-"targetname" "enemy_patrol_p3"
-"target" "enemy_patrol_p4"
 }
 // entity 38
 {
@@ -893,6 +887,9 @@
 "origin" "-424 -136 24"
 "route_id" "enemy_patrol"
 "order" "3"
-"targetname" "enemy_patrol_p4"
-"target" "enemy_patrol_p1"
+}
+// entity 39
+{
+"classname" "env_sandstorm"
+"origin" "-728 104 24"
 }

@@ -124,6 +124,7 @@ From base FGD resources (`sacred-fruit/tb/fgd/base/*`):
 | `item_ammo` | `ammo_type`, `amount`, `auto_free`, `targetname` | Calls `add_ammo` on player/GAME fallback. |
 | `physics_ball` | `tumbleweed_enabled`, `radius`, `mass_kg`, `wind_response`, `rolling_torque`, `max_speed`, `water_buoyancy` | `RigidBody3D` physics prop. In tumbleweed mode it samples map wind/sandstorm settings and rolls with gusting wind force. `water_buoyancy` controls float/sink behavior in `water_volume`. |
 | `npc` | `flags`, `scale`, `targetname`, `ai_enabled`, `ai_route_id`, `ai_patrol_speed`, `ai_alert_duration`, `ai_reacts_to_alerts` (+ actor base) | Generic NPC actor entity using the default NPC scene with optional idle/patrol/alert AI controller. |
+| `npc_enemy_patrol` | `flags`, `scale`, `targetname`, `ai_enabled=1`, `ai_route_id`, `ai_patrol_speed`, `ai_alert_duration`, `ai_reacts_to_alerts`, `dialogue_enabled=0` | Enemy patrol preset over the NPC scene; intended for route-driven hostile/non-dialogue movement authoring. |
 | `path_corner` | `target`, `wait`, `targetname` | Train path node for `func_train`. |
 | `logic_auto` (new) | `enabled`, `fire_once`, `delay` + target base | Fires outputs automatically on spawn, optional delay, optional one-shot. |
 | `logic_relay` | `enabled`, `trigger_once`, `delay` + target base | Relay with delayed optional one-shot fire. |
@@ -143,7 +144,7 @@ From base FGD resources (`sacred-fruit/tb/fgd/base/*`):
 | `perf_budget_marker` | `enabled`, `cost`, `radius`, `falloff_exponent`, `budget_limit`, `tag` | Point-based performance cost hint sampled by `GAME.get_perf_budget_at_point(...)`. |
 | `perf_heatmap_volume` | `enabled`, `cost`, `extents`, `budget_limit`, `tag` | Local cost zone sampled by `GAME.get_perf_budget_at_point(...)` for heatmap-style authoring. |
 | `ai_nav_region` | `enabled`, `region_id`, `nav_tag`, `radius` | Authoring marker for AI navigation metadata buckets. |
-| `ai_patrol_point` | `enabled`, `route_id`, `order`, `wait` | Ordered patrol points fetched with `GAME.get_ai_patrol_points(route_id)`. |
+| `ai_patrol_point` | `enabled`, `route_id`, `order`, `target`, `wait` | Patrol points fetched with `GAME.get_ai_patrol_points(route_id)`. `target` can explicitly link to the next point (`targetname`) for TrenchBroom arrows and runtime path order override. |
 | `ai_cover_marker` | `enabled`, `team`, `exposure`, `crouch_only` | Candidate cover position, query via `GAME.get_ai_cover_markers(team)`. |
 | `ai_perception_blocker` | `enabled`, `radius` | LOS blocker proxy used by `GAME.is_ai_perception_blocked(start, end)`. |
 | `ai_spawn_wave_point` | `enabled`, `wave_id`, `squad_id`, `max_spawn_count`, `cooldown` | Spawn anchor metadata for wave systems via `GAME.get_ai_spawn_wave_points(...)`. |

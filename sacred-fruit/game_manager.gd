@@ -241,6 +241,16 @@ func get_ai_patrol_points(route_id: String = "default") -> Array[Node3D]:
 	if key.is_empty():
 		key = "default"
 	var nodes := get_tree().get_nodes_in_group("ai_patrol_route_%s" % key)
+	# Fallback: some point entities may miss dynamic route groups at runtime.
+	# Scan all ai_patrol_point nodes and filter by route_id from node/meta properties.
+	if nodes.is_empty():
+		var fallback_nodes := get_tree().get_nodes_in_group("ai_patrol_point")
+		for n in fallback_nodes:
+			var route_val := String(_get_node_prop(n, "route_id", "default")).strip_edges().to_lower()
+			if route_val.is_empty():
+				route_val = "default"
+			if route_val == key:
+				nodes.append(n)
 	var out: Array[Node3D] = []
 	for n in nodes:
 		if n is Node3D and Util.to_bool(_get_node_prop(n, "enabled", true), true):

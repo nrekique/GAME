@@ -1,0 +1,19 @@
+[remap]
+
+importer="csv_translation"
+type="Translation"
+uid="uid://cs4waph525guo"
+
+[deps]
+
+files=["res://tests/perf_baselines/portal_stress_baseline.pairs.translation", "res://tests/perf_baselines/portal_stress_baseline.portals.translation", "res://tests/perf_baselines/portal_stress_baseline.render.translation", "res://tests/perf_baselines/portal_stress_baseline.keep.translation", "res://tests/perf_baselines/portal_stress_baseline.samples.translation", "res://tests/perf_baselines/portal_stress_baseline.avg.translation", "res://tests/perf_baselines/portal_stress_baseline.p95.translation", "res://tests/perf_baselines/portal_stress_baseline.p99.translation", "res://tests/perf_baselines/portal_stress_baseline.max.translation"]
+
+source_file="res://tests/perf_baselines/portal_stress_baseline.csv"
+dest_files=["res://tests/perf_baselines/portal_stress_baseline.pairs.translation", "res://tests/perf_baselines/portal_stress_baseline.portals.translation", "res://tests/perf_baselines/portal_stress_baseline.render.translation", "res://tests/perf_baselines/portal_stress_baseline.keep.translation", "res://tests/perf_baselines/portal_stress_baseline.samples.translation", "res://tests/perf_baselines/portal_stress_baseline.avg.translation", "res://tests/perf_baselines/portal_stress_baseline.p95.translation", "res://tests/perf_baselines/portal_stress_baseline.p99.translation", "res://tests/perf_baselines/portal_stress_baseline.max.translation"]
+
+[params]
+
+compress=1
+delimiter=0
+unescape_keys=false
+unescape_translations=true

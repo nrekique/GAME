@@ -50,15 +50,26 @@ func _update_text() -> void:
 		return
 	var game := get_node_or_null("/root/GAME")
 	var nav_count := 0
-	var patrol_count := 0
+	var patrol_default_count := 0
+	var patrol_active_route_count := 0
 	var cover_count := 0
 	var wave_point_count := 0
 	var controller_count := get_tree().get_nodes_in_group("ai_controller").size()
+	var active_route := "default"
+	for ctrl in get_tree().get_nodes_in_group("ai_controller"):
+		if ctrl == null or not is_instance_valid(ctrl):
+			continue
+		if "route_id" in ctrl:
+			active_route = String(ctrl.get("route_id")).strip_edges()
+			if active_route.is_empty():
+				active_route = "default"
+			break
 	if game != null:
 		if game.has_method("get_ai_nav_regions"):
 			nav_count = (game.call("get_ai_nav_regions", "") as Array).size()
 		if game.has_method("get_ai_patrol_points"):
-			patrol_count = (game.call("get_ai_patrol_points", "default") as Array).size()
+			patrol_default_count = (game.call("get_ai_patrol_points", "default") as Array).size()
+			patrol_active_route_count = (game.call("get_ai_patrol_points", active_route) as Array).size()
 		if game.has_method("get_ai_cover_markers"):
 			cover_count = (game.call("get_ai_cover_markers", "") as Array).size()
 		if game.has_method("get_ai_spawn_wave_points"):
@@ -77,7 +88,9 @@ func _update_text() -> void:
 		if samples.size() < 3:
 			var route: String = String(snap.get("route_id", ""))
 			var points: int = int(snap.get("patrol_points", 0))
-			samples.append("%s(route=%s points=%d)" % [state, route, points])
+			var has_agent: bool = bool(snap.get("has_agent", false))
+			var moving: bool = bool(snap.get("is_moving", false))
+			samples.append("%s(route=%s points=%d agent=%s moving=%s)" % [state, route, points, str(has_agent), str(moving)])
 
 	var state_line := "none"
 	if not state_counts.is_empty():
@@ -88,11 +101,13 @@ func _update_text() -> void:
 		state_line = ", ".join(parts)
 	var sample_line := "n/a" if samples.is_empty() else " | ".join(samples)
 
-	_label.text = "AI HUD (F7)\nControllers %d  States [%s]\nNav %d  Patrol(default) %d  Cover %d  WavePoints(default) %d\nSample %s" % [
+	_label.text = "AI HUD (F7)\nControllers %d  States [%s]\nNav %d  Patrol(default) %d  Patrol(%s) %d  Cover %d  WavePoints(default) %d\nSample %s" % [
 		controller_count,
 		state_line,
 		nav_count,
-		patrol_count,
+		patrol_default_count,
+		active_route,
+		patrol_active_route_count,
 		cover_count,
 		wave_point_count,
 		sample_line

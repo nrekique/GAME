@@ -1,0 +1,9 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://entities/actors/npc/npc_spawn_anchor.gd" id="1_anchor"]
+[ext_resource type="PackedScene" path="res://entities/actors/npc/animations/Walking-3.fbx" id="2_mixamo_scene"]
+
+[node name="npc_mixamo" type="Node3D"]
+script = ExtResource("1_anchor")
+
+[node name="metarig" parent="." instance=ExtResource("2_mixamo_scene")]

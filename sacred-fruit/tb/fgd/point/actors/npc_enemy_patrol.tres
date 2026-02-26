@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="FuncGodotFGDPointClass" format=3]
+
+[ext_resource type="Script" path="res://addons/func_godot/src/fgd/func_godot_fgd_point_class.gd" id="1_point"]
+[ext_resource type="Resource" path="res://tb/fgd/base/actor_base.tres" id="2_actor_base"]
+[ext_resource type="Resource" path="res://tb/fgd/base/targetname_base.tres" id="3_targetname_base"]
+[ext_resource type="PackedScene" path="res://entities/actors/npc/npc_mixamo.tscn" id="4_scene"]
+
+[resource]
+script = ExtResource("1_point")
+scene_file = ExtResource("4_scene")
+apply_scale_on_map_build = false
+classname = "npc_enemy_patrol"
+description = "Enemy patrol NPC preset. Uses default NPC scene with patrol AI enabled and dialogue disabled."
+base_classes = Array[Resource]([ExtResource("2_actor_base"), ExtResource("3_targetname_base")])
+class_properties = {
+"ai_alert_duration": 4.0,
+"ai_enabled": true,
+"ai_patrol_speed": 2.5,
+"ai_reacts_to_alerts": true,
+"ai_route_id": "enemy_patrol",
+"dialogue_enabled": false,
+"dialogue_focus_bone_name": "spine.003",
+"dialogue_focus_bone_offset": -0.06,
+"dialogue_focus_height": 1.15,
+"dialogue_once_flag": "",
+"dialogue_resource_path": "res://data/dialogue/npc_default.md",
+"dialogue_speaker_name": "",
+"npc_visual_scale": 0.82
+}
+class_property_descriptions = {
+"ai_alert_duration": "Seconds to remain in alert state after AI alert.",
+"ai_enabled": "Always enabled for this preset.",
+"ai_patrol_speed": "Movement speed while patrolling.",
+"ai_reacts_to_alerts": "If true, reacts to GAME.ai_alerted events.",
+"ai_route_id": "Patrol route id (must match ai_patrol_point.route_id).",
+"dialogue_enabled": "Disabled for enemy preset by default.",
+"dialogue_focus_bone_name": "Skeleton bone name used for dialogue camera aim.",
+"dialogue_focus_bone_offset": "Vertical offset applied to the dialogue focus bone point.",
+"dialogue_focus_height": "World-space head focus height for dialogue camera.",
+"dialogue_once_flag": "Optional save key if dialogue is re-enabled.",
+"dialogue_resource_path": "Dialogue file path if dialogue is re-enabled.",
+"dialogue_speaker_name": "Speaker name override if dialogue is re-enabled.",
+"npc_visual_scale": "Visual model scale multiplier."
+}
+meta_properties = {
+"color": Color(0.95, 0.28, 0.28, 1),
+"iconsprite": "\"fgd/entities/sprites/npc_enemy_patrol.png\"",
+"model": "\"models/npc.obj\"",
+"size": AABB(-16, -16, -24, 16, 16, 32)
+}
