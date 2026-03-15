@@ -9,6 +9,12 @@ const Util := preload("res://scripts/core/util.gd")
 @export var show_volume: bool = true
 @export var one_shot: bool = true
 
+const ALLOWED_SCENE_ROOTS: Array[String] = [
+	"res://scenes/",
+	"res://tb/",
+	"res://entities/"
+]
+
 var _fired: bool = false
 
 const EXIT_VFX: PackedScene = preload("res://scenes/vfx/exit_burst.tscn")
@@ -34,13 +40,13 @@ func _func_godot_apply_properties(props: Dictionary) -> void:
 	if props.has("targetname"):
 		targetname = props["targetname"] as String
 	if props.has("map"):
-		map_path = props["map"] as String
+		map_path = Util.sanitize_allowed_resource_path(String(props["map"]), ALLOWED_SCENE_ROOTS, ".tscn")
 	elif props.has("map_path"):
-		map_path = props["map_path"] as String
+		map_path = Util.sanitize_allowed_resource_path(String(props["map_path"]), ALLOWED_SCENE_ROOTS, ".tscn")
 	elif props.has("scene"):
-		map_path = props["scene"] as String
+		map_path = Util.sanitize_allowed_resource_path(String(props["scene"]), ALLOWED_SCENE_ROOTS, ".tscn")
 	elif props.has("next_scene"):
-		map_path = props["next_scene"] as String
+		map_path = Util.sanitize_allowed_resource_path(String(props["next_scene"]), ALLOWED_SCENE_ROOTS, ".tscn")
 	if props.has("delay"):
 		# TrenchBroom values often arrive as strings.
 		delay = float(props["delay"])
@@ -48,6 +54,8 @@ func _func_godot_apply_properties(props: Dictionary) -> void:
 		show_volume = _parse_bool(props["show_volume"], show_volume)
 	if props.has("one_shot"):
 		one_shot = _parse_bool(props["one_shot"], one_shot)
+	if (props.has("map") or props.has("map_path") or props.has("scene") or props.has("next_scene")) and map_path.is_empty():
+		push_warning("trigger_exit '%s' rejected map_path outside allowlist" % name)
 
 
 func _init() -> void:
@@ -77,10 +85,11 @@ func _on_body_entered(body: Node) -> void:
 			set_deferred("monitoring", false)
 		_spawn_exit_vfx()
 		var ok := GAME.try_exit()
-		if ok and map_path != "":
+		var safe_scene := Util.sanitize_allowed_resource_path(map_path, ALLOWED_SCENE_ROOTS, ".tscn")
+		if ok and safe_scene != "":
 			if delay > 0.0:
 				await get_tree().create_timer(delay).timeout
-			get_tree().change_scene_to_file(map_path)
+			get_tree().change_scene_to_file(safe_scene)
 
 
 func _spawn_exit_vfx() -> void:
