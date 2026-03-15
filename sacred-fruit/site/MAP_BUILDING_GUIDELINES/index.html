@@ -1,0 +1,2074 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Mapper and developer documentation for Sacred Fruit">
+      
+      
+      
+      
+        <link rel="prev" href="../TB_ENTITY_QUICK_REFERENCE/">
+      
+      
+        <link rel="next" href="../KIT_SPEC_TEMPLATE/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.4">
+    
+    
+      
+        <title>Map Building Guidelines - Sacred Fruit Docs</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#map-building-guidelines" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="Sacred Fruit Docs" class="md-header__button md-logo" aria-label="Sacred Fruit Docs" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Sacred Fruit Docs
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Map Building Guidelines
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Sacred Fruit Docs" class="md-nav__button md-logo" aria-label="Sacred Fruit Docs" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Sacred Fruit Docs
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Roadmap
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Roadmap
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../DEVELOPMENT_TODO/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Development TODO
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../TEXTURE_ATLAS/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Texture Atlas
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../TEXTURE_PRODUCTION_CHECKLIST/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Texture Production Checklist
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../PHASE_1_DESIGN_BRIEF/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Phase 1 Design Brief
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../PHASE_1_QUICK_REF/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Phase 1 Quick Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../PHASE_1_TECHNICAL_SPECS/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Phase 1 Technical Specs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Mapping
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Mapping
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../TB_ENTITY_QUICK_REFERENCE/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    TrenchBroom Quick Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Map Building Guidelines
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Map Building Guidelines
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-canonical-units-and-grid" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Canonical Units and Grid
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-gameplay-clearances" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Gameplay Clearances
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Gameplay Clearances">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21-doors" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1 Doors
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22-interior-walls-and-ceilings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2 Interior Walls and Ceilings
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#23-stairs-steps-and-ramps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.3 Stairs, Steps, and Ramps
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-streets-and-sidewalks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Streets and Sidewalks
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-lighting-targets" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Lighting Targets
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Lighting Targets">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-indoor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1 Indoor
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42-outdoor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2 Outdoor
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#43-consistency-rules" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.3 Consistency Rules
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-prefab-and-kit-rules-bethesda-style-modular-discipline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Prefab and Kit Rules (Bethesda-style modular discipline)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Prefab and Kit Rules (Bethesda-style modular discipline)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#51-module-contracts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.1 Module Contracts
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#52-naming" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.2 Naming
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#53-variants-and-reuse" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.3 Variants and Reuse
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#54-validation-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.4 Validation Checklist
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-mapper-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Mapper Checklist
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-notes-on-external-baselines" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Notes on External Baselines
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-reference-material" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Reference Material
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../KIT_SPEC_TEMPLATE/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kit Spec Template
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../DOOR_KEY_AUTHORING/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Door + Key Authoring
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../MAP_LINTING/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Map Linting
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../MAP_VALIDATION_COOKBOOK/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Map Validation Cookbook
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../FGD_RUNTIME_KEY_MATRIX/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FGD to Runtime Key Matrix
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../RUNTIME_MAP_PIPELINE/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Runtime Map Pipeline
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../RUNTIME_LOGS_AND_CRASH_SIGNATURES/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Runtime Logs and Crash Signatures
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../WORLDSPAWN_KEYS_REFERENCE/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Worldspawn Keys Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../VOLUMES/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Volumes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Entities
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Entities
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ENTITY_SCRIPTING_GUIDE/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Entity Scripting Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ENTITY_IO_SYSTEM/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Entity I/O System
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ENTITY_INTERACTION_CONTRACT/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Entity Interaction Contract
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../DIALOGUE_MARKDOWN/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dialogue Markdown
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Rendering
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Rendering
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../PORTAL_TUNING_PLAYBOOK/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Portal Tuning Playbook
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../MIRROR_POLICY/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Mirror Policy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ENV_STACK_ORDER/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Environment Stack Order
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../PS1_SHADER_PARAMETERS/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PS1 Shader Parameters
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contributing
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Contributing
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../STYLE/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Style
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../TESTS/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tests
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../BUILD_PROFILES/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Build Profiles
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../DOCS_CONTRIBUTION_WORKFLOW/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Docs Contribution Workflow
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../DOCS_BACKLOG/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Docs Backlog
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-canonical-units-and-grid" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Canonical Units and Grid
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-gameplay-clearances" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Gameplay Clearances
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Gameplay Clearances">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21-doors" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1 Doors
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22-interior-walls-and-ceilings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2 Interior Walls and Ceilings
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#23-stairs-steps-and-ramps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.3 Stairs, Steps, and Ramps
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-streets-and-sidewalks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Streets and Sidewalks
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-lighting-targets" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Lighting Targets
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Lighting Targets">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-indoor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1 Indoor
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42-outdoor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2 Outdoor
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#43-consistency-rules" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.3 Consistency Rules
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-prefab-and-kit-rules-bethesda-style-modular-discipline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Prefab and Kit Rules (Bethesda-style modular discipline)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Prefab and Kit Rules (Bethesda-style modular discipline)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#51-module-contracts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.1 Module Contracts
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#52-naming" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.2 Naming
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#53-variants-and-reuse" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.3 Variants and Reuse
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#54-validation-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.4 Validation Checklist
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-mapper-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Mapper Checklist
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-notes-on-external-baselines" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Notes on External Baselines
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-reference-material" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Reference Material
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="map-building-guidelines">Map Building Guidelines<a class="headerlink" href="#map-building-guidelines" title="Permanent link">&para;</a></h1>
+<p>This document defines baseline mapper standards for Sacred Fruit so new maps feel consistent in scale, traversal, and lighting.</p>
+<h2 id="1-canonical-units-and-grid">1. Canonical Units and Grid<a class="headerlink" href="#1-canonical-units-and-grid" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Use <code>1 grid unit = 1 map unit (qu)</code>.</li>
+<li>Runtime conversion is <code>32 qu = 1 meter</code> (<code>inverse_scale_factor = 32.0</code>).</li>
+<li>Author on an <code>8 qu</code> grid for most work.</li>
+<li>Snap structural brushes to <code>16 qu</code> multiples.</li>
+<li>Keep hero alignment points (doors, stairs, cover edges, curb lines) on <code>8 qu</code> increments.</li>
+</ul>
+<p>Quick reference:
+- <code>32 qu = 1.0 m</code>
+- <code>16 qu = 0.5 m</code>
+- <code>8 qu = 0.25 m</code>
+- <code>4 qu = 0.125 m</code></p>
+<h2 id="2-gameplay-clearances">2. Gameplay Clearances<a class="headerlink" href="#2-gameplay-clearances" title="Permanent link">&para;</a></h2>
+<h3 id="21-doors">2.1 Doors<a class="headerlink" href="#21-doors" title="Permanent link">&para;</a></h3>
+<p>Default door standard (matches current key door usage in <code>tb/maps/fgd test.map</code>):
+- Clear width: <code>48 qu</code> (1.5 m)
+- Clear height: <code>84 qu</code> (2.625 m)
+- Door thickness: <code>4-8 qu</code>
+- Frame thickness: <code>8-16 qu</code></p>
+<p>Large door/gate standard:
+- Width: <code>96-160 qu</code>
+- Height: <code>96-160 qu</code></p>
+<p>Door movement defaults:
+- Swing/slide speed: <code>120 qu/s</code> (project default)
+- Auto-close wait: <code>3.0 s</code> unless gameplay needs faster reset</p>
+<h3 id="22-interior-walls-and-ceilings">2.2 Interior Walls and Ceilings<a class="headerlink" href="#22-interior-walls-and-ceilings" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Standard interior wall height: <code>96 qu</code> (3.0 m)</li>
+<li>Comfortable interior height: <code>112-120 qu</code> (3.5-3.75 m)</li>
+<li>Hero/public spaces: <code>128-192 qu</code> (4.0-6.0 m)</li>
+<li>Wall thickness:</li>
+<li>Interior partition: <code>8-12 qu</code></li>
+<li>Exterior/structural: <code>12-24 qu</code></li>
+</ul>
+<h3 id="23-stairs-steps-and-ramps">2.3 Stairs, Steps, and Ramps<a class="headerlink" href="#23-stairs-steps-and-ramps" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Single step rise: <code>4-8 qu</code></li>
+<li>Preferred stair run per step: <code>8-12 qu</code></li>
+<li>Keep repeated step rhythm consistent within one building kit.</li>
+<li>Ramp slope target: <code>1:8</code> to <code>1:12</code> for readable traversal.</li>
+</ul>
+<h2 id="3-streets-and-sidewalks">3. Streets and Sidewalks<a class="headerlink" href="#3-streets-and-sidewalks" title="Permanent link">&para;</a></h2>
+<p>Use these as map kit baselines:</p>
+<ul>
+<li>Single traffic lane: <code>96 qu</code> (3.0 m)</li>
+<li>Two-lane local road (no parking): <code>192 qu</code> (6.0 m)</li>
+<li>Collector/main road: <code>256-320 qu</code> (8.0-10.0 m)</li>
+<li>Sidewalk clear path (minimum): <code>32 qu</code> (1.0 m)</li>
+<li>Sidewalk standard: <code>48 qu</code> (1.5 m)</li>
+<li>Sidewalk generous/commercial: <code>64 qu</code> (2.0 m)</li>
+<li>Curb reveal height: <code>4 qu</code> (0.125 m)</li>
+<li>Buffer strip/tree pit band: <code>16-32 qu</code></li>
+</ul>
+<p>Road composition template:
+- Building face -&gt; <code>48 qu</code> sidewalk -&gt; <code>4 qu</code> curb -&gt; <code>192+ qu</code> carriageway -&gt; <code>4 qu</code> curb -&gt; <code>48 qu</code> sidewalk -&gt; building face.</p>
+<h2 id="4-lighting-targets">4. Lighting Targets<a class="headerlink" href="#4-lighting-targets" title="Permanent link">&para;</a></h2>
+<p>Sacred Fruit currently uses map-authored light energies commonly around <code>10</code>, <code>16</code>, and <code>25</code> in test content. Use that as the practical baseline.</p>
+<h3 id="41-indoor">4.1 Indoor<a class="headerlink" href="#41-indoor" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Ambient fill omni: <code>8-14</code></li>
+<li>Primary room key lights: <code>14-22</code></li>
+<li>Accent/task lights: <code>20-30</code></li>
+<li>Avoid fully flat rooms. Use at least 2 light roles:</li>
+<li>broad fill</li>
+<li>directional/accent</li>
+</ul>
+<h3 id="42-outdoor">4.2 Outdoor<a class="headerlink" href="#42-outdoor" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Daytime support lights (if needed): <code>6-12</code></li>
+<li>Night street/intersection lights: <code>16-30</code></li>
+<li>Landmark/emphasis lights: <code>24-40</code> (sparingly)</li>
+</ul>
+<h3 id="43-consistency-rules">4.3 Consistency Rules<a class="headerlink" href="#43-consistency-rules" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Keep color temperature coherent per zone (warm interior vs cooler exterior unless intentionally mixed).</li>
+<li>For one district/biome, keep most lights in a narrow band and reserve high energy for landmarks.</li>
+<li>Use shadows selectively. Enable only where silhouette readability matters.</li>
+</ul>
+<h2 id="5-prefab-and-kit-rules-bethesda-style-modular-discipline">5. Prefab and Kit Rules (Bethesda-style modular discipline)<a class="headerlink" href="#5-prefab-and-kit-rules-bethesda-style-modular-discipline" title="Permanent link">&para;</a></h2>
+<p>Define and enforce kit contracts before building large maps.</p>
+<h3 id="51-module-contracts">5.1 Module Contracts<a class="headerlink" href="#51-module-contracts" title="Permanent link">&para;</a></h3>
+<p>Every prefab/kit piece should declare:
+- Footprint in qu (<code>W x D x H</code>)
+- Connection edge type (wall, doorway, corner, stair start/end)
+- Door opening standard (<code>48 x 84</code> unless explicitly tagged otherwise)
+- Floor-to-floor height class (<code>96</code>, <code>120</code>, <code>160</code>, etc.)
+- Pivot/origin convention (recommended: floor center or lower-front-left)</p>
+<h3 id="52-naming">5.2 Naming<a class="headerlink" href="#52-naming" title="Permanent link">&para;</a></h3>
+<p>Use deterministic names:
+- <code>kit_&lt;theme&gt;_&lt;type&gt;_&lt;w&gt;x&lt;d&gt;x&lt;h&gt;_&lt;variant&gt;</code>
+- Example: <code>kit_city_corridor_96x192x120_a</code></p>
+<h3 id="53-variants-and-reuse">5.3 Variants and Reuse<a class="headerlink" href="#53-variants-and-reuse" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Build 1 clean base piece first.</li>
+<li>Add 2-4 visual variants without changing connection dimensions.</li>
+<li>Do not change snap points across variants.</li>
+</ul>
+<h3 id="54-validation-checklist">5.4 Validation Checklist<a class="headerlink" href="#54-validation-checklist" title="Permanent link">&para;</a></h3>
+<p>Before a prefab is approved:
+- Snaps on <code>8 qu</code> grid with no off-grid drift.
+- Door openings match standard or are clearly tagged as custom.
+- Collision and traversal clearances pass.
+- Lighting budget is in-range for zone type.
+- Works with neighboring kit pieces without manual vertex edits.</p>
+<h2 id="6-mapper-checklist">6. Mapper Checklist<a class="headerlink" href="#6-mapper-checklist" title="Permanent link">&para;</a></h2>
+<p>Before submitting a map revision:
+- Doorways use standard sizes unless intentional setpiece.
+- Interior heights stay within the chosen zone class.
+- Roads and sidewalks follow lane/walkway width standards.
+- Light energies stay in zone bands (indoor vs outdoor).
+- Key gameplay routes preserve readability and clearance.
+- New prefabs follow the naming and connection contract.</p>
+<h2 id="7-notes-on-external-baselines">7. Notes on External Baselines<a class="headerlink" href="#7-notes-on-external-baselines" title="Permanent link">&para;</a></h2>
+<p>This guide aligns Sacred Fruit with classic Quake/Valve readability principles:
+- predictable player clearances
+- modular grid discipline
+- repeatable architectural metrics</p>
+<p>Use this doc as the project source of truth even when references differ by engine unit system.</p>
+<h2 id="8-reference-material">8. Reference Material<a class="headerlink" href="#8-reference-material" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Valve Developer Community: <code>Dimensions (Half-Life 2 and Counter-Strike: Source)</code></li>
+<li>https://developer.valvesoftware.com/wiki/Dimensions_(Half-Life_2_and_Counter-Strike:_Source)</li>
+<li>QuakeC definitions (historical baseline conventions for classic Quake entity/player setup):</li>
+<li>https://www.gamers.org/dEngine/quake/QC/defs.qc.html</li>
+<li>Bethesda modular environment talk (kit-based worldbuilding discipline):</li>
+<li>https://www.youtube.com/watch?v=QBAM27YbKZg</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.sections", "navigation.top", "content.code.copy", "search.suggest", "search.highlight"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

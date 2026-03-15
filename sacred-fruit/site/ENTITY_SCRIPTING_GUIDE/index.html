@@ -1,0 +1,2920 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Mapper and developer documentation for Sacred Fruit">
+      
+      
+      
+      
+        <link rel="prev" href="../VOLUMES/">
+      
+      
+        <link rel="next" href="../ENTITY_IO_SYSTEM/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.4">
+    
+    
+      
+        <title>Entity Scripting Guide - Sacred Fruit Docs</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#sacred-fruit-entity-scripting-guide" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="Sacred Fruit Docs" class="md-header__button md-logo" aria-label="Sacred Fruit Docs" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Sacred Fruit Docs
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Entity Scripting Guide
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Sacred Fruit Docs" class="md-nav__button md-logo" aria-label="Sacred Fruit Docs" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Sacred Fruit Docs
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Roadmap
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Roadmap
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../DEVELOPMENT_TODO/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Development TODO
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../TEXTURE_ATLAS/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Texture Atlas
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../TEXTURE_PRODUCTION_CHECKLIST/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Texture Production Checklist
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../PHASE_1_DESIGN_BRIEF/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Phase 1 Design Brief
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../PHASE_1_QUICK_REF/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Phase 1 Quick Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../PHASE_1_TECHNICAL_SPECS/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Phase 1 Technical Specs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Mapping
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Mapping
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../TB_ENTITY_QUICK_REFERENCE/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    TrenchBroom Quick Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../MAP_BUILDING_GUIDELINES/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Map Building Guidelines
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../KIT_SPEC_TEMPLATE/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kit Spec Template
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../DOOR_KEY_AUTHORING/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Door + Key Authoring
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../MAP_LINTING/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Map Linting
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../MAP_VALIDATION_COOKBOOK/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Map Validation Cookbook
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../FGD_RUNTIME_KEY_MATRIX/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FGD to Runtime Key Matrix
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../RUNTIME_MAP_PIPELINE/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Runtime Map Pipeline
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../RUNTIME_LOGS_AND_CRASH_SIGNATURES/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Runtime Logs and Crash Signatures
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../WORLDSPAWN_KEYS_REFERENCE/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Worldspawn Keys Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../VOLUMES/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Volumes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Entities
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Entities
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Entity Scripting Guide
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Entity Scripting Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#see-also" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        See Also
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-pipeline-overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Pipeline Overview
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-core-io-model-target-system" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Core I/O Model (Target System)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Core I/O Model (Target System)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21-targetname" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1 targetname
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22-target" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2 target
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#23-targetfunc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.3 targetfunc
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#24-master-new" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.4 master (new)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#25-killtarget-new" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.5 killtarget (new)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-worldspawn-globals-new" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Worldspawn Globals (new)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-base-class-keyvalues" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Base Class Keyvalues
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-entity-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Entity Reference
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#51-point-entities" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.1 Point Entities
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#52-solid-brush-entities" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.2 Solid / Brush Entities
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5.2 Solid / Brush Entities">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#521-portal-runtime-notes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.2.1 Portal Runtime Notes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#522-swinging-doors-authoring-recipe" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.2.2 Swinging Doors (Authoring Recipe)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#53-environment-entity-rules" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.3 Environment Entity Rules
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-practical-recipes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Practical Recipes
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6. Practical Recipes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#61-boot-sequence-with-logic_auto" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.1 Boot sequence with logic_auto
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#62-locked-flow-with-master" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.2 Locked flow with master
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#63-cleanup-with-killtarget" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.3 Cleanup with killtarget
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#64-ordered-sequence-with-multi_manager" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.4 Ordered sequence with multi_manager
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#65-performance-budget-heatmap-authoring" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.5 Performance budget heatmap authoring
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-test-plan-for-your-next-refinement-pass" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Test Plan (for your next refinement pass)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="7. Test Plan (for your next refinement pass)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#71-core-dispatch-regression" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.1 Core dispatch regression
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#72-master-tests" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.2 master tests
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#73-killtarget-tests" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.3 killtarget tests
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#74-logic_auto-tests" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.4 logic_auto tests
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#75-worldspawn-sf_-tests" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.5 worldspawn sf_* tests
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#76-environment-env_-tests" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.6 Environment env_* tests
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#77-portal-tests" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.7 Portal tests
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-best-practices" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Best Practices
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-known-caveats" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. Known Caveats
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ENTITY_IO_SYSTEM/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Entity I/O System
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ENTITY_INTERACTION_CONTRACT/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Entity Interaction Contract
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../DIALOGUE_MARKDOWN/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dialogue Markdown
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Rendering
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Rendering
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../PORTAL_TUNING_PLAYBOOK/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Portal Tuning Playbook
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../MIRROR_POLICY/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Mirror Policy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ENV_STACK_ORDER/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Environment Stack Order
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../PS1_SHADER_PARAMETERS/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PS1 Shader Parameters
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contributing
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Contributing
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../STYLE/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Style
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../TESTS/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tests
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../BUILD_PROFILES/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Build Profiles
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../DOCS_CONTRIBUTION_WORKFLOW/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Docs Contribution Workflow
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../DOCS_BACKLOG/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Docs Backlog
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#see-also" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        See Also
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-pipeline-overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Pipeline Overview
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-core-io-model-target-system" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Core I/O Model (Target System)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Core I/O Model (Target System)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21-targetname" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1 targetname
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22-target" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2 target
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#23-targetfunc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.3 targetfunc
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#24-master-new" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.4 master (new)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#25-killtarget-new" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.5 killtarget (new)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-worldspawn-globals-new" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Worldspawn Globals (new)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-base-class-keyvalues" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Base Class Keyvalues
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-entity-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Entity Reference
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#51-point-entities" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.1 Point Entities
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#52-solid-brush-entities" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.2 Solid / Brush Entities
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5.2 Solid / Brush Entities">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#521-portal-runtime-notes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.2.1 Portal Runtime Notes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#522-swinging-doors-authoring-recipe" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.2.2 Swinging Doors (Authoring Recipe)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#53-environment-entity-rules" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.3 Environment Entity Rules
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-practical-recipes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Practical Recipes
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6. Practical Recipes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#61-boot-sequence-with-logic_auto" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.1 Boot sequence with logic_auto
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#62-locked-flow-with-master" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.2 Locked flow with master
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#63-cleanup-with-killtarget" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.3 Cleanup with killtarget
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#64-ordered-sequence-with-multi_manager" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.4 Ordered sequence with multi_manager
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#65-performance-budget-heatmap-authoring" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.5 Performance budget heatmap authoring
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-test-plan-for-your-next-refinement-pass" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Test Plan (for your next refinement pass)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="7. Test Plan (for your next refinement pass)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#71-core-dispatch-regression" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.1 Core dispatch regression
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#72-master-tests" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.2 master tests
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#73-killtarget-tests" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.3 killtarget tests
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#74-logic_auto-tests" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.4 logic_auto tests
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#75-worldspawn-sf_-tests" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.5 worldspawn sf_* tests
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#76-environment-env_-tests" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.6 Environment env_* tests
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#77-portal-tests" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.7 Portal tests
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-best-practices" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Best Practices
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-known-caveats" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. Known Caveats
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="sacred-fruit-entity-scripting-guide">Sacred Fruit Entity + Scripting Guide<a class="headerlink" href="#sacred-fruit-entity-scripting-guide" title="Permanent link">&para;</a></h1>
+<p>This guide documents how entity scripting works in this repo right now, including <code>worldspawn</code> globals, <code>logic_auto</code>, <code>master</code>, <code>killtarget</code>, and runtime environment controllers (<code>env_*</code>).</p>
+<h2 id="see-also">See Also<a class="headerlink" href="#see-also" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>docs/PORTAL_TUNING_PLAYBOOK.md</code></li>
+<li><code>docs/MIRROR_POLICY.md</code></li>
+<li><code>docs/ENV_STACK_ORDER.md</code></li>
+<li><code>docs/TB_ENTITY_QUICK_REFERENCE.md</code></li>
+<li><code>docs/WORLDSPAWN_KEYS_REFERENCE.md</code></li>
+</ul>
+<h2 id="1-pipeline-overview">1. Pipeline Overview<a class="headerlink" href="#1-pipeline-overview" title="Permanent link">&para;</a></h2>
+<p>Authoring flow:
+1. Build entities in TrenchBroom using <code>sacred-fruit/tb/fgd/sf_fgd.tres</code>.
+2. FuncGodot imports map entities and applies keyvalues through <code>_func_godot_apply_properties(props)</code>.
+3. Runtime behavior is implemented by scripts in <code>sacred-fruit/entities/**</code>.</p>
+<p>Key runtime singleton:
+- <code>GAME</code> (<code>/root/GAME</code>) from <code>sacred-fruit/game_manager.gd</code>.
+- Core dispatch API is <code>GAME.use_targets(activator, target)</code>.</p>
+<h2 id="2-core-io-model-target-system">2. Core I/O Model (Target System)<a class="headerlink" href="#2-core-io-model-target-system" title="Permanent link">&para;</a></h2>
+<h3 id="21-targetname">2.1 <code>targetname</code><a class="headerlink" href="#21-targetname" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>targetname</code> is mapped to Godot groups via <code>GAME.set_targetname(node, targetname)</code>.</li>
+<li>Comma-delimited targetnames are supported.</li>
+<li>Any entity with the same <code>targetname</code> becomes part of the same target group.</li>
+</ul>
+<h3 id="22-target">2.2 <code>target</code><a class="headerlink" href="#22-target" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>target</code> can be comma-delimited.</li>
+<li>Each target token is treated as a group name.</li>
+<li><code>GAME.use_targets(...)</code> calls target entities in each group once per group token.</li>
+</ul>
+<h3 id="23-targetfunc">2.3 <code>targetfunc</code><a class="headerlink" href="#23-targetfunc" title="Permanent link">&para;</a></h3>
+<ul>
+<li>If activator has <code>targetfunc</code>, that method is invoked on target entities.</li>
+<li>If empty, fallback method is <code>use</code>.</li>
+</ul>
+<h3 id="24-master-new">2.4 <code>master</code> (new)<a class="headerlink" href="#24-master-new" title="Permanent link">&para;</a></h3>
+<p><code>master</code> is evaluated in <code>GAME.use_targets(...)</code> before firing outputs.</p>
+<p>Behavior:
+- If <code>master</code> is empty: outputs proceed.
+- If <code>master</code> group has no nodes: outputs are blocked.
+- If any node in master group is considered unlocked: outputs proceed.
+- Otherwise outputs are blocked.</p>
+<p>A master node is considered unlocked when one of these is true:
+- Method exists and returns true: <code>is_unlocked</code>, <code>is_active</code>, <code>is_enabled</code>, <code>is_open</code>, or <code>is_on</code>.
+- Property exists and is truthy: <code>unlocked</code>, <code>active</code>, <code>enabled</code>, <code>open</code>, <code>on</code>, or <code>button_pressed</code>.
+- If no known method/property exists on a master node, that node is treated as unlocked.</p>
+<h3 id="25-killtarget-new">2.5 <code>killtarget</code> (new)<a class="headerlink" href="#25-killtarget-new" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Applied after outputs fire.</li>
+<li><code>killtarget</code> may be comma-delimited.</li>
+<li>Every node in each killtarget group is <code>queue_free()</code>'d.</li>
+<li>Duplicate node removals are deduplicated by instance id.</li>
+</ul>
+<h2 id="3-worldspawn-globals-new">3. Worldspawn Globals (new)<a class="headerlink" href="#3-worldspawn-globals-new" title="Permanent link">&para;</a></h2>
+<p>Custom worldspawn definition: <code>sacred-fruit/tb/fgd/solid/worldspawn.tres</code>.
+Runtime application:
+- <code>sacred-fruit/entities/worldspawn.gd</code>
+- <code>GAME.apply_worldspawn_globals(props, worldspawn)</code></p>
+<p>Important detail:
+- Globals apply only when the key was explicitly authored in the map (not merely inherited default).
+- This is done via source key tracking metadata (<code>func_godot_source_properties</code>) in FuncGodot import.</p>
+<p>Supported keys:
+- <code>sf_required_collectibles</code> (int)
+  - <code>&gt;= 0</code>: overrides <code>GAME.required_collectibles</code>.
+- <code>sf_objective_text</code> (string)
+  - non-empty: sets initial objective text.
+- <code>sf_ps1_shader</code> (bool)
+  - toggles <code>GAME</code> PS1 shader globally.
+- <code>sf_ps1_dither_strength</code> (float)
+  - <code>&gt;= 0.0</code>: overrides PS1 color dither strength.
+- <code>sf_sun_energy</code> (float)
+  - <code>&gt;= 0.0</code>: sets first <code>DirectionalLight3D.light_energy</code>.
+- <code>sf_fog_enabled</code> (bool)
+  - applies to <code>Environment.fog_enabled</code> and <code>Environment.volumetric_fog_enabled</code> if present.
+- <code>sf_fog_density</code> (float)
+  - <code>&gt;= 0.0</code>: sets <code>Environment.fog_density</code> if present.
+- <code>sf_fog_color</code> (Color/string)
+  - sets <code>fog_light_color</code> and <code>volumetric_fog_albedo</code> when available.</p>
+<h2 id="4-base-class-keyvalues">4. Base Class Keyvalues<a class="headerlink" href="#4-base-class-keyvalues" title="Permanent link">&para;</a></h2>
+<p>From base FGD resources (<code>sacred-fruit/tb/fgd/base/*</code>):</p>
+<ul>
+<li><code>Targetname</code></li>
+<li><code>targetname</code></li>
+<li><code>Target</code></li>
+<li><code>target</code></li>
+<li><code>targetfunc</code></li>
+<li><code>master</code> (new)</li>
+<li><code>killtarget</code> (new)</li>
+<li><code>Globalname</code></li>
+<li><code>globalname</code></li>
+<li><code>Func</code></li>
+<li><code>_phong</code></li>
+<li><code>Trigger</code></li>
+<li>inherits <code>Target</code> + <code>Targetname</code> + <code>Globalname</code></li>
+<li><code>Light</code></li>
+<li><code>color</code>, <code>energy</code>, <code>indirect_energy</code>, <code>shadow_bias</code>, <code>shadows</code></li>
+<li><code>Actor</code></li>
+<li><code>flags</code>, <code>scale</code></li>
+</ul>
+<h2 id="5-entity-reference">5. Entity Reference<a class="headerlink" href="#5-entity-reference" title="Permanent link">&para;</a></h2>
+<h2 id="51-point-entities">5.1 Point Entities<a class="headerlink" href="#51-point-entities" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Classname</th>
+<th>Main keyvalues</th>
+<th>Runtime behavior</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>info_player_start</code></td>
+<td><code>angles</code>, <code>active</code>, <code>targetname</code></td>
+<td>Places/rotates player at this marker on ready if active.</td>
+</tr>
+<tr>
+<td><code>info_intermission</code></td>
+<td><code>angles</code>, <code>active</code>, <code>targetname</code></td>
+<td>Camera entity; sets <code>current = true</code> if active.</td>
+</tr>
+<tr>
+<td><code>info_camera</code></td>
+<td><code>active</code>, <code>camera_target</code>, <code>targetname</code></td>
+<td>Camera that can be activated via <code>use()</code>.</td>
+</tr>
+<tr>
+<td><code>light</code> / <code>light_omni</code></td>
+<td>Light base + <code>range</code></td>
+<td>Omni light with QU-&gt;GU range conversion (<code>INVERSE_SCALE</code>).</td>
+</tr>
+<tr>
+<td><code>light_spot</code></td>
+<td>Light base + <code>range</code>, <code>angle</code>, <code>mangle</code></td>
+<td>Spot light with angle/range and orientation support.</td>
+</tr>
+<tr>
+<td><code>item_collectible</code></td>
+<td><code>value</code>, <code>auto_free</code>, <code>targetname</code></td>
+<td>Calls <code>GAME.collect(value)</code> on player overlap.</td>
+</tr>
+<tr>
+<td><code>item_health</code></td>
+<td><code>amount</code>, <code>allow_overheal</code>, <code>overheal_cap</code>, <code>auto_free</code>, <code>targetname</code></td>
+<td>Applies health to player (directly and via GAME fallback).</td>
+</tr>
+<tr>
+<td><code>item_ammo</code></td>
+<td><code>ammo_type</code>, <code>amount</code>, <code>auto_free</code>, <code>targetname</code></td>
+<td>Calls <code>add_ammo</code> on player/GAME fallback.</td>
+</tr>
+<tr>
+<td><code>physics_ball</code></td>
+<td><code>tumbleweed_enabled</code>, <code>radius</code>, <code>mass_kg</code>, <code>wind_response</code>, <code>rolling_torque</code>, <code>max_speed</code>, <code>water_buoyancy</code></td>
+<td><code>RigidBody3D</code> physics prop. In tumbleweed mode it samples map wind/sandstorm settings and rolls with gusting wind force. <code>water_buoyancy</code> controls float/sink behavior in <code>water_volume</code>.</td>
+</tr>
+<tr>
+<td><code>npc</code></td>
+<td><code>flags</code>, <code>scale</code>, <code>targetname</code>, <code>ai_enabled</code>, <code>ai_route_id</code>, <code>ai_patrol_speed</code>, <code>ai_alert_duration</code>, <code>ai_reacts_to_alerts</code> (+ actor base)</td>
+<td>Generic NPC actor entity using the default NPC scene with optional idle/patrol/alert AI controller.</td>
+</tr>
+<tr>
+<td><code>npc_enemy_patrol</code></td>
+<td><code>flags</code>, <code>scale</code>, <code>targetname</code>, <code>ai_enabled=1</code>, <code>ai_route_id</code>, <code>ai_patrol_speed</code>, <code>ai_alert_duration</code>, <code>ai_reacts_to_alerts</code>, <code>dialogue_enabled=0</code></td>
+<td>Enemy patrol preset over the NPC scene; intended for route-driven hostile/non-dialogue movement authoring.</td>
+</tr>
+<tr>
+<td><code>path_corner</code></td>
+<td><code>target</code>, <code>wait</code>, <code>targetname</code></td>
+<td>Train path node for <code>func_train</code>.</td>
+</tr>
+<tr>
+<td><code>logic_auto</code> (new)</td>
+<td><code>enabled</code>, <code>fire_once</code>, <code>delay</code> + target base</td>
+<td>Fires outputs automatically on spawn, optional delay, optional one-shot.</td>
+</tr>
+<tr>
+<td><code>logic_relay</code></td>
+<td><code>enabled</code>, <code>trigger_once</code>, <code>delay</code> + target base</td>
+<td>Relay with delayed optional one-shot fire.</td>
+</tr>
+<tr>
+<td><code>logic_timer</code></td>
+<td><code>enabled</code>, <code>start_on_spawn</code>, <code>one_shot</code>, <code>wait</code>, <code>random_jitter</code> + target base</td>
+<td>Interval-based output source.</td>
+</tr>
+<tr>
+<td><code>logic_random</code></td>
+<td><code>enabled</code>, <code>target1..8</code> (+ <code>target</code>) + target base</td>
+<td>Picks one target group at random and fires it.</td>
+</tr>
+<tr>
+<td><code>math_counter</code></td>
+<td><code>value</code>, <code>min_value</code>, <code>max_value</code>, <code>step</code>, <code>fire_on_limit_only</code>, <code>enabled</code> + target base</td>
+<td>Numeric counter with optional threshold-only output behavior.</td>
+</tr>
+<tr>
+<td><code>multi_manager</code></td>
+<td><code>target1..8</code>, <code>delay1..8</code>, <code>enabled</code>, <code>trigger_once</code> + target base</td>
+<td>Multi-output scheduler with per-target delays.</td>
+</tr>
+<tr>
+<td><code>env_message</code></td>
+<td><code>message</code>, <code>hold_time</code>, <code>restore_default_text</code>, <code>enabled</code> + target base</td>
+<td>Sets HUD objective text, optional restore, optional output firing.</td>
+</tr>
+<tr>
+<td><code>env_sandstorm</code></td>
+<td><code>enabled</code>, <code>intensity</code>, <code>wind_speed</code>, <code>wind_direction</code>, <code>fog_color</code></td>
+<td>Global sandstorm controller source. Drives overlay, dust particles, and fog tint/density in runtime map play.</td>
+</tr>
+<tr>
+<td><code>env_fog_controller</code></td>
+<td><code>fog_enabled</code>, <code>volumetric_fog_enabled</code>, <code>fog_density</code>, <code>volumetric_fog_density</code>, <code>fog_color</code></td>
+<td>Forces environment fog settings for the map.</td>
+</tr>
+<tr>
+<td><code>env_wind</code></td>
+<td><code>wind_speed</code>, <code>wind_direction</code></td>
+<td>Sets global wind vector/speed used by weather and sand effects.</td>
+</tr>
+<tr>
+<td><code>env_postfx</code></td>
+<td><code>postfx_strength</code>, <code>postfx_exposure</code>, <code>postfx_contrast</code>, <code>postfx_saturation</code></td>
+<td>Applies environment post-adjustments through <code>WorldEnvironment</code> adjustment/tonemap properties.</td>
+</tr>
+<tr>
+<td><code>env_weather</code></td>
+<td><code>weather_mode</code>, <code>weather_intensity</code></td>
+<td>Enables rain/snow-style ambient particles around camera.</td>
+</tr>
+<tr>
+<td><code>env_portal_budget</code></td>
+<td><code>portal_max_active</code>, <code>portal_refresh_seconds</code>, <code>portal_max_render_scale</code>, <code>portal_min_render_scale</code></td>
+<td>Applies runtime portal budgeting overrides to all <code>func_portal</code> entities.</td>
+</tr>
+<tr>
+<td><code>env_audio_ambience</code></td>
+<td><code>ambience_stream</code>, <code>ambience_volume_db</code>, <code>ambience_bus</code></td>
+<td>Plays looped ambience stream at map runtime via <code>AudioStreamPlayer</code>.</td>
+</tr>
+<tr>
+<td><code>env_zone</code></td>
+<td><code>radius</code>, <code>intensity</code>, <code>fog_density</code>, <code>wind_speed</code></td>
+<td>Radial local override zone blended by camera distance.</td>
+</tr>
+<tr>
+<td><code>perf_budget_marker</code></td>
+<td><code>enabled</code>, <code>cost</code>, <code>radius</code>, <code>falloff_exponent</code>, <code>budget_limit</code>, <code>tag</code></td>
+<td>Point-based performance cost hint sampled by <code>GAME.get_perf_budget_at_point(...)</code>.</td>
+</tr>
+<tr>
+<td><code>perf_heatmap_volume</code></td>
+<td><code>enabled</code>, <code>cost</code>, <code>extents</code>, <code>budget_limit</code>, <code>tag</code></td>
+<td>Local cost zone sampled by <code>GAME.get_perf_budget_at_point(...)</code> for heatmap-style authoring.</td>
+</tr>
+<tr>
+<td><code>ai_nav_region</code></td>
+<td><code>enabled</code>, <code>region_id</code>, <code>nav_tag</code>, <code>radius</code></td>
+<td>Authoring marker for AI navigation metadata buckets.</td>
+</tr>
+<tr>
+<td><code>ai_patrol_point</code></td>
+<td><code>enabled</code>, <code>route_id</code>, <code>order</code>, <code>target</code>, <code>wait</code></td>
+<td>Patrol points fetched with <code>GAME.get_ai_patrol_points(route_id)</code>. <code>target</code> can explicitly link to the next point (<code>targetname</code>) for TrenchBroom arrows and runtime path order override.</td>
+</tr>
+<tr>
+<td><code>ai_cover_marker</code></td>
+<td><code>enabled</code>, <code>team</code>, <code>exposure</code>, <code>crouch_only</code></td>
+<td>Candidate cover position, query via <code>GAME.get_ai_cover_markers(team)</code>.</td>
+</tr>
+<tr>
+<td><code>ai_perception_blocker</code></td>
+<td><code>enabled</code>, <code>radius</code></td>
+<td>LOS blocker proxy used by <code>GAME.is_ai_perception_blocked(start, end)</code>.</td>
+</tr>
+<tr>
+<td><code>ai_spawn_wave_point</code></td>
+<td><code>enabled</code>, <code>wave_id</code>, <code>squad_id</code>, <code>max_spawn_count</code>, <code>cooldown</code></td>
+<td>Spawn anchor metadata for wave systems via <code>GAME.get_ai_spawn_wave_points(...)</code>.</td>
+</tr>
+<tr>
+<td><code>ai_wave_spawner</code></td>
+<td><code>enabled</code>, <code>wave_id</code>, <code>squad_id</code>, <code>npc_scene</code>, <code>spawn_on_ready</code>, <code>spawn_interval</code>, <code>max_alive</code>, <code>total_spawn_limit</code></td>
+<td>Runtime NPC wave spawner that consumes <code>ai_spawn_wave_point</code> markers and respects per-point cooldown/max count.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="52-solid-brush-entities">5.2 Solid / Brush Entities<a class="headerlink" href="#52-solid-brush-entities" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Classname</th>
+<th>Main keyvalues</th>
+<th>Runtime behavior</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>worldspawn</code> (new override)</td>
+<td><code>sf_*</code> globals</td>
+<td>Applies map-global gameplay/visual overrides.</td>
+</tr>
+<tr>
+<td><code>func_geo</code></td>
+<td>(none custom)</td>
+<td>Static colliding geometry; occluder generation enabled.</td>
+</tr>
+<tr>
+<td><code>func_detail</code></td>
+<td>(none custom)</td>
+<td>Static colliding detail; no occluders.</td>
+</tr>
+<tr>
+<td><code>func_illusionary</code></td>
+<td>(none custom)</td>
+<td>Non-colliding decorative geometry; occluders enabled.</td>
+</tr>
+<tr>
+<td><code>func_detail_illusionary</code></td>
+<td>(none custom)</td>
+<td>Non-colliding detail; no occluders.</td>
+</tr>
+<tr>
+<td><code>func_move</code></td>
+<td><code>move_pos</code>, <code>move_rot</code>, <code>speed</code>, <code>targetname</code></td>
+<td>Interpolated movement/rotation with <code>use/toggle/mv_forward/mv_reverse</code>.</td>
+</tr>
+<tr>
+<td><code>func_door</code></td>
+<td><code>target</code>, <code>wait</code>, <code>auto_close</code>, <code>lock_open</code>, <code>required_key</code>, <code>consume_required_key</code> + func_move/base target keys</td>
+<td>Door open/close with optional key lock, optional auto-close, and target firing on open.</td>
+</tr>
+<tr>
+<td><code>func_button</code></td>
+<td><code>target</code>, <code>targetfunc</code>, <code>wait</code>, <code>once</code>, <code>targetname</code></td>
+<td>Touch-triggered output source with cooldown or one-shot.</td>
+</tr>
+<tr>
+<td><code>func_train</code></td>
+<td><code>target</code>, <code>speed</code>, <code>targetname</code></td>
+<td>Moves along <code>path_corner</code> chain.</td>
+</tr>
+<tr>
+<td><code>func_portal</code></td>
+<td><code>target</code>, <code>targetname</code>, <code>enabled</code>, <code>render_scale</code>, <code>dynamic_min_render_scale</code>, <code>dynamic_near_distance</code>, <code>dynamic_far_distance</code>, <code>manager_enable_budgeting</code>, <code>manager_max_active_portals</code>, <code>manager_refresh_seconds</code>, <code>teleport_cooldown</code>, <code>exit_offset</code>, <code>reverse_normal</code></td>
+<td>Linked render+teleport portal with runtime dynamic quality scaling and global budget manager support.</td>
+</tr>
+<tr>
+<td><code>func_mirror</code></td>
+<td><code>enabled</code>, <code>mirror_axis</code>, <code>mirror_face_from_texture</code>, <code>mirror_flip_u</code>, <code>mirror_tint</code>, <code>mirror_distortion</code>, <code>render_scale</code>, <code>render_cull_exclude_layers</code>, <code>reverse_normal</code></td>
+<td>Solid reflective mirror (no teleport); place on a face textured with a mirror material. Supports tint, optional distortion, and mirror-camera layer filtering. Plugin mirror backend is the default path.</td>
+</tr>
+<tr>
+<td><code>trigger_area</code></td>
+<td>trigger base keys</td>
+<td>Single-use trigger; disables collision after first fire.</td>
+</tr>
+<tr>
+<td><code>trigger_once</code></td>
+<td>trigger base keys</td>
+<td>Fires once on player enter.</td>
+</tr>
+<tr>
+<td><code>trigger_multiple</code></td>
+<td><code>wait</code> + trigger base keys</td>
+<td>Repeatable trigger with cooldown.</td>
+</tr>
+<tr>
+<td><code>trigger_hurt</code></td>
+<td><code>dmg</code>, <code>wait</code>, <code>start_disabled</code>, <code>one_shot</code>, <code>targetname</code></td>
+<td>Applies periodic damage while player remains inside.</td>
+</tr>
+<tr>
+<td><code>trigger_changelevel</code></td>
+<td><code>map</code>, <code>delay</code>, <code>targetname</code></td>
+<td>One-shot level transition trigger.</td>
+</tr>
+<tr>
+<td><code>trigger_exit</code></td>
+<td><code>map</code>, <code>delay</code>, <code>targetname</code></td>
+<td>Calls <code>GAME.try_exit()</code>, optional scene change on success.</td>
+</tr>
+<tr>
+<td><code>damage_volume</code></td>
+<td><code>amount</code>, <code>enabled</code></td>
+<td>Applies instant damage (calls <code>apply_damage()</code>) when bodies enter.</td>
+</tr>
+<tr>
+<td><code>checkpoint_volume</code></td>
+<td><code>enabled</code>, <code>checkpoint_id</code>, <code>save_id</code>, <code>starts_enabled</code>, <code>one_shot</code></td>
+<td>Registers/activates checkpoint on entry; respawn uses active checkpoint first.</td>
+</tr>
+<tr>
+<td><code>music_zone_volume</code></td>
+<td><code>tag</code>, <code>enabled</code></td>
+<td>Switches music zone on entry.</td>
+</tr>
+<tr>
+<td><code>ai_alert_volume</code></td>
+<td><code>enabled</code></td>
+<td>Notifies AI system of entrant position.</td>
+</tr>
+<tr>
+<td><code>quest_trigger_volume</code></td>
+<td><code>tag</code>, <code>enabled</code></td>
+<td>Placeholder for quest scripting; no default action.</td>
+</tr>
+<tr>
+<td><code>spawn_blocker_volume</code></td>
+<td><code>enabled</code></td>
+<td>Marks area where spawning should be avoided.</td>
+</tr>
+<tr>
+<td><code>water_volume</code></td>
+<td><code>enabled</code>, <code>starts_enabled</code>, <code>default_buoyancy</code>, <code>linear_drag</code>, <code>angular_drag</code>, <code>affect_sleeping_bodies</code></td>
+<td>Combined water brush: renders textured water geometry, applies swim-style movement to the player, and applies buoyancy/drag to rigid bodies inside.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="521-portal-runtime-notes">5.2.1 Portal Runtime Notes<a class="headerlink" href="#521-portal-runtime-notes" title="Permanent link">&para;</a></h3>
+<p><code>func_portal</code> behavior is implemented in <code>entities/funcs/func_portal.gd</code> and supports:
+- Dynamic per-portal render scaling based on distance/size:
+  - <code>dynamic_quality_enabled</code>
+  - <code>dynamic_min_render_scale</code>
+  - <code>dynamic_near_distance</code>
+  - <code>dynamic_far_distance</code>
+  - <code>dynamic_size_influence</code>
+  - <code>dynamic_scale_step</code>
+- Runtime portal manager budgeting:
+  - <code>manager_enable_budgeting</code>
+  - <code>manager_max_active_portals</code>
+  - <code>manager_refresh_seconds</code>
+- Base plugin settings:
+  - <code>plugin_keep_viewports_hot</code>
+  - <code>plugin_teleport_collision_mask</code>
+  - <code>render_scale</code></p>
+<p>Pairing:
+- Portal A links to Portal B by setting <code>target</code> on A to B's <code>targetname</code>.
+- Portal B should reciprocate for bidirectional portals.</p>
+<p>Interaction with <code>env_portal_budget</code>:
+- <code>env_portal_budget</code> applies map-wide overrides to all <code>func_portal</code> nodes at runtime:
+  - <code>manager_max_active_portals</code>
+  - <code>manager_refresh_seconds</code>
+  - <code>render_scale</code> (max quality cap)
+  - <code>dynamic_min_render_scale</code> (min quality floor)</p>
+<h3 id="522-swinging-doors-authoring-recipe">5.2.2 Swinging Doors (Authoring Recipe)<a class="headerlink" href="#522-swinging-doors-authoring-recipe" title="Permanent link">&para;</a></h3>
+<p>Use this setup for predictable hinge doors in TrenchBroom:</p>
+<ol>
+<li>Create one <code>func_door</code> entity containing:</li>
+<li>door visible brush(es)</li>
+<li>one <code>special/origin</code> brush placed at the hinge pivot</li>
+<li>Set movement keys:</li>
+<li><code>move_rot</code> to swing amount (example: <code>0 90 0</code>)</li>
+<li><code>move_pos</code> to <code>0 0 0</code> for pure swing doors</li>
+<li><code>speed</code> for swing rate (default <code>120</code>, interpreted as degrees/sec for rotation-only doors)</li>
+<li>Optional close behavior:</li>
+<li><code>auto_close=1</code> with <code>wait=&lt;seconds&gt;</code></li>
+<li><code>lock_open=1</code> to keep door open once activated</li>
+<li>Optional key lock:</li>
+<li>set <code>required_key</code> on door (example: <code>two</code>)</li>
+<li>place <code>item_key</code> entity with matching <code>key_id</code> (<code>two</code>)</li>
+<li>set <code>consume_required_key=1</code> if the key should be spent when opening</li>
+</ol>
+<p>Runtime interaction feedback:
+- Crosshair dot is green when door can be opened.
+- Crosshair dot is red when player is looking at a keyed door without the required key.</p>
+<h2 id="53-environment-entity-rules">5.3 Environment Entity Rules<a class="headerlink" href="#53-environment-entity-rules" title="Permanent link">&para;</a></h2>
+<p>Runtime environment parsing is centralized in <code>scripts/sandstorm_controller.gd</code>.</p>
+<p>Priority and fallback:
+1. Specific <code>env_*</code> point entity for that system (first matching entity in map file).
+2. <code>worldspawn</code> fallback keys (same key names where supported).</p>
+<p>Systems and keys:
+- Sandstorm: <code>env_sandstorm</code> or worldspawn <code>sandstorm_*</code>
+  - <code>sandstorm_enabled</code>, <code>sandstorm_intensity</code>, <code>sandstorm_wind_speed</code>, <code>sandstorm_wind_direction</code>, <code>sandstorm_fog_color</code>
+- Fog: <code>env_fog_controller</code> or worldspawn fog keys
+  - <code>fog_enabled</code>, <code>volumetric_fog_enabled</code>, <code>fog_density</code>, <code>volumetric_fog_density</code>, <code>fog_color</code>
+- Wind: <code>env_wind</code> or worldspawn wind keys
+  - <code>wind_speed</code>, <code>wind_direction</code>
+- PostFX: <code>env_postfx</code> or worldspawn postfx keys
+  - <code>postfx_strength</code>, <code>postfx_exposure</code>, <code>postfx_contrast</code>, <code>postfx_saturation</code>
+- Weather: <code>env_weather</code> or worldspawn weather keys
+  - <code>weather_mode</code> (<code>none</code>/<code>rain</code>/<code>snow</code>), <code>weather_intensity</code>
+- Portal budget: <code>env_portal_budget</code> or worldspawn portal keys
+  - <code>portal_max_active</code>, <code>portal_refresh_seconds</code>, <code>portal_max_render_scale</code>, <code>portal_min_render_scale</code>
+- Audio ambience: <code>env_audio_ambience</code> or worldspawn ambience keys
+  - <code>ambience_stream</code>, <code>ambience_volume_db</code>, <code>ambience_bus</code>
+- Zones: <code>env_zone</code> only (multiple supported)
+  - <code>radius</code>, <code>intensity</code>, <code>fog_density</code>, <code>wind_speed</code></p>
+<p>Notes:
+- <code>env_zone</code> is currently point/radial (not brush volume).
+- <code>env_zone.origin</code> is parsed from map origin and converted into Godot coordinates with map scale.
+- If multiple entities of the same non-zone type are authored, first one in the <code>.map</code> is used.</p>
+<h2 id="6-practical-recipes">6. Practical Recipes<a class="headerlink" href="#6-practical-recipes" title="Permanent link">&para;</a></h2>
+<h3 id="61-boot-sequence-with-logic_auto">6.1 Boot sequence with <code>logic_auto</code><a class="headerlink" href="#61-boot-sequence-with-logic_auto" title="Permanent link">&para;</a></h3>
+<p>Use one <code>logic_auto</code> with:
+- <code>target = setup_relay</code>
+- <code>delay = 0.1</code>
+- <code>fire_once = 1</code></p>
+<p>Then create <code>logic_relay</code> with <code>targetname = setup_relay</code> for startup chains.</p>
+<h3 id="62-locked-flow-with-master">6.2 Locked flow with <code>master</code><a class="headerlink" href="#62-locked-flow-with-master" title="Permanent link">&para;</a></h3>
+<p>Pattern:
+1. Create a master entity with <code>targetname = door_master</code> and <code>enabled = 0</code> (e.g., <code>logic_relay</code>).
+2. On the controlled activator (trigger/button/logic), set <code>master = door_master</code>.
+3. Create an unlock event that calls <code>enable</code> on <code>door_master</code>.</p>
+<p>Outputs from step 2 will be blocked until step 3 happens.</p>
+<h3 id="63-cleanup-with-killtarget">6.3 Cleanup with <code>killtarget</code><a class="headerlink" href="#63-cleanup-with-killtarget" title="Permanent link">&para;</a></h3>
+<p>On any activator that fires outputs, set:
+- <code>killtarget = temp_fx,old_blocker</code></p>
+<p>After outputs execute, both groups are removed from scene tree.</p>
+<h3 id="64-ordered-sequence-with-multi_manager">6.4 Ordered sequence with <code>multi_manager</code><a class="headerlink" href="#64-ordered-sequence-with-multi_manager" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>target1 = seq_a</code>, <code>delay1 = 0.0</code></li>
+<li><code>target2 = seq_b</code>, <code>delay2 = 1.0</code></li>
+<li><code>target3 = seq_c</code>, <code>delay3 = 2.5</code></li>
+</ul>
+<p>Use <code>trigger_once = 1</code> for cutscene-style single-run behavior.</p>
+<h3 id="65-performance-budget-heatmap-authoring">6.5 Performance budget heatmap authoring<a class="headerlink" href="#65-performance-budget-heatmap-authoring" title="Permanent link">&para;</a></h3>
+<ol>
+<li>Place <code>perf_budget_marker</code> near expected expensive content clusters.</li>
+<li>Set marker <code>cost</code>, <code>radius</code>, and <code>falloff_exponent</code>.</li>
+<li>Place <code>perf_heatmap_volume</code> over known heavy zones (dense props, mirrors, portals).</li>
+<li>Set optional <code>budget_limit</code> per marker/volume for local constraints.</li>
+<li>In runtime map mode, press <code>F8</code> to view budget score/status at camera position.</li>
+</ol>
+<h2 id="7-test-plan-for-your-next-refinement-pass">7. Test Plan (for your next refinement pass)<a class="headerlink" href="#7-test-plan-for-your-next-refinement-pass" title="Permanent link">&para;</a></h2>
+<h3 id="71-core-dispatch-regression">7.1 Core dispatch regression<a class="headerlink" href="#71-core-dispatch-regression" title="Permanent link">&para;</a></h3>
+<ol>
+<li>
+<p>Create 2 relays in same target group and fire once.
+Expected: both relays execute once.</p>
+</li>
+<li>
+<p>Set activator <code>target = a,b</code>.
+Expected: both groups execute.</p>
+</li>
+<li>
+<p>Set activator <code>targetfunc = enable</code> and ensure targets implement <code>enable()</code>.
+Expected: <code>enable()</code> called, not <code>use()</code>.</p>
+</li>
+</ol>
+<h3 id="72-master-tests">7.2 <code>master</code> tests<a class="headerlink" href="#72-master-tests" title="Permanent link">&para;</a></h3>
+<ol>
+<li>
+<p><code>master</code> points to non-existent group.
+Expected: activator is blocked.</p>
+</li>
+<li>
+<p><code>master</code> points to <code>logic_relay enabled=0</code>.
+Expected: activator blocked.</p>
+</li>
+<li>
+<p>Fire unlock relay that calls <code>enable</code> on master.
+Expected: activator now fires outputs.</p>
+</li>
+</ol>
+<h3 id="73-killtarget-tests">7.3 <code>killtarget</code> tests<a class="headerlink" href="#73-killtarget-tests" title="Permanent link">&para;</a></h3>
+<ol>
+<li>Spawn visible entity with <code>targetname = cleanup_me</code>.</li>
+<li>Fire activator with <code>killtarget = cleanup_me</code>.
+Expected: entity disappears after activation.</li>
+</ol>
+<h3 id="74-logic_auto-tests">7.4 <code>logic_auto</code> tests<a class="headerlink" href="#74-logic_auto-tests" title="Permanent link">&para;</a></h3>
+<ol>
+<li><code>logic_auto fire_once=1 delay=0</code> triggers relay at map start.</li>
+<li><code>logic_auto fire_once=0</code>, manually call <code>use()</code> from another entity.
+Expected: it can fire multiple times.</li>
+</ol>
+<h3 id="75-worldspawn-sf_-tests">7.5 <code>worldspawn sf_*</code> tests<a class="headerlink" href="#75-worldspawn-sf_-tests" title="Permanent link">&para;</a></h3>
+<p>In worldspawn set one key at a time and rebuild map.
+- <code>sf_required_collectibles = 0</code>: exit should be unlocked immediately.
+- <code>sf_objective_text = "Find the reactor"</code>: HUD objective should start with this text.
+- <code>sf_ps1_shader = 0</code>: PS1 shader should disable for scene.
+- <code>sf_sun_energy = 0.3</code>: sunlight intensity should change.
+- <code>sf_fog_enabled = 1</code>, <code>sf_fog_density = ...</code>, <code>sf_fog_color = ...</code>: fog should change.</p>
+<h3 id="76-environment-env_-tests">7.6 Environment <code>env_*</code> tests<a class="headerlink" href="#76-environment-env_-tests" title="Permanent link">&para;</a></h3>
+<ol>
+<li>
+<p>Place one <code>env_sandstorm</code> with <code>intensity=0.9</code>.
+Expected: visible storm overlay + dust + fog tint at runtime.</p>
+</li>
+<li>
+<p>Place one <code>env_fog_controller</code> with high <code>fog_density</code>.
+Expected: fog values in active <code>WorldEnvironment</code> update on load.</p>
+</li>
+<li>
+<p>Place one <code>env_wind</code> with changed direction/speed.
+Expected: storm/weather particle motion direction updates.</p>
+</li>
+<li>
+<p>Place one <code>env_postfx</code> with <code>postfx_strength=1</code>, boosted contrast/saturation.
+Expected: noticeable global color adjustment.</p>
+</li>
+<li>
+<p>Place one <code>env_weather</code> with <code>weather_mode=rain</code>, non-zero intensity.
+Expected: rain-like particle behavior around camera.</p>
+</li>
+<li>
+<p>Place one <code>env_portal_budget</code> with low max active portals.
+Expected: fewer active portal renders and lower portal render scale caps.</p>
+</li>
+<li>
+<p>Place one <code>env_audio_ambience</code> with valid stream path.
+Expected: ambience plays on configured bus and volume.</p>
+</li>
+<li>
+<p>Place two <code>env_zone</code> points with different radii/intensities.
+Expected: camera movement between zones blends local overrides.</p>
+</li>
+</ol>
+<h3 id="77-portal-tests">7.7 Portal tests<a class="headerlink" href="#77-portal-tests" title="Permanent link">&para;</a></h3>
+<ol>
+<li>
+<p>Create two linked <code>func_portal</code> entities with reciprocal <code>target</code>/<code>targetname</code>.
+Expected: both render and teleport when traversed.</p>
+</li>
+<li>
+<p>Set per-portal dynamic quality spread:</p>
+</li>
+<li><code>render_scale = 1.0</code></li>
+<li><code>dynamic_min_render_scale = 0.35</code></li>
+<li><code>dynamic_near_distance = 6</code></li>
+<li>
+<p><code>dynamic_far_distance = 32</code>
+Expected: near/large portals stay sharp, far/small portals reduce scale.</p>
+</li>
+<li>
+<p>Place <code>env_portal_budget</code> with:</p>
+</li>
+<li><code>portal_max_active = 2</code></li>
+<li><code>portal_refresh_seconds = 0.1</code></li>
+<li><code>portal_max_render_scale = 0.8</code></li>
+<li><code>portal_min_render_scale = 0.3</code>
+Expected: global cap limits concurrent active portal rendering and applies scale bounds to all portals.</li>
+</ol>
+<h2 id="8-best-practices">8. Best Practices<a class="headerlink" href="#8-best-practices" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Keep <code>targetname</code> names consistent and scoped by system (<code>door_*</code>, <code>seq_*</code>, <code>ui_*</code>).</li>
+<li>Prefer <code>logic_relay</code> between raw triggers and gameplay-critical outputs for easier debugging.</li>
+<li>Use comma-delimited <code>target</code> only when genuinely parallel fan-out is needed.</li>
+<li>Use <code>master</code> for locks/gates, not ad-hoc checks in many entities.</li>
+<li>Use <code>killtarget</code> for one-time helpers, temporary blockers, and consumed setup entities.</li>
+<li>For cutscenes/sequences: <code>logic_auto</code> -&gt; <code>multi_manager</code> -&gt; small relays.</li>
+<li>Keep trigger shapes simple and avoid excessive overlap of multiple large triggers.</li>
+<li>For train paths, keep <code>path_corner</code> spacing smooth and set <code>wait</code> only where pauses are intended.</li>
+<li>For portal pairs, ensure dimensions and facing are intentional; pair by <code>target</code> -&gt; <code>targetname</code>.</li>
+<li>When changing FGD definitions, rebuild/reload in TrenchBroom and rebuild the FuncGodot map in Godot before testing behavior.</li>
+</ul>
+<h2 id="9-known-caveats">9. Known Caveats<a class="headerlink" href="#9-known-caveats" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Some older entity scripts still parse booleans with strict casts; prefer <code>0/1</code> in TB where possible.</li>
+<li><code>InfoCamera</code> currently resolves <code>camera_target</code> by node naming convention (<code>entity_&lt;name&gt;</code>), so keep target ids stable.</li>
+<li><code>worldspawn sf_*</code> values only apply when explicitly authored in map keyvalues.</li>
+</ul>
+<hr />
+<p>If you want, next step I can add a compact in-game debug panel section that prints: activator, resolved target groups, master state, and killtarget execution in real time during test runs.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.sections", "navigation.top", "content.code.copy", "search.suggest", "search.highlight"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

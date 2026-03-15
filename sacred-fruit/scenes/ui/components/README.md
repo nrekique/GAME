@@ -85,10 +85,10 @@ Just instance Slider.tscn and set properties in Inspector:
 @onready var volume_slider: LabeledSlider = $VolumeSlider
 
 func _ready():
-    volume_slider.value_changed.connect(_on_volume_changed)
+	volume_slider.value_changed.connect(_on_volume_changed)
 
 func _on_volume_changed(value: float):
-    AudioServer.set_bus_volume_db(0, linear_to_db(value / 100.0))
+	AudioServer.set_bus_volume_db(0, linear_to_db(value / 100.0))
 ```
 
 ---
@@ -256,11 +256,11 @@ signal settings_applied(volume: float)
 
 
 func _ready() -> void:
-    apply_button.pressed.connect(_on_apply_pressed)
+	apply_button.pressed.connect(_on_apply_pressed)
 
 
 func _on_apply_pressed() -> void:
-    settings_applied.emit(volume_slider.current_value)
+	settings_applied.emit(volume_slider.current_value)
 ```
 
 **Result:** ~15 lines of logic instead of 400+ lines of UI construction!
@@ -272,17 +272,17 @@ func _on_apply_pressed() -> void:
 ### Before (Programmatic UI):
 ```gdscript
 func _build_ui():
-    var panel = PanelContainer.new()
-    var style = StyleBoxFlat.new()
-    style.bg_color = Color(0.07, 0.08, 0.10, 0.93)
-    style.corner_radius_top_left = 10
-    # ... 50 more lines ...
-    panel.add_theme_stylebox_override("panel", style)
-    
-    var slider = HSlider.new()
-    slider.min_value = 0
-    slider.max_value = 100
-    # ... more setup ...
+	var panel = PanelContainer.new()
+	var style = StyleBoxFlat.new()
+	style.bg_color = Color(0.07, 0.08, 0.10, 0.93)
+	style.corner_radius_top_left = 10
+	# ... 50 more lines ...
+	panel.add_theme_stylebox_override("panel", style)
+	
+	var slider = HSlider.new()
+	slider.min_value = 0
+	slider.max_value = 100
+	# ... more setup ...
 ```
 
 ### After (Component-Based):
@@ -292,7 +292,7 @@ func _build_ui():
 @onready var my_slider: LabeledSlider = $MySlider
 
 func _ready():
-    my_slider.value_changed.connect(_on_value_changed)
+	my_slider.value_changed.connect(_on_value_changed)
 ```
 
 **Code Reduction:** 90%+ reduction in UI code

@@ -1,0 +1,14 @@
+[remap]
+
+importer="func_godot.map"
+type="Resource"
+uid="uid://cy0nvqdr31n0p"
+path="res://.godot/imported/fgd test-crash.map-4ad8b08b1db96d610aa8d5f9bf2c05ee.tres"
+
+[deps]
+
+source_file="res://tb/maps/fgd test-crash.map"
+dest_files=["res://.godot/imported/fgd test-crash.map-4ad8b08b1db96d610aa8d5f9bf2c05ee.tres"]
+
+[params]
+

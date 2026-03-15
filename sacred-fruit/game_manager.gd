@@ -69,6 +69,7 @@ var _last_worldspawn_id: int = -1
 # worldspawn collision optimisation threshold
 const WORLDSPAWN_COLLIDER_THRESHOLD: int = 250
 const RUNTIME_STATE_PATH := "user://runtime_state.cfg"
+const RUNTIME_STATE_BACKUP_PATH := RUNTIME_STATE_PATH + ".bak"
 const ZONE_LIGHTING_UPDATE_INTERVAL := 0.10
 
 var _runtime_entity_enabled: Dictionary = {}
@@ -616,7 +617,38 @@ func _save_runtime_state() -> void:
 	cfg.set_value("entity", "fired_once", _runtime_fired_once)
 	cfg.set_value("checkpoint", "data", _runtime_checkpoints)
 	cfg.set_value("checkpoint", "active_id", _runtime_active_checkpoint_id)
-	cfg.save(RUNTIME_STATE_PATH)
+	_save_config_atomic(cfg, RUNTIME_STATE_PATH, RUNTIME_STATE_BACKUP_PATH, "runtime_state")
+
+
+func _save_config_atomic(cfg: ConfigFile, target_path: String, backup_path: String, label: String) -> bool:
+	var tmp_path := target_path + ".tmp"
+	var tmp_save_err := cfg.save(tmp_path)
+	if tmp_save_err != OK:
+		push_warning("GAME %s save failed (tmp): %s" % [label, str(tmp_save_err)])
+		return false
+
+	var abs_target := ProjectSettings.globalize_path(target_path)
+	var abs_backup := ProjectSettings.globalize_path(backup_path)
+	var abs_tmp := ProjectSettings.globalize_path(tmp_path)
+
+	if FileAccess.file_exists(backup_path):
+		DirAccess.remove_absolute(abs_backup)
+	if FileAccess.file_exists(target_path):
+		var backup_err := DirAccess.rename_absolute(abs_target, abs_backup)
+		if backup_err != OK:
+			push_warning("GAME %s save failed (backup rotate): %s" % [label, str(backup_err)])
+			DirAccess.remove_absolute(abs_tmp)
+			return false
+
+	var promote_err := DirAccess.rename_absolute(abs_tmp, abs_target)
+	if promote_err != OK:
+		push_warning("GAME %s save failed (promote tmp): %s" % [label, str(promote_err)])
+		# Attempt rollback if we already moved the previous file to backup.
+		if FileAccess.file_exists(backup_path) and not FileAccess.file_exists(target_path):
+			DirAccess.rename_absolute(abs_backup, abs_target)
+		return false
+
+	return true
 
 
 func _load_runtime_state() -> void:
@@ -625,8 +657,12 @@ func _load_runtime_state() -> void:
 	_runtime_checkpoints.clear()
 	_runtime_active_checkpoint_id = ""
 	var cfg := ConfigFile.new()
-	if cfg.load(RUNTIME_STATE_PATH) != OK:
-		return
+	var load_err := cfg.load(RUNTIME_STATE_PATH)
+	if load_err != OK:
+		var backup_err := cfg.load(RUNTIME_STATE_BACKUP_PATH)
+		if backup_err != OK:
+			return
+		push_warning("GAME runtime_state load fallback to backup due to primary read failure: %s" % str(load_err))
 	var enabled_var: Variant = cfg.get_value("entity", "enabled", {})
 	if enabled_var is Dictionary:
 		_runtime_entity_enabled = enabled_var

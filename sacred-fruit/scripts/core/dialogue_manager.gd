@@ -5,6 +5,7 @@ const DialogueUIScript := preload("res://scripts/ui/dialogue_ui.gd")
 const DialogueMarkdown := preload("res://scripts/core/dialogue_markdown.gd")
 
 const DIALOGUE_STATE_PATH := "user://dialogue_state.cfg"
+const DIALOGUE_STATE_BACKUP_PATH := DIALOGUE_STATE_PATH + ".bak"
 
 signal dialogue_started(conversation_id: String, speaker: String)
 signal dialogue_closed(conversation_id: String)
@@ -580,7 +581,37 @@ func _save_state() -> void:
 	cfg.set_value("dialogue", "skills", _skills)
 	cfg.set_value("dialogue", "faction_rep", _faction_rep)
 	cfg.set_value("dialogue", "quest_stage", _quest_stage)
-	cfg.save(DIALOGUE_STATE_PATH)
+	_save_config_atomic(cfg, DIALOGUE_STATE_PATH, DIALOGUE_STATE_BACKUP_PATH, "dialogue_state")
+
+
+func _save_config_atomic(cfg: ConfigFile, target_path: String, backup_path: String, label: String) -> bool:
+	var tmp_path := target_path + ".tmp"
+	var tmp_save_err := cfg.save(tmp_path)
+	if tmp_save_err != OK:
+		push_warning("DIALOGUE %s save failed (tmp): %s" % [label, str(tmp_save_err)])
+		return false
+
+	var abs_target := ProjectSettings.globalize_path(target_path)
+	var abs_backup := ProjectSettings.globalize_path(backup_path)
+	var abs_tmp := ProjectSettings.globalize_path(tmp_path)
+
+	if FileAccess.file_exists(backup_path):
+		DirAccess.remove_absolute(abs_backup)
+	if FileAccess.file_exists(target_path):
+		var backup_err := DirAccess.rename_absolute(abs_target, abs_backup)
+		if backup_err != OK:
+			push_warning("DIALOGUE %s save failed (backup rotate): %s" % [label, str(backup_err)])
+			DirAccess.remove_absolute(abs_tmp)
+			return false
+
+	var promote_err := DirAccess.rename_absolute(abs_tmp, abs_target)
+	if promote_err != OK:
+		push_warning("DIALOGUE %s save failed (promote tmp): %s" % [label, str(promote_err)])
+		if FileAccess.file_exists(backup_path) and not FileAccess.file_exists(target_path):
+			DirAccess.rename_absolute(abs_backup, abs_target)
+		return false
+
+	return true
 
 
 func _load_state() -> void:
@@ -589,8 +620,12 @@ func _load_state() -> void:
 	_faction_rep.clear()
 	_quest_stage.clear()
 	var cfg := ConfigFile.new()
-	if cfg.load(DIALOGUE_STATE_PATH) != OK:
-		return
+	var load_err := cfg.load(DIALOGUE_STATE_PATH)
+	if load_err != OK:
+		var backup_err := cfg.load(DIALOGUE_STATE_BACKUP_PATH)
+		if backup_err != OK:
+			return
+		push_warning("DIALOGUE primary state load failed; using backup (%s)" % str(load_err))
 	var facts_v: Variant = cfg.get_value("dialogue", "facts", {})
 	if facts_v is Dictionary:
 		_facts = facts_v as Dictionary

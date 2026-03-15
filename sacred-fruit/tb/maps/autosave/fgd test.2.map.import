@@ -1,0 +1,14 @@
+[remap]
+
+importer="func_godot.map"
+type="Resource"
+uid="uid://cw60h5wdyk1pp"
+path="res://.godot/imported/fgd test.2.map-1a8b6c1605112d0221deb5b342b0edaf.tres"
+
+[deps]
+
+source_file="res://tb/maps/autosave/fgd test.2.map"
+dest_files=["res://.godot/imported/fgd test.2.map-1a8b6c1605112d0221deb5b342b0edaf.tres"]
+
+[params]
+

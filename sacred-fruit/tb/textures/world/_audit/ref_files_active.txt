@@ -1,0 +1,535 @@
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/scenes/birthday.tscn
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/scenes/ui/debug_menu.tscn
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/scenes/ui/options_menu.tscn
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/scenes/ui/hud.tscn
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/scenes/ui/main_menu.tscn
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/scenes/player.tscn
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/scenes/photo_mode.tscn
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/scenes/ra.tscn
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/scenes/HOME_play.tscn
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/scenes/runtime_map_play.tscn
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/scenes/grill.tscn
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/scenes/vfx/exit_burst.tscn
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/scenes/vfx/collect_burst.tscn
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/scenes/env/gillEenviroment.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/scenes/HOME.tscn
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/scenes/dev/ui_health_check.tscn
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/scenes/spectator.tscn
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tools/photo_mode_layout_smoke_test.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tools/smoke_runner.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tools/portal_pair_smoke_test.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tools/export_item_collectible_tb_obj.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tools/portal_stress_bench.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tools/export_npc_tb_obj.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tools/tab_visibility_test.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tools/smoke_capture.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tools/map_build_smoke.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/ExampleScene/DeckExample.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/ExampleScene/DeckExample.tscn
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/ExampleScene/DeckToy.tscn
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/3 of Spades/3 of Spades.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/3 of Spades/3 of Spades.tscn
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/9 of Diamonds/9 of Diamonds.tscn
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/9 of Diamonds/9 of Diamonds.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/7 of Clubs/7 of Clubs.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/7 of Clubs/7 of Clubs.tscn
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/6 of Clubs/6 of Clubs.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/6 of Clubs/6 of Clubs.tscn
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/Ace of Spades/Ace of Spades.tscn
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/Ace of Spades/Ace of Spades.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/Queen of Clubs/Queen of Clubs.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/Queen of Clubs/Queen of Clubs.tscn
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/5 of Diamonds/5 of Diamonds.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/5 of Diamonds/5 of Diamonds.tscn
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/5 of Spades/5 of Spades.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/5 of Spades/5 of Spades.tscn
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/6 of Hearts/6 of Hearts.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/6 of Hearts/6 of Hearts.tscn
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/Jack of Clubs/Jack of Clubs.tscn
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/Jack of Clubs/Jack of Clubs.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/test.tscn
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/Jack of Diamonds/Jack of Diamonds.tscn
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/Jack of Diamonds/Jack of Diamonds.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/8 of Spades/8 of Spades.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/8 of Spades/8 of Spades.tscn
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/2 of Spades/2 of Spades.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/2 of Spades/2 of Spades.tscn
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/10 of Spades/10 of Spades.tscn
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/10 of Spades/10 of Spades.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/Queen of Spades/Queen of Spades.tscn
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/Queen of Spades/Queen of Spades.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/6 of Diamonds/6 of Diamonds.tscn
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/6 of Diamonds/6 of Diamonds.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/Jack of Spades/Jack of Spades.tscn
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/Jack of Spades/Jack of Spades.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/Queen of Diamonds/Queen of Diamonds.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/Queen of Diamonds/Queen of Diamonds.tscn
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/Ace of Clubs/Ace of Clubs.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/Ace of Clubs/Ace of Clubs.tscn
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/3 of Diamonds/3 of Diamonds.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/3 of Diamonds/3 of Diamonds.tscn
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/4 of Spades/4 of Spades.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/4 of Spades/4 of Spades.tscn
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/King Of Hearts/King of Hearts.tscn
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/King Of Hearts/King of Hearts.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/7 of Hearts/7 of Hearts.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/7 of Hearts/7 of Hearts.tscn
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/9 of Spades/9 of Spades.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/9 of Spades/9 of Spades.tscn
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/10 of Hearts/10 of Hearts.tscn
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/10 of Hearts/10 of Hearts.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/Queen of Hearts/Queen of Hearts.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/Queen of Hearts/Queen of Hearts.tscn
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/2 of Hearts/2 of Hearts.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/2 of Hearts/2 of Hearts.tscn
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/10 of Diamonds/10 of Diamonds.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/10 of Diamonds/10 of Diamonds.tscn
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/4 of Diamonds/4 of Diamonds.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/4 of Diamonds/4 of Diamonds.tscn
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/King of Spades/King of Spades.tscn
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/King of Spades/King of Spades.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/4 of Clubs/4 of Clubs.tscn
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/4 of Clubs/4 of Clubs.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/5 of Clubs/5 of Clubs.tscn
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/5 of Clubs/5 of Clubs.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/7 of Spades/7 of Spades.tscn
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/7 of Spades/7 of Spades.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/9 of Hearts/9 of Hearts.tscn
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/9 of Hearts/9 of Hearts.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/Jack of Hearts/Jack of Hearts.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/Jack of Hearts/Jack of Hearts.tscn
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/4 of Hearts/4 of Hearts.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/4 of Hearts/4 of Hearts.tscn
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/8 of Diamonds/8 of Diamonds.tscn
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/8 of Diamonds/8 of Diamonds.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/Ace of Hearts/Ace of Hearts.tscn
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/Ace of Hearts/Ace of Hearts.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/3 of Clubs/3 of Clubs.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/3 of Clubs/3 of Clubs.tscn
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/2 of Clubs/2 of Clubs.tscn
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/2 of Clubs/2 of Clubs.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/King of Clubs/King of Clubs.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/King of Clubs/King of Clubs.tscn
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/2 of Diamonds/2 of Diamonds.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/2 of Diamonds/2 of Diamonds.tscn
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/10 of Clubs/10 of Clubs.tscn
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/10 of Clubs/10 of Clubs.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/3 of Hearts/3 of Hearts.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/3 of Hearts/3 of Hearts.tscn
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/9 of Clubs/9 of Clubs.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/9 of Clubs/9 of Clubs.tscn
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/8 of Clubs/8 of Clubs.tscn
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/8 of Clubs/8 of Clubs.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/6 of Spades/6 of Spades.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/6 of Spades/6 of Spades.tscn
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/7 of Diamonds/7 of Diamonds.tscn
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/7 of Diamonds/7 of Diamonds.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/8 of Hearts/8 of Hearts.tscn
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/8 of Hearts/8 of Hearts.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/Ace of Diamonds/Ace of Diamonds.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/Ace of Diamonds/Ace of Diamonds.tscn
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/King of Diamonds/King of Diamonds.tscn
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/King of Diamonds/King of Diamonds.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/5 of Hearts/5 of Hearts.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/Cards/5 of Hearts/5 of Hearts.tscn
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/addons/dolly-camera-controller/demo/demo_dolly_effect_controller_main.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/addons/dolly-camera-controller/demo/DEMO_DollyEffectController_Main.tscn
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/addons/dolly-camera-controller/demo/assets/Materials/prototype_subject.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/addons/dolly-camera-controller/demo/assets/Materials/prototype_object.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/addons/dolly-camera-controller/demo/assets/Materials/prototype_floor.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/addons/dolly-camera-controller/classes/DollyEffectController.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/addons/dolly-camera-controller/classes/LoaderDollyEffectController.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/addons/dolly-camera-controller/plugin.cfg
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/addons/dolly-camera-controller/LICENCE.txt
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/addons/CardGameSkeleton/plugin.cfg
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/addons/CardGameSkeleton/Resources/CardAttribute.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/addons/CardGameSkeleton/Resources/AbstractCard2D.tscn
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/addons/CardGameSkeleton/Resources/CardProjectSettings.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/addons/CardGameSkeleton/Resources/Deck.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/addons/CardGameSkeleton/Resources/ProjectAttributes.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/addons/CardGameSkeleton/CardGameSkeleton.tscn
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/addons/CardGameSkeleton/CardGameSkeleton.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/addons/CardGameSkeleton/Credits.txt
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/addons/CardGameSkeleton/Menus/PathSettingsMenu.tscn
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/addons/CardGameSkeleton/Menus/NewCardMenu.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/addons/CardGameSkeleton/Menus/CGSMenuButton.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/addons/CardGameSkeleton/Menus/EditCardMenu.tscn
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/addons/CardGameSkeleton/Menus/AttributeField.tscn
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/addons/CardGameSkeleton/Menus/DeckMenu.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/addons/CardGameSkeleton/Menus/NewDeckMenu.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/addons/CardGameSkeleton/Menus/AttributeField.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/addons/CardGameSkeleton/Menus/EditCardMenu.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/addons/CardGameSkeleton/Menus/CardMenu.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/addons/CardGameSkeleton/Menus/ManageAttributesMenu.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/addons/CardGameSkeleton/Menus/PathSettingsMenu.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/addons/CardGameSkeleton/Menus/NewDeckMenu.tscn
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/addons/CardGameSkeleton/Menus/DockControl.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/addons/CardGameSkeleton/Menus/NewCardMenu.tscn
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/addons/CardGameSkeleton/Menus/ManageAttributesMenu.tscn
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/addons/CardGameSkeleton/CardLibrary/SaveCard.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/addons/CardGameSkeleton/CardLibrary/Card.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/addons/CardGameSkeleton/CardLibrary/LoadCard.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/addons/CardGameSkeleton/CardLibrary/DeckLoader.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/addons/CardGameSkeleton/CardLibrary/Cards.json
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/addons/CardGameSkeleton/CardLibrary/Decks.json
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/addons/CardGameSkeleton/CardLibrary/CardLibrary.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/addons/func_godot/game_config/trenchbroom/tb_brush_tag_trigger.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/addons/func_godot/game_config/trenchbroom/tb_face_tag_clip.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/addons/func_godot/game_config/trenchbroom/tb_face_tag_skip.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/addons/func_godot/game_config/trenchbroom/func_godot_tb_game_config.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/addons/func_godot/game_config/trenchbroom/tb_brush_tag_func.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/addons/func_godot/game_config/trenchbroom/tb_face_tag_origin.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/addons/func_godot/game_config/netradiant_custom/netradiant_custom_shader_origin.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/addons/func_godot/game_config/netradiant_custom/netradiant_custom_shader_clip.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/addons/func_godot/game_config/netradiant_custom/func_godot_netradiant_custom_gamepack_config.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/addons/func_godot/game_config/netradiant_custom/netradiant_custom_shader_skip.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/addons/func_godot/func_godot_local_config.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/addons/func_godot/textures/default_material.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/addons/func_godot/plugin.cfg
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/addons/func_godot/func_godot_default_map_settings.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/addons/func_godot/fgd/func_detail.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/addons/func_godot/fgd/func_illusionary.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/addons/func_godot/fgd/func_geo.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/addons/func_godot/fgd/phong_base.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/addons/func_godot/fgd/func_detail_illusionary.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/addons/func_godot/fgd/worldspawn.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/addons/func_godot/fgd/func_godot_fgd.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/addons/func_godot/src/core/func_godot_map_parser.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/addons/func_godot/src/core/func_godot_map_data.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/addons/func_godot/src/core/func_godot.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/addons/func_godot/src/core/func_godot_geo_generator.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/addons/func_godot/src/core/func_godot_surface_gatherer.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/addons/func_godot/src/trenchbroom/trenchbroom_tag.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/addons/func_godot/src/trenchbroom/trenchbroom_game_config.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/addons/func_godot/src/util/func_godot_texture_loader.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/addons/func_godot/src/util/func_godot_local_config.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/addons/func_godot/src/util/func_godot_util.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/addons/func_godot/src/netradiant_custom/netradiant_custom_gamepack_config.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/addons/func_godot/src/netradiant_custom/netradiant_custom_shader.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/addons/func_godot/src/func_godot_plugin.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/addons/func_godot/src/map/func_godot_map.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/addons/func_godot/src/map/func_godot_map_settings.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/addons/func_godot/src/import/quake_wad_file.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/addons/func_godot/src/import/quake_palette_import_plugin.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/addons/func_godot/src/import/quake_map_import_plugin.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/addons/func_godot/src/import/quake_wad_import_plugin.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/addons/func_godot/src/import/quake_palette_file.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/addons/func_godot/src/import/quake_map_file.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/addons/func_godot/src/fgd/func_godot_fgd_base_class.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/addons/func_godot/src/fgd/func_godot_fgd_file.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/addons/func_godot/src/fgd/func_godot_fgd_point_class.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/addons/func_godot/src/fgd/func_godot_fgd_entity_class.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/addons/func_godot/src/fgd/func_godot_fgd_model_point_class.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/addons/func_godot/src/fgd/func_godot_fgd_solid_class.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/addons/portals/plugin.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/addons/portals/materials/editor-preview-portal-material.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/addons/portals/gizmos/portal_exit_outline.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/addons/portals/gizmos/portal_forward_direction.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/addons/portals/plugin.cfg
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/addons/portals/scripts/portal_boxmesh.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/addons/portals/scripts/portal_settings.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/addons/portals/scripts/at_export.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/addons/portals/scripts/portal_3d.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/addons/Mirror/plugin.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/addons/Mirror/plugin.cfg
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/addons/Mirror/Mirror/Mirror.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/addons/Mirror/Mirror/MirrorContainer.tscn
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/addons/Mirror/Mirror/MirrorMaterial.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tests/ai_authoring_test.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tests/perf_budget_test.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tests/io_test.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tests/profile_test.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tests/dialogue_integration_test.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tests/util_test.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tests/volume_test.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/maps/theater.map
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/maps/Rascasuelos2.map
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/maps/grill.map
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/maps/unnamed.map
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/maps/door.map
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/maps/reno.map
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/maps/birthday.map
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/maps/home.map
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/maps/Rascasuelos.map
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/maps/fgd test.map
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/maps/outside.map
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/maps/venue.map
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/maps/bigbrother.map
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/maps/laCebia.map
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/textures/color/cyan.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/textures/color/redT.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/textures/color/magentaT.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/textures/color/cblueT.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/textures/color/yGreenT.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/textures/color/black.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/textures/color/magentaS.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/textures/color/redS.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/textures/color/cblue.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/textures/color/blueT.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/textures/color/yGreenS.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/textures/color/yellow.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/textures/color/orange.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/textures/color/orangeT.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/textures/color/white.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/textures/color/yGreen.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/textures/color/cyanS.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/textures/color/purpleS.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/textures/color/magenta.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/textures/color/wGray.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/textures/color/pink.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/textures/color/yellowT.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/textures/color/greenS.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/textures/color/grey.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/textures/color/bGray.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/textures/special/origin.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/textures/special/glass.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/textures/special/trigger.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/textures/special/sandstorm.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/textures/special/water.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/textures/special/portal.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/textures/special/mirror.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/fgd/fgd_point.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/fgd/fgd_base.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/fgd/sf_fgd.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/fgd/point/props/physics_ball.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/fgd/point/logic/env_message.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/fgd/point/logic/perf_budget_marker.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/fgd/point/logic/env_sandstorm.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/fgd/point/logic/logic_auto.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/fgd/point/logic/ai_cover_marker.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/fgd/point/logic/perf_heatmap_volume.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/fgd/point/logic/logic_relay.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/fgd/point/logic/ai_nav_region.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/fgd/point/logic/env_postfx.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/fgd/point/logic/ai_patrol_point.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/fgd/point/logic/env_sky_scene.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/fgd/point/logic/ai_spawn_wave_point.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/fgd/point/logic/env_portal_budget.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/fgd/point/logic/env_weather.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/fgd/point/logic/env_zone.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/fgd/point/logic/func_prefab_instance.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/fgd/point/logic/ai_wave_spawner.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/fgd/point/logic/logic_timer.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/fgd/point/logic/env_audio_ambience.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/fgd/point/logic/env_reflection_probe.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/fgd/point/logic/ai_perception_blocker.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/fgd/point/logic/logic_random.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/fgd/point/logic/multi_manager.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/fgd/point/logic/env_wind.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/fgd/point/logic/math_counter.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/fgd/point/logic/env_fog_controller.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/fgd/point/info_intermission.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/fgd/point/light.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/fgd/point/info_player_start.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/fgd/point/actors/npc.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/fgd/point/actors/npc_enemy_patrol.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/fgd/point/path_corner.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/fgd/point/info_camera.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/fgd/point/items/item_collectible.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/fgd/point/items/item_health.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/fgd/point/items/item_ammo.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/fgd/point/items/item_key.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/fgd/point/lights/light_omni.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/fgd/point/lights/light_spot.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/fgd/solid/triggers/trigger_hurt.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/fgd/solid/triggers/trigger_area.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/fgd/solid/triggers/trigger_exit.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/fgd/solid/triggers/trigger_once.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/fgd/solid/triggers/trigger_multiple.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/fgd/solid/triggers/trigger_changelevel.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/fgd/solid/funcs/func_detail.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/fgd/solid/funcs/func_illusionary.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/fgd/solid/funcs/func_door.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/fgd/solid/funcs/func_geo.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/fgd/solid/funcs/func_train.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/fgd/solid/funcs/func_detail_illusionary.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/fgd/solid/funcs/func_texture_tile.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/fgd/solid/funcs/func_portal.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/fgd/solid/funcs/func_button.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/fgd/solid/funcs/func_move.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/fgd/solid/funcs/func_mirror.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/fgd/solid/worldspawn.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/fgd/solid/volumes/volume_ai_alert.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/fgd/solid/volumes/volume_quest_trigger.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/fgd/solid/volumes/volume_checkpoint.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/fgd/solid/volumes/volume_music_zone.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/fgd/solid/volumes/volume_spawn_blocker.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/fgd/solid/volumes/volume_damage.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/fgd/solid/volumes/volume_water.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/fgd/map_settings_grill.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/fgd/tags/tag_trigger.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/fgd/tags/tag_clip.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/fgd/tags/tag_skip.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/fgd/game_cfg.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/fgd/fgd_solid.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/fgd/fgd_main.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/fgd/new_resource.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/fgd/sfGameConfig.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/fgd/base/func_base.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/fgd/base/actor_base.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/fgd/base/target_base.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/fgd/base/light_base.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/fgd/base/targetname_base.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/fgd/base/trigger_base.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/fgd/base/globalname_base.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/fgd/map_settings.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/requirements-docs.txt
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/game_manager.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/.venv/pyvenv.cfg
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/.venv/lib/python3.14/site-packages/mkdocs-1.6.1.dist-info/entry_points.txt
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/.venv/lib/python3.14/site-packages/mergedeep-1.3.4.dist-info/top_level.txt
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/.venv/lib/python3.14/site-packages/requests-2.32.5.dist-info/top_level.txt
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/.venv/lib/python3.14/site-packages/click-8.3.1.dist-info/licenses/LICENSE.txt
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/.venv/lib/python3.14/site-packages/mkdocs_get_deps-0.2.0.dist-info/entry_points.txt
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/.venv/lib/python3.14/site-packages/certifi-2026.2.25.dist-info/top_level.txt
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/.venv/lib/python3.14/site-packages/colorama-0.4.6.dist-info/licenses/LICENSE.txt
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/.venv/lib/python3.14/site-packages/paginate-0.5.7.dist-info/top_level.txt
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/.venv/lib/python3.14/site-packages/babel-2.18.0.dist-info/entry_points.txt
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/.venv/lib/python3.14/site-packages/babel-2.18.0.dist-info/top_level.txt
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/.venv/lib/python3.14/site-packages/pip-25.3.dist-info/licenses/LICENSE.txt
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/.venv/lib/python3.14/site-packages/pip-25.3.dist-info/licenses/AUTHORS.txt
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/.venv/lib/python3.14/site-packages/pip-25.3.dist-info/licenses/src/pip/_vendor/dependency_groups/LICENSE.txt
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/.venv/lib/python3.14/site-packages/pip-25.3.dist-info/licenses/src/pip/_vendor/distlib/LICENSE.txt
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/.venv/lib/python3.14/site-packages/pip-25.3.dist-info/licenses/src/pip/_vendor/cachecontrol/LICENSE.txt
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/.venv/lib/python3.14/site-packages/pip-25.3.dist-info/licenses/src/pip/_vendor/urllib3/LICENSE.txt
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/.venv/lib/python3.14/site-packages/pip-25.3.dist-info/entry_points.txt
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/.venv/lib/python3.14/site-packages/ghp_import-2.1.0.dist-info/entry_points.txt
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/.venv/lib/python3.14/site-packages/ghp_import-2.1.0.dist-info/top_level.txt
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/.venv/lib/python3.14/site-packages/charset_normalizer-3.4.4.dist-info/entry_points.txt
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/.venv/lib/python3.14/site-packages/charset_normalizer-3.4.4.dist-info/top_level.txt
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/.venv/lib/python3.14/site-packages/pip/_vendor/vendor.txt
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/.venv/lib/python3.14/site-packages/pip/_vendor/dependency_groups/LICENSE.txt
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/.venv/lib/python3.14/site-packages/pip/_vendor/distlib/LICENSE.txt
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/.venv/lib/python3.14/site-packages/pip/_vendor/cachecontrol/LICENSE.txt
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/.venv/lib/python3.14/site-packages/pip/_vendor/urllib3/LICENSE.txt
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/.venv/lib/python3.14/site-packages/python_dateutil-2.9.0.post0.dist-info/top_level.txt
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/.venv/lib/python3.14/site-packages/pyyaml-6.0.3.dist-info/top_level.txt
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/.venv/lib/python3.14/site-packages/urllib3-2.6.3.dist-info/licenses/LICENSE.txt
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/.venv/lib/python3.14/site-packages/jinja2-3.1.6.dist-info/licenses/LICENSE.txt
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/.venv/lib/python3.14/site-packages/jinja2-3.1.6.dist-info/entry_points.txt
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/.venv/lib/python3.14/site-packages/pyyaml_env_tag-1.1.dist-info/top_level.txt
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/.venv/lib/python3.14/site-packages/markupsafe-3.0.3.dist-info/licenses/LICENSE.txt
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/.venv/lib/python3.14/site-packages/markupsafe-3.0.3.dist-info/top_level.txt
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/.venv/lib/python3.14/site-packages/mkdocs/themes/mkdocs/css/bootstrap.min.css.map
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/.venv/lib/python3.14/site-packages/mkdocs/themes/mkdocs/js/bootstrap.bundle.min.js.map
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/.venv/lib/python3.14/site-packages/pygments-2.19.2.dist-info/entry_points.txt
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/.venv/lib/python3.14/site-packages/watchdog-6.0.0.dist-info/entry_points.txt
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/.venv/lib/python3.14/site-packages/watchdog-6.0.0.dist-info/top_level.txt
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/.venv/lib/python3.14/site-packages/mkdocs_gitbook-0.0.1.dist-info/entry_points.txt
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/.venv/lib/python3.14/site-packages/mkdocs_gitbook-0.0.1.dist-info/top_level.txt
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/.venv/lib/python3.14/site-packages/material/templates/.icons/fontawesome/LICENSE.txt
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/.venv/lib/python3.14/site-packages/material/templates/assets/javascripts/workers/search.2c215733.min.js.map
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/.venv/lib/python3.14/site-packages/material/templates/assets/javascripts/bundle.79ae519e.min.js.map
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/.venv/lib/python3.14/site-packages/material/templates/assets/stylesheets/main.484c7ddc.min.css.map
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/.venv/lib/python3.14/site-packages/material/templates/assets/stylesheets/palette.ab4e12ef.min.css.map
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/.venv/lib/python3.14/site-packages/markdown-3.10.2.dist-info/entry_points.txt
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/.venv/lib/python3.14/site-packages/markdown-3.10.2.dist-info/top_level.txt
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/.venv/lib/python3.14/site-packages/six-1.17.0.dist-info/top_level.txt
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/.venv/lib/python3.14/site-packages/mkdocs_material-9.7.4.dist-info/entry_points.txt
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/scripts/ui/hud.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/scripts/ui/main_menu.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/scripts/ui/dialogue_ui.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/scripts/ui/options_menu.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/scripts/core/settings.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/scripts/core/io_manager.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/scripts/core/player.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/scripts/core/GameManager.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/scripts/core/home_setup.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/scripts/core/dialogue_manager.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/scripts/core/exit.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/scripts/core/dialogue_markdown.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/scripts/core/util.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/scripts/env/ps1_shader_manager.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/scripts/env/vfx_one_shot.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/scripts/env/sandstorm_controller.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/scripts/photo/photo_guides.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/scripts/photo/photo_histogram.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/scripts/photo/photo_mode.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/scripts/photo/photo_viewfinder.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/scripts/debug/debug.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/scripts/debug/ui_health_check.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/scripts/debug/runtime_perf_hud.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/scripts/debug/runtime_map_play.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/scripts/debug/debug_menu.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/scripts/debug/runtime_ai_hud.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/scripts/debug/spectator.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/site/search/search_index.json
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/site/assets/javascripts/workers/search.2c215733.min.js.map
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/site/assets/javascripts/bundle.79ae519e.min.js.map
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/site/assets/stylesheets/main.484c7ddc.min.css.map
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/site/assets/stylesheets/palette.ab4e12ef.min.css.map
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/export_presets.cfg
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/data/dialogue/npc_default.json
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/themes/rapidraw_photo_theme.tres
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/entities/generated/generated_model_static.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/entities/path_corner.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/entities/triggers/trigger_multiple.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/entities/triggers/trigger_once.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/entities/triggers/trigger_changelevel.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/entities/triggers/trigger_hurt.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/entities/triggers/trigger_exit.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/entities/triggers/trigger_area.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/entities/props/physics_ball.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/entities/logic/env_postfx.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/entities/logic/env_message.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/entities/logic/multi_manager.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/entities/logic/env_weather.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/entities/logic/checkpoint_volume.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/entities/logic/logic_timer.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/entities/logic/volume.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/entities/logic/ai_spawn_wave_point.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/entities/logic/spawn_blocker_volume.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/entities/logic/ai_alert_volume.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/entities/logic/ai_controller.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/entities/logic/env_audio_ambience.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/entities/logic/water_volume.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/entities/logic/env_fog_controller.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/entities/logic/ai_patrol_point.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/entities/logic/env_zone.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/entities/logic/logic_random.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/entities/logic/ai_wave_spawner.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/entities/logic/perf_heatmap_volume.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/entities/logic/logic_auto.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/entities/logic/env_sandstorm.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/entities/logic/math_counter.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/entities/logic/env_reflection_probe.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/entities/logic/func_prefab_instance.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/entities/logic/env_wind.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/entities/logic/damage_volume.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/entities/logic/quest_trigger_volume.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/entities/logic/env_sky_scene.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/entities/logic/ai_perception_blocker.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/entities/logic/ai_nav_region.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/entities/logic/ai_cover_marker.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/entities/logic/perf_budget_marker.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/entities/logic/music_zone_volume.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/entities/logic/logic_relay.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/entities/logic/env_portal_budget.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/entities/info_intermission.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/entities/info_camera.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/entities/actors/actor.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/entities/actors/marsfrog/marsfrog.tscn
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/entities/actors/marsfrog/marsfrog.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/entities/actors/npc/npc.tscn
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/entities/actors/npc/npc_mixamo.tscn
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/entities/actors/npc/npc_spawn_anchor.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/entities/funcs/portal_runtime_manager.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/entities/funcs/mirror_runtime_manager.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/entities/funcs/portal3d_adapter.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/entities/funcs/func_portal.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/entities/funcs/func_mirror.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/entities/funcs/func_door.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/entities/funcs/func_texture_tile.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/entities/funcs/func_train.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/entities/funcs/func_move.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/entities/funcs/func_button.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/entities/items/item_health.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/entities/items/collectible.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/entities/items/item_key.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/entities/items/item_ammo.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/entities/items/collectible/collectible.tscn
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/entities/lights/light_spot.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/entities/lights/light_base.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/entities/lights/light_omni.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/entities/info_player_start.gd
+/Users/nre/Documents/GitHub/GAME/sacred-fruit/entities/worldspawn.gd

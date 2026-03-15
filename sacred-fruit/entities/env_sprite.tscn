@@ -1,0 +1,9 @@
+[gd_scene load_steps=2 format=3 uid="uid://b8mnpjxkd8grn"]
+
+[ext_resource type="Script" path="res://entities/env_sprite.gd" id="1_sprite"]
+
+[node name="env_sprite" type="Sprite3D"]
+script = ExtResource("1_sprite")
+pixel_size = 0.03125
+billboard = 1
+texture_filter = 0

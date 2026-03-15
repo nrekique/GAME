@@ -5,6 +5,7 @@ signal settings_applied
 signal settings_changed
 
 const CONFIG_PATH := "user://settings.cfg"
+const CONFIG_BACKUP_PATH := CONFIG_PATH + ".bak"
 
 # Defaults (match current gameplay feel)
 var fullscreen: bool = false
@@ -29,8 +30,11 @@ func load_settings() -> void:
 	var cfg := ConfigFile.new()
 	var err := cfg.load(CONFIG_PATH)
 	if err != OK:
-		# First run or unreadable config: keep defaults.
-		return
+		var backup_err := cfg.load(CONFIG_BACKUP_PATH)
+		if backup_err != OK:
+			# First run or unreadable config: keep defaults.
+			return
+		push_warning("SETTINGS: primary config load failed; using backup copy (%s)" % str(err))
 
 	fullscreen = bool(cfg.get_value("display", "fullscreen", fullscreen))
 	vsync = bool(cfg.get_value("display", "vsync", vsync))
@@ -62,7 +66,37 @@ func save_settings() -> void:
 	cfg.set_value("controls", "mouse_sens", mouse_sens)
 	cfg.set_value("controls", "mouse_smoothing", mouse_smoothing)
 	cfg.set_value("controls", "gameplay_fov", gameplay_fov)
-	cfg.save(CONFIG_PATH)
+	_save_config_atomic(cfg, CONFIG_PATH, CONFIG_BACKUP_PATH, "settings")
+
+
+func _save_config_atomic(cfg: ConfigFile, target_path: String, backup_path: String, label: String) -> bool:
+	var tmp_path := target_path + ".tmp"
+	var tmp_save_err := cfg.save(tmp_path)
+	if tmp_save_err != OK:
+		push_warning("SETTINGS %s save failed (tmp): %s" % [label, str(tmp_save_err)])
+		return false
+
+	var abs_target := ProjectSettings.globalize_path(target_path)
+	var abs_backup := ProjectSettings.globalize_path(backup_path)
+	var abs_tmp := ProjectSettings.globalize_path(tmp_path)
+
+	if FileAccess.file_exists(backup_path):
+		DirAccess.remove_absolute(abs_backup)
+	if FileAccess.file_exists(target_path):
+		var backup_err := DirAccess.rename_absolute(abs_target, abs_backup)
+		if backup_err != OK:
+			push_warning("SETTINGS %s save failed (backup rotate): %s" % [label, str(backup_err)])
+			DirAccess.remove_absolute(abs_tmp)
+			return false
+
+	var promote_err := DirAccess.rename_absolute(abs_tmp, abs_target)
+	if promote_err != OK:
+		push_warning("SETTINGS %s save failed (promote tmp): %s" % [label, str(promote_err)])
+		if FileAccess.file_exists(backup_path) and not FileAccess.file_exists(target_path):
+			DirAccess.rename_absolute(abs_backup, abs_target)
+		return false
+
+	return true
 
 
 func apply_settings() -> void:

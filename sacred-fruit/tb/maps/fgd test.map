@@ -5,6 +5,7 @@
 "mapversion" "220"
 "wad" ""
 "classname" "worldspawn"
+"sf_sun_energy" "1.5"
 // brush 0
 {
 ( -448 -384 80 ) ( -448 -528 80 ) ( -448 -528 16 ) color/cblueT [ -1.8369701987210297e-16 -1 0 -16 ] [ 0 0 -1 0 ] 180 1 1
@@ -333,6 +334,10 @@
 "classname" "func_portal"
 "target" "portal_a"
 "targetname" "portal_b"
+"render_use_oblique_clip" "1"
+"plugin_keep_viewports_hot" "0"
+"dynamic_near_distance" "3.0"
+"dynamic_far_distance" "16.0"
 // brush 0
 {
 ( -688 -48 16 ) ( -688 -47 16 ) ( -688 -48 17 ) special/skip [ 0 -1 0 -16 ] [ 0 0 -1 0 ] 180 1 1
@@ -348,6 +353,10 @@
 "classname" "func_portal"
 "target" "portal_b"
 "targetname" "portal_a"
+"render_use_oblique_clip" "1"
+"plugin_keep_viewports_hot" "0"
+"dynamic_near_distance" "3.0"
+"dynamic_far_distance" "16.0"
 // brush 0
 {
 ( -544 -48 16 ) ( -544 -47 16 ) ( -544 -48 17 ) special/skip [ 0 -1 0 16 ] [ 0 0 -1 0 ] 90 1 1
@@ -365,6 +374,10 @@
 "targetname" "e"
 "plugin_face_from_portal_texture" "1"
 "use_portals_plugin" "1"
+"render_use_oblique_clip" "1"
+"plugin_keep_viewports_hot" "0"
+"dynamic_near_distance" "3.0"
+"dynamic_far_distance" "16.0"
 // brush 0
 {
 ( -1120 -320 16 ) ( -1120 -319 16 ) ( -1120 -320 17 ) special/skip [ 0 -1 0 0 ] [ 0 0 -1 0 ] 180 1 1
@@ -410,7 +423,6 @@
 {
 "classname" "logic_auto"
 "origin" "88 24 24"
-"target" "setup_relay"
 "delay" "0.1"
 "fire_once" "1"
 }
@@ -505,8 +517,14 @@
 {
 "classname" "env_portal_budget"
 "origin" "88 -56 24"
-"stress_profile" ""
+"stress_profile" "1"
 "profile_mode" "balanced"
+"portal_max_active" "1"
+"portal_max_render_scale" "0.60"
+"portal_min_render_scale" "0.15"
+"portal_refresh_seconds" "0.20"
+"mirror_max_active" "0"
+"mirror_refresh_seconds" "0.25"
 }
 // entity 20
 {
@@ -604,6 +622,10 @@
 "target" "y"
 "targetname" "t"
 "use_portals_plugin" "1"
+"render_use_oblique_clip" "1"
+"plugin_keep_viewports_hot" "0"
+"dynamic_near_distance" "3.0"
+"dynamic_far_distance" "16.0"
 "_tb_group" "1"
 // brush 0
 {
@@ -630,6 +652,10 @@
 "target" "e"
 "targetname" "d"
 "use_portals_plugin" "1"
+"render_use_oblique_clip" "1"
+"plugin_keep_viewports_hot" "0"
+"dynamic_near_distance" "3.0"
+"dynamic_far_distance" "16.0"
 "_tb_group" "1"
 // brush 0
 {
@@ -746,6 +772,10 @@
 "target" "t"
 "targetname" "y"
 "use_portals_plugin" "1"
+"render_use_oblique_clip" "1"
+"plugin_keep_viewports_hot" "0"
+"dynamic_near_distance" "3.0"
+"dynamic_far_distance" "16.0"
 "_tb_group" "3"
 // brush 0
 {
@@ -823,6 +853,7 @@
 // entity 32
 {
 "classname" "func_door"
+"targetname" "door2"
 "required_key" "two"
 "speed" "120.000000"
 "target" "door2"
@@ -895,4 +926,122 @@
 "order" "3"
 "targetname" "enemy_patrol_p4"
 "target" "enemy_patrol_p1"
+}
+// entity 39 — func_button: floor pad in front of door1, opens it on touch/interact
+{
+"classname" "func_button"
+"target" "door1"
+"touch_activates" "1"
+"interact_activates" "1"
+"wait" "2.0"
+// brush 0
+{
+( -760 -452 16 ) ( -760 -452 17 ) ( -760 -451 16 ) color/orange [ 0 -1 0 0 ] [ 0 0 -1 0 ] 0 1 1
+( -740 -452 16 ) ( -740 -451 16 ) ( -740 -452 17 ) color/orange [ 0 1 0 0 ] [ 0 0 -1 0 ] 0 1 1
+( -760 -452 16 ) ( -759 -452 16 ) ( -760 -452 17 ) color/orange [ -1 0 0 0 ] [ 0 0 -1 0 ] 0 1 1
+( -760 -412 16 ) ( -760 -412 17 ) ( -759 -412 16 ) color/orange [ 1 0 0 0 ] [ 0 0 -1 0 ] 0 1 1
+( -760 -452 16 ) ( -760 -451 16 ) ( -759 -452 16 ) color/orange [ 1 0 0 0 ] [ 0 -1 0 0 ] 0 1 1
+( -760 -452 24 ) ( -759 -452 24 ) ( -760 -451 24 ) color/orange [ 1 0 0 0 ] [ 0 -1 0 0 ] 0 1 1
+}
+}
+// entity 40 — item_health: pickup near patrol area
+{
+"classname" "item_health"
+"origin" "-520 -72 24"
+"amount" "25"
+}
+// entity 41 — item_ammo: pickup near patrol area
+{
+"classname" "item_ammo"
+"origin" "-520 -136 24"
+"ammo_type" "bullets"
+"amount" "10"
+}
+// entity 42 — trigger_hurt: damage floor zone
+{
+"classname" "trigger_hurt"
+"dmg" "20"
+"wait" "0.5"
+// brush 0
+{
+( -200 -200 0 ) ( -200 -200 1 ) ( -200 -199 0 ) special/trigger [ 0 -1 0 0 ] [ 0 0 -1 0 ] 0 1 1
+( -280 -200 0 ) ( -280 -199 0 ) ( -280 -200 1 ) special/trigger [ 0 1 0 0 ] [ 0 0 -1 0 ] 0 1 1
+( -200 -200 0 ) ( -199 -200 0 ) ( -200 -200 1 ) special/trigger [ -1 0 0 0 ] [ 0 0 -1 0 ] 0 1 1
+( -200 -280 0 ) ( -200 -280 1 ) ( -199 -280 0 ) special/trigger [ 1 0 0 0 ] [ 0 0 -1 0 ] 0 1 1
+( -200 -200 0 ) ( -200 -199 0 ) ( -199 -200 0 ) special/trigger [ 1 0 0 0 ] [ 0 -1 0 0 ] 0 1 1
+( -200 -200 16 ) ( -199 -200 16 ) ( -200 -199 16 ) special/trigger [ 1 0 0 0 ] [ 0 -1 0 0 ] 0 1 1
+}
+}
+// entity 43 — volume_checkpoint: registers save point at player start area
+{
+"classname" "checkpoint_volume"
+"checkpoint_id" "start_zone"
+// brush 0
+{
+( -320 -420 16 ) ( -320 -420 17 ) ( -320 -419 16 ) special/trigger [ 0 -1 0 0 ] [ 0 0 -1 0 ] 0 1 1
+( -400 -420 16 ) ( -400 -419 16 ) ( -400 -420 17 ) special/trigger [ 0 1 0 0 ] [ 0 0 -1 0 ] 0 1 1
+( -320 -420 16 ) ( -319 -420 16 ) ( -320 -420 17 ) special/trigger [ -1 0 0 0 ] [ 0 0 -1 0 ] 0 1 1
+( -320 -500 16 ) ( -320 -500 17 ) ( -319 -500 16 ) special/trigger [ 1 0 0 0 ] [ 0 0 -1 0 ] 0 1 1
+( -320 -420 16 ) ( -320 -419 16 ) ( -319 -420 16 ) special/trigger [ 1 0 0 0 ] [ 0 -1 0 0 ] 0 1 1
+( -320 -420 80 ) ( -319 -420 80 ) ( -320 -419 80 ) special/trigger [ 1 0 0 0 ] [ 0 -1 0 0 ] 0 1 1
+}
+}
+// entity 44 — func_train: moving platform on a two-point loop
+{
+"classname" "func_train"
+"target" "train_pt1"
+"speed" "64"
+// brush 0
+{
+( -160 -490 24 ) ( -160 -490 25 ) ( -160 -489 24 ) color/green [ 0 -1 0 0 ] [ 0 0 -1 0 ] 0 1 1
+( -200 -490 24 ) ( -200 -489 24 ) ( -200 -490 25 ) color/green [ 0 1 0 0 ] [ 0 0 -1 0 ] 0 1 1
+( -160 -490 24 ) ( -159 -490 24 ) ( -160 -490 25 ) color/green [ -1 0 0 0 ] [ 0 0 -1 0 ] 0 1 1
+( -160 -530 24 ) ( -160 -530 25 ) ( -159 -530 24 ) color/green [ 1 0 0 0 ] [ 0 0 -1 0 ] 0 1 1
+( -160 -490 24 ) ( -160 -489 24 ) ( -159 -490 24 ) color/green [ 1 0 0 0 ] [ 0 -1 0 0 ] 0 1 1
+( -160 -490 40 ) ( -159 -490 40 ) ( -160 -489 40 ) color/green [ 1 0 0 0 ] [ 0 -1 0 0 ] 0 1 1
+}
+}
+// entity 45 — path_corner: first train stop
+{
+"classname" "path_corner"
+"targetname" "train_pt1"
+"target" "train_pt2"
+"origin" "-180 -510 24"
+}
+// entity 46 — path_corner: second train stop, loops back
+{
+"classname" "path_corner"
+"targetname" "train_pt2"
+"target" "train_pt1"
+"origin" "-180 -640 24"
+}
+// entity 47 — trigger_once: fires relay once when player enters
+{
+"classname" "trigger_once"
+"target" "relay_entry"
+// brush 0
+{
+( -300 -430 16 ) ( -300 -430 17 ) ( -300 -429 16 ) special/trigger [ 0 -1 0 0 ] [ 0 0 -1 0 ] 0 1 1
+( -360 -430 16 ) ( -360 -429 16 ) ( -360 -430 17 ) special/trigger [ 0 1 0 0 ] [ 0 0 -1 0 ] 0 1 1
+( -300 -430 16 ) ( -299 -430 16 ) ( -300 -430 17 ) special/trigger [ -1 0 0 0 ] [ 0 0 -1 0 ] 0 1 1
+( -300 -480 16 ) ( -300 -480 17 ) ( -299 -480 16 ) special/trigger [ 1 0 0 0 ] [ 0 0 -1 0 ] 0 1 1
+( -300 -430 16 ) ( -300 -429 16 ) ( -299 -430 16 ) special/trigger [ 1 0 0 0 ] [ 0 -1 0 0 ] 0 1 1
+( -300 -430 80 ) ( -299 -430 80 ) ( -300 -429 80 ) special/trigger [ 1 0 0 0 ] [ 0 -1 0 0 ] 0 1 1
+}
+}
+// entity 48 — logic_relay: delays and passes trigger to env_message
+{
+"classname" "logic_relay"
+"targetname" "relay_entry"
+"target" "msg_entry"
+"delay" "0.5"
+"origin" "88 -120 24"
+}
+// entity 49 — env_message: HUD message on entry
+{
+"classname" "env_message"
+"targetname" "msg_entry"
+"message" "Test zone entered. Use button to open door."
+"hold_time" "3.0"
+"origin" "88 -160 24"
 }

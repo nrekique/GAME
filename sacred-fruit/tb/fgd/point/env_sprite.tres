@@ -1,0 +1,45 @@
+[gd_resource type="Resource" script_class="FuncGodotFGDPointClass" format=3 uid="uid://dg0w3mpt8xc7m"]
+
+[ext_resource type="Script" uid="uid://dne2nmlkaibt5" path="res://addons/func_godot/src/fgd/func_godot_fgd_point_class.gd" id="1_pgkm"]
+[ext_resource type="Resource" uid="uid://cwbnifad3sdgw" path="res://tb/fgd/base/targetname_base.tres" id="2_base"]
+[ext_resource type="PackedScene" uid="uid://b8mnpjxkd8grn" path="res://entities/env_sprite.tscn" id="3_scene"]
+
+[resource]
+script = ExtResource("1_pgkm")
+scene_file = ExtResource("3_scene")
+classname = "env_sprite"
+description = "Billboard sprite entity that always faces the camera. Used for foliage, particles, and decorative elements."
+base_classes = Array[Resource]([ExtResource("2_base")])
+class_properties = {
+"texture": "",
+"scale": 1.0,
+"_color": Color(1, 1, 1, 1),
+"transparent": true,
+"shaded": false,
+"double_sided": false,
+"billboard": 1,
+"frames": 1,
+"framerate": 10.0,
+"render_layer": 1,
+"alpha_scissor": 0.5
+}
+class_property_descriptions = {
+"texture": "Path to sprite texture (relative to res://tb/textures/ or absolute res:// path)",
+"scale": "Sprite scale multiplier",
+"_color": "Color tint/modulation",
+"transparent": "Enable transparency",
+"shaded": "Enable lighting/shading",
+"double_sided": "Render sprite on both sides",
+"billboard": "Billboard mode: 0=disabled, 1=enabled, 2=y-axis only",
+"frames": "Number of horizontal animation frames in texture",
+"framerate": "Animation playback speed (frames per second)",
+"render_layer": "Render layer mask",
+"alpha_scissor": "Alpha cutoff threshold (0.0-1.0)"
+}
+meta_properties = {
+"color": Color(0.2, 0.8, 0.2, 1),
+"iconsprite": "\"fgd/entities/sprites/env_sprite.png\"",
+"size": AABB(-8, -8, -8, 8, 8, 8)
+}
+apply_rotation_on_map_build = true
+apply_scale_on_map_build = true

@@ -1,0 +1,2033 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Mapper and developer documentation for Sacred Fruit">
+      
+      
+      
+      
+        <link rel="prev" href="../DEVELOPMENT_TODO/">
+      
+      
+        <link rel="next" href="../TEXTURE_PRODUCTION_CHECKLIST/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.4">
+    
+    
+      
+        <title>Texture Atlas - Sacred Fruit Docs</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#texture-atlas" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="Sacred Fruit Docs" class="md-header__button md-logo" aria-label="Sacred Fruit Docs" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Sacred Fruit Docs
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Texture Atlas
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Sacred Fruit Docs" class="md-nav__button md-logo" aria-label="Sacred Fruit Docs" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Sacred Fruit Docs
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Roadmap
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Roadmap
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../DEVELOPMENT_TODO/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Development TODO
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Texture Atlas
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Texture Atlas
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#special-textures" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Special Textures
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#color-textures" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Color Textures
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Color Textures">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#full-saturation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Full Saturation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tints" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tints
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#shades" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Shades
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#environmental-texture-targets" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Environmental Texture Targets
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#deferred-replaced" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Deferred / Replaced
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../TEXTURE_PRODUCTION_CHECKLIST/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Texture Production Checklist
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../PHASE_1_DESIGN_BRIEF/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Phase 1 Design Brief
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../PHASE_1_QUICK_REF/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Phase 1 Quick Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../PHASE_1_TECHNICAL_SPECS/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Phase 1 Technical Specs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Mapping
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Mapping
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../TB_ENTITY_QUICK_REFERENCE/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    TrenchBroom Quick Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../MAP_BUILDING_GUIDELINES/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Map Building Guidelines
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../KIT_SPEC_TEMPLATE/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kit Spec Template
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../DOOR_KEY_AUTHORING/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Door + Key Authoring
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../MAP_LINTING/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Map Linting
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../MAP_VALIDATION_COOKBOOK/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Map Validation Cookbook
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../FGD_RUNTIME_KEY_MATRIX/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FGD to Runtime Key Matrix
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../RUNTIME_MAP_PIPELINE/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Runtime Map Pipeline
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../RUNTIME_LOGS_AND_CRASH_SIGNATURES/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Runtime Logs and Crash Signatures
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../WORLDSPAWN_KEYS_REFERENCE/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Worldspawn Keys Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../VOLUMES/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Volumes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Entities
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Entities
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ENTITY_SCRIPTING_GUIDE/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Entity Scripting Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ENTITY_IO_SYSTEM/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Entity I/O System
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ENTITY_INTERACTION_CONTRACT/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Entity Interaction Contract
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../DIALOGUE_MARKDOWN/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dialogue Markdown
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Rendering
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Rendering
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../PORTAL_TUNING_PLAYBOOK/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Portal Tuning Playbook
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../MIRROR_POLICY/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Mirror Policy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ENV_STACK_ORDER/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Environment Stack Order
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../PS1_SHADER_PARAMETERS/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PS1 Shader Parameters
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contributing
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Contributing
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../STYLE/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Style
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../TESTS/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tests
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../BUILD_PROFILES/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Build Profiles
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../DOCS_CONTRIBUTION_WORKFLOW/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Docs Contribution Workflow
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../DOCS_BACKLOG/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Docs Backlog
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#special-textures" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Special Textures
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#color-textures" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Color Textures
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Color Textures">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#full-saturation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Full Saturation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tints" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tints
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#shades" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Shades
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#environmental-texture-targets" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Environmental Texture Targets
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#deferred-replaced" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Deferred / Replaced
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="texture-atlas">Texture Atlas<a class="headerlink" href="#texture-atlas" title="Permanent link">&para;</a></h1>
+<p>This is the full atlas (completed + pending) for the current texture scope.
+Use <a href="../TEXTURE_PRODUCTION_CHECKLIST/">Texture Production Checklist</a> for only textures still to be made.</p>
+<h2 id="special-textures">Special Textures<a class="headerlink" href="#special-textures" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Texture</th>
+<th>Preview</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>special/clip</code></td>
+<td><img src="../assets/texture-previews/special_clip.png" alt="special clip" width="96"></td>
+<td>Completed</td>
+</tr>
+<tr>
+<td><code>special/glass</code></td>
+<td><img src="../assets/texture-previews/special_glass.png" alt="special glass" width="96"></td>
+<td>Completed</td>
+</tr>
+<tr>
+<td><code>special/mirror</code></td>
+<td><img src="../assets/texture-previews/special_mirror.png" alt="special mirror" width="96"></td>
+<td>Completed</td>
+</tr>
+<tr>
+<td><code>special/origin</code></td>
+<td><img src="../assets/texture-previews/special_origin.png" alt="special origin" width="96"></td>
+<td>Pending</td>
+</tr>
+<tr>
+<td><code>special/portal</code></td>
+<td><img src="../assets/texture-previews/special_portal.png" alt="special portal" width="96"></td>
+<td>Completed</td>
+</tr>
+<tr>
+<td><code>special/skip</code></td>
+<td><img src="../assets/texture-previews/special_skip.png" alt="special skip" width="96"></td>
+<td>Completed</td>
+</tr>
+<tr>
+<td><code>special/trigger</code></td>
+<td><img src="../assets/texture-previews/special_trigger.png" alt="special trigger" width="96"></td>
+<td>Completed</td>
+</tr>
+<tr>
+<td><code>special/water</code></td>
+<td><img src="../assets/texture-previews/special_water.png" alt="special water" width="96"></td>
+<td>Completed</td>
+</tr>
+</tbody>
+</table>
+<h2 id="color-textures">Color Textures<a class="headerlink" href="#color-textures" title="Permanent link">&para;</a></h2>
+<p>Naming rule: base = full saturation, trailing <code>t</code> = tint, trailing <code>s</code> = shade.</p>
+<h3 id="full-saturation">Full Saturation<a class="headerlink" href="#full-saturation" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Texture</th>
+<th>Preview</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>color/bgray</code></td>
+<td><img src="../assets/texture-previews/color_bgray.png" alt="color bgray" width="96"></td>
+</tr>
+<tr>
+<td><code>color/black</code></td>
+<td><img src="../assets/texture-previews/color_black.png" alt="color black" width="96"></td>
+</tr>
+<tr>
+<td><code>color/blue</code></td>
+<td><img src="../assets/texture-previews/color_blue.png" alt="color blue" width="96"></td>
+</tr>
+<tr>
+<td><code>color/cblue</code></td>
+<td><img src="../assets/texture-previews/color_cblue.png" alt="color cblue" width="96"></td>
+</tr>
+<tr>
+<td><code>color/cyan</code></td>
+<td><img src="../assets/texture-previews/color_cyan.png" alt="color cyan" width="96"></td>
+</tr>
+<tr>
+<td><code>color/green</code></td>
+<td><img src="../assets/texture-previews/color_green.png" alt="color green" width="96"></td>
+</tr>
+<tr>
+<td><code>color/grey</code></td>
+<td><img src="../assets/texture-previews/color_grey.png" alt="color grey" width="96"></td>
+</tr>
+<tr>
+<td><code>color/magenta</code></td>
+<td><img src="../assets/texture-previews/color_magenta.png" alt="color magenta" width="96"></td>
+</tr>
+<tr>
+<td><code>color/orange</code></td>
+<td><img src="../assets/texture-previews/color_orange.png" alt="color orange" width="96"></td>
+</tr>
+<tr>
+<td><code>color/pink</code></td>
+<td><img src="../assets/texture-previews/color_pink.png" alt="color pink" width="96"></td>
+</tr>
+<tr>
+<td><code>color/purple</code></td>
+<td><img src="../assets/texture-previews/color_purple.png" alt="color purple" width="96"></td>
+</tr>
+<tr>
+<td><code>color/red</code></td>
+<td><img src="../assets/texture-previews/color_red.png" alt="color red" width="96"></td>
+</tr>
+<tr>
+<td><code>color/wgray</code></td>
+<td><img src="../assets/texture-previews/color_wgray.png" alt="color wgray" width="96"></td>
+</tr>
+<tr>
+<td><code>color/white</code></td>
+<td><img src="../assets/texture-previews/color_white.png" alt="color white" width="96"></td>
+</tr>
+<tr>
+<td><code>color/yellow</code></td>
+<td><img src="../assets/texture-previews/color_yellow.png" alt="color yellow" width="96"></td>
+</tr>
+<tr>
+<td><code>color/ygreen</code></td>
+<td><img src="../assets/texture-previews/color_ygreen.png" alt="color ygreen" width="96"></td>
+</tr>
+</tbody>
+</table>
+<h3 id="tints">Tints<a class="headerlink" href="#tints" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Texture</th>
+<th>Preview</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>color/bluet</code></td>
+<td><img src="../assets/texture-previews/color_bluet.png" alt="color bluet" width="96"></td>
+</tr>
+<tr>
+<td><code>color/cbluet</code></td>
+<td><img src="../assets/texture-previews/color_cbluet.png" alt="color cbluet" width="96"></td>
+</tr>
+<tr>
+<td><code>color/cyant</code></td>
+<td><img src="../assets/texture-previews/color_cyant.png" alt="color cyant" width="96"></td>
+</tr>
+<tr>
+<td><code>color/greent</code></td>
+<td><img src="../assets/texture-previews/color_greent.png" alt="color greent" width="96"></td>
+</tr>
+<tr>
+<td><code>color/magentat</code></td>
+<td><img src="../assets/texture-previews/color_magentat.png" alt="color magentat" width="96"></td>
+</tr>
+<tr>
+<td><code>color/oranget</code></td>
+<td><img src="../assets/texture-previews/color_oranget.png" alt="color oranget" width="96"></td>
+</tr>
+<tr>
+<td><code>color/pinkt</code></td>
+<td><img src="../assets/texture-previews/color_pinkt.png" alt="color pinkt" width="96"></td>
+</tr>
+<tr>
+<td><code>color/purplet</code></td>
+<td><img src="../assets/texture-previews/color_purplet.png" alt="color purplet" width="96"></td>
+</tr>
+<tr>
+<td><code>color/redt</code></td>
+<td><img src="../assets/texture-previews/color_redt.png" alt="color redt" width="96"></td>
+</tr>
+<tr>
+<td><code>color/yellowt</code></td>
+<td><img src="../assets/texture-previews/color_yellowt.png" alt="color yellowt" width="96"></td>
+</tr>
+<tr>
+<td><code>color/ygreent</code></td>
+<td><img src="../assets/texture-previews/color_ygreent.png" alt="color ygreent" width="96"></td>
+</tr>
+</tbody>
+</table>
+<h3 id="shades">Shades<a class="headerlink" href="#shades" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Texture</th>
+<th>Preview</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>color/blues</code></td>
+<td><img src="../assets/texture-previews/color_blues.png" alt="color blues" width="96"></td>
+</tr>
+<tr>
+<td><code>color/cblues</code></td>
+<td><img src="../assets/texture-previews/color_cblues.png" alt="color cblues" width="96"></td>
+</tr>
+<tr>
+<td><code>color/cyans</code></td>
+<td><img src="../assets/texture-previews/color_cyans.png" alt="color cyans" width="96"></td>
+</tr>
+<tr>
+<td><code>color/greens</code></td>
+<td><img src="../assets/texture-previews/color_greens.png" alt="color greens" width="96"></td>
+</tr>
+<tr>
+<td><code>color/magentas</code></td>
+<td><img src="../assets/texture-previews/color_magentas.png" alt="color magentas" width="96"></td>
+</tr>
+<tr>
+<td><code>color/oranges</code></td>
+<td><img src="../assets/texture-previews/color_oranges.png" alt="color oranges" width="96"></td>
+</tr>
+<tr>
+<td><code>color/pinks</code></td>
+<td><img src="../assets/texture-previews/color_pinks.png" alt="color pinks" width="96"></td>
+</tr>
+<tr>
+<td><code>color/purples</code></td>
+<td><img src="../assets/texture-previews/color_purples.png" alt="color purples" width="96"></td>
+</tr>
+<tr>
+<td><code>color/reds</code></td>
+<td><img src="../assets/texture-previews/color_reds.png" alt="color reds" width="96"></td>
+</tr>
+<tr>
+<td><code>color/yellows</code></td>
+<td><img src="../assets/texture-previews/color_yellows.png" alt="color yellows" width="96"></td>
+</tr>
+<tr>
+<td><code>color/ygreens</code></td>
+<td><img src="../assets/texture-previews/color_ygreens.png" alt="color ygreens" width="96"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="environmental-texture-targets">Environmental Texture Targets<a class="headerlink" href="#environmental-texture-targets" title="Permanent link">&para;</a></h2>
+<p>These are the current world textures in scope from live map usage.</p>
+<table>
+<thead>
+<tr>
+<th>Texture</th>
+<th>Status</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>world/curtains_purple</code></td>
+<td>Pending</td>
+<td>Purple variant of curtain family</td>
+</tr>
+<tr>
+<td><code>world/dark1</code></td>
+<td>Pending</td>
+<td>Opaque world material</td>
+</tr>
+<tr>
+<td><code>world/tunnel_trim</code></td>
+<td>Pending</td>
+<td>Normalized from legacy tunnle names</td>
+</tr>
+<tr>
+<td><code>world/light1</code></td>
+<td>Pending</td>
+<td>Emissive brush surface</td>
+</tr>
+<tr>
+<td><code>world/red5</code></td>
+<td>Pending</td>
+<td>Opaque world material</td>
+</tr>
+<tr>
+<td><code>world/light12</code></td>
+<td>Pending</td>
+<td>Emissive brush surface</td>
+</tr>
+<tr>
+<td><code>world/red1</code></td>
+<td>Pending</td>
+<td>Opaque world material</td>
+</tr>
+<tr>
+<td><code>world/metal5_3</code></td>
+<td>Pending</td>
+<td>Opaque world material</td>
+</tr>
+<tr>
+<td><code>world/orange5</code></td>
+<td>Pending</td>
+<td>Opaque world material</td>
+</tr>
+<tr>
+<td><code>world/green1</code></td>
+<td>Pending</td>
+<td>Opaque world material</td>
+</tr>
+<tr>
+<td><code>world/light6</code></td>
+<td>Pending</td>
+<td>Emissive brush surface</td>
+</tr>
+<tr>
+<td><code>world/tunnel_wall</code></td>
+<td>Pending</td>
+<td>Normalized from legacy tunnle names</td>
+</tr>
+<tr>
+<td><code>world/cutout1</code></td>
+<td>Pending</td>
+<td>2D collage alpha-card</td>
+</tr>
+<tr>
+<td><code>world/coop</code></td>
+<td>Pending</td>
+<td>2D collage alpha-card</td>
+</tr>
+<tr>
+<td><code>world/cutout4</code></td>
+<td>Pending</td>
+<td>2D collage alpha-card</td>
+</tr>
+<tr>
+<td><code>world/cutout11</code></td>
+<td>Pending</td>
+<td>2D collage alpha-card</td>
+</tr>
+<tr>
+<td><code>world/cutout5</code></td>
+<td>Pending</td>
+<td>2D collage alpha-card</td>
+</tr>
+<tr>
+<td><code>world/cutout2</code></td>
+<td>Pending</td>
+<td>2D collage alpha-card</td>
+</tr>
+<tr>
+<td><code>world/cutout12</code></td>
+<td>Pending</td>
+<td>2D collage alpha-card</td>
+</tr>
+</tbody>
+</table>
+<h2 id="deferred-replaced">Deferred / Replaced<a class="headerlink" href="#deferred-replaced" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>world/sky1</code>, <code>world/skystar1</code>: replaced by modern sky workflow.</li>
+<li><code>world/car3</code>: replaced by 3D car models.</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.sections", "navigation.top", "content.code.copy", "search.suggest", "search.highlight"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

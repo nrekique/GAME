@@ -1,0 +1,14 @@
+[remap]
+
+importer="func_godot.map"
+type="Resource"
+uid="uid://cb71w8ddvxirr"
+path="res://.godot/imported/palette.ab4e12ef.min.css.map-735f895cd7be3bc6a24061e179dd3002.tres"
+
+[deps]
+
+source_file="res://site/assets/stylesheets/palette.ab4e12ef.min.css.map"
+dest_files=["res://.godot/imported/palette.ab4e12ef.min.css.map-735f895cd7be3bc6a24061e179dd3002.tres"]
+
+[params]
+

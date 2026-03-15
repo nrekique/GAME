@@ -1,0 +1,47 @@
+Adding file system path "/Applications/TrenchBroom.app/Contents/Resources/defaults/assets"
+Adding file system path "/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb"
+Loading document from /Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/maps/fgd test.map
+Found 0 shaders
+Found multiple model properties (at FileLocation{line: 471, column: 74})
+Found multiple model properties (at FileLocation{line: 500, column: 86})
+Found multiple model properties (at FileLocation{line: 576, column: 86})
+Duplicate class info 'worldspawn' (at FileLocation{line: 75, column: 13})
+Duplicate class info 'func_detail' (at FileLocation{line: 95, column: 13})
+Duplicate class info 'func_detail_illusionary' (at FileLocation{line: 97, column: 13})
+Duplicate class info 'func_geo' (at FileLocation{line: 99, column: 13})
+Duplicate class info 'func_illusionary' (at FileLocation{line: 101, column: 13})
+Loaded entity definition file sacredFruit.fgd
+Found 0 shaders
+Loaded "/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/maps/fgd test.map" in 26ms
+Could not resize brush: Brush is incomplete
+Created autosave backup at "/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/maps/autosave/fgd test.3.map"
+Adding file system path "/Applications/TrenchBroom.app/Contents/Resources/defaults/assets"
+Adding file system path "/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb"
+Loading document from /Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/maps/fgd test.map
+Found 0 shaders
+Found multiple model properties (at FileLocation{line: 471, column: 74})
+Found multiple model properties (at FileLocation{line: 500, column: 86})
+Found multiple model properties (at FileLocation{line: 576, column: 86})
+Duplicate class info 'worldspawn' (at FileLocation{line: 75, column: 13})
+Duplicate class info 'func_detail' (at FileLocation{line: 95, column: 13})
+Duplicate class info 'func_detail_illusionary' (at FileLocation{line: 97, column: 13})
+Duplicate class info 'func_geo' (at FileLocation{line: 99, column: 13})
+Duplicate class info 'func_illusionary' (at FileLocation{line: 101, column: 13})
+Loaded entity definition file sacredFruit.fgd
+Found 0 shaders
+Loaded "/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/maps/fgd test.map" in 53ms
+Adding file system path "/Applications/TrenchBroom.app/Contents/Resources/defaults/assets"
+Adding file system path "/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb"
+Loading document from /Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/maps/fgd test.map
+Found 0 shaders
+Found multiple model properties (at FileLocation{line: 471, column: 74})
+Found multiple model properties (at FileLocation{line: 500, column: 86})
+Found multiple model properties (at FileLocation{line: 576, column: 86})
+Duplicate class info 'worldspawn' (at FileLocation{line: 75, column: 13})
+Duplicate class info 'func_detail' (at FileLocation{line: 95, column: 13})
+Duplicate class info 'func_detail_illusionary' (at FileLocation{line: 97, column: 13})
+Duplicate class info 'func_geo' (at FileLocation{line: 99, column: 13})
+Duplicate class info 'func_illusionary' (at FileLocation{line: 101, column: 13})
+Loaded entity definition file sacredFruit.fgd
+Found 0 shaders
+Loaded "/Users/nre/Documents/GitHub/GAME/sacred-fruit/tb/maps/fgd test.map" in 54ms

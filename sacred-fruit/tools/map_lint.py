@@ -50,6 +50,17 @@ class LintMessage:
     message: str
 
 
+def is_critical_warning(message: LintMessage) -> bool:
+    if message.level != "WARN":
+        return False
+    # TrenchBroom helper grouping class is non-runtime and intentionally tolerated.
+    if message.message == "unknown classname in FGD" and message.classname not in {"func_group"}:
+        return True
+    if "references missing targetname" in message.message:
+        return True
+    return False
+
+
 def to_bool(raw: str, default: bool = False) -> bool:
     value = (raw or "").strip().lower()
     if value in {"1", "true", "yes", "on", "y"}:
@@ -383,9 +394,13 @@ def print_report(messages: list[LintMessage], map_path: Path) -> int:
     errors = sum(1 for m in messages if m.level == "ERROR")
     warns = sum(1 for m in messages if m.level == "WARN")
     infos = sum(1 for m in messages if m.level == "INFO")
+    critical_warns = sum(1 for m in messages if is_critical_warning(m))
 
     print(f"Map lint report: {map_path}")
-    print(f"Summary: {errors} error(s), {warns} warning(s), {infos} info")
+    print(
+        "Summary: "
+        f"{errors} error(s), {warns} warning(s), {critical_warns} critical warning(s), {infos} info"
+    )
     if not messages:
         print("PASS: no issues found")
         return 0
@@ -397,8 +412,11 @@ def print_report(messages: list[LintMessage], map_path: Path) -> int:
             if m.classname:
                 where += f" {m.classname}"
             where += "] "
-        print(f"{m.level}: {where}{m.message}")
-    return 1 if errors > 0 else 0
+        level = m.level
+        if is_critical_warning(m):
+            level = "WARN(CRITICAL)"
+        print(f"{level}: {where}{m.message}")
+    return 1 if (errors > 0 or critical_warns > 0) else 0
 
 
 def main() -> int:

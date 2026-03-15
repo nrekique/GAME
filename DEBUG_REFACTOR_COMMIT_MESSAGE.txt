@@ -1,0 +1,52 @@
+feat(debug): split debug menu into F3 overlay + Map Builder menu
+
+Refactored monolithic debug menu into two focused systems:
+
+## 1. F3 Debug Overlay (Minecraft-style)
+File: scenes/ui/debug_overlay.tscn + scripts/debug/debug_overlay.gd
+
+Real-time stats overlay (175 lines):
+- FPS with color coding (green > 55, yellow 30-55, red < 30)
+- Frame time with 30-frame rolling average
+- Player position (XYZ) and rotation (facing direction + yaw)
+- Player velocity in m/s
+- Current scene and map name
+- Memory usage (static + dynamic)
+- Node count and draw calls per frame
+- Active camera FOV
+
+UX:
+- Toggle with F3 (Minecraft pattern)
+- Non-blocking overlay (mouse_filter = IGNORE)
+- Updates every frame when visible
+- Auto-discovers player and camera
+- Semi-transparent text with drop shadow
+
+## 2. Map Builder Menu (Dedicated tool)
+File: scenes/ui/map_builder_menu.tscn + scripts/debug/map_builder_menu.gd
+
+Modal menu for dev tools (300 lines):
+- Tab 1 (Maps): Map list with search, Build + Run, Photo Mode
+- Tab 2 (TrenchBroom): Model entity generator (FGD creation)
+- Status bar and clean tabbed interface
+- Sacred Fruit theme applied
+
+UX:
+- Toggle with F1
+- Modal overlay when open
+- Organized by function (maps vs TrenchBroom)
+- Integration with DEBUG autoload
+
+## Benefits
+- Separation of concerns: debug stats ≠ map loading
+- 52% code reduction: 988 lines → 475 lines (175 + 300)
+- Better UX: Non-blocking F3 for gameplay debugging
+- Familiar pattern: Minecraft F3 muscle memory
+- Easier to maintain: Focused, single-purpose systems
+- Performance: Only updates when visible
+
+## Old File Status
+- debug_menu.gd (988 lines) can be deprecated
+- Entity generation logic needs porting (~600 lines)
+
+Related to DEVELOPMENT_TODO.md debug tooling improvements.

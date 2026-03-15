@@ -1,0 +1,704 @@
+/* Apple-inspired custom styling for MkDocs GitBook theme */
+
+:root {
+  /* Apple-like color palette */
+  --apple-blue: #007AFF;
+  --apple-gray-1: #F5F5F7;
+  --apple-gray-2: #E8E8ED;
+  --apple-gray-3: #D2D2D7;
+  --apple-gray-6: #1D1D1F;
+  --apple-text: #1D1D1F;
+  --apple-text-secondary: #86868B;
+  --apple-border: #D2D2D7;
+}
+
+/* San Francisco-inspired font stack (uses macOS system fonts) */
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", 
+               "Helvetica Neue", Helvetica, Arial, sans-serif !important;
+  letter-spacing: -0.003em;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+/* Headers with Apple typography */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 600 !important;
+  letter-spacing: -0.012em !important;
+  color: var(--apple-text);
+}
+
+h1 {
+  font-size: 2.5em !important;
+  line-height: 1.1;
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}
+
+h2 {
+  font-size: 2em !important;
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+}
+
+h3 {
+  font-size: 1.5em !important;
+}
+
+/* GitBook sidebar styling */
+.book-summary {
+  background: #FAFAFA !important;
+  border-right: 1px solid #E5E5E5 !important;
+  padding: 20px 0 !important;
+}
+
+/* Sidebar divider after search */
+.book-summary .book-search {
+  border-bottom: 1px solid #E5E5E5 !important;
+  margin-bottom: 16px !important;
+  padding-bottom: 8px !important;
+}
+
+.book-summary ul.summary {
+  padding: 0 16px !important;
+}
+
+.book-summary ul.summary li {
+  list-style: none !important;
+  margin: 2px 0 !important;
+}
+
+.book-summary ul.summary li a {
+  color: #1D1D1F !important;
+  font-weight: 400 !important;
+  font-size: 14px !important;
+  padding: 8px 12px !important;
+  border-radius: 8px !important;
+  transition: all 0.15s ease !important;
+  display: block !important;
+  line-height: 1.4 !important;
+}
+
+.book-summary ul.summary li a:hover {
+  background: #F0F0F0 !important;
+  color: #1D1D1F !important;
+}
+
+.book-summary ul.summary li.active > a {
+  background: var(--apple-blue) !important;
+  color: white !important;
+  font-weight: 500 !important;
+  box-shadow: 0 1px 3px rgba(0,122,255,0.3) !important;
+}
+
+/* Nested items */
+.book-summary ul.summary li ul {
+  padding-left: 16px !important;
+  margin-top: 4px !important;
+}
+
+.book-summary ul.summary li ul li a {
+  font-size: 13px !important;
+  padding: 6px 12px !important;
+  color: #6E6E73 !important;
+}
+
+.book-summary ul.summary li ul li a:hover {
+  color: #1D1D1F !important;
+}
+
+/* Chapter headers */
+.book-summary ul.summary li.header {
+  color: #86868B !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  padding: 16px 12px 8px !important;
+  margin-top: 8px !important;
+}
+
+/* GitBook header */
+.book-header {
+  background: rgba(255,255,255,0.8) !important;
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-bottom: 1px solid var(--apple-border) !important;
+}
+
+/* Content area */
+.book-body {
+  background: white;
+}
+
+.page-inner {
+  max-width: 900px;
+  padding: 40px 60px;
+}
+
+/* Apple-style code blocks */
+pre {
+  border-radius: 12px !important;
+  background: var(--apple-gray-6) !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12) !important;
+  padding: 20px !important;
+  border: none !important;
+}
+
+code {
+  border-radius: 6px !important;
+  padding: 2px 6px !important;
+  background: var(--apple-gray-2) !important;
+  color: var(--apple-text) !important;
+  font-family: "SF Mono", Monaco, Menlo, Consolas, monospace !important;
+  font-size: 0.9em !important;
+  border: none !important;
+}
+
+pre code {
+  background: transparent !important;
+  padding: 0 !important;
+  color: #e8e8ed !important;
+}
+
+/* Apple-style tables */
+table {
+  border-radius: 12px !important;
+  overflow: hidden !important;
+  border: 1px solid var(--apple-border) !important;
+  border-spacing: 0;
+  width: 100%;
+  margin: 1.5em 0;
+  background: white !important;
+}
+
+th {
+  background: var(--apple-gray-1) !important;
+  font-weight: 600 !important;
+  padding: 12px 15px !important;
+  text-align: left;
+  border-bottom: 2px solid var(--apple-border) !important;
+  color: #1D1D1F !important;
+}
+
+td {
+  padding: 10px 15px !important;
+  border-bottom: 1px solid var(--apple-gray-2) !important;
+  background: white !important;
+  color: #1D1D1F !important;
+}
+
+tr {
+  background: white !important;
+}
+
+tr:last-child td {
+  border-bottom: none !important;
+}
+
+tr:hover td {
+  background: var(--apple-gray-1) !important;
+}
+
+/* Links with Apple blue */
+a {
+  color: var(--apple-blue) !important;
+  text-decoration: none !important;
+}
+
+a:hover {
+  text-decoration: underline !important;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+}
+
+/* Apple-style blockquotes */
+blockquote {
+  border-left: 3px solid var(--apple-blue) !important;
+  border-radius: 0 8px 8px 0 !important;
+  background: var(--apple-gray-1) !important;
+  padding: 1em 1.5em !important;
+  margin: 1.5em 0 !important;
+  color: var(--apple-text-secondary);
+}
+
+/* Admonitions/callouts */
+.admonition {
+  border-radius: 12px !important;
+  border: none !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08) !important;
+  background: var(--apple-gray-1) !important;
+  padding: 1em 1.5em !important;
+  margin: 1.5em 0 !important;
+}
+
+.admonition-title {
+  font-weight: 600 !important;
+  margin-bottom: 0.5em !important;
+}
+
+/* Lists */
+ul, ol {
+  line-height: 1.8;
+}
+
+li {
+  margin: 0.5em 0;
+}
+
+/* Images */
+img {
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  max-width: 100%;
+  height: auto;
+}
+
+/* Apple-style scrollbar (webkit only) */
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--apple-gray-3);
+  border-radius: 6px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--apple-text-secondary);
+  background-clip: padding-box;
+}
+
+/* Search box */
+#book-search-input,
+.search-input input {
+  border-radius: 10px !important;
+  background: #F0F0F0 !important;
+  border: 1px solid transparent !important;
+  padding: 10px 16px !important;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif !important;
+  font-size: 14px !important;
+  transition: all 0.2s ease !important;
+  margin: 8px 16px 16px !important;
+  width: calc(100% - 32px) !important;
+}
+
+#book-search-input:focus,
+.search-input input:focus {
+  background: white !important;
+  border: 1px solid var(--apple-blue) !important;
+  box-shadow: 0 0 0 3px rgba(0,122,255,0.1) !important;
+  outline: none !important;
+}
+
+#book-search-input::placeholder,
+.search-input input::placeholder {
+  color: #86868B !important;
+  font-weight: 400 !important;
+}
+
+/* Navigation buttons */
+.navigation {
+  margin-top: 3em;
+  padding-top: 2em;
+  border-top: 1px solid var(--apple-border);
+}
+
+.navigation a {
+  border-radius: 980px !important;
+  padding: 10px 20px !important;
+  background: var(--apple-blue) !important;
+  color: white !important;
+  font-weight: 500 !important;
+  display: inline-block;
+  transition: all 0.2s ease;
+}
+
+.navigation a:hover {
+  transform: scale(1.02);
+  box-shadow: 0 4px 12px rgba(0,122,255,0.3);
+  text-decoration: none !important;
+}
+
+/* Smooth page transitions */
+.page-inner {
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+  from { 
+    opacity: 0; 
+    transform: translateY(10px); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0); 
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .page-inner {
+    padding: 20px 30px;
+  }
+  
+  h1 {
+    font-size: 2em !important;
+  }
+  
+  h2 {
+    font-size: 1.5em !important;
+  }
+}
+
+/* ============================================ */
+/* DARK MODE - Automatic based on macOS system */
+/* ============================================ */
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Dark mode color palette */
+    --apple-gray-1: #1C1C1E;
+    --apple-gray-2: #2C2C2E;
+    --apple-gray-3: #3A3A3C;
+    --apple-gray-6: #F5F5F7;
+    --apple-text: #F5F5F7;
+    --apple-text-secondary: #98989D;
+    --apple-border: #38383A;
+  }
+
+  /* GLOBAL DARK MODE ENFORCEMENT */
+  html,
+  body,
+  .book,
+  .book-body,
+  .body-inner,
+  .page-wrapper,
+  .page-inner,
+  .page-inner section,
+  .markdown-section {
+    background: #000000 !important;
+    background-color: #000000 !important;
+    color: #F5F5F7 !important;
+  }
+
+  /* Sidebar dark mode */
+  .book-summary {
+    background: #1C1C1E !important;
+    background-color: #1C1C1E !important;
+    border-right: 1px solid #2C2C2E !important;
+  }
+
+  /* Sidebar divider dark mode */
+  .book-summary .book-search {
+    border-bottom: 1px solid #2C2C2E !important;
+  }
+
+  .book-summary ul.summary li a {
+    color: #F5F5F7 !important;
+  }
+
+  .book-summary ul.summary li a:hover {
+    background: #2C2C2E !important;
+    color: #F5F5F7 !important;
+  }
+
+  .book-summary ul.summary li.active > a {
+    background: var(--apple-blue) !important;
+    background-color: var(--apple-blue) !important;
+    color: white !important;
+    box-shadow: 0 1px 3px rgba(0,122,255,0.5) !important;
+  }
+
+  /* Nested items dark mode */
+  .book-summary ul.summary li ul li a {
+    color: #98989D !important;
+  }
+
+  .book-summary ul.summary li ul li a:hover {
+    color: #F5F5F7 !important;
+  }
+
+  /* Chapter headers dark mode */
+  .book-summary ul.summary li.header {
+    color: #6E6E73 !important;
+  }
+
+  /* Header dark mode */
+  .book-header {
+    background: rgba(28,28,30,0.8) !important;
+    background-color: rgba(28,28,30,0.8) !important;
+    border-bottom: 1px solid var(--apple-border) !important;
+  }
+
+  .book-header h1,
+  .book-header a {
+    color: var(--apple-text) !important;
+  }
+
+  /* All text elements */
+  .page-inner,
+  .page-inner section,
+  .markdown-section {
+    color: var(--apple-text) !important;
+  }
+
+  /* Headers in dark mode */
+  h1, h2, h3, h4, h5, h6 {
+    color: var(--apple-text) !important;
+  }
+
+  /* Paragraph and list text */
+  p, li, ul, ol, div {
+    color: var(--apple-text) !important;
+  }
+
+  /* Code blocks - lighter in dark mode */
+  pre,
+  .hljs {
+    background: var(--apple-gray-1) !important;
+    background-color: var(--apple-gray-1) !important;
+  }
+
+  pre code {
+    color: #e8e8ed !important;
+  }
+
+  code {
+    background: var(--apple-gray-2) !important;
+    background-color: var(--apple-gray-2) !important;
+    color: var(--apple-text) !important;
+  }
+
+  /* Tables dark mode - AGGRESSIVE OVERRIDES */
+  .markdown-section table,
+  .page-inner table,
+  section table,
+  table {
+    border: 1px solid var(--apple-border) !important;
+    background: #000000 !important;
+    background-color: #000000 !important;
+  }
+
+  .markdown-section th,
+  .page-inner th,
+  section th,
+  th {
+    background: #1C1C1E !important;
+    background-color: #1C1C1E !important;
+    color: #F5F5F7 !important;
+    border-bottom: 2px solid #38383A !important;
+  }
+
+  .markdown-section td,
+  .page-inner td,
+  section td,
+  td {
+    color: #F5F5F7 !important;
+    border-bottom: 1px solid #38383A !important;
+    background: #000000 !important;
+    background-color: #000000 !important;
+  }
+
+  /* Force all child elements inside cells to inherit dark styling */
+  .markdown-section td *,
+  .markdown-section th *,
+  .page-inner td *,
+  .page-inner th *,
+  td *, th * {
+    color: #F5F5F7 !important;
+    background: transparent !important;
+  }
+
+  td p, th p,
+  td span, th span,
+  td div, th div,
+  td strong, th strong,
+  td em, th em {
+    color: #F5F5F7 !important;
+    background: transparent !important;
+    background-color: transparent !important;
+  }
+
+  td code,
+  th code {
+    color: #F5F5F7 !important;
+    background: #2C2C2E !important;
+    background-color: #2C2C2E !important;
+  }
+
+  td a,
+  th a {
+    color: #0A84FF !important;
+  }
+
+  .markdown-section tr,
+  .page-inner tr,
+  section tr,
+  tr {
+    background: #000000 !important;
+    background-color: #000000 !important;
+  }
+
+  .markdown-section tr:hover,
+  .page-inner tr:hover,
+  section tr:hover,
+  tr:hover {
+    background: #1C1C1E !important;
+    background-color: #1C1C1E !important;
+  }
+
+  .markdown-section tr:hover td,
+  .page-inner tr:hover td,
+  section tr:hover td,
+  tr:hover td {
+    background: #1C1C1E !important;
+    background-color: #1C1C1E !important;
+  }
+
+  /* Force tbody background */
+  tbody {
+    background: #000000 !important;
+    background-color: #000000 !important;
+  }
+
+  thead {
+    background: #1C1C1E !important;
+    background-color: #1C1C1E !important;
+  }
+
+  /* Blockquotes dark */
+  blockquote {
+    background: var(--apple-gray-1) !important;
+    background-color: var(--apple-gray-1) !important;
+    color: var(--apple-text-secondary) !important;
+    border-left-color: var(--apple-blue) !important;
+  }
+
+  /* Admonitions dark */
+  .admonition {
+    background: var(--apple-gray-1) !important;
+    background-color: var(--apple-gray-1) !important;
+    color: var(--apple-text) !important;
+  }
+
+  /* Search dark mode */
+  #book-search-input,
+  .search-input input {
+    background: #2C2C2E !important;
+    background-color: #2C2C2E !important;
+    border: 1px solid transparent !important;
+    color: var(--apple-text) !important;
+  }
+
+  #book-search-input:focus,
+  .search-input input:focus {
+    background: #3A3A3C !important;
+    background-color: #3A3A3C !important;
+    border: 1px solid var(--apple-blue) !important;
+    box-shadow: 0 0 0 3px rgba(0,122,255,0.2) !important;
+  }
+
+  #book-search-input::placeholder,
+  .search-input input::placeholder {
+    color: #6E6E73 !important;
+  }
+
+  /* Navigation links */
+  a {
+    color: var(--apple-blue) !important;
+  }
+
+  /* Horizontal rules */
+  hr {
+    border-color: var(--apple-border) !important;
+    background: var(--apple-border) !important;
+  }
+
+  /* Navigation section borders */
+  .navigation {
+    border-top: 1px solid var(--apple-border) !important;
+  }
+
+  /* Selection color in dark mode */
+  ::selection {
+    background: var(--apple-blue) !important;
+    color: white !important;
+  }
+
+  /* Scrollbar in dark mode */
+  ::-webkit-scrollbar-track {
+    background: #000000 !important;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--apple-gray-3) !important;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--apple-text-secondary) !important;
+  }
+
+  /* Strong and emphasis */
+  strong, b {
+    color: var(--apple-text) !important;
+  }
+
+  em, i {
+    color: var(--apple-text-secondary) !important;
+  }
+
+  /* Ensure no white backgrounds sneak through */
+  * {
+    border-color: var(--apple-border) !important;
+  }
+
+  .markdown-section > * {
+    color: var(--apple-text) !important;
+  }
+
+  /* NUCLEAR OPTION: Kill all white backgrounds */
+  [style*="background: white"],
+  [style*="background-color: white"],
+  [style*="background: #fff"],
+  [style*="background-color: #fff"],
+  [style*="background: #FFF"],
+  [style*="background-color: #FFF"],
+  [style*="background: rgb(255, 255, 255)"],
+  [style*="background-color: rgb(255, 255, 255)"] {
+    background: #000000 !important;
+    background-color: #000000 !important;
+  }
+
+  /* Force table wrapper containers */
+  .table-wrapper,
+  div:has(> table) {
+    background: #000000 !important;
+    background-color: #000000 !important;
+  }
+}
+
+/* ============================================ */
+/* HIDE GITBOOK SEARCH RESULTS SECTION         */
+/* ============================================ */
+
+/* Hide empty search results display at bottom of pages */
+#book-search-results,
+.search-results,
+.search-noresults,
+#search-results {
+  display: none !important;
+}
+
+/* Hide "RESULTS MATCHING" and "NO RESULTS MATCHING" text */
+.search-results-title,
+.search-noresults-title {
+  display: none !important;
+}

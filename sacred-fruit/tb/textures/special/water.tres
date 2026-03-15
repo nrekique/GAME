@@ -1,37 +1,8 @@
-[gd_resource type="ShaderMaterial" load_steps=6 format=3 uid="uid://30u725yagtru"]
+[gd_resource type="StandardMaterial3D" format=3]
 
-[ext_resource type="Shader" path="res://tb/textures/shaders/WATER.gdshader" id="1_vkbki"]
 [ext_resource type="Texture2D" path="res://tb/textures/special/water.png" id="2_q7owf"]
-[ext_resource type="Texture2D" path="res://tb/textures/world/water_normal.jpg" id="3_k8ene"]
-[ext_resource type="Texture2D" path="res://tb/textures/world/water_normal.jpg" id="4_2732h"]
-[ext_resource type="Texture2D" path="res://tb/textures/world/water_normal2.jpeg" id="5_yl21n"]
 
 [resource]
-shader = ExtResource("1_vkbki")
-shader_parameter/surface_color = Color(0.05, 0.34, 0.5, 1)
-shader_parameter/depth_color = Color(0.01, 0.06, 0.12, 1)
-shader_parameter/foam_color = Color(0.7, 0.88, 0.95, 1)
-shader_parameter/depth_size = 14.0
-shader_parameter/screen_color_mix = 0.16
-shader_parameter/foam_strength = 0.45
-shader_parameter/surface_roughness = 0.12
-shader_parameter/foam_roughness = 0.08
-shader_parameter/caustics_texture = ExtResource("2_q7owf")
-shader_parameter/caustics_strength = 2.8
-shader_parameter/caustics_scale = Vector2(0.9, 0.9)
-shader_parameter/wave_texture = ExtResource("2_q7owf")
-shader_parameter/wave_normal_texture = ExtResource("3_k8ene")
-shader_parameter/wave_softness = 2.6
-shader_parameter/wave_scale = Vector2(0.06, 0.06)
-shader_parameter/wave_layer_scale = Vector2(1.6, 1.6)
-shader_parameter/wave_highlight = 0.24
-shader_parameter/wave_velocity = Vector2(0.03, 0.02)
-shader_parameter/foam_texture = ExtResource("4_2732h")
-shader_parameter/edge_foam_depth_size = 0.35
-shader_parameter/wave_foam_amount = 0.2
-shader_parameter/foam_start = 0.42
-shader_parameter/foam_end = 0.86
-shader_parameter/foam_exponent = 2.6
-shader_parameter/refraction_amount = 0.1
-shader_parameter/refraction_exponent = 0.65
-shader_parameter/displacement_amount = 0.06
+albedo_texture = ExtResource("2_q7owf")
+metallic_specular = 0.0
+texture_filter = 2

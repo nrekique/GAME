@@ -1,0 +1,1969 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Mapper and developer documentation for Sacred Fruit">
+      
+      
+      
+      
+        <link rel="prev" href="../PHASE_1_TECHNICAL_SPECS/">
+      
+      
+        <link rel="next" href="../MAP_BUILDING_GUIDELINES/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.4">
+    
+    
+      
+        <title>TrenchBroom Quick Reference - Sacred Fruit Docs</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#trenchbroom-entity-quick-reference" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="Sacred Fruit Docs" class="md-header__button md-logo" aria-label="Sacred Fruit Docs" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Sacred Fruit Docs
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              TrenchBroom Quick Reference
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Sacred Fruit Docs" class="md-nav__button md-logo" aria-label="Sacred Fruit Docs" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Sacred Fruit Docs
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Roadmap
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Roadmap
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../DEVELOPMENT_TODO/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Development TODO
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../TEXTURE_ATLAS/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Texture Atlas
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../TEXTURE_PRODUCTION_CHECKLIST/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Texture Production Checklist
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../PHASE_1_DESIGN_BRIEF/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Phase 1 Design Brief
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../PHASE_1_QUICK_REF/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Phase 1 Quick Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../PHASE_1_TECHNICAL_SPECS/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Phase 1 Technical Specs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Mapping
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Mapping
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    TrenchBroom Quick Reference
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    TrenchBroom Quick Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#core-logic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Core Logic
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#portals" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Portals
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#environment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Environment
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#physics-props" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Physics Props
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#triggers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Triggers
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#doors" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Doors
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#volumes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Volumes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ai-authoring-phase-1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AI Authoring (Phase 1)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#interactions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Interactions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#target-io-reminders" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Target I/O Reminders
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../MAP_BUILDING_GUIDELINES/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Map Building Guidelines
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../KIT_SPEC_TEMPLATE/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kit Spec Template
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../DOOR_KEY_AUTHORING/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Door + Key Authoring
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../MAP_LINTING/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Map Linting
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../MAP_VALIDATION_COOKBOOK/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Map Validation Cookbook
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../FGD_RUNTIME_KEY_MATRIX/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FGD to Runtime Key Matrix
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../RUNTIME_MAP_PIPELINE/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Runtime Map Pipeline
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../RUNTIME_LOGS_AND_CRASH_SIGNATURES/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Runtime Logs and Crash Signatures
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../WORLDSPAWN_KEYS_REFERENCE/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Worldspawn Keys Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../VOLUMES/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Volumes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Entities
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Entities
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ENTITY_SCRIPTING_GUIDE/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Entity Scripting Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ENTITY_IO_SYSTEM/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Entity I/O System
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ENTITY_INTERACTION_CONTRACT/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Entity Interaction Contract
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../DIALOGUE_MARKDOWN/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dialogue Markdown
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Rendering
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Rendering
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../PORTAL_TUNING_PLAYBOOK/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Portal Tuning Playbook
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../MIRROR_POLICY/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Mirror Policy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ENV_STACK_ORDER/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Environment Stack Order
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../PS1_SHADER_PARAMETERS/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PS1 Shader Parameters
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contributing
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Contributing
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../STYLE/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Style
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../TESTS/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tests
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../BUILD_PROFILES/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Build Profiles
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../DOCS_CONTRIBUTION_WORKFLOW/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Docs Contribution Workflow
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../DOCS_BACKLOG/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Docs Backlog
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#core-logic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Core Logic
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#portals" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Portals
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#environment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Environment
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#physics-props" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Physics Props
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#triggers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Triggers
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#doors" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Doors
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#volumes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Volumes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ai-authoring-phase-1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AI Authoring (Phase 1)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#interactions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Interactions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#target-io-reminders" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Target I/O Reminders
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="trenchbroom-entity-quick-reference">TrenchBroom Entity Quick Reference<a class="headerlink" href="#trenchbroom-entity-quick-reference" title="Permanent link">&para;</a></h1>
+<p>Quick authoring sheet for common gameplay/environment entities.</p>
+<h2 id="core-logic">Core Logic<a class="headerlink" href="#core-logic" title="Permanent link">&para;</a></h2>
+<p><code>logic_auto</code>
+- <code>enabled</code> (<code>0/1</code>)
+- <code>fire_once</code> (<code>0/1</code>)
+- <code>delay</code> (seconds)
+- <code>target</code>, <code>targetfunc</code></p>
+<p><code>logic_relay</code>
+- <code>enabled</code> (<code>0/1</code>)
+- <code>trigger_once</code> (<code>0/1</code>)
+- <code>delay</code> (seconds)
+- <code>target</code>, <code>targetfunc</code></p>
+<p><code>logic_timer</code>
+- <code>enabled</code> (<code>0/1</code>)
+- <code>start_on_spawn</code> (<code>0/1</code>)
+- <code>one_shot</code> (<code>0/1</code>)
+- <code>wait</code>, <code>random_jitter</code>
+- <code>target</code></p>
+<h2 id="portals">Portals<a class="headerlink" href="#portals" title="Permanent link">&para;</a></h2>
+<p><code>func_portal</code> (pairing required)
+- <code>target</code> -&gt; other portal <code>targetname</code>
+- <code>targetname</code> -&gt; name this portal
+- <code>enabled</code> (<code>0/1</code>)
+- <code>render_scale</code> (<code>0.25..1.0</code>)
+- <code>dynamic_min_render_scale</code> (<code>0.25..1.0</code>)
+- <code>dynamic_near_distance</code>
+- <code>dynamic_far_distance</code>
+- <code>manager_enable_budgeting</code> (<code>0/1</code>)
+- <code>manager_max_active_portals</code>
+- <code>manager_refresh_seconds</code></p>
+<p><code>env_portal_budget</code> (global)
+- <code>portal_max_active</code>
+- <code>portal_refresh_seconds</code>
+- <code>portal_max_render_scale</code>
+- <code>portal_min_render_scale</code></p>
+<p><code>perf_budget_marker</code>
+- <code>enabled</code> (<code>0/1</code>)
+- <code>cost</code> (base local perf cost)
+- <code>radius</code> (influence radius)
+- <code>falloff_exponent</code> (center weighting; higher is steeper)
+- <code>budget_limit</code> (optional local cap; <code>&lt;=0</code> uses global HUD thresholds)
+- <code>tag</code> (optional grouping key)</p>
+<p><code>perf_heatmap_volume</code>
+- <code>enabled</code> (<code>0/1</code>)
+- <code>cost</code> (added while inside volume)
+- <code>extents</code> (<code>x y z</code> half-size)
+- <code>budget_limit</code> (optional local cap)
+- <code>tag</code> (optional grouping key)</p>
+<h2 id="environment">Environment<a class="headerlink" href="#environment" title="Permanent link">&para;</a></h2>
+<p><code>env_sandstorm</code>
+- <code>enabled</code> (<code>0/1</code>)
+- <code>intensity</code> (<code>0..1</code>)
+- <code>wind_speed</code>
+- <code>wind_direction</code> (<code>x z</code>, example: <code>1 0.25</code>)
+- <code>fog_color</code> (<code>r g b</code>, supports <code>0..1</code> or <code>0..255</code>)</p>
+<p><code>env_fog_controller</code>
+- <code>fog_enabled</code> (<code>0/1</code>)
+- <code>volumetric_fog_enabled</code> (<code>0/1</code>)
+- <code>fog_density</code> (<code>0..0.2</code>)
+- <code>volumetric_fog_density</code> (<code>0..0.2</code>)
+- <code>fog_color</code></p>
+<p><code>env_wind</code>
+- <code>wind_speed</code>
+- <code>wind_direction</code></p>
+<p><code>env_postfx</code>
+- <code>postfx_strength</code> (<code>0..1</code>)
+- <code>postfx_exposure</code> (<code>0.25..4</code>)
+- <code>postfx_contrast</code> (<code>0.1..4</code>)
+- <code>postfx_saturation</code> (<code>0..2</code>)</p>
+<p><code>env_weather</code>
+- <code>weather_mode</code> (<code>none</code>/<code>rain</code>/<code>snow</code>)
+- <code>weather_intensity</code> (<code>0..1</code>)</p>
+<p><code>env_audio_ambience</code>
+- <code>ambience_stream</code> (<code>res://...</code> audio resource path)
+- <code>ambience_volume_db</code> (<code>-60..12</code>)
+- <code>ambience_bus</code> (default: <code>SFX</code>)</p>
+<p><code>env_zone</code> (radial point zone)
+- <code>enabled</code> (<code>0/1</code>)
+- <code>radius</code>
+- <code>intensity</code>
+- <code>fog_density</code>
+- <code>wind_speed</code>
+- <code>light_cull_mask</code> (<code>-1</code> to ignore)
+- <code>reflection_cull_mask</code> (<code>-1</code> to ignore)
+- <code>reflection_intensity_scale</code> (<code>-1</code> to ignore)</p>
+<p><code>env_reflection_probe</code>
+- <code>enabled</code> (<code>0/1</code>)
+- <code>box_size</code> (<code>x y z</code>)
+- <code>update_mode</code> (<code>once</code>/<code>always</code>)
+- <code>probe_intensity</code>
+- <code>probe_cull_mask</code></p>
+<p><code>func_prefab_instance</code>
+- <code>prefab_scene</code> (<code>res://...tscn</code>)
+- <code>spawn_on_ready</code> (<code>0/1</code>)
+- <code>one_shot</code> (<code>0/1</code>)
+- <code>clear_children_before_spawn</code> (<code>0/1</code>)
+- <code>override_json</code> (JSON Dictionary keyed by <code>node_path:property</code>)</p>
+<p><code>env_sky_scene</code>
+- <code>sky_scene</code> (<code>res://...tscn</code>)
+- <code>load_on_ready</code> (<code>0/1</code>)
+- <code>follow_camera</code> (<code>0/1</code>)
+- <code>copy_camera_rotation</code> (<code>0/1</code>)
+- <code>position_offset</code> (<code>x y z</code>)
+- <code>rotation_speed_deg</code> (<code>x y z</code> degrees/sec)</p>
+<h2 id="physics-props">Physics Props<a class="headerlink" href="#physics-props" title="Permanent link">&para;</a></h2>
+<p><code>physics_ball</code> (tumbleweed-ready)
+- <code>tumbleweed_enabled</code> (<code>0/1</code>)
+- <code>interact_pickup_enabled</code> (<code>0/1</code>)
+- <code>radius</code>
+- <code>mass_kg</code>
+- <code>wind_response</code>
+- <code>rolling_torque</code>
+- <code>max_speed</code>
+- <code>water_buoyancy</code> (<code>0..3</code>, <code>1</code> neutral, <code>&lt;1</code> sinks, <code>&gt;1</code> floats)</p>
+<h2 id="triggers">Triggers<a class="headerlink" href="#triggers" title="Permanent link">&para;</a></h2>
+<p><code>trigger_once</code>
+- <code>target</code>, <code>targetfunc</code></p>
+<p><code>trigger_multiple</code>
+- <code>wait</code>
+- <code>target</code>, <code>targetfunc</code></p>
+<p><code>trigger_hurt</code>
+- <code>dmg</code>
+- <code>wait</code>
+- <code>start_disabled</code> (<code>0/1</code>)
+- <code>one_shot</code> (<code>0/1</code>)</p>
+<h2 id="doors">Doors<a class="headerlink" href="#doors" title="Permanent link">&para;</a></h2>
+<p><code>func_door</code> (swinging or translating)
+- <code>move_rot</code> (<code>x y z</code> degrees; use <code>0 90 0</code> for a 90deg Y swing)
+- <code>move_pos</code> (<code>x y z</code> in Quake units; leave <code>0 0 0</code> for pure swing)
+- <code>speed</code> (default <code>120</code>; translation uses Q1 units/sec, rotation-only uses deg/sec)
+- <code>auto_close</code> (<code>0/1</code>)
+- <code>wait</code> (seconds before close if <code>auto_close=1</code>)
+- <code>lock_open</code> (<code>0/1</code>)
+- <code>required_key</code> (optional key id, e.g. <code>blue</code>, <code>two</code>)
+- <code>consume_required_key</code> (<code>0/1</code>, consumes key on first open)</p>
+<h2 id="volumes">Volumes<a class="headerlink" href="#volumes" title="Permanent link">&para;</a></h2>
+<p><em>These areas emit <code>body_entered(body)</code> and <code>body_exited(body)</code> signals.</em></p>
+<p><code>damage_volume</code>
+- <code>amount</code> (damage applied on entry)
+- <code>enabled</code> (<code>0/1</code>)</p>
+<p><code>checkpoint_volume</code>
+- <code>enabled</code> (<code>0/1</code>)
+- <code>checkpoint_id</code> (optional unique checkpoint key)
+- <code>save_id</code> (optional persistence key)
+- <code>starts_enabled</code> (<code>0/1</code>)
+- <code>one_shot</code> (<code>0/1</code>)</p>
+<p><code>music_zone_volume</code>
+- <code>tag</code> (zone name)
+- <code>enabled</code> (<code>0/1</code>)</p>
+<p><code>ai_alert_volume</code>
+- <code>enabled</code> (<code>0/1</code>)</p>
+<p><code>quest_trigger_volume</code>
+- <code>tag</code> (optional identifier)
+- <code>enabled</code> (<code>0/1</code>)</p>
+<p><code>spawn_blocker_volume</code>
+- <code>enabled</code> (<code>0/1</code>)</p>
+<p><code>water_volume</code>
+- <code>enabled</code> (<code>0/1</code>)
+- <code>starts_enabled</code> (<code>0/1</code>)
+- <code>default_buoyancy</code> (<code>0..3</code>, <code>1</code> neutral, <code>&lt;1</code> sinks, <code>&gt;1</code> floats)
+- <code>linear_drag</code>
+- <code>angular_drag</code>
+- <code>affect_sleeping_bodies</code> (<code>0/1</code>)
+- Use a normal water-textured brush (<code>special/water</code>) for visuals and swim volume in one.</p>
+<h2 id="ai-authoring-phase-1">AI Authoring (Phase 1)<a class="headerlink" href="#ai-authoring-phase-1" title="Permanent link">&para;</a></h2>
+<p><code>ai_nav_region</code>
+- <code>enabled</code> (<code>0/1</code>)
+- <code>region_id</code> (optional unique id)
+- <code>nav_tag</code> (optional category: <code>indoor</code>, <code>rooftop</code>, etc.)
+- <code>radius</code></p>
+<p><code>ai_patrol_point</code>
+- <code>enabled</code> (<code>0/1</code>)
+- <code>route_id</code> (route/group id)
+- <code>order</code> (integer ordering within route)
+- <code>target</code> (optional next point <code>targetname</code>; shows TrenchBroom link arrow)
+- <code>wait</code> (seconds)</p>
+<p><code>ai_cover_marker</code>
+- <code>enabled</code> (<code>0/1</code>)
+- <code>team</code> (optional team filter)
+- <code>exposure</code> (<code>0..1</code>)
+- <code>crouch_only</code> (<code>0/1</code>)</p>
+<p><code>ai_perception_blocker</code>
+- <code>enabled</code> (<code>0/1</code>)
+- <code>radius</code></p>
+<p><code>ai_spawn_wave_point</code>
+- <code>enabled</code> (<code>0/1</code>)
+- <code>wave_id</code>
+- <code>squad_id</code> (optional)
+- <code>max_spawn_count</code>
+- <code>cooldown</code></p>
+<p><code>ai_wave_spawner</code>
+- <code>enabled</code> (<code>0/1</code>)
+- <code>wave_id</code>
+- <code>squad_id</code> (optional)
+- <code>npc_scene</code> (<code>res://...tscn</code>)
+- <code>spawn_on_ready</code> (<code>0/1</code>)
+- <code>spawn_interval</code>
+- <code>max_alive</code>
+- <code>total_spawn_limit</code></p>
+<p><code>npc</code> (AI keys)
+- <code>ai_enabled</code> (<code>0/1</code>)
+- <code>ai_route_id</code>
+- <code>ai_patrol_speed</code>
+- <code>ai_alert_duration</code>
+- <code>ai_reacts_to_alerts</code> (<code>0/1</code>)</p>
+<p>Runtime debug:
+- <code>F7</code> toggles AI HUD (controller counts/states, route/point summary).</p>
+<p><code>npc_enemy_patrol</code> (preset)
+- <code>ai_enabled</code> default <code>1</code>
+- <code>dialogue_enabled</code> default <code>0</code>
+- <code>ai_route_id</code> default <code>enemy_patrol</code>
+- Uses same scene as <code>npc</code>, but tuned for drop-in patrol enemies.</p>
+<p>Basic path setup:
+1. Place one <code>npc_enemy_patrol</code>.
+2. Set <code>ai_route_id</code> (example: <code>enemy_patrol_a</code>).
+3. Place at least 2 <code>ai_patrol_point</code> entities with matching <code>route_id</code>.
+4. Set patrol <code>order</code> values (0, 1, 2...) to define loop path.
+5. Optional visual links: give each patrol point a <code>targetname</code>, then set each point's <code>target</code> to the next point <code>targetname</code> to display route arrows in TrenchBroom.</p>
+<h2 id="interactions">Interactions<a class="headerlink" href="#interactions" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Player <code>use</code> input is mapped to <code>E</code>.</li>
+<li><code>func_button</code> now supports both interaction styles:</li>
+<li><code>touch_activates</code> (<code>0/1</code>)</li>
+<li><code>interact_activates</code> (<code>0/1</code>)</li>
+<li><code>physics_ball</code> supports pickup/drop via <code>use</code> ray interaction.</li>
+</ul>
+<h2 id="target-io-reminders">Target I/O Reminders<a class="headerlink" href="#target-io-reminders" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>targetname</code> defines group membership.</li>
+<li><code>target</code> fires group(s), comma-separated supported.</li>
+<li><code>targetfunc</code> chooses called method (default <code>use</code>).</li>
+<li><code>targetarg</code> optional argument payload passed to target input.</li>
+<li><code>targetdelay</code> optional delay (seconds) before dispatch.</li>
+<li><code>master</code> gates outputs through another entity/group.</li>
+<li><code>killtarget</code> removes entities by group after fire.</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.sections", "navigation.top", "content.code.copy", "search.suggest", "search.highlight"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

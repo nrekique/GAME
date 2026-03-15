@@ -1,0 +1,37 @@
+refactor: code cleanup - gate debug prints and extract magic numbers
+
+Major code quality improvements to reduce technical debt:
+
+## Task 1: Gate Ungated Debug Prints
+- Wrapped 20 ungated print() calls with Util.debug_print()
+- Files: GameManager.gd (1), io_manager.gd (1), photo_mode.gd (18)
+- All debug output now respects global Util.debug_enabled flag
+- Added io_debug_logging fallback in io_manager for trace control
+
+## Task 2: Extract Magic Numbers to Constants
+- Created scripts/core/constants.gd with 20+ named constants
+- Categories: Canvas layers, z-indices, UI dimensions, camera settings,
+  physics parameters, particle effects, debug timings
+- Modified 7 files to import and use constants:
+  * dialogue_ui.gd - corner radii, layer
+  * player.gd - crosshair layer
+  * sandstorm_controller.gd - overlay layer, particle spreads
+  * photo_mode.gd - ISO, layers, z-indices, margins, padding
+  * debug.gd - default FOV
+  * runtime_perf_hud.gd - debug HUD layer
+  * runtime_ai_hud.gd - debug HUD layer
+- 30+ constant usages replace hardcoded values
+
+## Benefits
+- Debug noise reduction: easily toggle output at runtime
+- Maintainability: change layers/dimensions in one place
+- Discoverability: all tuning parameters documented in constants.gd
+- Design iteration: tweak values without hunting through code
+
+## Verification
+- Smoke tests: PASS (portal rendering, map linting)
+- No regressions detected
+- Style verification: follows STYLE.md guidelines
+- All constants load and resolve correctly
+
+Relates to DEVELOPMENT_TODO.md codebase audit follow-ups.

@@ -3,25 +3,38 @@ site_description: Mapper and developer documentation for Sacred Fruit
 site_dir: site
 docs_dir: docs
 
+extra_css:
+  - stylesheets/apple-style.css
+
 theme:
-  name: material
-  features:
-    - navigation.sections
-    - navigation.top
-    - content.code.copy
-    - search.suggest
-    - search.highlight
+  name: gitbook
 
 markdown_extensions:
   - admonition
   - tables
+  - attr_list
+  - md_in_html
   - toc:
       permalink: true
+      toc_depth: 3
+  - pymdownx.highlight
+  - pymdownx.superfences
+  - pymdownx.details
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
 
 nav:
   - Home: index.md
   - Roadmap:
     - Development TODO: DEVELOPMENT_TODO.md
+    - Texture Atlas: TEXTURE_ATLAS.md
+    - Texture Production Checklist: TEXTURE_PRODUCTION_CHECKLIST.md
+    - Phase 1 Design Brief: PHASE_1_DESIGN_BRIEF.md
+    - Phase 1 Quick Reference: PHASE_1_QUICK_REF.md
+    - Phase 1 Technical Specs: PHASE_1_TECHNICAL_SPECS.md
   - Mapping:
     - TrenchBroom Quick Reference: TB_ENTITY_QUICK_REFERENCE.md
     - Map Building Guidelines: MAP_BUILDING_GUIDELINES.md

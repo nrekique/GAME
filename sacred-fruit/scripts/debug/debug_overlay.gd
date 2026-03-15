@@ -204,4 +204,3 @@ func _update_camera() -> void:
 		camera_label.text = "Camera FOV: %.1f°" % _camera.fov
 	else:
 		camera_label.text = "Camera: none"
-
