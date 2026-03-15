@@ -11,6 +11,12 @@ const Util := preload("res://scripts/core/util.gd")
 @export var clear_children_before_spawn: bool = true
 @export_multiline var override_json: String = ""
 
+const ALLOWED_PREFAB_ROOTS: Array[String] = [
+	"res://scenes/",
+	"res://entities/",
+	"res://tb/"
+]
+
 var _spawned: bool = false
 var _instance: Node = null
 
@@ -21,7 +27,10 @@ func _func_godot_apply_properties(props: Dictionary) -> void:
 	if props.has("enabled"):
 		enabled = Util.to_bool(props["enabled"], enabled)
 	if props.has("prefab_scene"):
-		prefab_scene = String(props["prefab_scene"]).strip_edges()
+		var mapped_prefab := Util.sanitize_allowed_resource_path(String(props["prefab_scene"]), ALLOWED_PREFAB_ROOTS, ".tscn")
+		if mapped_prefab.is_empty():
+			push_warning("func_prefab_instance '%s' rejected prefab_scene outside allowlist: %s" % [name, String(props["prefab_scene"])])
+		prefab_scene = mapped_prefab
 	if props.has("spawn_on_ready"):
 		spawn_on_ready = Util.to_bool(props["spawn_on_ready"], spawn_on_ready)
 	if props.has("one_shot"):
@@ -64,9 +73,13 @@ func spawn_prefab() -> void:
 	if prefab_scene.is_empty():
 		push_warning("func_prefab_instance '%s' missing prefab_scene" % name)
 		return
-	var packed_v: Variant = load(prefab_scene)
+	var safe_path := Util.sanitize_allowed_resource_path(prefab_scene, ALLOWED_PREFAB_ROOTS, ".tscn")
+	if safe_path.is_empty():
+		push_warning("func_prefab_instance '%s' rejected prefab_scene outside allowlist: %s" % [name, prefab_scene])
+		return
+	var packed_v: Variant = load(safe_path)
 	if not (packed_v is PackedScene):
-		push_warning("func_prefab_instance '%s' could not load PackedScene at %s" % [name, prefab_scene])
+		push_warning("func_prefab_instance '%s' could not load PackedScene at %s" % [name, safe_path])
 		return
 	if clear_children_before_spawn:
 		clear_instance()
