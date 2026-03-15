@@ -1,0 +1,78 @@
+[gd_scene load_steps=7 format=3]
+
+[ext_resource type="PackedScene" uid="uid://buv62edwvq1j5" path="res://scenes/ui/components/Panel.tscn" id="1"]
+[ext_resource type="PackedScene" uid="uid://b5xqwng3wajcp" path="res://scenes/ui/components/Slider.tscn" id="2"]
+[ext_resource type="PackedScene" uid="uid://co7q2p1j3ajkq" path="res://scenes/ui/components/Button.tscn" id="3"]
+[ext_resource type="PackedScene" uid="uid://c1k8v76bvvpy2" path="res://scenes/ui/components/Checkbox.tscn" id="4"]
+[ext_resource type="PackedScene" uid="uid://dlmv4xm0j2gy4" path="res://scenes/ui/components/Dropdown.tscn" id="5"]
+[ext_resource type="PackedScene" uid="uid://cg0bycp54jaqe" path="res://scenes/ui/components/ColorPicker.tscn" id="6"]
+
+[node name="ComponentShowcase" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Panel" parent="." instance=ExtResource("1")]
+offset_left = 50.0
+offset_top = 50.0
+offset_right = 450.0
+offset_bottom = 550.0
+
+[node name="MarginContainer" parent="Panel"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Title" type="Label" parent="Panel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "UI Component Library"
+horizontal_alignment = 1
+
+[node name="Slider1" parent="Panel/MarginContainer/VBoxContainer" instance=ExtResource("2")]
+layout_mode = 2
+label_text = "Volume"
+max_value = 100.0
+current_value = 75.0
+value_suffix = "%"
+
+[node name="Slider2" parent="Panel/MarginContainer/VBoxContainer" instance=ExtResource("2")]
+layout_mode = 2
+label_text = "Brightness"
+max_value = 2.0
+current_value = 1.0
+step_size = 0.1
+value_format = "%.1f"
+
+[node name="Checkbox1" parent="Panel/MarginContainer/VBoxContainer" instance=ExtResource("4")]
+layout_mode = 2
+text = "Enable Post-Processing"
+
+[node name="Checkbox2" parent="Panel/MarginContainer/VBoxContainer" instance=ExtResource("4")]
+layout_mode = 2
+text = "Show Debug Info"
+
+[node name="Dropdown1" parent="Panel/MarginContainer/VBoxContainer" instance=ExtResource("5")]
+layout_mode = 2
+
+[node name="ColorPicker1" parent="Panel/MarginContainer/VBoxContainer" instance=ExtResource("6")]
+layout_mode = 2
+label_text = "Accent Color"
+
+[node name="ButtonRow" type="HBoxContainer" parent="Panel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Button1" parent="Panel/MarginContainer/VBoxContainer/ButtonRow" instance=ExtResource("3")]
+layout_mode = 2
+text = "Apply"
+
+[node name="Button2" parent="Panel/MarginContainer/VBoxContainer/ButtonRow" instance=ExtResource("3")]
+layout_mode = 2
+text = "Cancel"
+
+[node name="Button3" parent="Panel/MarginContainer/VBoxContainer/ButtonRow" instance=ExtResource("3")]
+layout_mode = 2
+text = "Reset"

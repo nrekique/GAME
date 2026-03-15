@@ -1,0 +1,64 @@
+[gd_scene load_steps=3 format=3 uid="uid://c7hn4p8wq2mfx"]
+
+[ext_resource type="Theme" uid="uid://dxuct2amfb0rp" path="res://themes/sacred_fruit.tres" id="1"]
+[ext_resource type="PackedScene" uid="uid://b5xqwng3wajcp" path="res://scenes/ui/components/Slider.tscn" id="2"]
+
+[node name="ExposureTab" type="VBoxContainer"]
+offset_right = 560.0
+offset_bottom = 400.0
+theme = ExtResource("1")
+theme_override_constants/separation = 12
+
+[node name="Title" type="Label" parent="."]
+layout_mode = 2
+text = "Exposure"
+horizontal_alignment = 1
+
+[node name="ExposureSlider" parent="." instance=ExtResource("2")]
+layout_mode = 2
+label_text = "Exposure Compensation"
+min_value = -2.0
+max_value = 2.0
+current_value = 0.0
+step_size = 0.05
+value_format = "%.2f"
+value_suffix = " EV"
+
+[node name="AutoExposure" type="CheckBox" parent="."]
+layout_mode = 2
+text = "Auto Exposure"
+
+[node name="AutoExposureSpeed" parent="." instance=ExtResource("2")]
+layout_mode = 2
+label_text = "Auto Exposure Speed"
+min_value = 0.05
+max_value = 4.0
+current_value = 1.0
+step_size = 0.05
+value_format = "%.2f"
+
+[node name="AutoExposureRange" type="VBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Label" type="Label" parent="AutoExposureRange"]
+layout_mode = 2
+text = "Auto Exposure Range"
+
+[node name="MinSlider" parent="AutoExposureRange" instance=ExtResource("2")]
+layout_mode = 2
+label_text = "Min"
+min_value = -4.0
+max_value = 0.0
+current_value = -2.0
+step_size = 0.1
+value_format = "%.1f"
+
+[node name="MaxSlider" parent="AutoExposureRange" instance=ExtResource("2")]
+layout_mode = 2
+label_text = "Max"
+min_value = 0.0
+max_value = 4.0
+current_value = 2.0
+step_size = 0.1
+value_format = "%.1f"

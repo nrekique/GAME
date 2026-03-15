@@ -1,0 +1,72 @@
+[gd_scene load_steps=3 format=3 uid="uid://djn6x4r8p2wvq"]
+
+[ext_resource type="Theme" uid="uid://dxuct2amfb0rp" path="res://themes/sacred_fruit.tres" id="1"]
+[ext_resource type="PackedScene" uid="uid://c1k8v76bvvpy2" path="res://scenes/ui/components/Checkbox.tscn" id="2"]
+
+[node name="PassesTab" type="VBoxContainer"]
+offset_right = 560.0
+offset_bottom = 350.0
+theme = ExtResource("1")
+theme_override_constants/separation = 12
+
+[node name="Title" type="Label" parent="."]
+layout_mode = 2
+text = "Render Passes"
+horizontal_alignment = 1
+
+[node name="PassPreview" type="VBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="Label" type="Label" parent="PassPreview"]
+layout_mode = 2
+text = "Preview Pass"
+
+[node name="Dropdown" type="OptionButton" parent="PassPreview"]
+layout_mode = 2
+
+[node name="PassesLabel" type="Label" parent="."]
+layout_mode = 2
+text = "Export Passes"
+theme_override_font_sizes/font_size = 14
+
+[node name="PassesGrid" type="GridContainer" parent="."]
+layout_mode = 2
+columns = 2
+
+[node name="PassBeauty" parent="PassesGrid" instance=ExtResource("2")]
+layout_mode = 2
+button_pressed = true
+text = "Beauty"
+
+[node name="PassAlbedo" parent="PassesGrid" instance=ExtResource("2")]
+layout_mode = 2
+button_pressed = true
+text = "Albedo"
+
+[node name="PassNormals" parent="PassesGrid" instance=ExtResource("2")]
+layout_mode = 2
+button_pressed = true
+text = "Normals"
+
+[node name="PassDepth" parent="PassesGrid" instance=ExtResource("2")]
+layout_mode = 2
+button_pressed = true
+text = "Depth"
+
+[node name="PassLighting" parent="PassesGrid" instance=ExtResource("2")]
+layout_mode = 2
+button_pressed = true
+text = "Lighting"
+
+[node name="PassEmission" parent="PassesGrid" instance=ExtResource("2")]
+layout_mode = 2
+text = "Emission"
+
+[node name="PassAO" parent="PassesGrid" instance=ExtResource("2")]
+layout_mode = 2
+text = "Ambient Occlusion"
+
+[node name="PassShadow" parent="PassesGrid" instance=ExtResource("2")]
+layout_mode = 2
+text = "Shadow"

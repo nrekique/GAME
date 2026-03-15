@@ -1,0 +1,42 @@
+[gd_scene load_steps=3 format=3 uid="uid://c2r7q5n8x4fjp"]
+
+[ext_resource type="Theme" uid="uid://dxuct2amfb0rp" path="res://themes/sacred_fruit.tres" id="1"]
+[ext_resource type="PackedScene" uid="uid://b5xqwng3wajcp" path="res://scenes/ui/components/Slider.tscn" id="2"]
+
+[node name="EffectsTab" type="VBoxContainer"]
+offset_right = 560.0
+offset_bottom = 300.0
+theme = ExtResource("1")
+theme_override_constants/separation = 12
+
+[node name="Title" type="Label" parent="."]
+layout_mode = 2
+text = "Effects"
+horizontal_alignment = 1
+
+[node name="Vignette" parent="." instance=ExtResource("2")]
+layout_mode = 2
+label_text = "Vignette"
+min_value = 0.0
+max_value = 1.0
+current_value = 0.0
+step_size = 0.01
+value_format = "%.2f"
+
+[node name="Grain" parent="." instance=ExtResource("2")]
+layout_mode = 2
+label_text = "Film Grain"
+min_value = 0.0
+max_value = 1.0
+current_value = 0.0
+step_size = 0.01
+value_format = "%.2f"
+
+[node name="Bloom" parent="." instance=ExtResource("2")]
+layout_mode = 2
+label_text = "Bloom"
+min_value = 0.0
+max_value = 1.0
+current_value = 0.0
+step_size = 0.01
+value_format = "%.2f"

@@ -1,0 +1,28 @@
+[gd_scene load_steps=3 format=3 uid="uid://buv62edwvq1j5"]
+
+[ext_resource type="Theme" uid="uid://dxuct2amfb0rp" path="res://themes/sacred_fruit.tres" id="1"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
+bg_color = Color(0.07, 0.08, 0.10, 0.93)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.72, 0.68, 0.50, 0.95)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_left = 10
+corner_radius_bottom_right = 10
+
+[node name="StyledPanel" type="PanelContainer"]
+offset_right = 400.0
+offset_bottom = 300.0
+theme = ExtResource("1")
+theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 2
+theme_override_constants/margin_left = 18
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 18
+theme_override_constants/margin_bottom = 14

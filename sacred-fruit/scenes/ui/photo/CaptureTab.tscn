@@ -1,0 +1,87 @@
+[gd_scene load_steps=3 format=3 uid="uid://c4m8x9p2n7vwq"]
+
+[ext_resource type="Theme" uid="uid://dxuct2amfb0rp" path="res://themes/sacred_fruit.tres" id="1"]
+[ext_resource type="PackedScene" uid="uid://co7q2p1j3ajkq" path="res://scenes/ui/components/Button.tscn" id="2"]
+
+[node name="CaptureTab" type="VBoxContainer"]
+offset_right = 560.0
+offset_bottom = 400.0
+theme = ExtResource("1")
+theme_override_constants/separation = 12
+
+[node name="Title" type="Label" parent="."]
+layout_mode = 2
+text = "Capture & Export"
+horizontal_alignment = 1
+
+[node name="Resolution" type="VBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="Label" type="Label" parent="Resolution"]
+layout_mode = 2
+text = "Resolution"
+
+[node name="Dropdown" type="OptionButton" parent="Resolution"]
+layout_mode = 2
+
+[node name="AspectRatio" type="VBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="Label" type="Label" parent="AspectRatio"]
+layout_mode = 2
+text = "Aspect Ratio"
+
+[node name="Dropdown" type="OptionButton" parent="AspectRatio"]
+layout_mode = 2
+
+[node name="CaptureFormat" type="VBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="Label" type="Label" parent="CaptureFormat"]
+layout_mode = 2
+text = "Format"
+
+[node name="Dropdown" type="OptionButton" parent="CaptureFormat"]
+layout_mode = 2
+
+[node name="CapturePath" type="VBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="Label" type="Label" parent="CapturePath"]
+layout_mode = 2
+text = "Save Location"
+
+[node name="PathRow" type="HBoxContainer" parent="CapturePath"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="PathEdit" type="LineEdit" parent="CapturePath/PathRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "user://photo_captures"
+
+[node name="BrowseButton" parent="CapturePath/PathRow" instance=ExtResource("2")]
+layout_mode = 2
+text = "Browse"
+
+[node name="ButtonsRow" type="HBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="CaptureButton" parent="ButtonsRow" instance=ExtResource("2")]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Capture"
+
+[node name="CaptureLayersButton" parent="ButtonsRow" instance=ExtResource("2")]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Capture Layers (EXR)"
+
+[node name="BackButton" parent="ButtonsRow" instance=ExtResource("2")]
+layout_mode = 2
+text = "Back"

@@ -1,0 +1,124 @@
+[gd_scene load_steps=4 format=3 uid="uid://cm5r7n8q4xpwj"]
+
+[ext_resource type="Theme" uid="uid://dxuct2amfb0rp" path="res://themes/sacred_fruit.tres" id="1"]
+[ext_resource type="PackedScene" uid="uid://c1k8v76bvvpy2" path="res://scenes/ui/components/Checkbox.tscn" id="2"]
+[ext_resource type="PackedScene" uid="uid://b5xqwng3wajcp" path="res://scenes/ui/components/Slider.tscn" id="3"]
+
+[node name="LightRigTab" type="VBoxContainer"]
+offset_right = 560.0
+offset_bottom = 500.0
+theme = ExtResource("1")
+theme_override_constants/separation = 12
+
+[node name="Title" type="Label" parent="."]
+layout_mode = 2
+text = "Studio Light Rig"
+horizontal_alignment = 1
+
+[node name="LightGrid" type="GridContainer" parent="."]
+layout_mode = 2
+theme_override_constants/h_separation = 12
+theme_override_constants/v_separation = 8
+columns = 3
+
+[node name="HeaderEnable" type="Label" parent="LightGrid"]
+layout_mode = 2
+text = "Enable"
+
+[node name="HeaderColor" type="Label" parent="LightGrid"]
+layout_mode = 2
+text = "Color"
+
+[node name="HeaderIntensity" type="Label" parent="LightGrid"]
+layout_mode = 2
+text = "Intensity"
+
+[node name="KeyEnabled" parent="LightGrid" instance=ExtResource("2")]
+layout_mode = 2
+button_pressed = true
+text = "Key Light"
+
+[node name="KeyColor" type="ColorPickerButton" parent="LightGrid"]
+layout_mode = 2
+color = Color(1, 1, 1, 1)
+
+[node name="KeyIntensity" parent="LightGrid" instance=ExtResource("3")]
+layout_mode = 2
+label_text = ""
+min_value = 0.0
+max_value = 8.0
+current_value = 3.5
+step_size = 0.1
+value_format = "%.1f"
+
+[node name="FillEnabled" parent="LightGrid" instance=ExtResource("2")]
+layout_mode = 2
+button_pressed = true
+text = "Fill Light"
+
+[node name="FillColor" type="ColorPickerButton" parent="LightGrid"]
+layout_mode = 2
+color = Color(0.9, 0.95, 1, 1)
+
+[node name="FillIntensity" parent="LightGrid" instance=ExtResource("3")]
+layout_mode = 2
+label_text = ""
+min_value = 0.0
+max_value = 6.0
+current_value = 1.5
+step_size = 0.1
+value_format = "%.1f"
+
+[node name="RimEnabled" parent="LightGrid" instance=ExtResource("2")]
+layout_mode = 2
+button_pressed = true
+text = "Rim Light"
+
+[node name="RimColor" type="ColorPickerButton" parent="LightGrid"]
+layout_mode = 2
+color = Color(1, 0.9, 0.85, 1)
+
+[node name="RimIntensity" parent="LightGrid" instance=ExtResource("3")]
+layout_mode = 2
+label_text = ""
+min_value = 0.0
+max_value = 8.0
+current_value = 2.0
+step_size = 0.1
+value_format = "%.1f"
+
+[node name="TopEnabled" parent="LightGrid" instance=ExtResource("2")]
+layout_mode = 2
+button_pressed = true
+text = "Top Light"
+
+[node name="TopColor" type="ColorPickerButton" parent="LightGrid"]
+layout_mode = 2
+color = Color(1, 1, 1, 1)
+
+[node name="TopIntensity" parent="LightGrid" instance=ExtResource("3")]
+layout_mode = 2
+label_text = ""
+min_value = 0.0
+max_value = 6.0
+current_value = 1.0
+step_size = 0.1
+value_format = "%.1f"
+
+[node name="BounceEnabled" parent="LightGrid" instance=ExtResource("2")]
+layout_mode = 2
+button_pressed = true
+text = "Bounce Light"
+
+[node name="BounceColor" type="ColorPickerButton" parent="LightGrid"]
+layout_mode = 2
+color = Color(1, 0.95, 0.85, 1)
+
+[node name="BounceIntensity" parent="LightGrid" instance=ExtResource("3")]
+layout_mode = 2
+label_text = ""
+min_value = 0.0
+max_value = 6.0
+current_value = 0.8
+step_size = 0.1
+value_format = "%.1f"

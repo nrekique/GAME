@@ -1,0 +1,51 @@
+[gd_scene load_steps=3 format=3 uid="uid://dcj5x8p3n9qrw"]
+
+[ext_resource type="Theme" uid="uid://dxuct2amfb0rp" path="res://themes/sacred_fruit.tres" id="1"]
+[ext_resource type="PackedScene" uid="uid://b5xqwng3wajcp" path="res://scenes/ui/components/Slider.tscn" id="2"]
+
+[node name="ColorTab" type="VBoxContainer"]
+offset_right = 560.0
+offset_bottom = 400.0
+theme = ExtResource("1")
+theme_override_constants/separation = 12
+
+[node name="Title" type="Label" parent="."]
+layout_mode = 2
+text = "Color Grading"
+horizontal_alignment = 1
+
+[node name="Temperature" parent="." instance=ExtResource("2")]
+layout_mode = 2
+label_text = "Temperature"
+min_value = -1.0
+max_value = 1.0
+current_value = 0.0
+step_size = 0.01
+value_format = "%.2f"
+
+[node name="Tint" parent="." instance=ExtResource("2")]
+layout_mode = 2
+label_text = "Tint (Green/Magenta)"
+min_value = -1.0
+max_value = 1.0
+current_value = 0.0
+step_size = 0.01
+value_format = "%.2f"
+
+[node name="Saturation" parent="." instance=ExtResource("2")]
+layout_mode = 2
+label_text = "Saturation"
+min_value = 0.0
+max_value = 2.0
+current_value = 1.0
+step_size = 0.01
+value_format = "%.2f"
+
+[node name="Contrast" parent="." instance=ExtResource("2")]
+layout_mode = 2
+label_text = "Contrast"
+min_value = 0.0
+max_value = 2.0
+current_value = 1.0
+step_size = 0.01
+value_format = "%.2f"

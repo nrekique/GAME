@@ -1,0 +1,26 @@
+[gd_scene load_steps=2 format=3 uid="uid://cx8r4n7p2mvwq"]
+
+[ext_resource type="Theme" uid="uid://dxuct2amfb0rp" path="res://themes/sacred_fruit.tres" id="1"]
+
+[node name="CompositionTab" type="VBoxContainer"]
+offset_right = 560.0
+offset_bottom = 200.0
+theme = ExtResource("1")
+theme_override_constants/separation = 12
+
+[node name="Title" type="Label" parent="."]
+layout_mode = 2
+text = "Composition Tools"
+horizontal_alignment = 1
+
+[node name="CompositionNote" type="Label" parent="."]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.65, 0.68, 0.72, 1)
+theme_override_font_sizes/font_size = 12
+text = "Future features:
+• Crop & straighten
+• Tilt-shift simulation
+• Horizon lock
+• Rule-of-thirds alignment
+• Dynamic framing"
+autowrap_mode = 3

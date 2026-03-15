@@ -1,0 +1,91 @@
+[gd_scene load_steps=3 format=3 uid="uid://bqw8r3n5m7jxd"]
+
+[ext_resource type="Theme" uid="uid://dxuct2amfb0rp" path="res://themes/sacred_fruit.tres" id="1"]
+[ext_resource type="PackedScene" uid="uid://b5xqwng3wajcp" path="res://scenes/ui/components/Slider.tscn" id="2"]
+
+[node name="CameraTab" type="VBoxContainer"]
+offset_right = 560.0
+offset_bottom = 600.0
+theme = ExtResource("1")
+theme_override_constants/separation = 12
+
+[node name="Title" type="Label" parent="."]
+layout_mode = 2
+text = "Camera"
+horizontal_alignment = 1
+
+[node name="Status" type="Label" parent="."]
+layout_mode = 2
+autowrap_mode = 3
+
+[node name="FOVSlider" parent="." instance=ExtResource("2")]
+layout_mode = 2
+label_text = "Field of View"
+min_value = 20.0
+max_value = 110.0
+current_value = 60.0
+value_suffix = "°"
+
+[node name="FocalLength" type="VBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="Label" type="Label" parent="FocalLength"]
+layout_mode = 2
+text = "Focal Length"
+
+[node name="Dropdown" type="OptionButton" parent="FocalLength"]
+layout_mode = 2
+
+[node name="ISOSlider" parent="." instance=ExtResource("2")]
+layout_mode = 2
+label_text = "ISO"
+min_value = 50.0
+max_value = 3200.0
+current_value = 400.0
+step_size = 50.0
+
+[node name="ApertureSlider" parent="." instance=ExtResource("2")]
+layout_mode = 2
+label_text = "Aperture"
+min_value = 1.4
+max_value = 16.0
+current_value = 2.8
+step_size = 0.1
+value_format = "%.1f"
+value_suffix = " f-stop"
+
+[node name="ShutterSlider" parent="." instance=ExtResource("2")]
+layout_mode = 2
+label_text = "Shutter Speed"
+min_value = 0.002
+max_value = 0.1
+current_value = 0.016
+step_size = 0.001
+value_format = "%.3f"
+value_suffix = "s"
+
+[node name="FocusSlider" parent="." instance=ExtResource("2")]
+layout_mode = 2
+label_text = "Focus Distance"
+min_value = 0.5
+max_value = 50.0
+current_value = 5.0
+step_size = 0.1
+value_format = "%.1f"
+value_suffix = "m"
+
+[node name="ShootingMode" type="VBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="Label" type="Label" parent="ShootingMode"]
+layout_mode = 2
+text = "Shooting Mode"
+
+[node name="Dropdown" type="OptionButton" parent="ShootingMode"]
+layout_mode = 2
+
+[node name="AutoFocus" type="CheckBox" parent="."]
+layout_mode = 2
+text = "Auto Focus"

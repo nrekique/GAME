@@ -1,0 +1,51 @@
+[gd_scene load_steps=3 format=3 uid="uid://b7qx4n9r2wvpm"]
+
+[ext_resource type="Theme" uid="uid://dxuct2amfb0rp" path="res://themes/sacred_fruit.tres" id="1"]
+[ext_resource type="PackedScene" uid="uid://b5xqwng3wajcp" path="res://scenes/ui/components/Slider.tscn" id="2"]
+
+[node name="EnvironmentTab" type="VBoxContainer"]
+offset_right = 560.0
+offset_bottom = 350.0
+theme = ExtResource("1")
+theme_override_constants/separation = 12
+
+[node name="Title" type="Label" parent="."]
+layout_mode = 2
+text = "Environment"
+horizontal_alignment = 1
+
+[node name="EnvironmentPreset" type="VBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="Label" type="Label" parent="EnvironmentPreset"]
+layout_mode = 2
+text = "Environment Preset"
+
+[node name="Dropdown" type="OptionButton" parent="EnvironmentPreset"]
+layout_mode = 2
+
+[node name="SunAngle" parent="." instance=ExtResource("2")]
+layout_mode = 2
+label_text = "Sun Elevation"
+min_value = -90.0
+max_value = 90.0
+current_value = -35.0
+step_size = 1.0
+value_format = "%.0f"
+value_suffix = "°"
+
+[node name="AmbientIntensity" parent="." instance=ExtResource("2")]
+layout_mode = 2
+label_text = "Ambient Intensity"
+min_value = 0.0
+max_value = 2.0
+current_value = 1.0
+step_size = 0.05
+value_format = "%.2f"
+
+[node name="FogNote" type="Label" parent="."]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.65, 0.68, 0.72, 1)
+theme_override_font_sizes/font_size = 11
+text = "Fog and atmosphere controls (future)"

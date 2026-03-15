@@ -1,0 +1,16 @@
+[gd_scene load_steps=2 format=3 uid="uid://dlmv4xm0j2gy4"]
+
+[ext_resource type="Theme" uid="uid://dxuct2amfb0rp" path="res://themes/sacred_fruit.tres" id="1"]
+
+[node name="LabeledDropdown" type="VBoxContainer"]
+offset_right = 300.0
+offset_bottom = 50.0
+theme = ExtResource("1")
+theme_override_constants/separation = 4
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 2
+text = "Option"
+
+[node name="Dropdown" type="OptionButton" parent="."]
+layout_mode = 2
