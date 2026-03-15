@@ -77,7 +77,7 @@ func use_targets(activator: Node)->void:
 	# Because we can trigger multiple entities at once, we get the trigger message from the caller node only,
 	# to prevent spam / missed messages / unpredictable behavior...
 	if props.has("message"):
-		print(props.message)
+		Util.debug_print(props.message)
 
 # Set the targetnames for the entity. We can specify multiple targetnames using comma delimiting.
 func set_targetname(ent: Node, targetname: String)->void:

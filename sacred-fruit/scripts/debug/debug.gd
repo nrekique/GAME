@@ -1,6 +1,7 @@
 class_name Debug
 extends Node
 const Util := preload("res://scripts/core/util.gd")
+const Constants := preload("res://scripts/core/constants.gd")
 
 # Simple debug overlay + runtime map launcher.
 # Toggle menu with F1.
@@ -15,7 +16,7 @@ var pending_runtime_map_path: String = ""
 var pending_photo_map_path: String = ""
 var pending_photo_camera_position: Vector3 = Vector3.ZERO
 var pending_photo_camera_rotation: Vector3 = Vector3.ZERO
-var pending_photo_camera_fov: float = 70.0
+var pending_photo_camera_fov: float = Constants.PHOTO_DEFAULT_FOV
 var pending_photo_camera_valid: bool = false
 var pending_force_spectator: bool = false
 

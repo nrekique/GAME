@@ -2,6 +2,7 @@ extends CanvasLayer
 
 const PORTAL_MANAGER_PATH := "/root/PortalRuntimeManager"
 const MIRROR_MANAGER_PATH := "/root/MirrorRuntimeManager"
+const Constants := preload("res://scripts/core/constants.gd")
 
 @export var enabled: bool = true
 @export_range(0.05, 1.0, 0.01) var refresh_seconds: float = 0.2
@@ -18,7 +19,7 @@ var _csv_path: String = ""
 
 
 func _ready() -> void:
-	layer = 120
+	layer = Constants.LAYER_DEBUG_PERF_HUD
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	if not InputMap.has_action(toggle_action):
 		InputMap.add_action(toggle_action)

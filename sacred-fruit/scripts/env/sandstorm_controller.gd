@@ -1,5 +1,6 @@
 extends Node3D
 const Util := preload("res://scripts/core/util.gd")
+const Constants := preload("res://scripts/core/constants.gd")
 
 @export var enabled: bool = true
 @export_range(0.0, 1.0, 0.01) var intensity: float = 0.85
@@ -126,7 +127,7 @@ func _find_world_environment() -> WorldEnvironment:
 func _setup_overlay() -> void:
 	_overlay_layer = CanvasLayer.new()
 	_overlay_layer.name = "SandstormOverlay"
-	_overlay_layer.layer = 60
+	_overlay_layer.layer = Constants.LAYER_WEATHER_OVERLAY
 	add_child(_overlay_layer)
 
 	_overlay_rect = ColorRect.new()
@@ -198,7 +199,7 @@ func _make_dust_particles(name: String, amount: int, lifetime: float, radius: fl
 	pm.emission_shape = ParticleProcessMaterial.EMISSION_SHAPE_BOX
 	pm.emission_box_extents = Vector3(radius, radius * 0.6, radius)
 	pm.direction = Vector3(1.0, -0.02, 0.2).normalized()
-	pm.spread = 25.0
+	pm.spread = Constants.SANDSTORM_SPREAD_NORMAL
 	pm.initial_velocity_min = 1.0
 	pm.initial_velocity_max = 2.8
 	pm.gravity = Vector3.ZERO
@@ -349,7 +350,7 @@ func _update_weather_state(storm_intensity: float, wind2: Vector2) -> void:
 	var weight: float = clampf(weather_intensity, 0.0, 1.0)
 	var dir := Vector3(wind2.x, -1.0, wind2.y).normalized()
 	pm.direction = dir
-	pm.spread = 12.0 if mode == "rain" else 25.0
+	pm.spread = Constants.SANDSTORM_SPREAD_RAIN if mode == "rain" else Constants.SANDSTORM_SPREAD_NORMAL
 	pm.initial_velocity_min = lerpf(4.0, 12.0, weight) if mode == "rain" else lerpf(0.5, 2.0, weight)
 	pm.initial_velocity_max = lerpf(8.0, 20.0, weight) if mode == "rain" else lerpf(1.0, 3.4, weight)
 	pm.scale_min = 0.04 if mode == "rain" else 0.09

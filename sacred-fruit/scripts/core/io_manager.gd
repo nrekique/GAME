@@ -92,14 +92,14 @@ func _append_io_trace(event: Dictionary) -> void:
 	while _io_trace.size() > io_trace_capacity:
 		_io_trace.remove_at(0)
 	io_event_dispatched.emit(event)
-	if io_debug_logging:
+	if io_debug_logging or Util.debug_enabled:
 		var source_name: String = String(event.get("source_name", ""))
 		var group_name: String = String(event.get("target_group", ""))
 		var input_name: String = String(event.get("input", "use"))
 		var delay_value: float = float(event.get("delay", 0.0))
 		var invoked: int = int(event.get("invoked_count", 0))
 		var target_count: int = int(event.get("target_count", 0))
-		print("[io] src=%s target=%s input=%s delay=%.3f invoked=%d/%d" % [source_name, group_name, input_name, delay_value, invoked, target_count])
+		Util.debug_print("[io] src=%s target=%s input=%s delay=%.3f invoked=%d/%d" % [source_name, group_name, input_name, delay_value, invoked, target_count])
 
 func io_get_trace() -> Array[Dictionary]:
 	return _io_trace.duplicate(true)

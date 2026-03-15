@@ -1,5 +1,7 @@
 extends CanvasLayer
 
+const Constants := preload("res://scripts/core/constants.gd")
+
 @export var enabled: bool = true
 @export_range(0.05, 1.0, 0.01) var refresh_seconds: float = 0.25
 @export var toggle_action: StringName = &"debug_toggle_ai_hud"
@@ -10,7 +12,7 @@ var _visible: bool = true
 
 
 func _ready() -> void:
-	layer = 121
+	layer = Constants.LAYER_DEBUG_AI_HUD
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	if not InputMap.has_action(toggle_action):
 		InputMap.add_action(toggle_action)

@@ -1,5 +1,6 @@
 extends CharacterBody3D
 const PHYSICS_BALL_SCRIPT: Script = preload("res://entities/props/physics_ball.gd")
+const Constants := preload("res://scripts/core/constants.gd")
 
 signal health_changed(current: int, max_health: int, max_overhealth: int)
 signal died
@@ -779,7 +780,7 @@ func _ensure_interact_crosshair() -> void:
 		return
 	_crosshair_layer = CanvasLayer.new()
 	_crosshair_layer.name = "InteractCrosshair"
-	_crosshair_layer.layer = 10
+	_crosshair_layer.layer = Constants.LAYER_CROSSHAIR
 	add_child(_crosshair_layer)
 
 	var root := Control.new()

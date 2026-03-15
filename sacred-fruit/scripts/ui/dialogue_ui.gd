@@ -4,6 +4,8 @@ extends CanvasLayer
 signal option_selected(choice_index: int)
 signal close_requested()
 
+const Constants := preload("res://scripts/core/constants.gd")
+
 @export_range(24.0, 320.0, 1.0) var default_line_reveal_rate: float = 90.0
 
 var _root: Control = null
@@ -27,7 +29,7 @@ var _options_tween: Tween = null
 
 
 func _ready() -> void:
-	layer = 30
+	layer = Constants.LAYER_DIALOGUE_UI
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	set_process(true)
 	visible = false
@@ -73,10 +75,10 @@ func _build_ui() -> void:
 	panel_style.border_width_top = 2
 	panel_style.border_width_right = 2
 	panel_style.border_width_bottom = 2
-	panel_style.corner_radius_top_left = 10
-	panel_style.corner_radius_top_right = 10
-	panel_style.corner_radius_bottom_left = 10
-	panel_style.corner_radius_bottom_right = 10
+	panel_style.corner_radius_top_left = Constants.DIALOGUE_CORNER_RADIUS
+	panel_style.corner_radius_top_right = Constants.DIALOGUE_CORNER_RADIUS
+	panel_style.corner_radius_bottom_left = Constants.DIALOGUE_CORNER_RADIUS
+	panel_style.corner_radius_bottom_right = Constants.DIALOGUE_CORNER_RADIUS
 	_panel.add_theme_stylebox_override("panel", panel_style)
 
 	var margin := MarginContainer.new()
@@ -250,10 +252,10 @@ func _apply_option_style(button: Button, enabled: bool) -> void:
 	normal.border_width_top = 1
 	normal.border_width_right = 1
 	normal.border_width_bottom = 1
-	normal.corner_radius_top_left = 6
-	normal.corner_radius_top_right = 6
-	normal.corner_radius_bottom_left = 6
-	normal.corner_radius_bottom_right = 6
+	normal.corner_radius_top_left = Constants.DIALOGUE_CHOICE_CORNER_RADIUS
+	normal.corner_radius_top_right = Constants.DIALOGUE_CHOICE_CORNER_RADIUS
+	normal.corner_radius_bottom_left = Constants.DIALOGUE_CHOICE_CORNER_RADIUS
+	normal.corner_radius_bottom_right = Constants.DIALOGUE_CHOICE_CORNER_RADIUS
 	normal.bg_color = Color(0.16, 0.18, 0.22, 0.95) if enabled else Color(0.12, 0.13, 0.15, 0.85)
 	normal.border_color = Color(0.35, 0.37, 0.44, 0.95)
 
