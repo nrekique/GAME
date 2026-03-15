@@ -1942,7 +1942,7 @@ func _debug_layout() -> void:
 	await get_tree().process_frame
 	await get_tree().process_frame
 	if _ui_root == null:
-		Util.debug_Util.debug_print("[PhotoMode] _ui_root missing")
+		Util.debug_print("[PhotoMode] _ui_root missing")
 		return
 
 	var c := _ui_root
@@ -1952,48 +1952,48 @@ func _debug_layout() -> void:
 	var root_hbox := _ui_root.get_node_or_null("RootMargin/RootHBox") as Control
 	var panel := _ui_root.get_node_or_null("RootMargin/RootHBox/Panel") as Control
 
-	Util.debug_Util.debug_print("[PhotoMode] ui_root size=" + str(c.size) + " global=" + str(c.global_position) +
+	Util.debug_print("[PhotoMode] ui_root size=" + str(c.size) + " global=" + str(c.global_position) +
 		" anchors=" + str(Vector4(c.anchor_left, c.anchor_top, c.anchor_right, c.anchor_bottom)) +
 		" offsets=" + str(Vector4(c.offset_left, c.offset_top, c.offset_right, c.offset_bottom)))
 	if root_margin == null:
-		Util.debug_Util.debug_print("[PhotoMode] RootMargin missing. PhotoUI children: " + str(c.get_children()))
+		Util.debug_print("[PhotoMode] RootMargin missing. PhotoUI children: " + str(c.get_children()))
 		var canvas_layer := get_node_or_null("CanvasLayer")
 		if canvas_layer:
 			var layer_controls: Array[String] = []
 			for ch in canvas_layer.get_children():
 				if ch is Control:
 					layer_controls.append(ch.name)
-				Util.debug_print("[PhotoMode] CanvasLayer controls:", layer_controls)
+				Util.debug_print("[PhotoMode] CanvasLayer controls: " + str(layer_controls))
 		var root_controls: Array[String] = []
 		for ch in get_children():
 			if ch is Control:
 				root_controls.append(ch.name)
-		Util.debug_print("[PhotoMode] Root controls:", root_controls)
+		Util.debug_print("[PhotoMode] Root controls: " + str(root_controls))
 		var mangled: Array[String] = []
 		for n in find_children("*", "Control", true, false):
 			if String(n.name).find("CanvasLayer_PhotoUI") != -1:
 				mangled.append(String(n.name))
-		Util.debug_print("[PhotoMode] Mangled controls:", mangled)
+		Util.debug_print("[PhotoMode] Mangled controls: " + str(mangled))
 
 
 	# Additional layout info (kept in debug layout)
 	if root_margin:
-		Util.debug_print("[PhotoMode] RootMargin size=", root_margin.size, " global=", root_margin.global_position,
-			" anchors=", Vector4(root_margin.anchor_left, root_margin.anchor_top, root_margin.anchor_right, root_margin.anchor_bottom),
-			" offsets=", Vector4(root_margin.offset_left, root_margin.offset_top, root_margin.offset_right, root_margin.offset_bottom))
+		Util.debug_print("[PhotoMode] RootMargin size=" + str(root_margin.size) + " global=" + str(root_margin.global_position) +
+			" anchors=" + str(Vector4(root_margin.anchor_left, root_margin.anchor_top, root_margin.anchor_right, root_margin.anchor_bottom)) +
+			" offsets=" + str(Vector4(root_margin.offset_left, root_margin.offset_top, root_margin.offset_right, root_margin.offset_bottom)))
 	if root_hbox:
-		Util.debug_print("[PhotoMode] RootHBox size=", root_hbox.size, " global=", root_hbox.global_position)
+		Util.debug_print("[PhotoMode] RootHBox size=" + str(root_hbox.size) + " global=" + str(root_hbox.global_position))
 	if panel:
-		Util.debug_print("[PhotoMode] Panel size=", panel.size, " global=", panel.global_position)
+		Util.debug_print("[PhotoMode] Panel size=" + str(panel.size) + " global=" + str(panel.global_position))
 
-	Util.debug_print("[PhotoMode] parent=", p, " parent_is_control=", parent_ctrl != null,
-		" parent_size=", (parent_ctrl.size if parent_ctrl else Vector2(-1, -1)))
+	Util.debug_print("[PhotoMode] parent=" + str(p) + " parent_is_control=" + str(parent_ctrl != null) +
+		" parent_size=" + str(parent_ctrl.size if parent_ctrl else Vector2(-1, -1)))
 
 	var tabs := _ui_root.get_node_or_null("RootMargin/RootHBox/TabsPanel") as Control
 	if tabs:
-		Util.debug_print("[PhotoMode] Tabs anchors:", tabs.anchor_left, tabs.anchor_top, tabs.anchor_right, tabs.anchor_bottom,
-			" offsets:", tabs.offset_left, tabs.offset_top, tabs.offset_right, tabs.offset_bottom,
-			" size:", tabs.size)
+		Util.debug_print("[PhotoMode] Tabs anchors: " + str(tabs.anchor_left) + " " + str(tabs.anchor_top) + " " + str(tabs.anchor_right) + " " + str(tabs.anchor_bottom) +
+			" offsets: " + str(tabs.offset_left) + " " + str(tabs.offset_top) + " " + str(tabs.offset_right) + " " + str(tabs.offset_bottom) +
+			" size: " + str(tabs.size))
 
 	# New: report any Control nodes that are NOT children of the canonical Settings VBox
 	if _ui_root != null:
@@ -2008,7 +2008,7 @@ func _debug_layout() -> void:
 			if canonical_vbox != null and canonical_vbox.is_ancestor_of(ctrl) == false:
 				stray.append({"path": String(ctrl.get_path()), "parent": String(ctrl.get_parent().get_path()), "anchors": Vector4(ctrl.anchor_left, ctrl.anchor_top, ctrl.anchor_right, ctrl.anchor_bottom), "offsets": Vector4(ctrl.offset_left, ctrl.offset_top, ctrl.offset_right, ctrl.offset_bottom)})
 		if stray.size() > 0:
-			Util.debug_print("[PhotoMode DEBUG] stray_controls=", stray)
+			Util.debug_print("[PhotoMode DEBUG] stray_controls=" + str(stray))
 
 
 func _ensure_row(row_name: String, type_class: Variant, parent: Node, child_names: Array) -> void:
@@ -3913,17 +3913,17 @@ func _apply_color_adjustments() -> void:
 	if not (env is Environment):
 		if _is_layout_debug_enabled():
 			if _debug_accum >= DEBUG_PRINT_INTERVAL:
-				Util.debug_print("[PhotoMode DEBUG] _apply_color_adjustments: world_env=", _world_env, " env_type=", typeof(env), " env=", env)
+				Util.debug_print("[PhotoMode DEBUG] _apply_color_adjustments: world_env=" + str(_world_env) + " env_type=" + str(typeof(env)) + " env=" + str(env))
 				_debug_accum = 0.0
 		return
 
 	if _is_layout_debug_enabled():
 		if _debug_accum >= DEBUG_PRINT_INTERVAL:
-			Util.debug_print("[PhotoMode DEBUG] _apply_color_adjustments: world_env=", _world_env, " env=", env)
+			Util.debug_print("[PhotoMode DEBUG] _apply_color_adjustments: world_env=" + str(_world_env) + " env=" + str(env))
 			var props := []
 			for p in env.get_property_list():
 				props.append(p.name)
-			Util.debug_print("[PhotoMode DEBUG] environment properties sample=", props.slice(0, 30))
+			Util.debug_print("[PhotoMode DEBUG] environment properties sample=" + str(props.slice(0, 30)))
 			_debug_accum = 0.0
 	_set_attr_if_exists(env, "adjustment_enabled", true)
 	if _saturation_slider:
@@ -3950,7 +3950,7 @@ func _on_vignette_changed(value: float) -> void:
 		_vignette_value.text = "%.2f" % value
 	if _world_env and _world_env.environment:
 		if _is_layout_debug_enabled():
-			Util.debug_print("[PhotoMode DEBUG] setting vignette to", value)
+			Util.debug_print("[PhotoMode DEBUG] setting vignette to " + str(value))
 		_set_attr_if_exists(_world_env.environment, "vignette_enabled", value > 0.001)
 		_set_attr_if_exists(_world_env.environment, "vignette_intensity", value)
 		_set_attr_if_exists(_world_env.environment, "vignette_smoothness", 0.5)
@@ -3965,7 +3965,7 @@ func _on_grain_changed(value: float) -> void:
 		_grain_value.text = "%.2f" % value
 	if _world_env and _world_env.environment:
 		if _is_layout_debug_enabled():
-			Util.debug_print("[PhotoMode DEBUG] setting grain to", value)
+			Util.debug_print("[PhotoMode DEBUG] setting grain to " + str(value))
 		_set_attr_if_exists(_world_env.environment, "film_grain", value)
 		_set_attr_if_exists(_world_env.environment, "film_grain_enabled", value > 0.001)
 		_set_attr_if_exists(_world_env.environment, "grain_strength", value)
@@ -4468,7 +4468,7 @@ func _update_viewfinder() -> void:
 
 	var crop_rect := _calculate_crop_rect(base_size)
 	if _is_layout_debug_enabled():
-		Util.debug_print("[PhotoMode DEBUG] _update_viewfinder: viewport=", base_size, " viewfinder_size=", (_viewfinder.size if _viewfinder is Control else Vector2.ZERO))
+		Util.debug_print("[PhotoMode DEBUG] _update_viewfinder: viewport=" + str(base_size) + " viewfinder_size=" + str(_viewfinder.size if _viewfinder is Control else Vector2.ZERO))
 	if _viewfinder.has_method("set_crop_rect"):
 		_viewfinder.call("set_crop_rect", crop_rect)
 
