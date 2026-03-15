@@ -1,0 +1,210 @@
+[gd_scene load_steps=3 format=3 uid="uid://dpx8r5n4q7wvm"]
+
+[ext_resource type="Theme" uid="uid://dxuct2amfb0rp" path="res://themes/sacred_fruit.tres" id="1"]
+[ext_resource type="Script" path="res://scripts/debug/map_builder_menu.gd" id="2"]
+
+[node name="MapBuilderMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+theme = ExtResource("1")
+script = ExtResource("2")
+
+[node name="Backdrop" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+color = Color(0, 0, 0, 0.7)
+
+[node name="Center" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Panel" type="PanelContainer" parent="Center"]
+custom_minimum_size = Vector2(900, 700)
+layout_mode = 2
+
+[node name="Margin" type="MarginContainer" parent="Center/Panel"]
+layout_mode = 2
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="VBox" type="VBoxContainer" parent="Center/Panel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Title" type="Label" parent="Center/Panel/Margin/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "Map Builder & Runtime"
+horizontal_alignment = 1
+
+[node name="TabContainer" type="TabContainer" parent="Center/Panel/Margin/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Maps" type="VBoxContainer" parent="Center/Panel/Margin/VBox/TabContainer"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="TopBar" type="HBoxContainer" parent="Center/Panel/Margin/VBox/TabContainer/Maps"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Search" type="LineEdit" parent="Center/Panel/Margin/VBox/TabContainer/Maps/TopBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Filter maps (e.g. home, grill…)"
+
+[node name="IncludeAutosave" type="CheckBox" parent="Center/Panel/Margin/VBox/TabContainer/Maps/TopBar"]
+layout_mode = 2
+text = "Include Autosave"
+
+[node name="MapList" type="ItemList" parent="Center/Panel/Margin/VBox/TabContainer/Maps"]
+layout_mode = 2
+size_flags_vertical = 3
+allow_reselect = true
+
+[node name="Buttons" type="HBoxContainer" parent="Center/Panel/Margin/VBox/TabContainer/Maps"]
+layout_mode = 2
+theme_override_constants/separation = 10
+alignment = 2
+
+[node name="BuildRun" type="Button" parent="Center/Panel/Margin/VBox/TabContainer/Maps/Buttons"]
+layout_mode = 2
+text = "Build + Run"
+
+[node name="PhotoMode" type="Button" parent="Center/Panel/Margin/VBox/TabContainer/Maps/Buttons"]
+layout_mode = 2
+text = "Photo Mode"
+
+[node name="TrenchBroom" type="VBoxContainer" parent="Center/Panel/Margin/VBox/TabContainer"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Header" type="Label" parent="Center/Panel/Margin/VBox/TabContainer/TrenchBroom"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "TrenchBroom Entity Generator"
+
+[node name="Description" type="Label" parent="Center/Panel/Margin/VBox/TabContainer/TrenchBroom"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.8, 0.8, 0.8, 1)
+theme_override_font_sizes/font_size = 12
+text = "Generate FGD entities from GLB/GLTF models for use in TrenchBroom editor."
+autowrap_mode = 3
+
+[node name="ModelTopBar" type="HBoxContainer" parent="Center/Panel/Margin/VBox/TabContainer/TrenchBroom"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="ModelFilter" type="LineEdit" parent="Center/Panel/Margin/VBox/TabContainer/TrenchBroom/ModelTopBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Filter models (glb/gltf)..."
+
+[node name="ModelList" type="ItemList" parent="Center/Panel/Margin/VBox/TabContainer/TrenchBroom"]
+custom_minimum_size = Vector2(0, 200)
+layout_mode = 2
+size_flags_vertical = 3
+allow_reselect = true
+
+[node name="OptionsGrid" type="GridContainer" parent="Center/Panel/Margin/VBox/TabContainer/TrenchBroom"]
+layout_mode = 2
+theme_override_constants/h_separation = 12
+theme_override_constants/v_separation = 8
+columns = 2
+
+[node name="ScaleLabel" type="Label" parent="Center/Panel/Margin/VBox/TabContainer/TrenchBroom/OptionsGrid"]
+layout_mode = 2
+text = "Uniform Scale"
+
+[node name="ModelScale" type="LineEdit" parent="Center/Panel/Margin/VBox/TabContainer/TrenchBroom/OptionsGrid"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+text = "1.0"
+
+[node name="CollisionLabel" type="Label" parent="Center/Panel/Margin/VBox/TabContainer/TrenchBroom/OptionsGrid"]
+layout_mode = 2
+text = "Collision Size"
+
+[node name="SizeMode" type="OptionButton" parent="Center/Panel/Margin/VBox/TabContainer/TrenchBroom/OptionsGrid"]
+layout_mode = 2
+size_flags_horizontal = 3
+selected = 0
+item_count = 2
+popup/item_0/text = "Auto from Mesh AABB"
+popup/item_0/id = 0
+popup/item_1/text = "Manual Size"
+popup/item_1/id = 1
+
+[node name="ManualLabel" type="Label" parent="Center/Panel/Margin/VBox/TabContainer/TrenchBroom/OptionsGrid"]
+layout_mode = 2
+text = "Manual Size (X Y Z)"
+
+[node name="ManualSizeRow" type="HBoxContainer" parent="Center/Panel/Margin/VBox/TabContainer/TrenchBroom/OptionsGrid"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="ManualSizeX" type="LineEdit" parent="Center/Panel/Margin/VBox/TabContainer/TrenchBroom/OptionsGrid/ManualSizeRow"]
+custom_minimum_size = Vector2(80, 0)
+layout_mode = 2
+text = "32"
+editable = false
+
+[node name="ManualSizeY" type="LineEdit" parent="Center/Panel/Margin/VBox/TabContainer/TrenchBroom/OptionsGrid/ManualSizeRow"]
+custom_minimum_size = Vector2(80, 0)
+layout_mode = 2
+text = "32"
+editable = false
+
+[node name="ManualSizeZ" type="LineEdit" parent="Center/Panel/Margin/VBox/TabContainer/TrenchBroom/OptionsGrid/ManualSizeRow"]
+custom_minimum_size = Vector2(80, 0)
+layout_mode = 2
+text = "32"
+editable = false
+
+[node name="TBPathLabel" type="Label" parent="Center/Panel/Margin/VBox/TabContainer/TrenchBroom/OptionsGrid"]
+layout_mode = 2
+text = "TrenchBroom Game Folder"
+
+[node name="TBConfigPath" type="LineEdit" parent="Center/Panel/Margin/VBox/TabContainer/TrenchBroom/OptionsGrid"]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "/Users/.../ Application Support/TrenchBroom/games/sacredFruit"
+
+[node name="GenerateButtons" type="HBoxContainer" parent="Center/Panel/Margin/VBox/TabContainer/TrenchBroom"]
+layout_mode = 2
+theme_override_constants/separation = 10
+alignment = 2
+
+[node name="GeneratePropEntity" type="Button" parent="Center/Panel/Margin/VBox/TabContainer/TrenchBroom/GenerateButtons"]
+layout_mode = 2
+text = "Generate Prop Entity"
+
+[node name="GenerateActorEntity" type="Button" parent="Center/Panel/Margin/VBox/TabContainer/TrenchBroom/GenerateButtons"]
+layout_mode = 2
+text = "Generate Actor Entity"
+
+[node name="Status" type="Label" parent="Center/Panel/Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.9, 0.9, 1)
+text = "Ready. Press F1 to close."
+autowrap_mode = 3
+
+[node name="BottomButtons" type="HBoxContainer" parent="Center/Panel/Margin/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 10
+alignment = 2
+
+[node name="Close" type="Button" parent="Center/Panel/Margin/VBox/BottomButtons"]
+layout_mode = 2
+text = "Close (F1)"
