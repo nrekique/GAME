@@ -181,7 +181,7 @@ func _update_scene_info() -> void:
 func _update_performance() -> void:
 	# Memory usage
 	var static_mem := Performance.get_monitor(Performance.MEMORY_STATIC) / 1024.0 / 1024.0
-	var dynamic_mem := Performance.get_monitor(Performance.MEMORY_DYNAMIC) / 1024.0 / 1024.0
+	var dynamic_mem := _get_dynamic_memory_usage_mb()
 	var total_mem := static_mem + dynamic_mem
 	memory_label.text = "Memory: %.1f MB (Static: %.1f / Dynamic: %.1f)" % [total_mem, static_mem, dynamic_mem]
 	
@@ -204,3 +204,9 @@ func _update_camera() -> void:
 		camera_label.text = "Camera FOV: %.1f°" % _camera.fov
 	else:
 		camera_label.text = "Camera: none"
+
+
+func _get_dynamic_memory_usage_mb() -> float:
+	if OS.has_method("get_dynamic_memory_usage"):
+		return OS.get_dynamic_memory_usage() / 1024.0 / 1024.0
+	return 0.0
