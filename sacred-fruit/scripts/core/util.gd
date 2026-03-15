@@ -78,3 +78,51 @@ static func editor_hint() -> bool:
 static func debug_print(msg: String) -> void:
 	if debug_enabled:
 		print(msg)
+
+
+static func normalize_res_path(raw_path: String) -> String:
+	var path := raw_path.strip_edges().replace("\\", "/")
+	if path.begins_with("\"") and path.ends_with("\"") and path.length() >= 2:
+		path = path.substr(1, path.length() - 2)
+	if path.is_empty():
+		return ""
+	if path.find("/../") != -1 or path.begins_with("../") or path.ends_with("/.."):
+		return ""
+	while path.find("//") != -1:
+		path = path.replace("//", "/")
+	if path.begins_with("res:/") and not path.begins_with("res://"):
+		path = "res://" + path.trim_prefix("res:/").trim_prefix("/")
+	if path.begins_with("res://"):
+		return path
+	# Reject non-project URI schemes and absolute drive paths.
+	if path.find("://") != -1 or path.find(":") != -1:
+		return ""
+	if path.begins_with("/"):
+		return "res://" + path.substr(1)
+	return "res://" + path
+
+
+static func sanitize_allowed_resource_path(
+		raw_path: String,
+		allowed_roots: PackedStringArray,
+		required_extension: String = ""
+	) -> String:
+	var path := normalize_res_path(raw_path)
+	if path.is_empty():
+		return ""
+	var ext := required_extension.strip_edges().to_lower()
+	if not ext.is_empty() and not path.to_lower().ends_with(ext):
+		return ""
+
+	var roots := allowed_roots
+	if roots.is_empty():
+		roots = PackedStringArray(["res://"])
+	for root_v in roots:
+		var root := normalize_res_path(String(root_v))
+		if root.is_empty():
+			continue
+		if not root.ends_with("/"):
+			root += "/"
+		if path.begins_with(root):
+			return path
+	return ""
