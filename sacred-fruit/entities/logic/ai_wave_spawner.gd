@@ -3,6 +3,11 @@ class_name AIWaveSpawner
 extends Node3D
 const Util := preload("res://scripts/core/util.gd")
 const DEFAULT_NPC_SCENE: PackedScene = preload("res://entities/actors/npc/npc.tscn")
+const ALLOWED_NPC_SCENE_ROOTS: Array[String] = [
+	"res://entities/",
+	"res://scenes/",
+	"res://tb/"
+]
 
 @export var enabled: bool = true
 @export var wave_id: String = "default"
@@ -136,11 +141,11 @@ func _resolve_npc_scene() -> PackedScene:
 	return DEFAULT_NPC_SCENE
 
 func _try_load_npc_scene_from_path() -> void:
-	var path := npc_scene_path.strip_edges()
+	var path := Util.sanitize_allowed_resource_path(npc_scene_path, ALLOWED_NPC_SCENE_ROOTS, ".tscn")
 	if path.is_empty():
+		if not npc_scene_path.strip_edges().is_empty():
+			push_warning("ai_wave_spawner '%s' rejected npc_scene outside allowlist: %s" % [name, npc_scene_path])
 		return
-	if not path.begins_with("res://"):
-		path = "res://" + path.trim_prefix("/")
 	var loaded: Variant = load(path)
 	if loaded is PackedScene:
 		npc_scene = loaded as PackedScene

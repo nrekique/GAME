@@ -12,6 +12,12 @@ const Util := preload("res://scripts/core/util.gd")
 @export var copy_camera_rotation: bool = false
 @export var rotation_speed_deg: Vector3 = Vector3.ZERO
 
+const ALLOWED_SKY_SCENE_ROOTS: Array[String] = [
+	"res://scenes/",
+	"res://entities/",
+	"res://tb/"
+]
+
 var _instance: Node3D = null
 var _camera: Camera3D = null
 
@@ -22,7 +28,10 @@ func _func_godot_apply_properties(props: Dictionary) -> void:
 	if props.has("enabled"):
 		enabled = Util.to_bool(props["enabled"], enabled)
 	if props.has("sky_scene"):
-		sky_scene = String(props["sky_scene"]).strip_edges()
+		var mapped_scene := Util.sanitize_allowed_resource_path(String(props["sky_scene"]), ALLOWED_SKY_SCENE_ROOTS, ".tscn")
+		if mapped_scene.is_empty():
+			push_warning("env_sky_scene '%s' rejected sky_scene outside allowlist: %s" % [name, String(props["sky_scene"])])
+		sky_scene = mapped_scene
 	if props.has("load_on_ready"):
 		load_on_ready = Util.to_bool(props["load_on_ready"], load_on_ready)
 	if props.has("follow_camera"):
@@ -84,9 +93,13 @@ func load_sky_scene() -> void:
 	if sky_scene.is_empty():
 		push_warning("env_sky_scene '%s' missing sky_scene path" % name)
 		return
-	var packed_v: Variant = load(sky_scene)
+	var safe_scene := Util.sanitize_allowed_resource_path(sky_scene, ALLOWED_SKY_SCENE_ROOTS, ".tscn")
+	if safe_scene.is_empty():
+		push_warning("env_sky_scene '%s' rejected sky_scene outside allowlist: %s" % [name, sky_scene])
+		return
+	var packed_v: Variant = load(safe_scene)
 	if not (packed_v is PackedScene):
-		push_warning("env_sky_scene '%s' could not load PackedScene at %s" % [name, sky_scene])
+		push_warning("env_sky_scene '%s' could not load PackedScene at %s" % [name, safe_scene])
 		return
 	clear_sky_scene()
 	var inst: Node = (packed_v as PackedScene).instantiate()
