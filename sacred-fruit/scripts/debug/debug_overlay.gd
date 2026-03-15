@@ -207,6 +207,4 @@ func _update_camera() -> void:
 
 
 func _get_dynamic_memory_usage_mb() -> float:
-	if OS.has_method("get_dynamic_memory_usage"):
-		return OS.get_dynamic_memory_usage() / 1024.0 / 1024.0
 	return 0.0
