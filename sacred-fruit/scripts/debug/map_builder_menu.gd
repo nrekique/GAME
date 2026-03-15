@@ -283,20 +283,413 @@ func _scan_model_dir_recursive(dir_path: String, out: Array[String]) -> void:
 
 
 func _size_mode_is_manual() -> bool:
-	return size_mode.selected == 1
+	return size_mode != null and size_mode.selected == 1
 
 
-# [Entity generation functions continue from old debug_menu.gd - about 600 more lines]
-# NOTE: Keeping the entity generation logic for reference but marking as "to be implemented"
-# These functions handle TrenchBroom FGD entity creation from models
+func _generate_model_entity(as_actor: bool) -> void:
+	if status == null:
+		return
+	var model_path := _selected_model_path()
+	if model_path.is_empty():
+		status.text = "No model selected"
+		return
+	if not FileAccess.file_exists(model_path) and not FileAccess.file_exists(model_path + ".import"):
+		status.text = "Missing model: %s" % model_path
+		return
 
-func _generate_model_entity(_as_actor: bool) -> void:
-	status.text = "Entity generation not yet fully implemented in refactored menu"
-	# TODO: Port the full entity generation logic from old debug_menu.gd
-	# Functions needed:
-	# - _generate_model_entity()
-	# - _build_wrapper_scene()
-	# - _upsert_entity_definition()
-	# - _compute_model_size_meta()
-	# - _export_trenchbroom_bundle()
-	# ... etc
+	var model_scene := load(model_path) as PackedScene
+	if model_scene == null:
+		status.text = "Model not loadable as PackedScene: %s" % model_path.get_file()
+		return
+
+	var wrapper_script := load(GENERATED_MODEL_SCRIPT) as Script
+	if wrapper_script == null:
+		status.text = "Missing wrapper script: %s" % GENERATED_MODEL_SCRIPT
+		return
+
+	var point_script := load(POINT_CLASS_SCRIPT) as Script
+	if point_script == null:
+		status.text = "Missing point class script: %s" % POINT_CLASS_SCRIPT
+		return
+
+	var point_fgd := load(FGD_POINT_FILE) as Resource
+	if point_fgd == null:
+		status.text = "Missing FGD: %s" % FGD_POINT_FILE
+		return
+
+	var model_name := _sanitize_token(model_path.get_file().get_basename())
+	var classname := ("actor_" if as_actor else "prop_") + model_name
+
+	var entity_res_path := GENERATED_FGD_DIR.path_join("%s.tres" % classname)
+	var scene_res_path := GENERATED_SCENE_DIR.path_join("%s.tscn" % classname)
+
+	var scale_factor := _read_uniform_scale()
+	var auto_meta := _compute_model_size_meta(model_scene)
+	var scaled_auto_meta := _scale_size_meta(auto_meta, scale_factor)
+	var auto_center := _size_meta_center(scaled_auto_meta)
+	var auto_size := _size_meta_dimensions(scaled_auto_meta)
+
+	var use_manual_size := _size_mode_is_manual()
+	var manual_size := _read_manual_size(auto_size)
+	var final_size := manual_size if use_manual_size else auto_size
+	var final_meta := _make_size_meta_from_center_and_size(auto_center, final_size)
+
+	var collision_from_aabb := not use_manual_size
+	var collision_size := final_size
+	var collision_offset := Vector3.ZERO
+	if use_manual_size:
+		collision_offset = auto_center
+		if scale_factor > 0.0001:
+			collision_size /= scale_factor
+			collision_offset /= scale_factor
+
+	var wrapper_scene := _build_wrapper_scene(
+		wrapper_script,
+		model_scene,
+		collision_from_aabb,
+		collision_size,
+		collision_offset,
+		scale_factor
+	)
+	if wrapper_scene == null:
+		status.text = "Failed creating wrapper scene for %s" % model_path.get_file()
+		return
+
+	var scene_dir_err := _ensure_res_dir(GENERATED_SCENE_DIR)
+	if scene_dir_err != OK and scene_dir_err != ERR_ALREADY_EXISTS:
+		status.text = "Failed creating generated scene dir (%s)" % str(scene_dir_err)
+		return
+	var fgd_dir_err := _ensure_res_dir(GENERATED_FGD_DIR)
+	if fgd_dir_err != OK and fgd_dir_err != ERR_ALREADY_EXISTS:
+		status.text = "Failed creating generated FGD dir (%s)" % str(fgd_dir_err)
+		return
+
+	var save_wrapper_err := ResourceSaver.save(wrapper_scene, scene_res_path)
+	if save_wrapper_err != OK:
+		status.text = "Failed saving wrapper scene (%s)" % str(save_wrapper_err)
+		return
+	var saved_wrapper_scene := load(scene_res_path) as PackedScene
+	if saved_wrapper_scene == null:
+		saved_wrapper_scene = wrapper_scene
+
+	var entity_def := load(entity_res_path) as Resource
+	if entity_def == null:
+		entity_def = point_script.new() as Resource
+	if entity_def == null:
+		status.text = "Failed creating point class resource"
+		return
+
+	var base_class_path := ACTOR_BASE_CLASS if as_actor else TARGETNAME_BASE_CLASS
+	var base_class_res := load(base_class_path) as Resource
+	if base_class_res == null:
+		status.text = "Missing base class: %s" % base_class_path
+		return
+
+	var model_meta_path := _model_path_for_meta(model_path)
+	var debug_color := Color(0.92, 0.78, 0.34, 1.0)
+	if as_actor:
+		debug_color = Color(0.45, 0.78, 0.96, 1.0)
+
+	entity_def.set("classname", classname)
+	entity_def.set("description", "Auto-generated from %s" % model_path.get_file())
+	entity_def.set("func_godot_internal", false)
+	entity_def.set("base_classes", [base_class_res])
+	entity_def.set("class_properties", {
+		"scale": 1.0
+	})
+	entity_def.set("class_property_descriptions", {
+		"scale": "Uniform scale multiplier. 1.0 keeps authored size."
+	})
+	entity_def.set("auto_apply_to_matching_node_properties", false)
+	entity_def.set("meta_properties", {
+		"model": "\"%s\"" % model_meta_path,
+		"size": final_meta,
+		"color": debug_color
+	})
+	entity_def.set("node_class", "")
+	entity_def.set("name_property", "")
+	entity_def.set("scene_file", saved_wrapper_scene)
+	entity_def.set("apply_rotation_on_map_build", true)
+	entity_def.set("apply_scale_on_map_build", true)
+
+	var save_entity_err := ResourceSaver.save(entity_def, entity_res_path)
+	if save_entity_err != OK:
+		status.text = "Failed saving entity def (%s)" % str(save_entity_err)
+		return
+	var saved_entity := load(entity_res_path) as Resource
+	if saved_entity == null:
+		saved_entity = entity_def
+
+	_upsert_entity_definition(point_fgd, saved_entity, classname)
+	var save_fgd_err := ResourceSaver.save(point_fgd, FGD_POINT_FILE)
+	if save_fgd_err != OK:
+		status.text = "Saved entity, but failed to update fgd_point.tres (%s)" % str(save_fgd_err)
+		return
+
+	var export_err := _export_trenchbroom_bundle(_read_tb_config_path())
+	if export_err.is_empty():
+		status.text = "Generated %s from %s and exported TrenchBroom config." % [classname, model_path.get_file()]
+	else:
+		status.text = "Generated %s, but TB export failed: %s" % [classname, export_err]
+
+
+func _build_wrapper_scene(
+	wrapper_script: Script,
+	model_scene: PackedScene,
+	collision_from_aabb: bool,
+	collision_size: Vector3,
+	collision_offset: Vector3,
+	uniform_scale: float
+) -> PackedScene:
+	if wrapper_script == null or model_scene == null:
+		return null
+
+	var root := StaticBody3D.new()
+	root.name = "GeneratedModelStatic"
+	root.set_script(wrapper_script)
+	root.set("model_scene", model_scene)
+	root.set("collision_from_model_aabb", collision_from_aabb)
+	root.set("collision_size", collision_size)
+	root.set("collision_offset", collision_offset)
+	root.scale = Vector3.ONE * maxf(uniform_scale, 0.001)
+
+	var packed := PackedScene.new()
+	var pack_err := packed.pack(root)
+	root.free()
+	if pack_err != OK:
+		return null
+	return packed
+
+
+func _upsert_entity_definition(point_fgd: Resource, entity_def: Resource, classname: String) -> void:
+	var defs_variant: Variant = point_fgd.get("entity_definitions")
+	var defs: Array = []
+	if defs_variant is Array:
+		defs = (defs_variant as Array).duplicate()
+	var replaced := false
+	for i in range(defs.size()):
+		var def_item: Variant = defs[i]
+		if not (def_item is Resource):
+			continue
+		var def_res := def_item as Resource
+		if String(def_res.get("classname")) == classname:
+			defs[i] = entity_def
+			replaced = true
+			break
+	if not replaced:
+		defs.append(entity_def)
+	point_fgd.set("entity_definitions", defs)
+
+
+func _model_path_for_meta(model_path: String) -> String:
+	var prefix := MODEL_ROOT + "/"
+	var rel := model_path
+	if model_path.begins_with(prefix):
+		rel = model_path.substr(prefix.length())
+	else:
+		rel = model_path.get_file()
+	return "models/%s" % rel
+
+
+func _compute_model_size_meta(scene: PackedScene) -> AABB:
+	var fallback := AABB(Vector3(-8, -8, -8), Vector3(8, 8, 8))
+	if scene == null:
+		return fallback
+	var root := scene.instantiate()
+	if root == null:
+		return fallback
+
+	var mins := Vector3(1000000.0, 1000000.0, 1000000.0)
+	var maxs := Vector3(-1000000.0, -1000000.0, -1000000.0)
+	var found_mesh := false
+
+	var stack: Array[Node] = []
+	stack.append(root)
+	while stack.size() > 0:
+		var node: Node = stack.pop_back()
+		if node is MeshInstance3D:
+			var mesh_node := node as MeshInstance3D
+			if mesh_node.mesh != null:
+				var mesh_aabb := mesh_node.mesh.get_aabb()
+				var corners := _aabb_corners(mesh_aabb)
+				for c in corners:
+					var p := mesh_node.global_transform * c
+					mins.x = minf(mins.x, p.x)
+					mins.y = minf(mins.y, p.y)
+					mins.z = minf(mins.z, p.z)
+					maxs.x = maxf(maxs.x, p.x)
+					maxs.y = maxf(maxs.y, p.y)
+					maxs.z = maxf(maxs.z, p.z)
+				found_mesh = true
+		for child in node.get_children():
+			if child is Node:
+				stack.append(child as Node)
+
+	root.free()
+
+	if not found_mesh:
+		return fallback
+
+	var min_i := Vector3(floor(mins.x), floor(mins.y), floor(mins.z))
+	var max_i := Vector3(ceil(maxs.x), ceil(maxs.y), ceil(maxs.z))
+	for axis in 3:
+		if max_i[axis] <= min_i[axis]:
+			max_i[axis] = min_i[axis] + 8.0
+	return AABB(min_i, max_i)
+
+
+func _scale_size_meta(size_meta: AABB, uniform_scale: float) -> AABB:
+	var f := maxf(uniform_scale, 0.001)
+	return AABB(size_meta.position * f, size_meta.size * f)
+
+
+func _size_meta_center(size_meta: AABB) -> Vector3:
+	return (size_meta.position + size_meta.size) * 0.5
+
+
+func _size_meta_dimensions(size_meta: AABB) -> Vector3:
+	var size := size_meta.size - size_meta.position
+	size.x = maxf(absf(size.x), 0.1)
+	size.y = maxf(absf(size.y), 0.1)
+	size.z = maxf(absf(size.z), 0.1)
+	return size
+
+
+func _make_size_meta_from_center_and_size(center: Vector3, size: Vector3) -> AABB:
+	var final_size := Vector3(maxf(size.x, 0.1), maxf(size.y, 0.1), maxf(size.z, 0.1))
+	var half := final_size * 0.5
+	var mins := center - half
+	var maxs := center + half
+	return AABB(mins, maxs)
+
+
+func _aabb_corners(aabb: AABB) -> Array[Vector3]:
+	var p := aabb.position
+	var s := aabb.size
+	return [
+		p,
+		p + Vector3(s.x, 0.0, 0.0),
+		p + Vector3(0.0, s.y, 0.0),
+		p + Vector3(0.0, 0.0, s.z),
+		p + Vector3(s.x, s.y, 0.0),
+		p + Vector3(s.x, 0.0, s.z),
+		p + Vector3(0.0, s.y, s.z),
+		p + Vector3(s.x, s.y, s.z),
+	]
+
+
+func _sanitize_token(raw: String) -> String:
+	var lower := raw.to_lower()
+	var out := ""
+	for i in lower.length():
+		var ch := lower.substr(i, 1)
+		var is_alpha := ch >= "a" and ch <= "z"
+		var is_digit := ch >= "0" and ch <= "9"
+		if is_alpha or is_digit or ch == "_":
+			out += ch
+		else:
+			out += "_"
+	while out.find("__") != -1:
+		out = out.replace("__", "_")
+	while out.begins_with("_"):
+		out = out.substr(1)
+	while out.ends_with("_"):
+		out = out.substr(0, out.length() - 1)
+	if out.is_empty():
+		return "model"
+	return out
+
+
+func _read_uniform_scale() -> float:
+	var value := _line_float(model_scale, 1.0)
+	return maxf(value, 0.001)
+
+
+func _read_manual_size(fallback: Vector3) -> Vector3:
+	var sx := _line_float(manual_size_x, fallback.x)
+	var sy := _line_float(manual_size_y, fallback.y)
+	var sz := _line_float(manual_size_z, fallback.z)
+	return Vector3(maxf(sx, 0.1), maxf(sy, 0.1), maxf(sz, 0.1))
+
+
+func _line_float(line_edit: LineEdit, fallback: float) -> float:
+	if line_edit == null:
+		return fallback
+	var raw := line_edit.text.strip_edges()
+	if raw.is_empty():
+		return fallback
+	if not raw.is_valid_float():
+		return fallback
+	return raw.to_float()
+
+
+func _read_tb_config_path() -> String:
+	if tb_config_path:
+		var path := tb_config_path.text.strip_edges()
+		if not path.is_empty():
+			return path
+	return TB_GAME_FOLDER_DEFAULT
+
+
+func _export_trenchbroom_bundle(raw_target_path: String) -> String:
+	var target_path := _to_absolute_path(raw_target_path)
+	if target_path.is_empty():
+		return "empty TrenchBroom path"
+
+	var mk_err := DirAccess.make_dir_recursive_absolute(target_path)
+	if mk_err != OK and mk_err != ERR_ALREADY_EXISTS:
+		return "failed creating folder (%s)" % str(mk_err)
+
+	var fgd := load(MAIN_FGD_FILE) as Resource
+	if fgd == null or not fgd.has_method("build_class_text"):
+		return "missing FGD resource: %s" % MAIN_FGD_FILE
+
+	var fgd_name := String(fgd.get("fgd_name"))
+	if fgd_name.is_empty():
+		fgd_name = "sacredFruit"
+	var fgd_text := String(fgd.call("build_class_text", TRENCHBROOM_EDITOR_TARGET))
+	var fgd_save_error := _write_text_file(target_path.path_join("%s.fgd" % fgd_name), fgd_text)
+	if not fgd_save_error.is_empty():
+		return fgd_save_error
+
+	var game_config := load(TB_GAME_CONFIG_FILE) as Resource
+	if game_config == null or not game_config.has_method("build_class_text"):
+		return "missing game config resource: %s" % TB_GAME_CONFIG_FILE
+
+	var cfg_text := String(game_config.call("build_class_text"))
+	var cfg_save_error := _write_text_file(target_path.path_join("GameConfig.cfg"), cfg_text)
+	if not cfg_save_error.is_empty():
+		return cfg_save_error
+
+	var icon_variant: Variant = game_config.get("icon")
+	if icon_variant is Texture2D:
+		var icon_image := (icon_variant as Texture2D).get_image()
+		if icon_image != null:
+			icon_image.resize(32, 32, Image.INTERPOLATE_LANCZOS)
+			var icon_err := icon_image.save_png(target_path.path_join("icon.png"))
+			if icon_err != OK:
+				return "failed writing icon (%s)" % str(icon_err)
+
+	return ""
+
+
+func _write_text_file(path: String, text: String) -> String:
+	var file := FileAccess.open(path, FileAccess.WRITE)
+	if file == null:
+		return "failed writing %s (%s)" % [path, str(FileAccess.get_open_error())]
+	file.store_string(text)
+	file.close()
+	return ""
+
+
+func _to_absolute_path(path: String) -> String:
+	var clean := path.strip_edges()
+	if clean.is_empty():
+		return ""
+	if clean.begins_with("res://") or clean.begins_with("user://"):
+		return ProjectSettings.globalize_path(clean)
+	return clean
+
+
+func _ensure_res_dir(dir_path: String) -> int:
+	return DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(dir_path))

@@ -6,7 +6,8 @@ const Constants := preload("res://scripts/core/constants.gd")
 # Simple debug overlay + runtime map launcher.
 # Toggle menu with F1.
 
-const DEBUG_MENU_SCENE: PackedScene = preload("res://scenes/ui/debug_menu.tscn")
+const MAP_BUILDER_SCENE: PackedScene = preload("res://scenes/ui/map_builder_menu.tscn")
+const DEBUG_OVERLAY_SCENE: PackedScene = preload("res://scenes/ui/debug_overlay.tscn")
 const RUNTIME_PLAY_SCENE_PATH := "res://scenes/runtime_map_play.tscn"
 const PHOTO_MODE_SCENE_PATH := "res://scenes/photo_mode.tscn"
 const SMOKE_RUNNER_SCRIPT := preload("res://tools/smoke_runner.gd")
@@ -20,7 +21,8 @@ var pending_photo_camera_fov: float = Constants.PHOTO_DEFAULT_FOV
 var pending_photo_camera_valid: bool = false
 var pending_force_spectator: bool = false
 
-var _menu: Control
+var _menu: MapBuilderMenu
+var _debug_overlay: DebugOverlay
 var _smoke_runner: RefCounted = SMOKE_RUNNER_SCRIPT.new()
 var _smoke_in_progress: bool = false
 var _smoke_checked: bool = false
@@ -30,11 +32,16 @@ func _ready() -> void:
 	if not ProjectSettings.has_setting(RUNTIME_DEBUG_SETTING):
 		ProjectSettings.set_setting(RUNTIME_DEBUG_SETTING, false)
 	# Create once and keep hidden.
-	if DEBUG_MENU_SCENE:
-		_menu = DEBUG_MENU_SCENE.instantiate() as Control
+	if MAP_BUILDER_SCENE:
+		_menu = MAP_BUILDER_SCENE.instantiate() as MapBuilderMenu
 		if _menu:
 			_menu.visible = false
 			get_tree().root.call_deferred("add_child", _menu)
+	if DEBUG_OVERLAY_SCENE:
+		_debug_overlay = DEBUG_OVERLAY_SCENE.instantiate() as DebugOverlay
+		if _debug_overlay:
+			_debug_overlay.visible = false
+			get_tree().root.call_deferred("add_child", _debug_overlay)
 	call_deferred("_handle_startup_run_args")
 
 
@@ -43,8 +50,11 @@ func _unhandled_input(event: InputEvent) -> void:
 		if event.keycode == KEY_F1:
 			toggle_menu()
 			get_viewport().set_input_as_handled()
-		elif event.keycode == KEY_F3:
+		elif event.keycode == KEY_F2:
 			_open_photo_mode_from_scene(false)
+			get_viewport().set_input_as_handled()
+		elif event.keycode == KEY_F3:
+			toggle_debug_overlay()
 			get_viewport().set_input_as_handled()
 		elif event.keycode == KEY_F4:
 			_open_photo_mode_from_scene(true)
@@ -54,15 +64,16 @@ func _unhandled_input(event: InputEvent) -> void:
 func toggle_menu() -> void:
 	if _menu == null:
 		return
-	_menu.visible = not _menu.visible
 	if _menu.visible:
-		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
-		# Let it refresh list when opened.
-		if _menu.has_method("refresh"):
-			_menu.call_deferred("refresh")
+		_menu.visible = false
 	else:
-		# Don't force capture here (menus and gameplay handle their own cursor modes).
-		pass
+		_menu.open_menu()
+		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+
+func toggle_debug_overlay() -> void:
+	if _debug_overlay == null:
+		return
+	_debug_overlay.toggle_visibility()
 
 
 func request_play_runtime_map(map_path: String) -> void:

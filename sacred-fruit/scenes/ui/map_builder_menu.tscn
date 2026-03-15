@@ -1,4 +1,4 @@
-[gd_scene load_steps=3 format=3 uid="uid://dpx8r5n4q7wvm"]
+[gd_scene format=3 uid="uid://dpx8r5n4q7wvm"]
 
 [ext_resource type="Theme" uid="uid://dxuct2amfb0rp" path="res://themes/sacred_fruit.tres" id="1"]
 [ext_resource type="Script" path="res://scripts/debug/map_builder_menu.gd" id="2"]
@@ -9,6 +9,7 @@ anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 mouse_filter = 2
+visible = false
 theme = ExtResource("1")
 script = ExtResource("2")
 
@@ -60,15 +61,18 @@ layout_mode = 2
 theme_override_constants/separation = 10
 
 [node name="Search" type="LineEdit" parent="Center/Panel/Margin/VBox/TabContainer/Maps/TopBar"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 placeholder_text = "Filter maps (e.g. home, grill…)"
 
 [node name="IncludeAutosave" type="CheckBox" parent="Center/Panel/Margin/VBox/TabContainer/Maps/TopBar"]
+unique_name_in_owner = true
 layout_mode = 2
 text = "Include Autosave"
 
 [node name="MapList" type="ItemList" parent="Center/Panel/Margin/VBox/TabContainer/Maps"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
 allow_reselect = true
@@ -79,10 +83,12 @@ theme_override_constants/separation = 10
 alignment = 2
 
 [node name="BuildRun" type="Button" parent="Center/Panel/Margin/VBox/TabContainer/Maps/Buttons"]
+unique_name_in_owner = true
 layout_mode = 2
 text = "Build + Run"
 
 [node name="PhotoMode" type="Button" parent="Center/Panel/Margin/VBox/TabContainer/Maps/Buttons"]
+unique_name_in_owner = true
 layout_mode = 2
 text = "Photo Mode"
 
@@ -107,11 +113,13 @@ layout_mode = 2
 theme_override_constants/separation = 10
 
 [node name="ModelFilter" type="LineEdit" parent="Center/Panel/Margin/VBox/TabContainer/TrenchBroom/ModelTopBar"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 placeholder_text = "Filter models (glb/gltf)..."
 
 [node name="ModelList" type="ItemList" parent="Center/Panel/Margin/VBox/TabContainer/TrenchBroom"]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 200)
 layout_mode = 2
 size_flags_vertical = 3
@@ -128,6 +136,7 @@ layout_mode = 2
 text = "Uniform Scale"
 
 [node name="ModelScale" type="LineEdit" parent="Center/Panel/Margin/VBox/TabContainer/TrenchBroom/OptionsGrid"]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
 text = "1.0"
@@ -137,6 +146,7 @@ layout_mode = 2
 text = "Collision Size"
 
 [node name="SizeMode" type="OptionButton" parent="Center/Panel/Margin/VBox/TabContainer/TrenchBroom/OptionsGrid"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 selected = 0
@@ -155,18 +165,21 @@ layout_mode = 2
 theme_override_constants/separation = 8
 
 [node name="ManualSizeX" type="LineEdit" parent="Center/Panel/Margin/VBox/TabContainer/TrenchBroom/OptionsGrid/ManualSizeRow"]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(80, 0)
 layout_mode = 2
 text = "32"
 editable = false
 
 [node name="ManualSizeY" type="LineEdit" parent="Center/Panel/Margin/VBox/TabContainer/TrenchBroom/OptionsGrid/ManualSizeRow"]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(80, 0)
 layout_mode = 2
 text = "32"
 editable = false
 
 [node name="ManualSizeZ" type="LineEdit" parent="Center/Panel/Margin/VBox/TabContainer/TrenchBroom/OptionsGrid/ManualSizeRow"]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(80, 0)
 layout_mode = 2
 text = "32"
@@ -177,6 +190,7 @@ layout_mode = 2
 text = "TrenchBroom Game Folder"
 
 [node name="TBConfigPath" type="LineEdit" parent="Center/Panel/Margin/VBox/TabContainer/TrenchBroom/OptionsGrid"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 placeholder_text = "/Users/.../ Application Support/TrenchBroom/games/sacredFruit"
@@ -187,14 +201,17 @@ theme_override_constants/separation = 10
 alignment = 2
 
 [node name="GeneratePropEntity" type="Button" parent="Center/Panel/Margin/VBox/TabContainer/TrenchBroom/GenerateButtons"]
+unique_name_in_owner = true
 layout_mode = 2
 text = "Generate Prop Entity"
 
 [node name="GenerateActorEntity" type="Button" parent="Center/Panel/Margin/VBox/TabContainer/TrenchBroom/GenerateButtons"]
+unique_name_in_owner = true
 layout_mode = 2
 text = "Generate Actor Entity"
 
 [node name="Status" type="Label" parent="Center/Panel/Margin/VBox"]
+unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0.9, 0.9, 0.9, 1)
 text = "Ready. Press F1 to close."
@@ -206,5 +223,6 @@ theme_override_constants/separation = 10
 alignment = 2
 
 [node name="Close" type="Button" parent="Center/Panel/Margin/VBox/BottomButtons"]
+unique_name_in_owner = true
 layout_mode = 2
 text = "Close (F1)"
