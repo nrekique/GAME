@@ -323,8 +323,10 @@ func run() -> void:
 						entity.center += entity.brushes[b].center
 					entity.center /= float(entity.brushes.size())
 	
-	var generate_vertices_task_id:= WorkerThreadPool.add_group_task(generate_vertices_task, map_data.entities.size(), 4, true)
-	WorkerThreadPool.wait_for_group_task_completion(generate_vertices_task_id)
+	# Run on main thread to avoid Godot 4.6 WorkerThreadPool SIGSEGV regression
+	# (propagate_notification called from wrong thread in generate_brush_vertices).
+	for e in range(map_data.entities.size()):
+		generate_vertices_task.call(e)
 	
 	# wind face vertices
 	for e in range(map_data.entities.size()):
@@ -379,5 +381,6 @@ func run() -> void:
 					face_geo.indicies[i_count + 2] = i + 2
 					i_count += 3
 					
-	var index_faces_task_id:= WorkerThreadPool.add_group_task(index_faces_task, map_data.entities.size(), 4, true)
-	WorkerThreadPool.wait_for_group_task_completion(index_faces_task_id)
+	# Run on main thread (same as generate_vertices fix above).
+	for e in range(map_data.entities.size()):
+		index_faces_task.call(e)

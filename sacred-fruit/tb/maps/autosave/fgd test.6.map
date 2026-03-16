@@ -1024,4 +1024,5 @@
 "classname" "light_directional"
 "origin" "-8 -104 24"
 "bake_mode" "static"
+"energy" "10.000000"
 }

@@ -8,5 +8,5 @@
 
 [resource]
 script = ExtResource("4_u1crk")
-fgd_name = "FuncGodotExBasic"
+fgd_name = "sacredFruit"
 base_fgd_files = Array[Resource]([ExtResource("4_funcgodot"), ExtResource("1_s1atc"), ExtResource("2_p85ga"), ExtResource("3_2t8y0")])

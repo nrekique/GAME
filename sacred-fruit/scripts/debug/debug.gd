@@ -232,12 +232,15 @@ func _resolve_runtime_map_arg(raw_path: String) -> String:
 		var tb_maps_candidate: String = "res://tb/maps/" + p.get_file()
 		if FileAccess.file_exists(tb_maps_candidate):
 			return tb_maps_candidate
+		var found := _find_map_in_dir("res://tb/maps/", p.get_file())
+		if not found.is_empty():
+			return found
 		var tb_candidate: String = "res://tb/" + p.get_file()
 		if FileAccess.file_exists(tb_candidate):
 			return tb_candidate
 		return ""
 
-	var abs_path: String = p.simplify_path()
+	var abs_path := p.simplify_path()
 	var project_root: String = ProjectSettings.globalize_path("res://").replace("\\", "/").simplify_path()
 	if abs_path.begins_with(project_root):
 		var rel: String = abs_path.substr(project_root.length())
@@ -252,4 +255,23 @@ func _resolve_runtime_map_arg(raw_path: String) -> String:
 		var tb_res_path: String = "res://" + rel_tb
 		if FileAccess.file_exists(tb_res_path):
 			return tb_res_path
+	return ""
+
+
+func _find_map_in_dir(dir_path: String, filename: String) -> String:
+	var dir := DirAccess.open(dir_path)
+	if dir == null:
+		return ""
+	dir.list_dir_begin()
+	var entry := dir.get_next()
+	while not entry.is_empty():
+		if dir.current_is_dir() and not entry.begins_with("."):
+			var found := _find_map_in_dir(dir_path + entry + "/", filename)
+			if not found.is_empty():
+				return found
+		elif entry == filename:
+			var candidate := dir_path + entry
+			if FileAccess.file_exists(candidate):
+				return candidate
+		entry = dir.get_next()
 	return ""

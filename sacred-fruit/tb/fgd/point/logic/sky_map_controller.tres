@@ -1,0 +1,39 @@
+[gd_resource type="Resource" script_class="FuncGodotFGDPointClass" format=3]
+
+[ext_resource type="Script" uid="uid://dne2nmlkaibt5" path="res://addons/func_godot/src/fgd/func_godot_fgd_point_class.gd" id="1_point"]
+[ext_resource type="Resource" uid="uid://cwbnifad3sdgw" path="res://tb/fgd/base/targetname_base.tres" id="2_targetname"]
+[ext_resource type="Script" path="res://entities/logic/sky_map_controller.gd" id="3_script"]
+
+[resource]
+script = ExtResource("1_point")
+script_class = ExtResource("3_script")
+apply_rotation_on_map_build = false
+apply_scale_on_map_build = false
+classname = "sky_map_controller"
+description = "Loads up to 4 TrenchBroom sky maps. Switch via logic_relay targetfunc: load_sky_0 / load_sky_1 / load_sky_2 / load_sky_3 / clear_sky."
+base_classes = Array[Resource]([ExtResource("2_targetname")])
+class_properties = {
+"enabled": true,
+"parallax_factor": 0.0,
+"sky_scale": 20.0,
+"sky_0": "",
+"sky_1": "",
+"sky_2": "",
+"sky_3": "",
+"start_sky": 0
+}
+class_property_descriptions = {
+"enabled": "If false, no sky is loaded.",
+"parallax_factor": "0.0 = sky fixed at entity position (camera moves relative to it, giving parallax). 1.0 = sky follows camera exactly (classic no-parallax skybox). Values in between blend.",
+"sky_scale": "Uniform scale multiplier applied to the built sky map. Default 20 turns a 20m sky into ~400m, enclosing normal-sized levels.",
+"sky_0": "Absolute path to sky map slot 0 (.map file).",
+"sky_1": "Absolute path to sky map slot 1 (.map file).",
+"sky_2": "Absolute path to sky map slot 2 (.map file).",
+"sky_3": "Absolute path to sky map slot 3 (.map file).",
+"start_sky": "Sky slot to load on map start (0-3)."
+}
+meta_properties = {
+"color": Color(0.45, 0.75, 1, 1),
+"size": AABB(-8, -8, -8, 8, 8, 8)
+}
+node_class = "Node3D"

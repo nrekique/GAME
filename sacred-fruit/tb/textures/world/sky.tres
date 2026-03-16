@@ -1,0 +1,12 @@
+[gd_resource type="ShaderMaterial" format=3]
+
+[ext_resource type="Shader" path="res://tb/textures/shaders/qsky.gdshader" id="1_qsky"]
+[ext_resource type="Texture2D" path="res://tb/textures/world/sky.png" id="2_skytex"]
+
+[resource]
+shader = ExtResource("1_qsky")
+shader_parameter/alb = ExtResource("2_skytex")
+shader_parameter/scroll_speed_b = Vector2(0.01, 0.01)
+shader_parameter/scroll_speed_f = Vector2(0.05, 0.05)
+shader_parameter/sky_height = 4.0
+shader_parameter/sky_scale = 3.0

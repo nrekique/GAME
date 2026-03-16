@@ -43,6 +43,12 @@ if [[ "${TB_SKIP_LINT:-0}" != "1" ]]; then
       LINT_MAP_FILE="$ROOT_DIR/tb/$MAP_FILE"
     elif [[ -f "$ROOT_DIR/$MAP_FILE" ]]; then
       LINT_MAP_FILE="$ROOT_DIR/$MAP_FILE"
+    else
+      # Search subdirectories of tb/maps/ for the filename
+      FOUND_MAP="$(find "$ROOT_DIR/tb/maps" -name "$(basename "$MAP_FILE")" -type f 2>/dev/null | head -1)"
+      if [[ -n "$FOUND_MAP" ]]; then
+        LINT_MAP_FILE="$FOUND_MAP"
+      fi
     fi
   fi
   if [[ -f "$LINT_MAP_FILE" ]]; then

@@ -1,0 +1,30 @@
+[gd_resource type="Resource" script_class="FuncGodotFGDPointClass" format=3]
+
+[ext_resource type="Script" uid="uid://dne2nmlkaibt5" path="res://addons/func_godot/src/fgd/func_godot_fgd_point_class.gd" id="1_point"]
+[ext_resource type="Resource" uid="uid://dukx4b4xgo1o2" path="res://tb/fgd/base/light_base.tres" id="2_light_base"]
+[ext_resource type="Script" uid="uid://d1ly8yba2frfj" path="res://entities/lights/light_directional.gd" id="3_script"]
+
+[resource]
+script = ExtResource("1_point")
+script_class = ExtResource("3_script")
+apply_rotation_on_map_build = false
+classname = "light_directional"
+description = "Directional sun/moon light (DirectionalLight3D). One per level. Position is ignored — only mangle rotation matters."
+base_classes = Array[Resource]([ExtResource("2_light_base")])
+class_properties = {
+"angular_distance": 0.5,
+"mangle": Vector3(-45, 45, 0),
+"shadow_max_distance": 3200.0,
+"sky_mode": "light_and_sky"
+}
+class_property_descriptions = {
+"angular_distance": "Angular size of the sun disc in degrees. Higher values give softer shadow penumbra (0 = hard shadows).",
+"mangle": "Light direction as (pitch yaw roll). pitch: negative = shining downward (-45 = sun 45 above horizon). yaw: compass bearing the light comes FROM (0=+Z 90=+X). roll: leave 0.",
+"shadow_max_distance": "Max distance in Quake units at which shadows are rendered. Lower = sharper/cheaper. Default 3200 = 100 Godot metres.",
+"sky_mode": "light_and_sky = affects scene and sky colour. light_only = scene only (use with a separate sky shader). sky_only = tints sky only, not scene geometry."
+}
+meta_properties = {
+"color": Color(1.0, 0.9, 0.6, 1),
+"size": AABB(-8, -8, -8, 8, 8, 8)
+}
+node_class = "DirectionalLight3D"

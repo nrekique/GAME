@@ -1,0 +1,14 @@
+[remap]
+
+importer="func_godot.map"
+type="Resource"
+uid="uid://dvv84h7v36p8o"
+path="res://.godot/imported/citySky.2.map-fa6b13a30ba59869a53a4e997707c211.tres"
+
+[deps]
+
+source_file="res://tb/maps/env_sky/autosave/citySky.2.map"
+dest_files=["res://.godot/imported/citySky.2.map-fa6b13a30ba59869a53a4e997707c211.tres"]
+
+[params]
+
